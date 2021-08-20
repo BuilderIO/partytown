@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+
+    <title>Google Tag Manager (GTM) 🎉</title>
+    <!-- Google Tag Manager -->
+    <script type="text/partytown" data-worker="GTM">
+      (function (window, document, i) {
+        window['dataLayer'] = window[dataLayer] || [];
+
+        window['dataLayer'].push({ 'gtm.start': new Date().getTime(), 'event': 'gtm.js' });
+
+        var firstScript = document.getElementsByTagName('script')[0];
+        var gtmScript = document.createElement('script');
+        var dataLayer = 'dataLayer' != 'dataLayer' ? '&l=' + 'dataLayer' : '';
+
+        gtmScript.async = true;
+        gtmScript.src = './gtm.js?id=' + i + dataLayer;
+
+        firstScript.parentNode.insertBefore(gtmScript, firstScript);
+      })(window, document, 'GTM-TEST');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <link
+      rel="icon"
+      id="favicon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎉</text></svg>"
+    />
+  </head>
+  <body>
+    <h1>Google Tag Manager (GTM) 🎉</h1>
+    <!-- prettier-ignore -->
+    <script>!function(t,e,i,n){function r(){n||((n=t.createElement("iframe")).setAttribute("style","display:block;width:0;height:0;border:0;visibility:hidden"),n.setAttribute("aria-hidden","true"),n.src=i+"partytown-sandbox",t.body.appendChild(n))}"serviceWorker"in e&&e.serviceWorker.register(i+"partytown-sw.js",{scope:i}).then((function(t){t.active?r():t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"===t.target.state&&r()}))}))}(document,navigator,"/~partytown/");</script>
+  </body>
+</html>

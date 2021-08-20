@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>Document Properties 🎉</title>
+
+    <script type="text/partytown">
+      (function () {
+        function timed(cb) {
+          const start = performance.now();
+          console.debug(cb(), (performance.now() - start) + 'ms');
+        }
+
+        timed(() => `get document.title: ${document.title}`);
+        timed(() => `get document.title: ${document.title}`);
+        timed(() => `get document.charset: ${document.charset}`);
+
+        timed(() => {
+          document.title = 'Updated Title';
+          return `set document.title: ${document.title}`
+        });
+        timed(() => `get document.title: ${document.title}`);
+      })();
+    </script>
+
+    <link
+      rel="icon"
+      id="favicon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎉</text></svg>"
+    />
+  </head>
+  <body>
+    <h1>Document Properties 🎉</h1>
+    <!-- prettier-ignore -->
+    <script>!function(t,e,i,n){function r(){n||((n=t.createElement("iframe")).setAttribute("style","display:block;width:0;height:0;border:0;visibility:hidden"),n.setAttribute("aria-hidden","true"),n.src=i+"partytown-sandbox",t.body.appendChild(n))}"serviceWorker"in e&&e.serviceWorker.register(i+"partytown-sw.js",{scope:i}).then((function(t){t.active?r():t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"===t.target.state&&r()}))}))}(document,navigator,"/~partytown/");</script>
+  </body>
+</html>

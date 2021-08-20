@@ -1,0 +1,56 @@
+{
+  "name": "@builder.io/partytown",
+  "version": "0.0.0",
+  "files": [
+    "/~partytown/"
+  ],
+  "scripts": {
+    "build": "rollup -c",
+    "dev": "rollup -c -w --configDev",
+    "serve": "sirv --port 4000 --dev",
+    "test": "jest",
+    "test.watch": "jest --watch"
+  },
+  "devDependencies": {
+    "@rollup/plugin-typescript": "^8.2.5",
+    "@types/jest": "^27.0.1",
+    "jest": "^27.0.6",
+    "prettier": "^2.3.2",
+    "rollup": "^2.56.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "sirv-cli": "^1.0.14",
+    "ts-jest": "^27.0.5",
+    "tslib": "^2.3.1",
+    "typescript": "^4.3.5"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/.cache/",
+      "/~partytown/",
+      "/node_modules/"
+    ]
+  },
+  "prettier": {
+    "trailingComma": "es5",
+    "tabWidth": 2,
+    "semi": true,
+    "singleQuote": true,
+    "printWidth": 100,
+    "useTabs": false,
+    "quoteProps": "consistent"
+  },
+  "license": "MIT",
+  "description": "Relocate resource intensive 3rd-party scripts off of the main thread and into a web worker.",
+  "keywords": [
+    "web worker",
+    "3rd-party",
+    "third-party",
+    "analytics",
+    "webapp",
+    "performance",
+    "lighthouse",
+    "core web vitals"
+  ]
+}

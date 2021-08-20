@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "incremental": true,
+    "target": "ES2018",
+    "module": "ES2020",
+    "lib": ["es2020", "DOM", "WebWorker"],
+    "strict": true,
+    "importsNotUsedAsValues": "error",
+    "esModuleInterop": true,
+    "outDir": "tsc",
+    "sourceMap": false
+  },
+  "include": ["src/**/*.ts"]
+}
