@@ -1,6 +1,6 @@
 import typescript from '@rollup/plugin-typescript';
 import { join } from 'path';
-import { readdirSync, statSync } from 'fs';
+import { readdirSync, statSync, writeFileSync } from 'fs';
 import { rollup } from 'rollup';
 import { terser } from 'rollup-plugin-terser';
 
@@ -65,9 +65,16 @@ export default function (cmdArgs) {
         const generated = await build.generate({
           format: 'es',
           exports: 'none',
+          intro: `((self)=>{`,
+          outro: `})(self);`,
           plugins: debug ? [terser(debugOpts)] : [managlePropsPlugin(), terser(minOpts)],
         });
+
         const webWorkerCode = generated.output[0].code;
+        writeFileSync(
+          join(cacheDir, `partytown-web-worker${debug ? '.debug' : ''}.js`),
+          webWorkerCode
+        );
 
         for (const b in bundles) {
           bundles[b].code = bundles[b].code.replace(
@@ -106,11 +113,17 @@ export default function (cmdArgs) {
         const generated = await build.generate({
           format: 'es',
           exports: 'none',
+          intro: `((window)=>{`,
+          outro: `})(window);`,
           plugins: debug
             ? [terser(debugOpts), inlinedWebWorker(true)]
             : [managlePropsPlugin(), terser(minOpts), inlinedWebWorker(false)],
         });
         const sandboxCode = generated.output[0].code;
+        writeFileSync(
+          join(cacheDir, `partytown-sandbox${debug ? '.debug' : ''}.html`),
+          sandboxCode
+        );
 
         for (const b in bundles) {
           bundles[b].code = bundles[b].code.replace(
@@ -212,10 +225,8 @@ function managlePropsPlugin() {
     $methodNames$: '',
     $msgId$: '',
     $nodeName$: '',
-    $resolve$: '',
     $rtnValue$: '',
     $scopePath$: '',
-    $timeoutId$: '',
     $url$: '',
     $workerName$: '',
   };
