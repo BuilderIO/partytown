@@ -6,7 +6,7 @@
 
 - Relocates resource intensive scripts to into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)
 - Web worker DOM implementation within `3kb`
-- Throttled 3rd-party code by using one `requestAnimationFrame()` per DOM operation, reducing jank
+- Throttles 3rd-party code by using one `requestAnimationFrame()` per DOM operation, reducing jank
 - Debug what 3rd-party scripts are calling into
 - Sandbox specific browser APIs
 - Main thread performance is, without question, more important than web worker thread performance
@@ -15,7 +15,7 @@
 
 - Free up main thread resources to be used only for the primary webapp execution
 - Reduce layout thrashing coming from 3rd-party scripts
-- Isolate 3rd-party scripts within a sandbox [(web worker)](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API) to give better insight as to what the scripts are doing
+- Isolate 3rd-party scripts within a sandbox ([web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)) to give better insight as to what the scripts are doing
 - Configure which browser APIs specific scripts can, and cannot, execute
 - Webapp startup time unchanged when Partytown library is added
 - Opt-in only, and does not automatically update existing scripts
@@ -29,11 +29,13 @@
 - DOM operations within the worker are purposely throttled, slowing down worker execution
 - Not ideal for scripts that are required to block the main document (blocking is bad)
 - Service worker network requests (even though they're all intercepted, they're not actual external HTTP requests, and do not affect [Lighthouse scores](https://web.dev/performance-scoring/), many service worker network requests may still show up in the network tab)
+- A total of three threads are used: Main Thread, Web Worker, Service Worker
 
 ### Browser Feature Requirements
 
-- [Service Workers](https://caniuse.com/serviceworkers)
-- [JS Proxies](https://caniuse.com/proxy)
+- [Web Worker](https://caniuse.com/webworkers)
+- [Service Worker](https://caniuse.com/serviceworkers)
+- [JavaScript Proxy](https://caniuse.com/proxy)
 
 ---
 
