@@ -1,5 +1,5 @@
 import typescript from '@rollup/plugin-typescript';
-import { join } from 'path';
+import { basename, join } from 'path';
 import { readdirSync, statSync, writeFileSync } from 'fs';
 import { rollup } from 'rollup';
 import { terser } from 'rollup-plugin-terser';
@@ -143,13 +143,13 @@ export default function (cmdArgs) {
           file: join(buildDir, 'partytown-sw.js'),
           format: 'es',
           exports: 'none',
-          plugins: [managlePropsPlugin(), terser(minOpts), inlinedSandbox(false)],
+          plugins: [managlePropsPlugin(), terser(minOpts), inlinedSandbox(false), fileSize()],
         },
         {
           file: join(buildDir, 'partytown-sw.debug.js'),
           format: 'es',
           exports: 'none',
-          plugins: [terser(debugOpts), inlinedSandbox(true)],
+          plugins: [terser(debugOpts), inlinedSandbox(true), fileSize()],
         },
       ],
       plugins: [
@@ -187,12 +187,13 @@ export default function (cmdArgs) {
           file: join(buildDir, 'partytown.js'),
           format: 'es',
           exports: 'none',
-          plugins: [terser(minOpts)],
+          plugins: [terser(minOpts), fileSize()],
         },
         {
           file: join(buildDir, 'partytown.debug.js'),
           format: 'es',
           exports: 'none',
+          plugins: [fileSize()],
         },
       ],
       plugins: [
@@ -244,6 +245,16 @@ function managlePropsPlugin() {
           bundle[fileName].code = bundle[fileName].code.replace(rg, replaceWith);
         });
       }
+    },
+  };
+}
+
+function fileSize() {
+  return {
+    name: 'fileSize',
+    writeBundle(options) {
+      const s = statSync(options.file);
+      console.log(`${basename(options.file)}: ${s.size} b`);
     },
   };
 }
