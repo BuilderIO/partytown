@@ -11,7 +11,7 @@
 
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker
-      .register(scope + 'partytown-sw.js', {
+      .register(scope + (globalThis as any).SERVICE_WORKER_URL, {
         scope: scope,
       })
       .then(function (swRegistration) {

@@ -187,13 +187,13 @@ export default function (cmdArgs) {
           file: join(buildDir, 'partytown.js'),
           format: 'es',
           exports: 'none',
-          plugins: [terser(minOpts), fileSize()],
+          plugins: [serviceWorkerUrl('partytown-sw.js'), terser(minOpts), fileSize()],
         },
         {
           file: join(buildDir, 'partytown.debug.js'),
           format: 'es',
           exports: 'none',
-          plugins: [fileSize()],
+          plugins: [serviceWorkerUrl('partytown-sw.debug.js'), fileSize()],
         },
       ],
       plugins: [
@@ -244,6 +244,20 @@ function managlePropsPlugin() {
           const replaceWith = mangleProps[key];
           bundle[fileName].code = bundle[fileName].code.replace(rg, replaceWith);
         });
+      }
+    },
+  };
+}
+
+function serviceWorkerUrl(swUrl) {
+  return {
+    name: 'fileSize',
+    generateBundle(opts, bundles) {
+      for (const b in bundles) {
+        bundles[b].code = bundles[b].code.replace(
+          'globalThis.SERVICE_WORKER_URL',
+          JSON.stringify(swUrl)
+        );
       }
     },
   };
