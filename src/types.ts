@@ -7,7 +7,10 @@ export interface InitWebWorkerData {
   $key$: number;
 }
 
-export interface WebWorkerContext extends InitWebWorkerData {}
+export interface WebWorkerContext extends InitWebWorkerData {
+  $importScripts$: (...urls: string[]) => void;
+  $currentScript$?: any;
+}
 
 export interface WorkerGroups {
   [workerName: string]: InitializeScriptData[];

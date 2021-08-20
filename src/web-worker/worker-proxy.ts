@@ -54,9 +54,12 @@ export class Element extends Node {
 }
 
 export class Document extends Element {
-  baseURI?: string;
-  currentScript?: string | null;
-  location?: URL;
+  get currentScript() {
+    const currentScript = webWorkerContext.$currentScript$;
+    if (currentScript) {
+    }
+    return null;
+  }
 
   get defaultView() {
     return self;
@@ -93,6 +96,14 @@ export class HTMLCollection {
     return this[CstrValues].$items$.length;
   }
 }
+
+export const setDocumentCurrentScript = (
+  doc: Document,
+  scriptUrl: string | null,
+  scriptContent?: string
+) => {
+  // const scriptElm = new Element({ })
+};
 
 export const constructInstance = (serializedInstance: SerializedInstance) => {
   const cstr = serializedInstance.$cstr$;
@@ -181,6 +192,7 @@ export const proxy = <T = any>(obj: T): T => {
     },
 
     set(target, propKey, value, receiver) {
+      console.log('set', target, propKey, value);
       if (Reflect.has(target, propKey)) {
         Reflect.set(target, propKey, value, receiver);
       } else {
