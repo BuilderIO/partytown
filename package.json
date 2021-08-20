@@ -1,6 +1,8 @@
 {
   "name": "@builder.io/partytown",
   "version": "0.0.0",
+  "description": "Relocate resource intensive 3rd-party scripts off of the main thread and into a web worker.",
+  "license": "MIT",
   "files": [
     "/~partytown/"
   ],
@@ -41,8 +43,12 @@
     "useTabs": false,
     "quoteProps": "consistent"
   },
-  "license": "MIT",
-  "description": "Relocate resource intensive 3rd-party scripts off of the main thread and into a web worker.",
+  "author": "Builder.io Team",
+  "homepage": "https://github.com/BuilderIO/partytown#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BuilderIO/partytown.git"
+  },
   "keywords": [
     "web worker",
     "3rd-party",
