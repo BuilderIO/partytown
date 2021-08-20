@@ -18,8 +18,7 @@ const initializeScriptContent = (id: number, content: string) => {
     const runScript = new Function(content);
     runScript();
   } catch (e) {
-    console.error(`party foul, script content (${id}):`, e);
-    console.error(content);
+    console.error(`party foul, script content (${id}):`, e, '\n' + content);
   }
 };
 
@@ -27,8 +26,7 @@ const initializeScriptUrl = (id: number, url: string) => {
   try {
     logWorker(`initialize script url (${id}): ${url}`);
   } catch (e) {
-    console.error(`party foul, script url (${id}):`, e);
-    console.error(`Script Url: ${url}`);
+    console.error(`party foul, script url "${url}", (${id}):`, e);
   }
 };
 

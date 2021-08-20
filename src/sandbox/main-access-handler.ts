@@ -41,7 +41,6 @@ const getInstanceMember = (instance: any, memberName: string, accessRsp: MainAcc
 };
 
 const setInstanceProp = (instance: any, propName: string, propValue: any) => {
-  console.log('setInstanceProp', instance, propName, propValue);
   instance[propName] = deserializeValue(propValue);
 };
 
@@ -51,7 +50,6 @@ const instanceCallMethod = (
   serializedArgs: any[],
   accessRsp: MainAccessResponse
 ) => {
-  console.log('instanceCallMethod', instance, methodName, serializedArgs);
   const args = deserializeValue(serializedArgs);
   const rtnValue = instance[methodName].apply(instance, args);
   accessRsp.$rtnValue$ = serializeValue(rtnValue, new Set());

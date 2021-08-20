@@ -57,7 +57,6 @@ export const serializeValue = (value: any, added: Set<any>): SerializedValueTran
             SerializedType.Instance,
             htmlCollectionInstance,
           ];
-          console.log('htmlCollection', htmlCollection);
           return htmlCollection;
         }
       }

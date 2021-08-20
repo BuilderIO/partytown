@@ -79,7 +79,6 @@ export class HTMLCollection {
   [CstrValues]: SerializedHTMLCollection;
 
   constructor(serializedHtmlCollection: SerializedHTMLCollection) {
-    console.log('HTMLCollection', serializedHtmlCollection);
     this[CstrValues] = serializedHtmlCollection;
     serializedHtmlCollection.$items$.forEach((item, index) => {
       (this as any)[index] = constructInstance(item);
@@ -131,7 +130,6 @@ const sendRequestToServiceWorker = (accessReq: MainAccessRequest) => {
 
 const createMethodProxy = (target: any, methodName: string) => {
   return (...args: any[]) => {
-    console.log('createMethodProxy apply', methodName, args);
     const accessRsp = sendRequestToServiceWorker({
       $msgId$: msgIds++,
       $accessType$: AccessType.Apply,
@@ -183,7 +181,6 @@ export const proxy = <T = any>(obj: T): T => {
     },
 
     set(target, propKey, value, receiver) {
-      console.log('set', propKey, value);
       if (Reflect.has(target, propKey)) {
         Reflect.set(target, propKey, value, receiver);
       } else {
@@ -208,7 +205,6 @@ export const constructValue = (
   memberName = String(memberName);
   const serializedType = serializedValueTransfer[0];
   const serializedValue = serializedValueTransfer[1] as any;
-  console.log(`constructValue, memberName: ${memberName}`, serializedValue);
 
   if (serializedType === SerializedType.Primitive) {
     return serializedValue;
