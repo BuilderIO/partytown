@@ -11,14 +11,8 @@ export const initSandbox = async (sandboxWindow: Window, createWebWorker: Create
   const swContainer = sandboxWindow.navigator.serviceWorker;
   const swRegistration = await swContainer.getRegistration();
 
-  const webWorker = createWebWorker();
-
-  const initWebWorkerData: InitWebWorkerData = {
-    $initializeScripts$: readMainScripts(mainDocument),
-    $methodNames$: readImplementations(mainWindow, mainDocument),
-    $scopePath$: swRegistration!.scope!,
-    $key$: key,
-  };
+  const methodNames = readImplementations(mainWindow, mainDocument);
+  const workerGroups = readMainScripts(mainDocument);
 
   setInstanceId(mainWindow, InstanceId.window);
   setInstanceId(mainDocument, InstanceId.document);
@@ -32,5 +26,14 @@ export const initSandbox = async (sandboxWindow: Window, createWebWorker: Create
     });
   });
 
-  webWorker.postMessage(initWebWorkerData);
+  for (const workerName in workerGroups) {
+    const initWebWorkerData: InitWebWorkerData = {
+      $initializeScripts$: workerGroups[workerName],
+      $methodNames$: methodNames,
+      $scopePath$: swRegistration!.scope!,
+      $key$: key,
+    };
+    const webWorker = createWebWorker(workerName);
+    webWorker.postMessage(initWebWorkerData);
+  }
 };

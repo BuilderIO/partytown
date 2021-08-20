@@ -1,21 +1,27 @@
-import type { InitializeScriptData } from '../types';
+import type { InitializeScriptData, WorkerGroups } from '../types';
 
-export const readMainScripts = (doc: Document) =>
-  Array.from(doc.querySelectorAll<HTMLScriptElement>('script[type="text/partytown"]')).map(
-    (elm, $id$) => {
+export const readMainScripts = (mainDocument: Document) => {
+  const workerGroups: WorkerGroups = {};
+  const scripts = mainDocument.querySelectorAll<HTMLScriptElement>('script[type="text/partytown"]');
+
+  scripts.forEach((scriptElm, $id$) => {
+    if (!scriptElm.dataset.partytownId) {
+      const workerName = scriptElm.dataset.worker || 'default';
       const scriptData: InitializeScriptData = {
         $id$,
-        $workerName$: elm.dataset.worker || '',
       };
 
-      if (elm.hasAttribute('src')) {
-        scriptData.$url$ = elm.src;
+      if (scriptElm.hasAttribute('src')) {
+        scriptData.$url$ = scriptElm.src;
       } else {
-        scriptData.$content$ = elm.innerHTML;
+        scriptData.$content$ = scriptElm.innerHTML;
       }
 
-      elm.dataset.partytown = $id$ as any;
+      scriptElm.dataset.partytownId = $id$ as any;
 
-      return scriptData;
+      (workerGroups[workerName] = workerGroups[workerName] || []).push(scriptData);
     }
-  );
+  });
+
+  return workerGroups;
+};

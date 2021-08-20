@@ -1,4 +1,4 @@
-export type CreateWorker = () => Worker;
+export type CreateWorker = (workerName: string) => Worker;
 
 export interface InitWebWorkerData {
   $initializeScripts$: InitializeScriptData[];
@@ -9,9 +9,12 @@ export interface InitWebWorkerData {
 
 export interface WebWorkerContext extends InitWebWorkerData {}
 
+export interface WorkerGroups {
+  [workerName: string]: InitializeScriptData[];
+}
+
 export interface InitializeScriptData {
   $id$: number;
-  $workerName$: string;
   $content$?: string;
   $url$?: string;
 }
