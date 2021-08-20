@@ -1,5 +1,6 @@
 import typescript from '@rollup/plugin-typescript';
 import { join } from 'path';
+import { readdirSync, statSync } from 'fs';
 import { rollup } from 'rollup';
 import { terser } from 'rollup-plugin-terser';
 
@@ -143,6 +144,24 @@ export default function (cmdArgs) {
           cacheDir: join(cacheDir, 'sw'),
           outputToFilesystem: false,
         }),
+        {
+          name: 'serviceWorker',
+          buildStart() {
+            const srcDir = join(__dirname, 'src');
+
+            const addWatchFile = (p) => {
+              const s = statSync(p);
+              if (s.isDirectory()) {
+                readdirSync(p).forEach((fileName) => addWatchFile(join(p, fileName)));
+              } else if (s.isFile() && p.endsWith('.ts')) {
+                this.addWatchFile(p);
+              }
+            };
+
+            addWatchFile(join(srcDir, 'sandbox'));
+            addWatchFile(join(srcDir, 'web-worker'));
+          },
+        },
       ],
     };
   }
