@@ -10,6 +10,7 @@
 - Debug what 3rd-party scripts are calling into
 - Sandbox specific browser APIs
 - Main thread performance is, without question, more important than web worker thread performance
+- Partytown runs 3rd-party scripts in a web worker to free up resources for your app on the main thread. If you're looking to instead run your app from within a web worker, then we recommend [WorkerDom](https://github.com/ampproject/worker-dom) instead.
 
 ### Goals
 
@@ -22,6 +23,17 @@
 - Allow 3rd-party scripts to run exactly how they're coded and without any alterations
 - Read and write main thread DOM operations _synchronously_ from within a web worker
 - No build-steps or bundling required, but rather update scripts the same as traditional 3rd-party scripts are updated
+
+### Use-Cases
+
+Below are just a few examples of 3rd-party scripts that may be a good candidate to run from within a web worker. The goal is to continue validating various services to ensure Partytown has the correct API proxies, but Partytown itself should not hardcode to any specific services. Help us test!
+
+- [Google Tag Manager (GTM)](https://marketingplatform.google.com/about/tag-manager/)
+- [Google Analytics (GA)](https://analytics.google.com/)
+- [Mixpanel](https://mixpanel.com/)
+- [Hubspot](https://www.hubspot.com/)
+- [Segment](https://segment.com/)
+- [Amplitude](https://amplitude.com/)
 
 ### Trade-offs
 
@@ -36,6 +48,7 @@
 - [Web Worker](https://caniuse.com/webworkers)
 - [Service Worker](https://caniuse.com/serviceworkers)
 - [JavaScript Proxy](https://caniuse.com/proxy)
+- [JavaScript Symbol](https://caniuse.com/mdn-javascript_builtins_symbol)
 
 ---
 
