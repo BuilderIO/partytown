@@ -75,10 +75,10 @@ For each 3rd-party script that should not run in the main thread, but instead pa
 </script>
 ```
 
-The Partytown library should be added to the bottom of the page and include the [async](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#attr-async) attribute, which tells the browser this not a critical resource.
+The Partytown library should be added to the bottom of the page and include the [async](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#attr-async) and [defer](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#attr-defer) attributes, which [helps tell the browser this not a critical resource](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/loading-third-party-javascript#use_async_or_defer).
 
 ```html
-<script src="/~partytown/partytown.js" async></script>
+<script src="/~partytown/partytown.js" async defer></script>
 ```
 
 Note that this script _must_ be hosted from the same origin as the HTML page, rather than a CDN. Additionally, the Partytown library should be
