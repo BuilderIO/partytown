@@ -3,6 +3,8 @@ export const PT_PROXY_URL = `partytown-proxy`;
 
 export const debug = (globalThis as any).partyTownDebug;
 
+export const isPromise = (value: any): value is Promise<unknown> => value instanceof Promise;
+
 export const toLower = (str: string) => str.toLowerCase();
 
 export const toUpper = (str: string) => str.toUpperCase();

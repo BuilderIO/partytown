@@ -1,6 +1,7 @@
 import { deserializeValue, serializeValue } from './main-serialization';
 import { getInstance } from './main-instances';
 import { MainAccessRequest, MainAccessResponse, AccessType } from '../types';
+import { isPromise } from '../utils';
 
 export const mainAccessHandler = async (key: number, accessReq: MainAccessRequest) => {
   const accessType = accessReq.$accessType$;
@@ -17,11 +18,11 @@ export const mainAccessHandler = async (key: number, accessReq: MainAccessReques
       const instance = getInstance(instanceId);
       if (instance) {
         if (accessType === AccessType.Get) {
-          getInstanceMember(instance, memberName, accessRsp);
-        } else if (accessType === AccessType.Set) {
-          setInstanceProp(instance, memberName, data);
+          await getInstanceMember(instance, memberName, accessRsp);
         } else if (accessType === AccessType.Apply) {
-          instanceCallMethod(instance, memberName, data, accessRsp);
+          await callInstanceMethod(instance, memberName, data, accessRsp);
+        } else if (accessType === AccessType.Set) {
+          instance[memberName] = deserializeValue(data);
         }
       } else {
         accessRsp.$error$ = `Instance ${instanceId} not found`;
@@ -36,21 +37,32 @@ export const mainAccessHandler = async (key: number, accessReq: MainAccessReques
   return accessRsp;
 };
 
-const getInstanceMember = (instance: any, memberName: string, accessRsp: MainAccessResponse) => {
-  accessRsp.$rtnValue$ = serializeValue(instance[memberName], new Set());
+const getInstanceMember = async (
+  instance: any,
+  memberName: string,
+  accessRsp: MainAccessResponse
+) => {
+  let getterValue = instance[memberName];
+
+  if (isPromise(getterValue)) {
+    getterValue = await getterValue;
+    accessRsp.$isPromise$ = true;
+  }
+  accessRsp.$rtnValue$ = serializeValue(getterValue, new Set());
 };
 
-const setInstanceProp = (instance: any, propName: string, propValue: any) => {
-  instance[propName] = deserializeValue(propValue);
-};
-
-const instanceCallMethod = (
+const callInstanceMethod = async (
   instance: any,
   methodName: string,
   serializedArgs: any[],
   accessRsp: MainAccessResponse
 ) => {
   const args = deserializeValue(serializedArgs);
-  const rtnValue = instance[methodName].apply(instance, args);
+  let rtnValue = instance[methodName].apply(instance, args);
+
+  if (isPromise(rtnValue)) {
+    rtnValue = await rtnValue;
+    accessRsp.$isPromise$ = true;
+  }
   accessRsp.$rtnValue$ = serializeValue(rtnValue, new Set());
 };
