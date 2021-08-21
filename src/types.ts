@@ -42,6 +42,12 @@ export interface MainAccessRequest {
   $instanceId$: number;
   $memberName$?: string;
   $data$?: any;
+  $extraInstructions$?: ExtraInstruction[];
+}
+
+export interface ExtraInstruction {
+  $setAttributeName$?: string;
+  $setAttributeValue$?: string;
 }
 
 export interface MainAccessResponse {

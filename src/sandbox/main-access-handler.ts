@@ -1,4 +1,4 @@
-import { AccessType, MainAccessRequest, MainAccessResponse } from '../types';
+import { AccessType, ExtraInstruction, MainAccessRequest, MainAccessResponse } from '../types';
 import { deserializeValue, serializeValue } from './main-serialization';
 import { getInstance } from './main-instances';
 import { isPromise } from '../utils';
@@ -8,6 +8,7 @@ export const mainAccessHandler = async (key: number, accessReq: MainAccessReques
   const instanceId = accessReq.$instanceId$;
   const memberName = accessReq.$memberName$!;
   const data = accessReq.$data$;
+  const extraInstructions = accessReq.$extraInstructions$;
   const accessRsp: MainAccessResponse = {
     $msgId$: accessReq.$msgId$,
     $instanceId$: instanceId,
@@ -18,9 +19,9 @@ export const mainAccessHandler = async (key: number, accessReq: MainAccessReques
       const instance = getInstance(instanceId);
       if (instance) {
         if (accessType === AccessType.Get) {
-          await getInstanceMember(instance, memberName, accessRsp);
+          await getInstanceMember(accessRsp, instance, memberName);
         } else if (accessType === AccessType.Apply) {
-          await callInstanceMethod(instance, memberName, data, accessRsp);
+          await callInstanceMethod(accessRsp, instance, memberName, data, extraInstructions);
         } else if (accessType === AccessType.Set) {
           instance[memberName] = deserializeValue(data);
         }
@@ -38,9 +39,9 @@ export const mainAccessHandler = async (key: number, accessReq: MainAccessReques
 };
 
 const getInstanceMember = async (
+  accessRsp: MainAccessResponse,
   instance: any,
-  memberName: string,
-  accessRsp: MainAccessResponse
+  memberName: string
 ) => {
   let getterValue = instance[memberName];
 
@@ -52,14 +53,22 @@ const getInstanceMember = async (
 };
 
 const callInstanceMethod = async (
+  accessRsp: MainAccessResponse,
   instance: any,
   methodName: string,
   serializedArgs: any[],
-  accessRsp: MainAccessResponse
+  extraInstructions?: ExtraInstruction[]
 ) => {
   const args = deserializeValue(serializedArgs);
   let rtnValue = instance[methodName].apply(instance, args);
 
+  if (extraInstructions) {
+    extraInstructions.forEach((extra) => {
+      if (extra.$setAttributeName$) {
+        rtnValue.setAttribute(extra.$setAttributeName$, extra.$setAttributeValue$);
+      }
+    });
+  }
   if (isPromise(rtnValue)) {
     rtnValue = await rtnValue;
     accessRsp.$isPromise$ = true;

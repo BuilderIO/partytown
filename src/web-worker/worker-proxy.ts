@@ -1,13 +1,14 @@
 import {
   AccessType,
+  ExtraInstruction,
   MainAccessRequest,
   MainAccessResponse,
   SerializedConstructorType,
   SerializedHTMLCollection,
   SerializedInstance,
   SerializedNode,
-  SerializedValueTransfer,
   SerializedType,
+  SerializedValueTransfer,
   WebWorkerContext,
 } from '../types';
 import { CstrValues, InstanceIdKey, NodeNameKey, NodeTypeKey, ProxyKey } from './worker-symbols';
@@ -52,6 +53,21 @@ export class Element extends Node {
 }
 
 export class Document extends Element {
+  createElement(tagName: string) {
+    const $extraInstructions$ =
+      toLower(tagName) === 'script'
+        ? [{ $setAttributeName$: 'type', $setAttributeValue$: 'text/partytown' }]
+        : undefined;
+
+    return sendSyncRequestToServiceWorker(
+      AccessType.Apply,
+      this,
+      'createElement',
+      [tagName],
+      $extraInstructions$
+    );
+  }
+
   get currentScript() {
     const currentScriptInstanceId = webWorkerContext.$currentScript$;
     if (currentScriptInstanceId) {
@@ -139,7 +155,8 @@ const sendSyncRequestToServiceWorker = (
   $accessType$: AccessType,
   target: any,
   $memberName$: string,
-  $data$?: any
+  $data$?: any,
+  $extraInstructions$?: ExtraInstruction[]
 ) => {
   const accessReq: MainAccessRequest = {
     $key$: webWorkerContext.$key$,
@@ -148,6 +165,7 @@ const sendSyncRequestToServiceWorker = (
     $instanceId$: target[InstanceIdKey],
     $memberName$,
     $data$,
+    $extraInstructions$,
   };
 
   const xhr = new XMLHttpRequest();
