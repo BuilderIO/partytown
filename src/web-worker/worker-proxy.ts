@@ -54,10 +54,19 @@ export class Element extends Node {
 
 export class Document extends Element {
   createElement(tagName: string) {
-    const $extraInstructions$ =
-      toLower(tagName) === 'script'
-        ? [{ $setAttributeName$: 'type', $setAttributeValue$: 'text/partytown' }]
-        : undefined;
+    tagName = toLower(tagName);
+
+    const $extraInstructions$: ExtraInstruction[] = [];
+
+    if (tagName === 'script') {
+      $extraInstructions$.push(
+        {
+          $setAttributeName$: 'type',
+          $setAttributeValue$: 'text/partytown',
+        },
+        { $setPartytownId$: true }
+      );
+    }
 
     return sendSyncRequestToServiceWorker(
       AccessType.Apply,
@@ -69,7 +78,7 @@ export class Document extends Element {
   }
 
   get currentScript() {
-    const currentScriptInstanceId = webWorkerContext.$currentScript$;
+    const currentScriptInstanceId = webWorkerCtx.$currentScript$;
     if (currentScriptInstanceId) {
       return createScript(currentScriptInstanceId);
     }
@@ -83,7 +92,7 @@ export class Document extends Element {
   getElementsByTagName(tagName: string) {
     if (toLower(tagName) === 'script') {
       // always return just the first script
-      return [createScript(webWorkerContext.$firstScriptId$)];
+      return [createScript(webWorkerCtx.$firstScriptId$)];
     }
     return sendSyncRequestToServiceWorker(AccessType.Apply, this, 'getElementsByTagName', [
       tagName,
@@ -159,8 +168,8 @@ const sendSyncRequestToServiceWorker = (
   $extraInstructions$?: ExtraInstruction[]
 ) => {
   const accessReq: MainAccessRequest = {
-    $key$: webWorkerContext.$key$,
-    $msgId$: webWorkerContext.$msgId$++,
+    $key$: webWorkerCtx.$key$,
+    $msgId$: webWorkerCtx.$msgId$++,
     $accessType$,
     $instanceId$: target[InstanceIdKey],
     $memberName$,
@@ -169,7 +178,7 @@ const sendSyncRequestToServiceWorker = (
   };
 
   const xhr = new XMLHttpRequest();
-  xhr.open('POST', webWorkerContext.$scopePath$ + PT_PROXY_URL, false);
+  xhr.open('POST', webWorkerCtx.$scopePath$ + PT_PROXY_URL, false);
   xhr.send(JSON.stringify(accessReq));
 
   // look ma, i'm synchronous (•‿•)
@@ -184,7 +193,7 @@ const sendSyncRequestToServiceWorker = (
     throw new Error(error);
   }
 
-  const rtn = constructValue(target, $memberName$, accessRsp.$rtnValue$);
+  const rtn = constructValue(target, $memberName$, accessRsp.$rtnValue$!);
   if (isPromise) {
     return Promise.resolve(rtn);
   }
@@ -217,7 +226,7 @@ export const proxy = <T = any>(obj: T): T => {
       }
 
       const memberName = String(propKey);
-      if (webWorkerContext.$methodNames$.includes(memberName)) {
+      if (webWorkerCtx.$methodNames$.includes(memberName)) {
         return createMethodProxy(target, memberName);
       }
 
@@ -270,4 +279,4 @@ const constructValue = (
   return undefined;
 };
 
-export const webWorkerContext: WebWorkerContext = {} as any;
+export const webWorkerCtx: WebWorkerContext = {} as any;

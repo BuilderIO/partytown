@@ -6,11 +6,10 @@ import { readImplementations } from './read-interfaces';
 import { readMainScripts } from './read-main-scripts';
 
 export const initSandbox = async (sandboxWindow: Window, createWebWorker: CreateWorker) => {
-  logMain(`Loaded sandbox`);
-
   const key = Math.random();
   const mainWindow = sandboxWindow.parent!;
   const mainDocument = mainWindow.document;
+  const url = mainWindow.location + '';
   const swContainer = sandboxWindow.navigator.serviceWorker;
   const swRegistration = await swContainer.getRegistration();
 
@@ -30,6 +29,8 @@ export const initSandbox = async (sandboxWindow: Window, createWebWorker: Create
     });
   });
 
+  logMain(`Loaded sandbox for ${url}`);
+
   for (const workerName in workerGroups) {
     const initWebWorkerData: InitWebWorkerData = {
       $initializeScripts$: workerGroups[workerName],
@@ -37,6 +38,7 @@ export const initSandbox = async (sandboxWindow: Window, createWebWorker: Create
       $scopePath$: swRegistration!.scope!,
       $key$: key,
       $firstScriptId$: firstScriptId,
+      $url$: url,
     };
     logMain(
       `Creating "${workerName}" web worker group, total scripts: ${initWebWorkerData.$initializeScripts$.length}`

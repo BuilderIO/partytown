@@ -6,6 +6,7 @@ export interface InitWebWorkerData {
   $scopePath$: string;
   $key$: number;
   $firstScriptId$: number;
+  $url$: string;
 }
 
 export interface WebWorkerContext extends InitWebWorkerData {
@@ -47,13 +48,14 @@ export interface MainAccessRequest {
 
 export interface ExtraInstruction {
   $setAttributeName$?: string;
-  $setAttributeValue$?: string;
+  $setAttributeValue$?: string | number | boolean;
+  $setPartytownId$?: boolean;
 }
 
 export interface MainAccessResponse {
   $msgId$: number;
   $instanceId$: number;
-  $rtnValue$?: any;
+  $rtnValue$?: SerializedValueTransfer;
   $isPromise$?: any;
   $error$?: string;
 }

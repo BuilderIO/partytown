@@ -221,7 +221,7 @@ export default function (cmdArgs) {
 }
 
 function managlePropsPlugin() {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$'.split('');
   const mangleProps = {
     $accessType$: '',
     $content$: '',
@@ -229,6 +229,8 @@ function managlePropsPlugin() {
     $currentScript$: '',
     $data$: '',
     $error$: '',
+    $extraInstructions$: '',
+    $firstScriptId$: '',
     $importScripts$: '',
     $instanceId$: '',
     $initializeScripts$: '',
@@ -241,6 +243,9 @@ function managlePropsPlugin() {
     $nodeName$: '',
     $rtnValue$: '',
     $scopePath$: '',
+    $setAttributeName$: '',
+    $setAttributeValue$: '',
+    $setPartytownId$: '',
     $url$: '',
     $workerName$: '',
   };

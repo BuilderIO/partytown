@@ -1,6 +1,6 @@
 import { AccessType, ExtraInstruction, MainAccessRequest, MainAccessResponse } from '../types';
 import { deserializeValue, serializeValue } from './main-serialization';
-import { getInstance } from './main-instances';
+import { getInstance, getInstanceId } from './main-instances';
 import { isPromise } from '../utils';
 
 export const mainAccessHandler = async (key: number, accessReq: MainAccessRequest) => {
@@ -62,16 +62,20 @@ const callInstanceMethod = async (
   const args = deserializeValue(serializedArgs);
   let rtnValue = instance[methodName].apply(instance, args);
 
-  if (extraInstructions) {
-    extraInstructions.forEach((extra) => {
-      if (extra.$setAttributeName$) {
-        rtnValue.setAttribute(extra.$setAttributeName$, extra.$setAttributeValue$);
-      }
-    });
-  }
   if (isPromise(rtnValue)) {
     rtnValue = await rtnValue;
     accessRsp.$isPromise$ = true;
   }
   accessRsp.$rtnValue$ = serializeValue(rtnValue, new Set());
+
+  if (extraInstructions) {
+    extraInstructions.forEach((extra) => {
+      if (extra.$setAttributeName$) {
+        rtnValue.setAttribute(extra.$setAttributeName$, extra.$setAttributeValue$);
+      }
+      if (extra.$setPartytownId$) {
+        rtnValue.dataset.partytownId = getInstanceId(rtnValue);
+      }
+    });
+  }
 };
