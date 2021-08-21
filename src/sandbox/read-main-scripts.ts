@@ -1,23 +1,23 @@
 import type { InitializeScriptData, WorkerGroups } from '../types';
+import { getInstanceId, setInstanceId } from './main-instances';
 
 export const readMainScripts = (mainDocument: Document) => {
   const workerGroups: WorkerGroups = {};
   const scripts = mainDocument.querySelectorAll<HTMLScriptElement>('script[type="text/partytown"]');
 
-  scripts.forEach((scriptElm, $id$) => {
+  scripts.forEach((scriptElm) => {
     if (!scriptElm.dataset.partytownId) {
+      const instanceId: number = (scriptElm.dataset.partytownId = getInstanceId(scriptElm) as any);
       const workerName = scriptElm.dataset.worker || 'default';
       const scriptData: InitializeScriptData = {
-        $id$,
+        $instanceId$: instanceId,
       };
 
-      if (scriptElm.hasAttribute('src')) {
+      if (scriptElm.src) {
         scriptData.$url$ = scriptElm.src;
       } else {
         scriptData.$content$ = scriptElm.innerHTML;
       }
-
-      scriptElm.dataset.partytownId = $id$ as any;
 
       (workerGroups[workerName] = workerGroups[workerName] || []).push(scriptData);
     }

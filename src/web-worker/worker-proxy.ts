@@ -13,8 +13,6 @@ import {
 import { CstrValues, InstanceIdKey, NodeNameKey, NodeTypeKey, ProxyKey } from './worker-symbols';
 import { PT_PROXY_URL, toLower } from '../utils';
 
-let msgIds = 0;
-
 export class Node {
   [InstanceIdKey]: number;
   [NodeNameKey]: string;
@@ -55,8 +53,13 @@ export class Element extends Node {
 
 export class Document extends Element {
   get currentScript() {
-    const currentScript = webWorkerContext.$currentScript$;
-    if (currentScript) {
+    const currentScriptInstanceId = webWorkerContext.$currentScript$;
+    if (currentScriptInstanceId) {
+      return new Element({
+        $cstr$: SerializedConstructorType.Element,
+        $instanceId$: currentScriptInstanceId,
+        $nodeName$: 'SCRIPT',
+      });
     }
     return null;
   }
@@ -97,14 +100,6 @@ export class HTMLCollection {
   }
 }
 
-export const setDocumentCurrentScript = (
-  doc: Document,
-  scriptUrl: string | null,
-  scriptContent?: string
-) => {
-  // const scriptElm = new Element({ })
-};
-
 export const constructInstance = (serializedInstance: SerializedInstance) => {
   const cstr = serializedInstance.$cstr$;
 
@@ -127,34 +122,48 @@ export const constructInstance = (serializedInstance: SerializedInstance) => {
   return proxy({});
 };
 
-const sendRequestToServiceWorker = (accessReq: MainAccessRequest) => {
+const sendSyncRequestToServiceWorker = (
+  $accessType$: AccessType,
+  target: any,
+  $memberName$: string,
+  $data$?: any
+) => {
+  const accessReq: MainAccessRequest = {
+    $key$: webWorkerContext.$key$,
+    $msgId$: webWorkerContext.$msgId$++,
+    $accessType$,
+    $instanceId$: target[InstanceIdKey],
+    $memberName$,
+    $data$,
+  };
+
   const xhr = new XMLHttpRequest();
   xhr.open('POST', webWorkerContext.$scopePath$ + PT_PROXY_URL, false);
-  accessReq.$key$ = webWorkerContext.$key$;
   xhr.send(JSON.stringify(accessReq));
+
+  // look ma, i'm synchronous (•‿•)
+
   const accessRsp: MainAccessResponse = JSON.parse(xhr.responseText);
-  if (accessRsp.$error$) {
-    throw new Error(accessRsp.$error$);
+  const error = accessRsp.$error$;
+  const isPromise = accessRsp.$isPromise$;
+  if (error) {
+    if (isPromise) {
+      return Promise.reject(error);
+    }
+    throw new Error(error);
   }
-  return accessRsp;
+
+  const rtn = constructValue(target, $memberName$, accessRsp.$rtnValue$);
+  if (isPromise) {
+    return Promise.resolve(rtn);
+  }
+  return rtn;
 };
 
-const createMethodProxy = (target: any, methodName: string) => {
-  return (...args: any[]) => {
-    const accessRsp = sendRequestToServiceWorker({
-      $msgId$: msgIds++,
-      $accessType$: AccessType.Apply,
-      $instanceId$: target[InstanceIdKey],
-      $memberName$: methodName,
-      $data$: args,
-    });
-    const rtn = constructValue(target, methodName, accessRsp.$rtnValue$);
-    if (accessRsp.$isPromise$) {
-      return Promise.resolve(rtn);
-    }
-    return rtn;
-  };
-};
+const createMethodProxy =
+  (target: any, methodName: string) =>
+  (...args: any[]) =>
+    sendSyncRequestToServiceWorker(AccessType.Apply, target, methodName, args);
 
 export const proxy = <T = any>(obj: T): T => {
   if (
@@ -181,62 +190,50 @@ export const proxy = <T = any>(obj: T): T => {
         return createMethodProxy(target, memberName);
       }
 
-      const accessRsp = sendRequestToServiceWorker({
-        $msgId$: msgIds++,
-        $accessType$: AccessType.Get,
-        $instanceId$: target[InstanceIdKey],
-        $memberName$: memberName,
-      });
-
-      return constructValue(target, propKey, accessRsp.$rtnValue$!);
+      return sendSyncRequestToServiceWorker(AccessType.Get, target, memberName);
     },
 
     set(target, propKey, value, receiver) {
       if (Reflect.has(target, propKey)) {
         Reflect.set(target, propKey, value, receiver);
       } else {
-        sendRequestToServiceWorker({
-          $msgId$: msgIds++,
-          $accessType$: AccessType.Set,
-          $instanceId$: target[InstanceIdKey],
-          $memberName$: String(propKey),
-          $data$: value,
-        });
+        sendSyncRequestToServiceWorker(AccessType.Set, target, String(propKey), value);
       }
       return true;
     },
   });
 };
 
-export const constructValue = (
+const constructValue = (
   target: any,
-  memberName: any,
+  memberName: string,
   serializedValueTransfer: SerializedValueTransfer
 ): any => {
-  memberName = String(memberName);
-  const serializedType = serializedValueTransfer[0];
-  const serializedValue = serializedValueTransfer[1] as any;
+  if (Array.isArray(serializedValueTransfer)) {
+    const serializedType = serializedValueTransfer[0];
+    const serializedValue = serializedValueTransfer[1] as any;
 
-  if (serializedType === SerializedType.Primitive) {
-    return serializedValue;
-  }
+    if (serializedType === SerializedType.Primitive) {
+      return serializedValue;
+    }
 
-  if (serializedType === SerializedType.Method) {
-    return createMethodProxy(target, memberName);
-  }
+    if (serializedType === SerializedType.Method) {
+      return createMethodProxy(target, memberName);
+    }
 
-  if (serializedType === SerializedType.Instance) {
-    const serializedInstance: SerializedInstance = serializedValue;
-    return constructInstance(serializedInstance);
-  }
+    if (serializedType === SerializedType.Instance) {
+      const serializedInstance: SerializedInstance = serializedValue;
+      return constructInstance(serializedInstance);
+    }
 
-  if (serializedType === SerializedType.Object) {
-    return proxy(serializedValue);
-  }
+    if (serializedType === SerializedType.Object) {
+      return proxy(serializedValue);
+    }
 
-  if (serializedType === SerializedType.Array) {
-    const serializedArray: SerializedValueTransfer[] = serializedValue;
-    return serializedArray.map((v) => constructValue(target, memberName, v));
+    if (serializedType === SerializedType.Array) {
+      const serializedArray: SerializedValueTransfer[] = serializedValue;
+      return serializedArray.map((v) => constructValue(target, memberName, v));
+    }
   }
 
   return undefined;

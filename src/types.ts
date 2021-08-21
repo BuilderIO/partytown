@@ -9,7 +9,8 @@ export interface InitWebWorkerData {
 
 export interface WebWorkerContext extends InitWebWorkerData {
   $importScripts$: (...urls: string[]) => void;
-  $currentScript$?: any;
+  $currentScript$?: number;
+  $msgId$: number;
 }
 
 export interface WorkerGroups {
@@ -17,7 +18,7 @@ export interface WorkerGroups {
 }
 
 export interface InitializeScriptData {
-  $id$: number;
+  $instanceId$: number;
   $content$?: string;
   $url$?: string;
 }
@@ -34,12 +35,12 @@ export const enum InstanceId {
 }
 
 export interface MainAccessRequest {
+  $key$: number;
   $msgId$: number;
   $accessType$: AccessType;
   $instanceId$: number;
   $memberName$?: string;
   $data$?: any;
-  $key$?: number;
 }
 
 export interface MainAccessResponse {

@@ -226,6 +226,7 @@ function managlePropsPlugin() {
     $accessType$: '',
     $content$: '',
     $cstr$: '',
+    $currentScript$: '',
     $data$: '',
     $error$: '',
     $importScripts$: '',
