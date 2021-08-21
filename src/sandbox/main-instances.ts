@@ -6,17 +6,22 @@ const instancesById = new Map<number, any>();
 const InstanceIdKey = Symbol();
 
 export const setInstanceId = (instance: any, instanceId: number) => {
-  instancesById.set(instanceId, instance);
-  instance[InstanceIdKey] = instanceId;
+  if (instance) {
+    instancesById.set(instanceId, instance);
+    instance[InstanceIdKey] = instanceId;
+  }
 };
 
 export const getInstanceId = (instance: any): number => {
-  let instanceId = instance[InstanceIdKey];
-  if (typeof instanceId !== 'number') {
-    instanceId = instanceIds++;
-    setInstanceId(instance, instanceId);
+  if (instance) {
+    let instanceId = instance[InstanceIdKey];
+    if (typeof instanceId !== 'number') {
+      instanceId = instanceIds++;
+      setInstanceId(instance, instanceId);
+    }
+    return instanceId;
   }
-  return instanceId;
+  return -1;
 };
 
 export const getInstance = (instanceId: number) => instancesById.get(instanceId);

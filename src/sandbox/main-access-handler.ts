@@ -1,6 +1,6 @@
+import { AccessType, MainAccessRequest, MainAccessResponse } from '../types';
 import { deserializeValue, serializeValue } from './main-serialization';
 import { getInstance } from './main-instances';
-import { MainAccessRequest, MainAccessResponse, AccessType } from '../types';
 import { isPromise } from '../utils';
 
 export const mainAccessHandler = async (key: number, accessReq: MainAccessRequest) => {

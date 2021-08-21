@@ -5,6 +5,7 @@ export interface InitWebWorkerData {
   $methodNames$: string[];
   $scopePath$: string;
   $key$: number;
+  $firstScriptId$: number;
 }
 
 export interface WebWorkerContext extends InitWebWorkerData {

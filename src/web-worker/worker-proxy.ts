@@ -16,7 +16,7 @@ import { PT_PROXY_URL, toLower } from '../utils';
 export class Node {
   [InstanceIdKey]: number;
   [NodeNameKey]: string;
-  [NodeTypeKey]: number;
+  [NodeTypeKey]: SerializedConstructorType;
 
   constructor(nodeCstr: SerializedNode) {
     this[InstanceIdKey] = nodeCstr.$instanceId$!;
@@ -55,17 +55,23 @@ export class Document extends Element {
   get currentScript() {
     const currentScriptInstanceId = webWorkerContext.$currentScript$;
     if (currentScriptInstanceId) {
-      return new Element({
-        $cstr$: SerializedConstructorType.Element,
-        $instanceId$: currentScriptInstanceId,
-        $nodeName$: 'SCRIPT',
-      });
+      return createScript(currentScriptInstanceId);
     }
     return null;
   }
 
   get defaultView() {
     return self;
+  }
+
+  getElementsByTagName(tagName: string) {
+    if (toLower(tagName) === 'script') {
+      // always return just the first script
+      return [createScript(webWorkerContext.$firstScriptId$)];
+    }
+    return sendSyncRequestToServiceWorker(AccessType.Apply, this, 'getElementsByTagName', [
+      tagName,
+    ]);
   }
 
   get localName() {
@@ -99,6 +105,13 @@ export class HTMLCollection {
     return this[CstrValues].$items$.length;
   }
 }
+
+export const createScript = ($instanceId$: number) =>
+  new Element({
+    $cstr$: SerializedConstructorType.Element,
+    $instanceId$,
+    $nodeName$: 'SCRIPT',
+  });
 
 export const constructInstance = (serializedInstance: SerializedInstance) => {
   const cstr = serializedInstance.$cstr$;
