@@ -4,13 +4,20 @@
 
 ⚠️ Warning! This is experimental! ⚠️
 
-- Relocates resource intensive scripts to into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)
-- Web worker DOM implementation within `3kb`
-- Throttles 3rd-party code by using one `requestAnimationFrame()` per DOM operation, reducing jank
+Even with a fast and higly tuned website following all of the best practices, it's all too common for your performance wins to be erased the moment 3rd-party scripts are added. By 3rd-party scripts we mean code that is not directly under your control, such analytics, ads, trackers, etc., and their inclusion are often a double-edged sword. The [Loading Third-Party JavaScript](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/loading-third-party-javascript) doc is a great resource for different techniques to debug and minimize their impact, but for the most part your hands are still tied.
+
+### Web Workers
+
+Partytown runs 3rd-party scripts in a web worker to free up resources for your app on the main thread.
+
+- Relocate resource intensive scripts to into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)
+- Throttle 3rd-party code by using one `requestAnimationFrame()` per DOM operation, reducing jank
+- Sandbox and ability to restrict specific browser APIs
 - Debug what 3rd-party scripts are calling into
-- Sandbox specific browser APIs
+- Web worker DOM implementation within `3kb`
 - Main thread performance is, without question, more important than web worker thread performance
-- Partytown runs 3rd-party scripts in a web worker to free up resources for your app on the main thread. If you're looking to instead run your app from within a web worker, then we recommend [WorkerDom](https://github.com/ampproject/worker-dom) instead.
+
+> If you're looking to instead run _your_ app within a web worker, then we recommend the [WorkerDom](https://github.com/ampproject/worker-dom) project.
 
 ### Goals
 
@@ -40,8 +47,11 @@ Below are just a few examples of 3rd-party scripts that may be a good candidate 
 - Partytown library scripts must be hosted from the same origin as the HTML document (not a CDN)
 - DOM operations within the worker are purposely throttled, slowing down worker execution
 - Not ideal for scripts that are required to block the main document (blocking is bad)
-- Service worker network requests (even though they're all intercepted, they're not actual external HTTP requests, and do not affect [Lighthouse scores](https://web.dev/performance-scoring/), many service worker network requests may still show up in the network tab)
 - A total of three threads are used: Main Thread, Web Worker, Service Worker
+- Service worker network requests
+  - Many service worker network requests may show up in the network tab
+  - Partytown service worker requests are intercepted by the client, rather than network HTTP requests
+  - [Lighthouse scores](https://web.dev/performance-scoring/) are unaffected by the intercepted requests
 
 ### Browser Feature Requirements
 
