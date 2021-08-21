@@ -1,10 +1,13 @@
 import { CreateWorker, InitWebWorkerData, InstanceId } from '../types';
+import { logMain } from '../utils';
 import { mainAccessHandler } from './main-access-handler';
 import { readImplementations } from './read-interfaces';
 import { readMainScripts } from './read-main-scripts';
 import { setInstanceId } from './main-instances';
 
 export const initSandbox = async (sandboxWindow: Window, createWebWorker: CreateWorker) => {
+  logMain(`Loaded`);
+
   const key = Math.random();
   const mainWindow = sandboxWindow.parent!;
   const mainDocument = mainWindow.document;
@@ -33,6 +36,9 @@ export const initSandbox = async (sandboxWindow: Window, createWebWorker: Create
       $scopePath$: swRegistration!.scope!,
       $key$: key,
     };
+    logMain(
+      `Creating "${workerName}" web worker group, total scripts: ${initWebWorkerData.$initializeScripts$.length}`
+    );
     const webWorker = createWebWorker(workerName);
     webWorker.postMessage(initWebWorkerData);
   }

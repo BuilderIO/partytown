@@ -192,7 +192,6 @@ export const proxy = <T = any>(obj: T): T => {
     },
 
     set(target, propKey, value, receiver) {
-      console.log('set', target, propKey, value);
       if (Reflect.has(target, propKey)) {
         Reflect.set(target, propKey, value, receiver);
       } else {

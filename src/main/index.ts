@@ -8,22 +8,28 @@
       document.body.appendChild(sandbox);
     }
   }
-
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker
       .register(scope + (globalThis as any).SERVICE_WORKER_URL, {
         scope: scope,
       })
-      .then(function (swRegistration) {
-        if (swRegistration.active) {
-          ready();
-        } else if (swRegistration.installing) {
-          swRegistration.installing.addEventListener('statechange', function (ev) {
-            if ((ev.target as any as ServiceWorker).state === 'activated') {
-              ready();
-            }
-          });
+      .then(
+        function (swRegistration) {
+          if (swRegistration.active) {
+            ready();
+          } else if (swRegistration.installing) {
+            swRegistration.installing.addEventListener('statechange', function (ev) {
+              if ((ev.target as any as ServiceWorker).state === 'activated') {
+                ready();
+              }
+            });
+          } else {
+            console.warn(swRegistration);
+          }
+        },
+        function (e) {
+          console.error(e);
         }
-      });
+      );
   }
 })(document, navigator, '/~partytown/');

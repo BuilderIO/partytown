@@ -17,7 +17,7 @@ export const initMainScriptsInWebWorker = (
 
 const initializeScriptContent = (doc: Document, id: number, scriptContent: string) => {
   try {
-    logWorker(`initialize script content (${id})`);
+    logWorker(`Run script content [data-partytown-id="${id}"]`);
     setDocumentCurrentScript(doc, null, scriptContent);
     const runScript = new Function(scriptContent);
     runScript();
@@ -29,7 +29,7 @@ const initializeScriptContent = (doc: Document, id: number, scriptContent: strin
 
 const initializeScriptUrl = (doc: Document, id: number, scriptUrl: string) => {
   try {
-    logWorker(`initialize script url (${id}): ${scriptUrl}`);
+    logWorker(`Run script url [data-partytown-id="${id}"] - ${scriptUrl}`);
     importScriptUrl(doc, scriptUrl);
   } catch (e) {
     console.error(`Party foul, url "${scriptUrl}", (${id}):`, e);
