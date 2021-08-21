@@ -16,7 +16,7 @@ export default function (cmdArgs) {
         'globalThis.partyTownDebug': false,
       },
       ecma: 2018,
-      passes: isDev ? 1 : 2,
+      passes: 2,
       unsafe_symbols: true,
     },
     format: {
@@ -136,22 +136,28 @@ export default function (cmdArgs) {
   }
 
   function serviceWorker() {
+    const swDebug = {
+      file: join(buildDir, 'partytown-sw.debug.js'),
+      format: 'es',
+      exports: 'none',
+      plugins: [terser(debugOpts), inlinedSandbox(true), fileSize()],
+    };
+
+    const swMin = {
+      file: join(buildDir, 'partytown-sw.js'),
+      format: 'es',
+      exports: 'none',
+      plugins: [managlePropsPlugin(), terser(minOpts), inlinedSandbox(false), fileSize()],
+    };
+
+    const output = [swDebug];
+    if (!isDev) {
+      output.push(swMin);
+    }
+
     return {
       input: 'src/service-worker/index.ts',
-      output: [
-        {
-          file: join(buildDir, 'partytown-sw.js'),
-          format: 'es',
-          exports: 'none',
-          plugins: [managlePropsPlugin(), terser(minOpts), inlinedSandbox(false), fileSize()],
-        },
-        {
-          file: join(buildDir, 'partytown-sw.debug.js'),
-          format: 'es',
-          exports: 'none',
-          plugins: [terser(debugOpts), inlinedSandbox(true), fileSize()],
-        },
-      ],
+      output,
       plugins: [
         typescript({
           cacheDir: join(cacheDir, 'sw'),
@@ -180,22 +186,28 @@ export default function (cmdArgs) {
   }
 
   function main() {
+    const partytownDebug = {
+      file: join(buildDir, 'partytown.debug.js'),
+      format: 'es',
+      exports: 'none',
+      plugins: [serviceWorkerUrl('partytown-sw.debug.js'), fileSize()],
+    };
+
+    const partytownMin = {
+      file: join(buildDir, 'partytown.js'),
+      format: 'es',
+      exports: 'none',
+      plugins: [serviceWorkerUrl('partytown-sw.js'), terser(minOpts), fileSize()],
+    };
+
+    const output = [partytownDebug];
+    if (!isDev) {
+      output.push(partytownMin);
+    }
+
     return {
       input: 'src/main/index.ts',
-      output: [
-        {
-          file: join(buildDir, 'partytown.js'),
-          format: 'es',
-          exports: 'none',
-          plugins: [serviceWorkerUrl('partytown-sw.js'), terser(minOpts), fileSize()],
-        },
-        {
-          file: join(buildDir, 'partytown.debug.js'),
-          format: 'es',
-          exports: 'none',
-          plugins: [serviceWorkerUrl('partytown-sw.debug.js'), fileSize()],
-        },
-      ],
+      output,
       plugins: [
         typescript({
           cacheDir: join(cacheDir, 'main'),
@@ -216,7 +228,7 @@ function managlePropsPlugin() {
     $cstr$: '',
     $data$: '',
     $error$: '',
-    $id$: '',
+    $importScripts$: '',
     $instanceId$: '',
     $initializeScripts$: '',
     $isPromise$: '',
