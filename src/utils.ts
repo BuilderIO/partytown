@@ -1,7 +1,4 @@
-export const PT_SANDBOX_URL = `partytown-sandbox`;
-export const PT_PROXY_URL = `partytown-proxy`;
-
-export const debug = (globalThis as any).partyTownDebug;
+export const debug = (globalThis as any).partytownDebug;
 
 export const isPromise = (value: any): value is Promise<unknown> => value instanceof Promise;
 
@@ -18,7 +15,13 @@ export const logWorker = (msg: string) =>
 const log = (prefix: string, color: string, msg: string) => [
   `%c${prefix}`,
   `background: ${color}; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
-  msg,
+  msg + '\n' + stackTrace(),
 ];
 
-export const startsWith = (str: string, searchString: string) => str.startsWith(searchString);
+export const stackTrace = () => {
+  const frames = new Error().stack!.split('\n').slice(3);
+  return frames.join('\n');
+};
+
+export const PT_PROXY_URL = `partytown-proxy`;
+export const PT_SANDBOX_URL = `partytown-sandbox`;

@@ -6,14 +6,19 @@ export interface InitWebWorkerData {
   $scopePath$: string;
   $key$: number;
   $firstScriptId$: number;
-  $url$: string;
+  $currentLocationUrl$: string;
+  $documentCookie$: string;
+  $documentReferrer$: string;
+  $documentReadyState$: string;
 }
 
-export interface WebWorkerContext extends InitWebWorkerData {
-  $importScripts$: (...urls: string[]) => void;
+export interface InitWebWorkerContext {
   $currentScript$?: number;
+  $importScripts$: (...urls: string[]) => void;
   $msgId$: number;
 }
+
+export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {}
 
 export interface WorkerGroups {
   [workerName: string]: InitializeScriptData[];

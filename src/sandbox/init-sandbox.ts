@@ -9,7 +9,10 @@ export const initSandbox = async (sandboxWindow: Window, createWebWorker: Create
   const key = Math.random();
   const mainWindow = sandboxWindow.parent!;
   const mainDocument = mainWindow.document;
-  const url = mainWindow.location + '';
+  const currentLocationUrl = mainWindow.location + '';
+  const documentCookie = mainDocument.cookie;
+  const documentReadyState = mainDocument.readyState;
+  const documentReferrer = mainDocument.referrer;
   const swContainer = sandboxWindow.navigator.serviceWorker;
   const swRegistration = await swContainer.getRegistration();
 
@@ -29,16 +32,19 @@ export const initSandbox = async (sandboxWindow: Window, createWebWorker: Create
     });
   });
 
-  logMain(`Loaded sandbox for ${url}`);
+  logMain(`Loaded sandbox for ${currentLocationUrl}`);
 
   for (const workerName in workerGroups) {
     const initWebWorkerData: InitWebWorkerData = {
+      $currentLocationUrl$: currentLocationUrl,
+      $documentCookie$: documentCookie,
+      $documentReadyState$: documentReadyState,
+      $documentReferrer$: documentReferrer,
+      $firstScriptId$: firstScriptId,
       $initializeScripts$: workerGroups[workerName],
+      $key$: key,
       $methodNames$: methodNames,
       $scopePath$: swRegistration!.scope!,
-      $key$: key,
-      $firstScriptId$: firstScriptId,
-      $url$: url,
     };
     logMain(
       `Creating "${workerName}" web worker group, total scripts: ${initWebWorkerData.$initializeScripts$.length}`

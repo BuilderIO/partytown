@@ -13,7 +13,7 @@ export default function (cmdArgs) {
   const minOpts = {
     compress: {
       global_defs: {
-        'globalThis.partyTownDebug': false,
+        'globalThis.partytownDebug': false,
       },
       ecma: 2018,
       passes: 2,
@@ -28,7 +28,7 @@ export default function (cmdArgs) {
   const debugOpts = {
     compress: {
       global_defs: {
-        'globalThis.partyTownDebug': true,
+        'globalThis.partytownDebug': true,
       },
       inline: false,
       join_vars: false,

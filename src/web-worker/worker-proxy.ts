@@ -1,166 +1,19 @@
 import {
   AccessType,
   ExtraInstruction,
+  InitWebWorkerContext,
   MainAccessRequest,
   MainAccessResponse,
-  SerializedConstructorType,
-  SerializedHTMLCollection,
   SerializedInstance,
-  SerializedNode,
   SerializedType,
   SerializedValueTransfer,
   WebWorkerContext,
 } from '../types';
-import { CstrValues, InstanceIdKey, NodeNameKey, NodeTypeKey, ProxyKey } from './worker-symbols';
-import { PT_PROXY_URL, toLower } from '../utils';
+import { constructInstance } from './worker-implementations';
+import { InstanceIdKey, ProxyKey } from './worker-symbols';
+import { logWorker, PT_PROXY_URL, stackTrace } from '../utils';
 
-export class Node {
-  [InstanceIdKey]: number;
-  [NodeNameKey]: string;
-  [NodeTypeKey]: SerializedConstructorType;
-
-  constructor(nodeCstr: SerializedNode) {
-    this[InstanceIdKey] = nodeCstr.$instanceId$!;
-    this[NodeTypeKey] = nodeCstr.$cstr$;
-    this[NodeNameKey] = nodeCstr.$nodeName$;
-    return proxy(this);
-  }
-  get nodeName() {
-    return this[NodeNameKey];
-  }
-  get nodeType() {
-    return this[NodeTypeKey];
-  }
-  get ownerDocument() {
-    return self.document;
-  }
-  toJSON(): SerializedNode {
-    return {
-      $cstr$: this[NodeTypeKey],
-      $nodeName$: this[NodeNameKey],
-      $instanceId$: this[InstanceIdKey],
-    };
-  }
-}
-
-export class Element extends Node {
-  get localName() {
-    return toLower(this[NodeNameKey]);
-  }
-  get tagName() {
-    return this[NodeNameKey];
-  }
-}
-
-export class Document extends Element {
-  createElement(tagName: string) {
-    tagName = toLower(tagName);
-
-    const $extraInstructions$: ExtraInstruction[] = [];
-
-    if (tagName === 'script') {
-      $extraInstructions$.push(
-        {
-          $setAttributeName$: 'type',
-          $setAttributeValue$: 'text/partytown',
-        },
-        { $setPartytownId$: true }
-      );
-    }
-
-    return sendSyncRequestToServiceWorker(
-      AccessType.Apply,
-      this,
-      'createElement',
-      [tagName],
-      $extraInstructions$
-    );
-  }
-
-  get currentScript() {
-    const currentScriptInstanceId = webWorkerCtx.$currentScript$;
-    if (currentScriptInstanceId) {
-      return createScript(currentScriptInstanceId);
-    }
-    return null;
-  }
-
-  get defaultView() {
-    return self;
-  }
-
-  getElementsByTagName(tagName: string) {
-    if (toLower(tagName) === 'script') {
-      // always return just the first script
-      return [createScript(webWorkerCtx.$firstScriptId$)];
-    }
-    return sendSyncRequestToServiceWorker(AccessType.Apply, this, 'getElementsByTagName', [
-      tagName,
-    ]);
-  }
-
-  get localName() {
-    return undefined as any;
-  }
-
-  get ownerDocument() {
-    return null as any;
-  }
-
-  get tagName() {
-    return undefined as any;
-  }
-}
-
-export class HTMLCollection {
-  [CstrValues]: SerializedHTMLCollection;
-
-  constructor(serializedHtmlCollection: SerializedHTMLCollection) {
-    this[CstrValues] = serializedHtmlCollection;
-    serializedHtmlCollection.$items$.forEach((item, index) => {
-      (this as any)[index] = constructInstance(item);
-    });
-  }
-
-  item(index: number) {
-    return (this as any)[index];
-  }
-
-  get length() {
-    return this[CstrValues].$items$.length;
-  }
-}
-
-export const createScript = ($instanceId$: number) =>
-  new Element({
-    $cstr$: SerializedConstructorType.Element,
-    $instanceId$,
-    $nodeName$: 'SCRIPT',
-  });
-
-export const constructInstance = (serializedInstance: SerializedInstance) => {
-  const cstr = serializedInstance.$cstr$;
-
-  if (cstr === SerializedConstructorType.Element) {
-    return new Element(serializedInstance as any);
-  }
-
-  if (
-    cstr === SerializedConstructorType.TextNode ||
-    cstr === SerializedConstructorType.CommentNode ||
-    cstr === SerializedConstructorType.DocumentFragmentNode
-  ) {
-    return new Node(serializedInstance as any);
-  }
-
-  if (cstr === SerializedConstructorType.HTMLCollection) {
-    return new HTMLCollection(serializedInstance as any);
-  }
-
-  return proxy({});
-};
-
-const sendSyncRequestToServiceWorker = (
+const syncRequestToServiceWorker = (
   $accessType$: AccessType,
   target: any,
   $memberName$: string,
@@ -200,17 +53,30 @@ const sendSyncRequestToServiceWorker = (
   return rtn;
 };
 
+export const getter = (target: any, memberName: string) =>
+  syncRequestToServiceWorker(AccessType.Get, target, memberName);
+
+export const setter = (target: any, memberName: string, value: any) =>
+  syncRequestToServiceWorker(AccessType.Set, target, memberName, value);
+
+export const callMethod = (
+  target: any,
+  memberName: string,
+  args: any[],
+  extraInstructions?: ExtraInstruction[]
+) => syncRequestToServiceWorker(AccessType.Apply, target, memberName, args, extraInstructions);
+
 const createMethodProxy =
   (target: any, methodName: string) =>
   (...args: any[]) =>
-    sendSyncRequestToServiceWorker(AccessType.Apply, target, methodName, args);
+    callMethod(target, methodName, args);
 
 export const proxy = <T = any>(obj: T): T => {
   if (
     !obj ||
     (typeof obj !== 'object' && typeof obj !== 'function') ||
     (obj as any)[ProxyKey] ||
-    (obj + '').includes('[native')
+    String(obj).includes('[native')
   ) {
     return obj;
   }
@@ -230,14 +96,20 @@ export const proxy = <T = any>(obj: T): T => {
         return createMethodProxy(target, memberName);
       }
 
-      return sendSyncRequestToServiceWorker(AccessType.Get, target, memberName);
+      logWorker(`get "${memberName}"`);
+
+      const rtn = getter(target, memberName);
+
+      logWorker(`get "${memberName}", value: "${rtn}"`);
+
+      return rtn;
     },
 
     set(target, propKey, value, receiver) {
       if (Reflect.has(target, propKey)) {
         Reflect.set(target, propKey, value, receiver);
       } else {
-        sendSyncRequestToServiceWorker(AccessType.Set, target, String(propKey), value);
+        setter(target, String(propKey), value);
       }
       return true;
     },
@@ -279,4 +151,9 @@ const constructValue = (
   return undefined;
 };
 
-export const webWorkerCtx: WebWorkerContext = {} as any;
+const initWebWorkerContext: InitWebWorkerContext = {
+  $msgId$: 0,
+  $importScripts$: importScripts.bind(self),
+};
+
+export const webWorkerCtx: WebWorkerContext = initWebWorkerContext as any;

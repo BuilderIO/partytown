@@ -1,21 +1,18 @@
-import { Document, webWorkerCtx } from './worker-proxy';
+import { webWorkerCtx } from './worker-proxy';
 import type { InitializeScriptData } from '../types';
 import { logWorker } from '../utils';
 
-export const initMainScriptsInWebWorker = (
-  doc: Document,
-  initializeScripts: InitializeScriptData[]
-) => {
+export const initMainScriptsInWebWorker = (initializeScripts: InitializeScriptData[]) => {
   initializeScripts.forEach((initializeScript) => {
     if (initializeScript.$url$) {
-      initializeScriptUrl(doc, initializeScript.$instanceId$, initializeScript.$url$);
+      importScriptUrl(initializeScript.$instanceId$, initializeScript.$url$);
     } else if (initializeScript.$content$) {
-      initializeScriptContent(doc, initializeScript.$instanceId$, initializeScript.$content$);
+      initializeScriptContent(initializeScript.$instanceId$, initializeScript.$content$);
     }
   });
 };
 
-const initializeScriptContent = (doc: Document, instanceId: number, scriptContent: string) => {
+const initializeScriptContent = (instanceId: number, scriptContent: string) => {
   try {
     logWorker(`Run script content [data-partytown-id="${instanceId}"]`);
     webWorkerCtx.$currentScript$ = instanceId;
@@ -23,22 +20,21 @@ const initializeScriptContent = (doc: Document, instanceId: number, scriptConten
     runScript();
     webWorkerCtx.$currentScript$ = -1;
   } catch (e) {
-    console.error(`Party foul`, e, '\n' + scriptContent);
+    console.error('Party foul,', e, '\n' + scriptContent);
   }
 };
 
-const initializeScriptUrl = (doc: Document, instanceId: number, scriptUrl: string) => {
+export const importScriptUrl = (instanceId: number, scriptUrl: string) => {
   try {
-    logWorker(`Run script url [data-partytown-id="${instanceId}"] - ${scriptUrl}`);
-    importScriptUrl(doc, scriptUrl, instanceId);
-  } catch (e) {
-    console.error(`Party foul`, e, '\n' + scriptUrl);
-  }
-};
+    scriptUrl = new URL(scriptUrl, webWorkerCtx.$currentLocationUrl$) + '';
+    webWorkerCtx.$currentScript$ = instanceId;
 
-export const importScriptUrl = (doc: Document, scriptUrl: string, instanceId?: number) => {
-  scriptUrl = new URL(scriptUrl, webWorkerCtx.$url$) + '';
-  webWorkerCtx.$currentScript$ = instanceId;
-  webWorkerCtx.$importScripts$(scriptUrl);
-  webWorkerCtx.$currentScript$ = -1;
+    logWorker(`Run script url [data-partytown-id="${instanceId}"] - ${scriptUrl}`);
+
+    webWorkerCtx.$importScripts$(scriptUrl);
+
+    webWorkerCtx.$currentScript$ = -1;
+  } catch (e) {
+    console.error('Party foul,', scriptUrl, e);
+  }
 };
