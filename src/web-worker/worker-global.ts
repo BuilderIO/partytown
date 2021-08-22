@@ -21,7 +21,7 @@ export const initWebWorkerGlobal = (self: any) => {
     },
     location: {
       get() {
-        return new WorkerLocation(webWorkerCtx.$currentLocationUrl$);
+        return new WorkerLocation(webWorkerCtx.$url$);
       },
       set(url: string) {
         setLocation(url);

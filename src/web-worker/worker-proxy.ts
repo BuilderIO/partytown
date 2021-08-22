@@ -11,7 +11,7 @@ import {
 } from '../types';
 import { constructInstance } from './worker-implementations';
 import { InstanceIdKey, ProxyKey } from './worker-symbols';
-import { logWorker, PT_PROXY_URL, stackTrace } from '../utils';
+import { logWorker, PT_PROXY_URL } from '../utils';
 
 const syncRequestToServiceWorker = (
   $accessType$: AccessType,

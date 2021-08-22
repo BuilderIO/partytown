@@ -111,16 +111,22 @@ The distribution comes with multiple files:
 - The initial script to be loaded on the main thread
 - Minified and property renamed
 - Console logs removed
-- Loads the other minified library scripts
-- Contents of this file could be used to inline this script into the HTML instead, in order to reduce an extra HTTP request
+- Contents of `partytown.js` could be inlined the HTML instead in order to reduce an extra HTTP request
+- Loads:
+  - `partytown-sw.js`: Minified service worker with inlined sandbox and web worker
 
 ### `/~partytown/partytown.debug.js`
 
-- Same purpose as `/~partytown/partytown.js`
+- Debug version of `/~partytown/partytown.js`
+- Additional request for sandbox and web worker
 - Not minified
 - Includes console logs
 - Loads other debug library scripts
 - Not meant for production, but useful to inspect what scripts are up to
+- Loads:
+  - `partytown-sw.debug.js`: Service worker with separate sandbox request
+  - `partytown-sandbox.debug.js`: Sandbox with separate web worker request
+  - `partytown-ww.debug.js`: Web worker as separate file, not inlined
 
 ---
 

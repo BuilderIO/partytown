@@ -6,10 +6,10 @@ export interface InitWebWorkerData {
   $scopePath$: string;
   $key$: number;
   $firstScriptId$: number;
-  $currentLocationUrl$: string;
   $documentCookie$: string;
   $documentReferrer$: string;
   $documentReadyState$: string;
+  $url$: string;
 }
 
 export interface InitWebWorkerContext {
@@ -107,5 +107,5 @@ export interface SerializedNode extends SerializedInstance {
 }
 
 export interface SerializedHTMLCollection extends SerializedInstance {
-  $items$: SerializedNode[];
+  $data$: SerializedNode[];
 }

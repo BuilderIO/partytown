@@ -26,7 +26,7 @@ const initializeScriptContent = (instanceId: number, scriptContent: string) => {
 
 export const importScriptUrl = (instanceId: number, scriptUrl: string) => {
   try {
-    scriptUrl = new URL(scriptUrl, webWorkerCtx.$currentLocationUrl$) + '';
+    scriptUrl = new URL(scriptUrl, webWorkerCtx.$url$) + '';
     webWorkerCtx.$currentScript$ = instanceId;
 
     logWorker(`Run script url [data-partytown-id="${instanceId}"] - ${scriptUrl}`);

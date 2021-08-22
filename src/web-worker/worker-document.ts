@@ -1,7 +1,7 @@
 import { callMethod, getter, setter, webWorkerCtx } from './worker-proxy';
 import { createScript, WorkerElement } from './worker-element';
 import type { ExtraInstruction } from '../types';
-import { logWorker, toLower, stackTrace } from '../utils';
+import { logWorker, toLower } from '../utils';
 import { setLocation, WorkerLocation } from './worker-location';
 
 export class WorkerDocument extends WorkerElement {
@@ -59,7 +59,7 @@ export class WorkerDocument extends WorkerElement {
   }
 
   get location() {
-    return new WorkerLocation(webWorkerCtx.$currentLocationUrl$) as any;
+    return new WorkerLocation(webWorkerCtx.$url$) as any;
   }
   set location(url: string) {
     setLocation(url);

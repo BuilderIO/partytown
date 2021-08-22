@@ -1,16 +1,19 @@
+import { debug } from '../utils';
+import SandboxHash from '@sandbox-hash';
+
 (function (document: Document, navigator: Navigator, scope: string, sandbox?: HTMLIFrameElement) {
   function ready() {
     if (!sandbox) {
       sandbox = document.createElement('iframe');
       sandbox.setAttribute('style', 'display:block;width:0;height:0;border:0;visibility:hidden');
       sandbox.setAttribute('aria-hidden', 'true');
-      sandbox.src = scope + 'partytown-sandbox';
+      sandbox.src = scope + 'partytown-sandbox' + (debug ? '.debug' : '-' + SandboxHash);
       document.body.appendChild(sandbox);
     }
   }
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker
-      .register(scope + (globalThis as any).SERVICE_WORKER_URL, {
+      .register(scope + (debug ? 'partytown-sw.debug.js' : 'partytown-sw.js'), {
         scope: scope,
       })
       .then(

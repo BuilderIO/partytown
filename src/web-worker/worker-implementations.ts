@@ -14,7 +14,7 @@ export class WorkerHTMLCollection {
 
   constructor(serializedHtmlCollection: SerializedHTMLCollection) {
     this[PrivateValues] = serializedHtmlCollection;
-    serializedHtmlCollection.$items$.forEach(
+    serializedHtmlCollection.$data$.forEach(
       (item, index) => ((this as any)[index] = constructInstance(item))
     );
   }
@@ -24,7 +24,7 @@ export class WorkerHTMLCollection {
   }
 
   get length() {
-    return this[PrivateValues].$items$.length;
+    return this[PrivateValues].$data$.length;
   }
 }
 

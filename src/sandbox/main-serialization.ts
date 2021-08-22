@@ -51,7 +51,7 @@ export const serializeValue = (value: any, added: Set<any>): SerializedValueTran
         if (cstrName === 'HTMLCollection') {
           const htmlCollectionInstance: SerializedHTMLCollection = {
             $cstr$: SerializedConstructorType.HTMLCollection,
-            $items$: Array.from(value).map((v) => serializeValue(v, added)[1]),
+            $data$: Array.from(value).map((v) => serializeValue(v, added)[1]),
           };
           const htmlCollection: SerializedValueTransfer = [
             SerializedType.Instance,

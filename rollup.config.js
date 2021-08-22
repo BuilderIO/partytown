@@ -1,14 +1,16 @@
 import typescript from '@rollup/plugin-typescript';
 import { basename, join } from 'path';
-import { readdirSync, statSync, writeFileSync } from 'fs';
+import { createHash } from 'crypto';
+import { mkdirSync, readdirSync, statSync, writeFileSync } from 'fs';
 import { rollup } from 'rollup';
 import { terser } from 'rollup-plugin-terser';
 
-export default function (cmdArgs) {
+export default async function (cmdArgs) {
   const isDev = !!cmdArgs.configDev;
   const buildDir = join(__dirname, '~partytown');
   const cacheDir = join(__dirname, '.cache');
   const cache = {};
+  let sandboxHash = '';
 
   const minOpts = {
     compress: {
@@ -45,114 +47,121 @@ export default function (cmdArgs) {
     mangle: false,
   };
 
-  function inlinedWebWorker(debug) {
-    return {
-      name: 'inlinedWebWorker',
-      async generateBundle(opts, bundles) {
-        console.log('generate inlined web worker', debug ? '(debug)' : '(minified)');
-        const build = await rollup({
-          input: 'src/web-worker/index.ts',
-          plugins: [
-            typescript({
-              cacheDir: join(cacheDir, 'ww'),
-              outputToFilesystem: false,
-            }),
-          ],
-          cache: cache.ww,
-        });
-        cache.ww = build.cache;
+  try {
+    mkdirSync(buildDir);
+  } catch (e) {}
 
-        const generated = await build.generate({
-          format: 'es',
-          exports: 'none',
-          intro: `((self)=>{`,
-          outro: `})(self);`,
-          plugins: debug ? [terser(debugOpts)] : [managlePropsPlugin(), terser(minOpts)],
-        });
+  async function getWebWorker(debug) {
+    console.log('generate web worker', debug ? '(debug)' : '(minified)');
 
-        const webWorkerCode = generated.output[0].code;
-        writeFileSync(
-          join(cacheDir, `partytown-web-worker${debug ? '.debug' : ''}.js`),
-          webWorkerCode
-        );
-
-        for (const b in bundles) {
-          bundles[b].code = bundles[b].code.replace(
-            'globalThis.WEB_WORKER_BLOB',
-            JSON.stringify(webWorkerCode)
-          );
-          bundles[b].code = createSandboxHtml(bundles[b].code);
-        }
+    const build = await rollup({
+      input: 'src/web-worker/index.ts',
+      plugins: [
+        typescript({
+          cacheDir: join(cacheDir, 'ww'),
+          outputToFilesystem: false,
+        }),
+      ],
+      onwarn(warning) {
+        if (warning.code === 'CIRCULAR_DEPENDENCY') return;
+        console.log(warning.code);
       },
-    };
+      cache: cache.ww,
+    });
+    cache.ww = build.cache;
+
+    const generated = await build.generate({
+      format: 'es',
+      exports: 'none',
+      intro: `((self)=>{`,
+      outro: `})(self);`,
+      plugins: debug ? [terser(debugOpts)] : [managlePropsPlugin(), terser(minOpts)],
+    });
+
+    const webWorkerCode = generated.output[0].code;
+    if (debug) {
+      writeFileSync(join(buildDir, `partytown-ww.debug.js`), webWorkerCode);
+    } else {
+      writeFileSync(join(cacheDir, `partytown-ww.js`), webWorkerCode);
+    }
+
+    return webWorkerCode;
   }
 
-  function createSandboxHtml(jsCode) {
-    const htmlIntro = `<!DOCTYPE html><html><head><meta charset="utf-8"><script type="module" async>`;
-    const htmlOutro = `</script></head></html>`;
-    return htmlIntro + jsCode + htmlOutro;
+  async function getSandbox(debug) {
+    console.log('generate sandbox', debug ? '(debug)' : '(minified)');
+
+    const webWorkerCode = isDev ? '' : await getWebWorker(debug);
+
+    const build = await rollup({
+      input: 'src/sandbox/index.ts',
+      plugins: [
+        typescript({
+          cacheDir: join(cacheDir, 'sb'),
+          outputToFilesystem: false,
+        }),
+        {
+          name: 'webWorkerIntoSandbox',
+          resolveId(id) {
+            if (id.startsWith('@')) return id;
+          },
+          async load(id) {
+            if (id === '@web-worker-blob') {
+              return `const WebWorkerBlob = ${JSON.stringify(
+                webWorkerCode
+              )}; export default WebWorkerBlob;`;
+            }
+          },
+        },
+      ],
+    });
+
+    const generated = await build.generate({
+      format: 'es',
+      exports: 'none',
+      intro: `((window)=>{`,
+      outro: `})(window);`,
+      plugins: debug ? [terser(debugOpts)] : [managlePropsPlugin(), terser(minOpts)],
+    });
+
+    const sandboxJsCode = generated.output[0].code;
+    let sandboxHtml;
+    if (debug) {
+      writeFileSync(join(buildDir, `partytown-sandbox.debug.js`), sandboxJsCode);
+
+      sandboxHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><script src="./partytown-sandbox.debug.js"></script></head></html>`;
+      writeFileSync(join(cacheDir, `partytown-sandbox.debug.html`), sandboxHtml);
+    } else {
+      sandboxHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><script type="module" async>${sandboxJsCode}</script></head></html>`;
+      writeFileSync(join(cacheDir, `partytown-sandbox.html`), sandboxHtml);
+    }
+
+    return sandboxHtml;
   }
 
-  function inlinedSandbox(debug) {
-    return {
-      name: 'inlinedSandbox',
-      async generateBundle(opts, bundles) {
-        console.log('generate inlined sandbox', debug ? '(debug)' : '(minified)');
-        const build = await rollup({
-          input: 'src/sandbox/index.ts',
-          plugins: [
-            typescript({
-              cacheDir: join(cacheDir, 'sb'),
-              outputToFilesystem: false,
-            }),
-          ],
-          cache: cache.sb,
-        });
-        cache.sb = build.cache;
-
-        const generated = await build.generate({
-          format: 'es',
-          exports: 'none',
-          intro: `((window)=>{`,
-          outro: `})(window);`,
-          plugins: debug
-            ? [terser(debugOpts), inlinedWebWorker(true)]
-            : [managlePropsPlugin(), terser(minOpts), inlinedWebWorker(false)],
-        });
-        const sandboxCode = generated.output[0].code;
-        writeFileSync(
-          join(cacheDir, `partytown-sandbox${debug ? '.debug' : ''}.html`),
-          sandboxCode
-        );
-
-        for (const b in bundles) {
-          bundles[b].code = bundles[b].code.replace(
-            'globalThis.SANDBOX',
-            JSON.stringify(sandboxCode)
-          );
-        }
-      },
-    };
-  }
-
-  function serviceWorker() {
+  async function serviceWorker() {
     const swDebug = {
       file: join(buildDir, 'partytown-sw.debug.js'),
       format: 'es',
       exports: 'none',
-      plugins: [terser(debugOpts), inlinedSandbox(true), fileSize()],
-    };
-
-    const swMin = {
-      file: join(buildDir, 'partytown-sw.js'),
-      format: 'es',
-      exports: 'none',
-      plugins: [managlePropsPlugin(), terser(minOpts), inlinedSandbox(false), fileSize()],
+      plugins: [terser(debugOpts)],
     };
 
     const output = [swDebug];
     if (!isDev) {
-      output.push(swMin);
+      output.push({
+        file: join(buildDir, 'partytown-sw.js'),
+        format: 'es',
+        exports: 'none',
+        plugins: [managlePropsPlugin(), terser(minOpts), fileSize()],
+      });
+    }
+
+    const sandboxCode = isDev ? '' : await getSandbox(false);
+
+    if (!isDev) {
+      sandboxHash = createHash('sha1').update(sandboxCode).digest('hex');
+      sandboxHash = sandboxHash.substr(0, 6).toLowerCase();
     }
 
     return {
@@ -180,6 +189,24 @@ export default function (cmdArgs) {
             addWatchFile(join(srcDir, 'sandbox'));
             addWatchFile(join(srcDir, 'web-worker'));
           },
+          resolveId(id) {
+            if (id.startsWith('@')) return id;
+          },
+          async load(id) {
+            if (id === '@sandbox') {
+              return `const Sandbox = ${JSON.stringify(sandboxCode)}; export default Sandbox;`;
+            }
+            if (id === '@sandbox-hash') {
+              return `const SandboxHash = ${JSON.stringify(
+                sandboxHash
+              )}; export default SandboxHash;`;
+            }
+            if (id === '@sandbox-debug') {
+              return `const SandboxDebug = ${JSON.stringify(
+                await getSandbox(true)
+              )}; export default SandboxDebug;`;
+            }
+          },
         },
       ],
     };
@@ -190,14 +217,14 @@ export default function (cmdArgs) {
       file: join(buildDir, 'partytown.debug.js'),
       format: 'es',
       exports: 'none',
-      plugins: [serviceWorkerUrl('partytown-sw.debug.js'), fileSize()],
+      plugins: [terser(debugOpts)],
     };
 
     const partytownMin = {
       file: join(buildDir, 'partytown.js'),
       format: 'es',
       exports: 'none',
-      plugins: [serviceWorkerUrl('partytown-sw.js'), terser(minOpts), fileSize()],
+      plugins: [terser(minOpts), fileSize()],
     };
 
     const output = [partytownDebug];
@@ -213,11 +240,23 @@ export default function (cmdArgs) {
           cacheDir: join(cacheDir, 'main'),
           outputToFilesystem: false,
         }),
+        {
+          resolveId(id) {
+            if (id.startsWith('@')) return id;
+          },
+          async load(id) {
+            if (id === '@sandbox-hash') {
+              return `const SandboxHash = ${JSON.stringify(
+                sandboxHash
+              )}; export default SandboxHash;`;
+            }
+          },
+        },
       ],
     };
   }
 
-  return [serviceWorker(), main()];
+  return [await serviceWorker(), main()];
 }
 
 function managlePropsPlugin() {
@@ -228,6 +267,9 @@ function managlePropsPlugin() {
     $cstr$: '',
     $currentScript$: '',
     $data$: '',
+    $documentCookie$: '',
+    $documentReadyState$: '',
+    $documentReferrer$: '',
     $error$: '',
     $extraInstructions$: '',
     $firstScriptId$: '',
@@ -235,7 +277,6 @@ function managlePropsPlugin() {
     $instanceId$: '',
     $initializeScripts$: '',
     $isPromise$: '',
-    $items$: '',
     $key$: '',
     $memberName$: '',
     $methodNames$: '',
@@ -262,20 +303,6 @@ function managlePropsPlugin() {
           const replaceWith = mangleProps[key];
           bundle[fileName].code = bundle[fileName].code.replace(rg, replaceWith);
         });
-      }
-    },
-  };
-}
-
-function serviceWorkerUrl(swUrl) {
-  return {
-    name: 'fileSize',
-    generateBundle(opts, bundles) {
-      for (const b in bundles) {
-        bundles[b].code = bundles[b].code.replace(
-          'globalThis.SERVICE_WORKER_URL',
-          JSON.stringify(swUrl)
-        );
       }
     },
   };

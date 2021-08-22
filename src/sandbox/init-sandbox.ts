@@ -36,7 +36,6 @@ export const initSandbox = async (sandboxWindow: Window, createWebWorker: Create
 
   for (const workerName in workerGroups) {
     const initWebWorkerData: InitWebWorkerData = {
-      $currentLocationUrl$: currentLocationUrl,
       $documentCookie$: documentCookie,
       $documentReadyState$: documentReadyState,
       $documentReferrer$: documentReferrer,
@@ -45,6 +44,7 @@ export const initSandbox = async (sandboxWindow: Window, createWebWorker: Create
       $key$: key,
       $methodNames$: methodNames,
       $scopePath$: swRegistration!.scope!,
+      $url$: currentLocationUrl,
     };
     logMain(
       `Creating "${workerName}" web worker group, total scripts: ${initWebWorkerData.$initializeScripts$.length}`

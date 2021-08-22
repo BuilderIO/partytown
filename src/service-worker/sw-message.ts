@@ -50,7 +50,7 @@ export const httpRequestFromWebWorker = (self: ServiceWorkerGlobalScope, req: Re
 
     resolve(
       new Response(JSON.stringify(responseData), {
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-cache no-store' },
+        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
       })
     );
   });

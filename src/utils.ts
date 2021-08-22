@@ -18,10 +18,10 @@ const log = (prefix: string, color: string, msg: string) => [
   msg + '\n' + stackTrace(),
 ];
 
-export const stackTrace = () => {
-  const frames = new Error().stack!.split('\n').slice(3);
-  return frames.join('\n');
+const stackTrace = () => {
+  const frames = new Error().stack!.split('\n');
+  const i = frames.findIndex((f) => f.includes('logWorker'));
+  return frames.slice(i + 1).join('\n');
 };
 
 export const PT_PROXY_URL = `partytown-proxy`;
-export const PT_SANDBOX_URL = `partytown-sandbox`;
