@@ -15,10 +15,9 @@ export class WorkerDocument extends WorkerElement {
   createElement(tagName: string) {
     tagName = toLower(tagName);
 
-    const isScript = tagName === 'script';
     const $extraInstructions$: ExtraInstruction[] = [];
 
-    if (isScript) {
+    if (tagName === 'script') {
       $extraInstructions$.push(
         {
           $setAttributeName$: 'type',

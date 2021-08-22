@@ -1,3 +1,4 @@
+import { ElementConstructors, WorkerElement } from './worker-element';
 import { PrivateValues } from './worker-symbols';
 import {
   SerializedConstructorType,
@@ -5,8 +6,6 @@ import {
   SerializedInstance,
   SerializedNode,
 } from '../types';
-import { toLower } from '../utils';
-import { WorkerElement, WorkerScriptElement } from './worker-element';
 import { WorkerNode } from './worker-node';
 
 export class WorkerHTMLCollection {
@@ -33,12 +32,7 @@ export const constructInstance = (serializedInstance: SerializedInstance) => {
 
   if (cstr === SerializedConstructorType.Element) {
     const serializedNode: SerializedNode = serializedInstance as any;
-
-    if (toLower(serializedNode.$nodeName$) === 'script') {
-      return new WorkerScriptElement(serializedNode);
-    } else {
-      return new WorkerElement(serializedNode);
-    }
+    return new (ElementConstructors[serializedNode.$nodeName$] || WorkerElement)(serializedNode);
   }
 
   if (

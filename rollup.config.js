@@ -91,7 +91,7 @@ export default async function (cmdArgs) {
   async function getSandbox(debug) {
     console.log('generate sandbox', debug ? '(debug)' : '(minified)');
 
-    const webWorkerCode = isDev ? '' : await getWebWorker(debug);
+    const webWorkerCode = await getWebWorker(debug);
 
     const build = await rollup({
       input: 'src/sandbox/index.ts',
