@@ -1,14 +1,16 @@
 import typescript from '@rollup/plugin-typescript';
 import { basename, join } from 'path';
 import { createHash } from 'crypto';
-import { mkdirSync, readdirSync, statSync, writeFileSync } from 'fs';
+import { copyFileSync, mkdirSync, readdirSync, statSync, unlinkSync, writeFileSync } from 'fs';
 import { rollup } from 'rollup';
 import { terser } from 'rollup-plugin-terser';
 
 export default async function (cmdArgs) {
   const isDev = !!cmdArgs.configDev;
-  const buildDir = join(__dirname, '~partytown');
-  const cacheDir = join(__dirname, '.cache');
+  const rootDir = __dirname;
+  const testsDir = join(rootDir, 'tests');
+  const buildDir = join(testsDir, '~partytown');
+  const cacheDir = join(rootDir, '.cache');
   const cache = {};
   let sandboxHash = '';
 
@@ -47,9 +49,7 @@ export default async function (cmdArgs) {
     mangle: false,
   };
 
-  try {
-    mkdirSync(buildDir);
-  } catch (e) {}
+  emptyDir(buildDir);
 
   async function getWebWorker(debug) {
     console.log('generate web worker', debug ? '(debug)' : '(minified)');
@@ -207,6 +207,9 @@ export default async function (cmdArgs) {
               )}; export default SandboxDebug;`;
             }
           },
+          writeBundle() {
+            copyBuildToRoot(buildDir, rootDir);
+          },
         },
       ],
     };
@@ -250,6 +253,9 @@ export default async function (cmdArgs) {
                 sandboxHash
               )}; export default SandboxHash;`;
             }
+          },
+          writeBundle() {
+            copyBuildToRoot(buildDir, rootDir);
           },
         },
       ],
@@ -317,4 +323,25 @@ function fileSize() {
       console.log(`${basename(options.file)}: ${s.size} b`);
     },
   };
+}
+
+function copyBuildToRoot(buildDir, rootDir) {
+  const files = readdirSync(buildDir);
+  files.forEach((file) => {
+    copyFileSync(join(buildDir, file), join(rootDir, file));
+  });
+}
+
+function ensureDir(dir) {
+  try {
+    mkdirSync(dir);
+  } catch (e) {}
+}
+
+function emptyDir(dir) {
+  ensureDir(dir);
+  const files = readdirSync(dir);
+  files.forEach((file) => {
+    unlinkSync(join(dir, file));
+  });
 }

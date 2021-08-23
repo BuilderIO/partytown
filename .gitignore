@@ -1,4 +1,5 @@
 .cache/
 .DS_Store
-~partytown/
 node_modules/
+~partytown/
+partytown*.js

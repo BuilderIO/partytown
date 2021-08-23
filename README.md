@@ -157,23 +157,26 @@ npm run dev
 
 Note that during development, the build of `partytown.js` is not minified.
 
-### Integration Tests
+### Local Testing
 
-Tests to be ran on a browser are located in the `tests`. First start the server, then visit http://localhost:4000/tests/
+Tests to be ran on a browser are located in the `tests` directory. These pages can help to manually test out DOM apis and individual services.
 
 ```
 npm run serve
 ```
 
-http://localhost:4000/tests/
+http://localhost:4000/
 
-### Unit Tests
+### E2E Tests
+
+E2E tests use [@playwright/test](https://playwright.dev/docs/intro#writing-assertions), which allows us to test on Chromium, Firefox and WebKit browsers.
 
 ```
 npm test
 ```
 
-```
-npm run test.watch
-npm run test.watch -- /path/to/test.unit.ts
-```
+### Deployed Tests
+
+The same pages found in `tests` are deployed to
+
+https://partytown.vercel.app/

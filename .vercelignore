@@ -1,7 +1,0 @@
-.cache
-src/
-.gitignore
-LICENSE
-README.md
-rollup.config.js
-tsconfig.json
