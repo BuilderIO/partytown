@@ -16,18 +16,18 @@ export class WorkerElement extends WorkerNode {
 
 export class WorkerScriptElement extends WorkerElement {
   get async() {
-    return !!this[PrivateValues].async;
+    return !!this[PrivateValues].a;
   }
   set async(value: boolean) {
-    this[PrivateValues].async = value;
+    this[PrivateValues].a = value;
   }
   get src() {
-    return this[PrivateValues].src || '';
+    return this[PrivateValues].$url$ || '';
   }
-  set src(src: string) {
-    this[PrivateValues].src = src;
+  set src(url: string) {
+    this[PrivateValues].$url$ = url;
     const instanceId = this[InstanceIdKey];
-    importScriptUrl(instanceId, src);
+    importScriptUrl(instanceId, url);
   }
 }
 

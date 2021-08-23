@@ -10,8 +10,8 @@ import {
   WebWorkerContext,
 } from '../types';
 import { constructInstance } from './worker-implementations';
+import { logValue, logWorker, PT_PROXY_URL } from '../utils';
 import { InstanceIdKey, ProxyKey } from './worker-symbols';
-import { logWorker, PT_PROXY_URL } from '../utils';
 
 const syncRequestToServiceWorker = (
   $accessType$: AccessType,
@@ -53,18 +53,35 @@ const syncRequestToServiceWorker = (
   return rtn;
 };
 
-export const getter = (target: any, memberName: string) =>
-  syncRequestToServiceWorker(AccessType.Get, target, memberName);
+export const getter = (target: any, memberName: string) => {
+  const rtn = syncRequestToServiceWorker(AccessType.Get, target, memberName);
+  logWorker(`get ${memberName}, returned: ${logValue(rtn)}`);
+  return rtn;
+};
 
-export const setter = (target: any, memberName: string, value: any) =>
-  syncRequestToServiceWorker(AccessType.Set, target, memberName, value);
+export const setter = (target: any, memberName: string, value: any) => {
+  logWorker(`set ${memberName}, value: ${logValue(value)}`);
+  return syncRequestToServiceWorker(AccessType.Set, target, memberName, value);
+};
 
 export const callMethod = (
   target: any,
   memberName: string,
   args: any[],
   extraInstructions?: ExtraInstruction[]
-) => syncRequestToServiceWorker(AccessType.Apply, target, memberName, args, extraInstructions);
+) => {
+  const rtn = syncRequestToServiceWorker(
+    AccessType.Apply,
+    target,
+    memberName,
+    args,
+    extraInstructions
+  );
+
+  logWorker(`call ${memberName}(${args.map(logValue).join(', ')}), returned: ${logValue(rtn)}`);
+
+  return rtn;
+};
 
 const createMethodProxy =
   (target: any, methodName: string) =>
@@ -96,13 +113,7 @@ export const proxy = <T = any>(obj: T): T => {
         return createMethodProxy(target, memberName);
       }
 
-      logWorker(`get "${memberName}"`);
-
-      const rtn = getter(target, memberName);
-
-      logWorker(`get "${memberName}", value: "${rtn}"`);
-
-      return rtn;
+      return getter(target, memberName);
     },
 
     set(target, propKey, value, receiver) {

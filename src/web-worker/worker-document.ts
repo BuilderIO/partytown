@@ -25,9 +25,8 @@ export class WorkerDocument extends WorkerElement {
         },
         { $setPartytownId$: true }
       );
+      logWorker(`create inert worker <script>`);
     }
-
-    logWorker(`document.createElement("${tagName}")`);
 
     return callMethod(this, 'createElement', [tagName], $extraInstructions$);
   }

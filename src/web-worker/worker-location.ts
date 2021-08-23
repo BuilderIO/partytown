@@ -1,7 +1,11 @@
 export class WorkerLocation extends URL {
   assign() {}
-  reload() {}
-  replace() {}
+  reload() {
+    console.trace(`reload()`);
+  }
+  replace() {
+    console.trace(`replace()`);
+  }
 }
 
-export const setLocation = (url: string) => console.trace(`attempted location change: ${url}`);
+export const setLocation = (url: string) => console.trace(`location change: ${url}`);
