@@ -1,6 +1,6 @@
-import { webWorkerCtx } from './worker-proxy';
 import type { InitializeScriptData } from '../types';
 import { logWorker } from '../utils';
+import { webWorkerCtx } from './worker-constants';
 
 export const initMainScriptsInWebWorker = (initializeScripts: InitializeScriptData[]) => {
   initializeScripts.forEach((initializeScript) => {
@@ -29,9 +29,9 @@ export const importScriptUrl = (instanceId: number, scriptUrl: string) => {
     scriptUrl = new URL(scriptUrl, webWorkerCtx.$url$) + '';
     webWorkerCtx.$currentScript$ = instanceId;
 
-    logWorker(`Run script url [data-partytown-id="${instanceId}"] - ${scriptUrl}`);
+    logWorker(`Run script url [data-partytown-id="${instanceId}"] ${scriptUrl}`);
 
-    webWorkerCtx.$importScripts$(scriptUrl);
+    webWorkerCtx.$importScripts$!(scriptUrl);
 
     webWorkerCtx.$currentScript$ = -1;
   } catch (e) {

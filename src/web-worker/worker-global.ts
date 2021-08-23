@@ -1,7 +1,7 @@
 import { InstanceId } from '../types';
-import { InstanceIdKey } from './worker-symbols';
+import { InstanceIdKey } from './worker-constants';
 import { setLocation, WorkerLocation } from './worker-location';
-import { webWorkerCtx } from './worker-proxy';
+import { webWorkerCtx } from './worker-constants';
 import { WorkerDocument } from './worker-document';
 
 export const initWebWorkerGlobal = (self: any) => {

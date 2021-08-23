@@ -1,4 +1,4 @@
-import { CreateWorker, InitWebWorkerData, InstanceId } from '../types';
+import { CreateWorker, InitWebWorkerData, InstanceId, MainWindow } from '../types';
 import { getInstanceId, setInstanceId } from './main-instances';
 import { logMain } from '../utils';
 import { mainAccessHandler } from './main-access-handler';
@@ -7,12 +7,14 @@ import { readMainScripts } from './read-main-scripts';
 
 export const initSandbox = async (sandboxWindow: Window, createWebWorker: CreateWorker) => {
   const key = Math.random();
-  const mainWindow = sandboxWindow.parent!;
+  const mainWindow: MainWindow = sandboxWindow.parent!;
   const mainDocument = mainWindow.document;
   const currentLocationUrl = mainWindow.location + '';
+  const config = mainWindow.partytown || {};
   const documentCookie = mainDocument.cookie;
   const documentReadyState = mainDocument.readyState;
   const documentReferrer = mainDocument.referrer;
+
   const swContainer = sandboxWindow.navigator.serviceWorker;
   const swRegistration = await swContainer.getRegistration();
 
@@ -36,6 +38,7 @@ export const initSandbox = async (sandboxWindow: Window, createWebWorker: Create
 
   for (const workerName in workerGroups) {
     const initWebWorkerData: InitWebWorkerData = {
+      $config$: config,
       $documentCookie$: documentCookie,
       $documentReadyState$: documentReadyState,
       $documentReferrer$: documentReferrer,
@@ -47,7 +50,7 @@ export const initSandbox = async (sandboxWindow: Window, createWebWorker: Create
       $url$: currentLocationUrl,
     };
     logMain(
-      `Creating "${workerName}" web worker group, total scripts: ${initWebWorkerData.$initializeScripts$.length}`
+      `Creating "${workerName}" web worker, total scripts: ${initWebWorkerData.$initializeScripts$.length}`
     );
     const webWorker = createWebWorker(workerName);
     webWorker.postMessage(initWebWorkerData);

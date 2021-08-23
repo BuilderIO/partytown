@@ -1,8 +1,9 @@
-import { callMethod, getter, setter, webWorkerCtx } from './worker-proxy';
+import { callMethod, getter, setter } from './worker-proxy';
 import { createScript, WorkerElement } from './worker-element';
 import type { ExtraInstruction } from '../types';
 import { logWorker, toLower } from '../utils';
 import { setLocation, WorkerLocation } from './worker-location';
+import { webWorkerCtx } from './worker-constants';
 
 export class WorkerDocument extends WorkerElement {
   get cookie() {
@@ -25,7 +26,7 @@ export class WorkerDocument extends WorkerElement {
         },
         { $setPartytownId$: true }
       );
-      logWorker(`create inert worker <script>`);
+      logWorker(`Create inert <script>`);
     }
 
     return callMethod(this, 'createElement', [tagName], $extraInstructions$);

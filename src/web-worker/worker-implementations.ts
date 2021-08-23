@@ -1,5 +1,5 @@
 import { ElementConstructors, WorkerElement } from './worker-element';
-import { PrivateValues } from './worker-symbols';
+import { PrivateValues } from './worker-constants';
 import {
   SerializedConstructorType,
   SerializedHTMLCollection,

@@ -1,20 +1,21 @@
 export type CreateWorker = (workerName: string) => Worker;
 
 export interface InitWebWorkerData {
-  $initializeScripts$: InitializeScriptData[];
-  $methodNames$: string[];
-  $scopePath$: string;
-  $key$: number;
-  $firstScriptId$: number;
+  $config$: PartytownConfig;
   $documentCookie$: string;
   $documentReferrer$: string;
   $documentReadyState$: string;
+  $firstScriptId$: number;
+  $initializeScripts$: InitializeScriptData[];
+  $key$: number;
+  $methodNames$: string[];
+  $scopePath$: string;
   $url$: string;
 }
 
 export interface InitWebWorkerContext {
   $currentScript$?: number;
-  $importScripts$: (...urls: string[]) => void;
+  $importScripts$?: (...urls: string[]) => void;
   $msgId$: number;
 }
 
@@ -108,4 +109,15 @@ export interface SerializedNode extends SerializedInstance {
 
 export interface SerializedHTMLCollection extends SerializedInstance {
   $data$: SerializedNode[];
+}
+
+export interface PartytownConfig {
+  logCalls?: boolean;
+  logGetters?: boolean;
+  logSetters?: boolean;
+  logStackTraces?: boolean;
+}
+
+export interface MainWindow extends Window {
+  partytown?: PartytownConfig;
 }

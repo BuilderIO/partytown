@@ -263,6 +263,7 @@ function managlePropsPlugin() {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$'.split('');
   const mangleProps = {
     $accessType$: '',
+    $config$: '',
     $content$: '',
     $cstr$: '',
     $currentScript$: '',

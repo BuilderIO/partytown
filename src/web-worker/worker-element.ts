@@ -1,8 +1,8 @@
 import { importScriptUrl } from './worker-script';
-import { InstanceIdKey, NodeNameKey, PrivateValues } from './worker-symbols';
+import { InstanceIdKey, NodeNameKey, PrivateValues } from './worker-constants';
 import { SerializedConstructorType } from '../types';
 import { toLower } from '../utils';
-import { webWorkerCtx } from './worker-proxy';
+import { webWorkerCtx } from './worker-constants';
 import { WorkerNode } from './worker-node';
 
 export class WorkerElement extends WorkerNode {

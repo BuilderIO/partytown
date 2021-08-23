@@ -128,6 +128,24 @@ The distribution comes with multiple files:
   - `partytown-sandbox.debug.js`: Sandbox with separate web worker request
   - `partytown-ww.debug.js`: Web worker as separate file, not inlined
 
+## Configuring and Debugging
+
+When using the `partytown.debug.js` file there is a minimal set of default debug logs that print in the console. You can also opt-in to list out even more verbose logs that may help to debug scripts. Before the Partytown library script, you can configure the `partytown` global object, such as:
+
+```html
+<script>
+  partytown = {
+    logCalls: true,
+    logGetters: true,
+    logSetters: true,
+    logStackTraces: true,
+  };
+</script>
+<script src="/~partytown/partytown.debug.js" async defer></script>
+```
+
+> Note that debug logs and configuration is not available in the `partytown.js` version.
+
 ---
 
 ## Development

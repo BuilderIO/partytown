@@ -1,17 +1,15 @@
 import {
   AccessType,
   ExtraInstruction,
-  InitWebWorkerContext,
   MainAccessRequest,
   MainAccessResponse,
   SerializedInstance,
   SerializedType,
   SerializedValueTransfer,
-  WebWorkerContext,
 } from '../types';
 import { constructInstance } from './worker-implementations';
-import { logValue, logWorker, PT_PROXY_URL } from '../utils';
-import { InstanceIdKey, ProxyKey } from './worker-symbols';
+import { InstanceIdKey, ProxyKey, webWorkerCtx } from './worker-constants';
+import { debug, logValue, logWorker, PT_PROXY_URL } from '../utils';
 
 const syncRequestToServiceWorker = (
   $accessType$: AccessType,
@@ -55,12 +53,16 @@ const syncRequestToServiceWorker = (
 
 export const getter = (target: any, memberName: string) => {
   const rtn = syncRequestToServiceWorker(AccessType.Get, target, memberName);
-  logWorker(`get ${memberName}, returned: ${logValue(rtn)}`);
+  if (debug && webWorkerCtx.$config$.logGetters) {
+    logWorker(`Get ${memberName}, returned: ${logValue(rtn)}`);
+  }
   return rtn;
 };
 
 export const setter = (target: any, memberName: string, value: any) => {
-  logWorker(`set ${memberName}, value: ${logValue(value)}`);
+  if (debug && webWorkerCtx.$config$.logSetters) {
+    logWorker(`Set ${memberName}, value: ${logValue(value)}`);
+  }
   return syncRequestToServiceWorker(AccessType.Set, target, memberName, value);
 };
 
@@ -78,7 +80,9 @@ export const callMethod = (
     extraInstructions
   );
 
-  logWorker(`call ${memberName}(${args.map(logValue).join(', ')}), returned: ${logValue(rtn)}`);
+  if (debug && webWorkerCtx.$config$.logCalls) {
+    logWorker(`Call ${memberName}(${args.map(logValue).join(', ')}), returned: ${logValue(rtn)}`);
+  }
 
   return rtn;
 };
@@ -161,10 +165,3 @@ const constructValue = (
 
   return undefined;
 };
-
-const initWebWorkerContext: InitWebWorkerContext = {
-  $msgId$: 0,
-  $importScripts$: importScripts.bind(self),
-};
-
-export const webWorkerCtx: WebWorkerContext = initWebWorkerContext as any;

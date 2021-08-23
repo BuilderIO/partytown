@@ -1,4 +1,4 @@
-import { InstanceIdKey, NodeNameKey, NodeTypeKey, PrivateValues } from './worker-symbols';
+import { InstanceIdKey, NodeNameKey, NodeTypeKey, PrivateValues } from './worker-constants';
 import { proxy } from './worker-proxy';
 import type { SerializedConstructorType, SerializedNode } from '../types';
 

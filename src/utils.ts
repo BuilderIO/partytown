@@ -1,3 +1,5 @@
+import { webWorkerCtx } from './web-worker/worker-constants';
+
 export const debug = (globalThis as any).partytownDebug;
 
 export const isPromise = (v: any): v is Promise<unknown> => v instanceof Promise;
@@ -7,24 +9,29 @@ export const toLower = (str: string) => str.toLowerCase();
 export const toUpper = (str: string) => str.toUpperCase();
 
 export const logMain = (msg: string) =>
-  debug && console.debug.apply(console, log('Main Thread 🌎', '#717171', msg));
+  debug &&
+  console.debug.apply(console, [
+    `%cMain Thread 🌎`,
+    `background: #717171; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
+    msg,
+  ]);
 
-export const logWorker = (msg: string) =>
-  debug && console.debug.apply(console, log(self.name, '#3498db', msg));
-
-const log = (prefix: string, color: string, msg: string) => [
-  `%c${prefix}`,
-  `background: ${color}; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
-  msg + stackTrace(),
-];
-
-const stackTrace = () => {
+export const logWorker = (msg: string) => {
   if (debug) {
-    const frames = new Error().stack!.split('\n');
-    const i = frames.findIndex((f) => f.includes('logWorker') || f.includes('logMain'));
-    return '\n' + frames.slice(i + 1).join('\n');
+    const config = webWorkerCtx.$config$;
+
+    if (config.logStackTraces) {
+      const frames = new Error().stack!.split('\n');
+      const i = frames.findIndex((f) => f.includes('logWorker'));
+      msg += '\n' + frames.slice(i + 1).join('\n');
+    }
+
+    console.debug.apply(console, [
+      `%c${self.name}`,
+      `background: #3498db; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
+      msg,
+    ]);
   }
-  return '';
 };
 
 export const logValue = (v: any) => {
