@@ -1,19 +1,21 @@
 import { ElementConstructors, WorkerElement } from './worker-element';
-import { PrivateValues } from './worker-constants';
 import {
-  SerializedConstructorType,
+  InterfaceType,
   SerializedHTMLCollection,
   SerializedInstance,
   SerializedNode,
 } from '../types';
+import { PrivateValues } from './worker-constants';
 import { WorkerNode } from './worker-node';
 
+/**
+ * https://developer.mozilla.org/en-US/docs/Web/API/HTMLCollection
+ */
 export class WorkerHTMLCollection {
-  [PrivateValues]: SerializedHTMLCollection;
+  [PrivateValues]: SerializedNode[];
 
-  constructor(serializedHtmlCollection: SerializedHTMLCollection) {
-    this[PrivateValues] = serializedHtmlCollection;
-    serializedHtmlCollection.$data$.forEach(
+  constructor(serializedNodes: SerializedNode[]) {
+    (this[PrivateValues] = serializedNodes).forEach(
       (item, index) => ((this as any)[index] = constructInstance(item))
     );
   }
@@ -23,28 +25,24 @@ export class WorkerHTMLCollection {
   }
 
   get length() {
-    return this[PrivateValues].$data$.length;
+    return this[PrivateValues].length;
   }
 }
 
 export const constructInstance = (serializedInstance: SerializedInstance) => {
-  const cstr = serializedInstance.$cstr$;
+  const interfaceType = serializedInstance.$interfaceType$;
 
-  if (cstr === SerializedConstructorType.Element) {
+  if (interfaceType === InterfaceType.Element) {
     const serializedNode: SerializedNode = serializedInstance as any;
     return new (ElementConstructors[serializedNode.$nodeName$] || WorkerElement)(serializedNode);
   }
 
-  if (
-    cstr === SerializedConstructorType.TextNode ||
-    cstr === SerializedConstructorType.CommentNode ||
-    cstr === SerializedConstructorType.DocumentFragmentNode
-  ) {
+  if (interfaceType === InterfaceType.TextNode) {
     return new WorkerNode(serializedInstance as SerializedNode);
   }
 
-  if (cstr === SerializedConstructorType.HTMLCollection) {
-    return new WorkerHTMLCollection(serializedInstance as SerializedHTMLCollection);
+  if (interfaceType === InterfaceType.HTMLCollection) {
+    return new WorkerHTMLCollection((serializedInstance as SerializedHTMLCollection).$data$);
   }
 
   return {};

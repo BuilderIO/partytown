@@ -1,6 +1,6 @@
 import { getInstance, getInstanceId } from './main-instances';
 import {
-  SerializedConstructorType,
+  InterfaceType,
   SerializedHTMLCollection,
   SerializedInstance,
   SerializedNode,
@@ -36,8 +36,8 @@ export const serializeValue = (value: any, added: Set<any>): SerializedValueTran
 
     if (value.nodeType) {
       const nodeInstance: SerializedNode = {
+        $interfaceType$: value.nodeType,
         $instanceId$: getInstanceId(value),
-        $cstr$: value.nodeType,
         $nodeName$: value.nodeName,
       };
       return [SerializedType.Instance, nodeInstance];
@@ -49,15 +49,15 @@ export const serializeValue = (value: any, added: Set<any>): SerializedValueTran
       if (value.constructor) {
         const cstrName = value.constructor.name;
         if (cstrName === 'HTMLCollection') {
-          const htmlCollectionInstance: SerializedHTMLCollection = {
-            $cstr$: SerializedConstructorType.HTMLCollection,
+          const htmlCollection: SerializedHTMLCollection = {
+            $interfaceType$: InterfaceType.HTMLCollection,
             $data$: Array.from(value).map((v) => serializeValue(v, added)[1]),
           };
-          const htmlCollection: SerializedValueTransfer = [
+          const htmlCollectionTransfer: SerializedValueTransfer = [
             SerializedType.Instance,
-            htmlCollectionInstance,
+            htmlCollection,
           ];
-          return htmlCollection;
+          return htmlCollectionTransfer;
         }
       }
 

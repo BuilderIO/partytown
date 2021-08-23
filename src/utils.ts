@@ -42,12 +42,18 @@ export const logValue = (v: any) => {
   if (isPromise(v)) {
     return `Promise`;
   }
-  if (v && (v as Node).nodeName) {
-    if (v.nodeType === 1) {
-      return `<${toLower(v.nodeName)}>`;
+  if (v) {
+    if ((v as Node).nodeName) {
+      if (v.nodeType === 1) {
+        return `<${toLower(v.nodeName)}>`;
+      }
+      return v.nodeName;
     }
-    return v.nodeName;
+    if ('value' in v) {
+      return JSON.stringify(v.value);
+    }
   }
+
   return '?';
 };
 

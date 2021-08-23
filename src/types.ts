@@ -8,9 +8,27 @@ export interface InitWebWorkerData {
   $firstScriptId$: number;
   $initializeScripts$: InitializeScriptData[];
   $key$: number;
-  $methodNames$: string[];
+  $interfaces$: InterfaceInfo[];
   $scopePath$: string;
   $url$: string;
+}
+
+export type InterfaceInfo = [InterfaceType, MemberTypeInfo];
+
+export interface MemberTypeInfo {
+  [memberName: string]: InterfaceType;
+}
+
+export const enum InterfaceType {
+  Window = 0,
+  Element = 1, // same as NodeType,
+  Method = 2,
+  TextNode = 3, // same as NodeType
+  NamedNodeMap = 4,
+  DOMStringMap = 5,
+  DOMTokenList = 6,
+  HTMLCollection = 7,
+  Document = 9, // same as NodeType,
 }
 
 export interface InitWebWorkerContext {
@@ -34,7 +52,7 @@ export interface InitializeScriptData {
 export const enum AccessType {
   Get,
   Set,
-  Apply,
+  CallMethod,
 }
 
 export const enum InstanceId {
@@ -47,7 +65,7 @@ export interface MainAccessRequest {
   $msgId$: number;
   $accessType$: AccessType;
   $instanceId$: number;
-  $memberName$?: string;
+  $memberPath$?: string[];
   $data$?: any;
   $extraInstructions$?: ExtraInstruction[];
 }
@@ -64,10 +82,6 @@ export interface MainAccessResponse {
   $rtnValue$?: SerializedValueTransfer;
   $isPromise$?: any;
   $error$?: string;
-}
-
-export interface SerializedMembers {
-  [propName: string]: SerializedValueTransfer;
 }
 
 export const enum SerializedType {
@@ -91,16 +105,8 @@ export type SerializedValueTransfer =
   | [];
 
 export interface SerializedInstance {
-  $cstr$: SerializedConstructorType;
+  $interfaceType$: InterfaceType;
   $instanceId$?: number;
-}
-
-export const enum SerializedConstructorType {
-  Element = 1, // same as NodeType
-  HTMLCollection = 2,
-  TextNode = 3, // same as NodeType
-  CommentNode = 8, // same as NodeType
-  DocumentFragmentNode = 11, // same as NodeType
 }
 
 export interface SerializedNode extends SerializedInstance {
@@ -120,4 +126,11 @@ export interface PartytownConfig {
 
 export interface MainWindow extends Window {
   partytown?: PartytownConfig;
+}
+
+export const enum NodeName {
+  Comment = '#comment',
+  Document = '#document',
+  DocumentFragment = '#document-fragment',
+  Text = '#text',
 }

@@ -6,7 +6,7 @@ import { isPromise } from '../utils';
 export const mainAccessHandler = async (key: number, accessReq: MainAccessRequest) => {
   const accessType = accessReq.$accessType$;
   const instanceId = accessReq.$instanceId$;
-  const memberName = accessReq.$memberName$!;
+  const memberPath = accessReq.$memberPath$!;
   const data = accessReq.$data$;
   const extraInstructions = accessReq.$extraInstructions$;
   const accessRsp: MainAccessResponse = {
@@ -19,11 +19,11 @@ export const mainAccessHandler = async (key: number, accessReq: MainAccessReques
       const instance = getInstance(instanceId);
       if (instance) {
         if (accessType === AccessType.Get) {
-          await getInstanceMember(accessRsp, instance, memberName);
-        } else if (accessType === AccessType.Apply) {
-          await callInstanceMethod(accessRsp, instance, memberName, data, extraInstructions);
+          await getInstanceMember(accessRsp, instance, memberPath);
+        } else if (accessType === AccessType.CallMethod) {
+          await callInstanceMethod(accessRsp, instance, memberPath, data, extraInstructions);
         } else if (accessType === AccessType.Set) {
-          instance[memberName] = deserializeValue(data);
+          instance[memberPath[memberPath.length - 1]] = deserializeValue(data);
         }
       } else {
         accessRsp.$error$ = `Instance ${instanceId} not found`;
@@ -41,9 +41,15 @@ export const mainAccessHandler = async (key: number, accessReq: MainAccessReques
 const getInstanceMember = async (
   accessRsp: MainAccessResponse,
   instance: any,
-  memberName: string
+  memberPath: string[]
 ) => {
-  let getterValue = instance[memberName];
+  let memberName = memberPath[0];
+  let getterValue: any = instance[memberName];
+
+  for (let i = 1; i < memberPath.length; i++) {
+    memberName = memberPath[i];
+    getterValue = getterValue[memberName];
+  }
 
   if (isPromise(getterValue)) {
     getterValue = await getterValue;
@@ -55,17 +61,25 @@ const getInstanceMember = async (
 const callInstanceMethod = async (
   accessRsp: MainAccessResponse,
   instance: any,
-  methodName: string,
+  memberPath: string[],
   serializedArgs: any[],
   extraInstructions?: ExtraInstruction[]
 ) => {
   const args = deserializeValue(serializedArgs);
-  let rtnValue = instance[methodName].apply(instance, args);
+  const memberPathLength = memberPath.length;
+  let rtnValue: any = undefined;
+
+  if (memberPathLength === 1) {
+    rtnValue = instance[memberPath[0]].apply(instance, args);
+  } else if (memberPathLength === 2) {
+    rtnValue = instance[memberPath[0]][memberPath[1]].apply(instance[memberPath[0]], args);
+  }
 
   if (isPromise(rtnValue)) {
     rtnValue = await rtnValue;
     accessRsp.$isPromise$ = true;
   }
+
   accessRsp.$rtnValue$ = serializeValue(rtnValue, new Set());
 
   if (extraInstructions) {

@@ -1,4 +1,4 @@
-import { InstanceId } from '../types';
+import { InstanceId, InterfaceType, NodeName } from '../types';
 import { InstanceIdKey } from './worker-constants';
 import { setLocation, WorkerLocation } from './worker-location';
 import { webWorkerCtx } from './worker-constants';
@@ -9,8 +9,8 @@ export const initWebWorkerGlobal = (self: any) => {
 
   const doc = new WorkerDocument({
     $instanceId$: InstanceId.document,
-    $cstr$: 9,
-    $nodeName$: '#document',
+    $interfaceType$: InterfaceType.Document,
+    $nodeName$: NodeName.Document,
   });
 
   Object.defineProperties(self, {

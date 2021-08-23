@@ -2,10 +2,14 @@ import { CreateWorker, InitWebWorkerData, InstanceId, MainWindow } from '../type
 import { getInstanceId, setInstanceId } from './main-instances';
 import { logMain } from '../utils';
 import { mainAccessHandler } from './main-access-handler';
-import { readImplementations } from './read-interfaces';
+import { readMainInterfaces } from './read-interfaces';
 import { readMainScripts } from './read-main-scripts';
 
-export const initSandbox = async (sandboxWindow: Window, createWebWorker: CreateWorker) => {
+export const initSandbox = async (
+  sandboxWindow: Window,
+  sandboxDocument: Document,
+  createWebWorker: CreateWorker
+) => {
   const key = Math.random();
   const mainWindow: MainWindow = sandboxWindow.parent!;
   const mainDocument = mainWindow.document;
@@ -14,11 +18,10 @@ export const initSandbox = async (sandboxWindow: Window, createWebWorker: Create
   const documentCookie = mainDocument.cookie;
   const documentReadyState = mainDocument.readyState;
   const documentReferrer = mainDocument.referrer;
-
+  const mainInterfaces = readMainInterfaces(sandboxWindow, sandboxDocument);
   const swContainer = sandboxWindow.navigator.serviceWorker;
   const swRegistration = await swContainer.getRegistration();
 
-  const methodNames = readImplementations(mainWindow, mainDocument);
   const workerGroups = readMainScripts(mainDocument);
   const firstScriptId = getInstanceId(mainDocument.querySelector('script'));
 
@@ -44,8 +47,8 @@ export const initSandbox = async (sandboxWindow: Window, createWebWorker: Create
       $documentReferrer$: documentReferrer,
       $firstScriptId$: firstScriptId,
       $initializeScripts$: workerGroups[workerName],
+      $interfaces$: mainInterfaces,
       $key$: key,
-      $methodNames$: methodNames,
       $scopePath$: swRegistration!.scope!,
       $url$: currentLocationUrl,
     };

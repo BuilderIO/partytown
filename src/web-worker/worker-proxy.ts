@@ -1,6 +1,7 @@
 import {
   AccessType,
   ExtraInstruction,
+  InterfaceType,
   MainAccessRequest,
   MainAccessResponse,
   SerializedInstance,
@@ -14,7 +15,7 @@ import { debug, logValue, logWorker, PT_PROXY_URL } from '../utils';
 const syncRequestToServiceWorker = (
   $accessType$: AccessType,
   target: any,
-  $memberName$: string,
+  memberPath: string[],
   $data$?: any,
   $extraInstructions$?: ExtraInstruction[]
 ) => {
@@ -23,7 +24,7 @@ const syncRequestToServiceWorker = (
     $msgId$: webWorkerCtx.$msgId$++,
     $accessType$,
     $instanceId$: target[InstanceIdKey],
-    $memberName$,
+    $memberPath$: memberPath,
     $data$,
     $extraInstructions$,
   };
@@ -44,65 +45,80 @@ const syncRequestToServiceWorker = (
     throw new Error(error);
   }
 
-  const rtn = constructValue(target, $memberName$, accessRsp.$rtnValue$!);
+  const rtn = constructValue(target, memberPath, accessRsp.$rtnValue$!);
   if (isPromise) {
     return Promise.resolve(rtn);
   }
   return rtn;
 };
 
-export const getter = (target: any, memberName: string) => {
-  const rtn = syncRequestToServiceWorker(AccessType.Get, target, memberName);
+export const getter = (target: any, memberPath: string[]) => {
+  const rtn = syncRequestToServiceWorker(AccessType.Get, target, memberPath);
   if (debug && webWorkerCtx.$config$.logGetters) {
-    logWorker(`Get ${memberName}, returned: ${logValue(rtn)}`);
+    logWorker(`Get ${memberPath.join('.')}, returned: ${logValue(rtn)}`);
   }
   return rtn;
 };
 
-export const setter = (target: any, memberName: string, value: any) => {
+export const setter = (target: any, memberPath: string[], value: any) => {
   if (debug && webWorkerCtx.$config$.logSetters) {
-    logWorker(`Set ${memberName}, value: ${logValue(value)}`);
+    logWorker(`Set ${memberPath.join('.')}, value: ${logValue(value)}`);
   }
-  return syncRequestToServiceWorker(AccessType.Set, target, memberName, value);
+  return syncRequestToServiceWorker(AccessType.Set, target, memberPath, value);
 };
 
 export const callMethod = (
   target: any,
-  memberName: string,
+  memberPath: string[],
   args: any[],
   extraInstructions?: ExtraInstruction[]
 ) => {
   const rtn = syncRequestToServiceWorker(
-    AccessType.Apply,
+    AccessType.CallMethod,
     target,
-    memberName,
+    memberPath,
     args,
     extraInstructions
   );
 
   if (debug && webWorkerCtx.$config$.logCalls) {
-    logWorker(`Call ${memberName}(${args.map(logValue).join(', ')}), returned: ${logValue(rtn)}`);
+    logWorker(
+      `Call ${memberPath.join('.')}(${args.map(logValue).join(', ')}), returned: ${logValue(rtn)}`
+    );
   }
 
   return rtn;
 };
 
-const createMethodProxy =
-  (target: any, methodName: string) =>
-  (...args: any[]) =>
-    callMethod(target, methodName, args);
+const createComplexMember = (interfaceType: InterfaceType, target: any, memberPath: string[]) => {
+  const interfaceInfo = webWorkerCtx.$interfaces$.find((i) => i[0] === interfaceType);
+  if (interfaceInfo) {
+    const memberTypeInfo = interfaceInfo[1];
+    const memberInfo = memberTypeInfo[memberPath[memberPath.length - 1]];
+    if (memberInfo === InterfaceType.Method) {
+      return (...args: any[]) => callMethod(target, memberPath, args);
+    } else if (typeof memberInfo === 'number') {
+      return proxy(memberInfo, target, [...memberPath]);
+    }
+  }
+  return null;
+};
 
-export const proxy = <T = any>(obj: T): T => {
+export const proxy = <T = any>(
+  interfaceType: InterfaceType,
+  target: T,
+  initMemberPath: string[]
+): T => {
   if (
-    !obj ||
-    (typeof obj !== 'object' && typeof obj !== 'function') ||
-    (obj as any)[ProxyKey] ||
-    String(obj).includes('[native')
+    !target ||
+    (typeof target !== 'object' && typeof target !== 'function') ||
+    (target as any)[ProxyKey] ||
+    String(target).includes('[native')
   ) {
-    return obj;
+    return target;
   }
 
-  return new Proxy<any>(obj, {
+  return new Proxy<any>(target, {
     get(target, propKey) {
       if (propKey === ProxyKey) {
         return true;
@@ -112,19 +128,20 @@ export const proxy = <T = any>(obj: T): T => {
         return Reflect.get(target, propKey);
       }
 
-      const memberName = String(propKey);
-      if (webWorkerCtx.$methodNames$.includes(memberName)) {
-        return createMethodProxy(target, memberName);
+      const memberPath = [...initMemberPath, String(propKey)];
+      const complexProp = createComplexMember(interfaceType, target, memberPath);
+      if (complexProp) {
+        return complexProp;
       }
 
-      return getter(target, memberName);
+      return getter(target, memberPath);
     },
 
     set(target, propKey, value, receiver) {
       if (Reflect.has(target, propKey)) {
         Reflect.set(target, propKey, value, receiver);
       } else {
-        setter(target, String(propKey), value);
+        setter(target, [...initMemberPath, String(propKey)], value);
       }
       return true;
     },
@@ -133,7 +150,7 @@ export const proxy = <T = any>(obj: T): T => {
 
 const constructValue = (
   target: any,
-  memberName: string,
+  memberPath: string[],
   serializedValueTransfer: SerializedValueTransfer
 ): any => {
   if (Array.isArray(serializedValueTransfer)) {
@@ -145,7 +162,7 @@ const constructValue = (
     }
 
     if (serializedType === SerializedType.Method) {
-      return createMethodProxy(target, memberName);
+      return (...args: any[]) => callMethod(target, memberPath, args);
     }
 
     if (serializedType === SerializedType.Instance) {
@@ -154,12 +171,12 @@ const constructValue = (
     }
 
     if (serializedType === SerializedType.Object) {
-      return proxy(serializedValue);
+      return {};
     }
 
     if (serializedType === SerializedType.Array) {
       const serializedArray: SerializedValueTransfer[] = serializedValue;
-      return serializedArray.map((v) => constructValue(target, memberName, v));
+      return serializedArray.map((v) => constructValue(target, memberPath, v));
     }
   }
 

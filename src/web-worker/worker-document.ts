@@ -10,7 +10,7 @@ export class WorkerDocument extends WorkerElement {
     return webWorkerCtx.$documentCookie$;
   }
   set cookie(cookie: string) {
-    setter(this, 'cookie', (webWorkerCtx.$documentCookie$ = cookie));
+    setter(this, ['cookie'], (webWorkerCtx.$documentCookie$ = cookie));
   }
 
   createElement(tagName: string) {
@@ -29,7 +29,7 @@ export class WorkerDocument extends WorkerElement {
       logWorker(`Create inert <script>`);
     }
 
-    return callMethod(this, 'createElement', [tagName], $extraInstructions$);
+    return callMethod(this, ['createElement'], [tagName], $extraInstructions$);
   }
 
   get createEventObject() {
@@ -54,7 +54,7 @@ export class WorkerDocument extends WorkerElement {
       // always return just the first script
       return [createScript(webWorkerCtx.$firstScriptId$)];
     }
-    return callMethod(this, 'getElementsByTagName', [tagName]);
+    return callMethod(this, ['getElementsByTagName'], [tagName]);
   }
 
   get location() {
@@ -70,7 +70,7 @@ export class WorkerDocument extends WorkerElement {
 
   get readyState() {
     if (webWorkerCtx.$documentReadyState$ !== 'complete') {
-      webWorkerCtx.$documentReadyState$ = getter(this, 'readyState');
+      webWorkerCtx.$documentReadyState$ = getter(this, ['readyState']);
     }
     return webWorkerCtx.$documentReadyState$;
   }

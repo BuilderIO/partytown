@@ -1,19 +1,19 @@
 import { InstanceIdKey, NodeNameKey, NodeTypeKey, PrivateValues } from './worker-constants';
+import type { InterfaceType, SerializedNode } from '../types';
 import { proxy } from './worker-proxy';
-import type { SerializedConstructorType, SerializedNode } from '../types';
 
 export class WorkerNode {
   [InstanceIdKey]: number;
   [NodeNameKey]: string;
-  [NodeTypeKey]: SerializedConstructorType;
+  [NodeTypeKey]: InterfaceType;
   [PrivateValues]: { [key: string]: any };
 
   constructor(nodeCstr: SerializedNode) {
     this[InstanceIdKey] = nodeCstr.$instanceId$!;
-    this[NodeTypeKey] = nodeCstr.$cstr$;
+    this[NodeTypeKey] = nodeCstr.$interfaceType$;
     this[NodeNameKey] = nodeCstr.$nodeName$;
     this[PrivateValues] = {};
-    return proxy(this);
+    return proxy(nodeCstr.$interfaceType$, this, []);
   }
 
   get nodeName() {
@@ -30,9 +30,9 @@ export class WorkerNode {
 
   toJSON(): SerializedNode {
     return {
-      $cstr$: this[NodeTypeKey],
-      $nodeName$: this[NodeNameKey],
+      $interfaceType$: this[NodeTypeKey],
       $instanceId$: this[InstanceIdKey],
+      $nodeName$: this[NodeNameKey],
     };
   }
 }

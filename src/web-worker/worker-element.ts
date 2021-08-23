@@ -1,6 +1,6 @@
 import { importScriptUrl } from './worker-script';
 import { InstanceIdKey, NodeNameKey, PrivateValues } from './worker-constants';
-import { SerializedConstructorType } from '../types';
+import { InterfaceType } from '../types';
 import { toLower } from '../utils';
 import { webWorkerCtx } from './worker-constants';
 import { WorkerNode } from './worker-node';
@@ -73,7 +73,7 @@ export const ElementConstructors: { [tagname: string]: any } = {
 
 export const createScript = ($instanceId$: number) =>
   new WorkerScriptElement({
-    $cstr$: SerializedConstructorType.Element,
+    $interfaceType$: InterfaceType.Element,
     $instanceId$,
     $nodeName$: 'SCRIPT',
   });
