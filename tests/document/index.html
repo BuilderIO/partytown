@@ -42,19 +42,28 @@
       </li>
 
       <li>
-        <code>querySelector('p')</code>
+        <code>querySelectorAll('h1')[0]</code>
         <span id="test3"></span>
         <script type="text/partytown">
-          const elm = document.querySelector('p');
-          document.getElementById('test3').textContent = elm.textContent;
+          const elm = querySelectorAll('h1')[0];
+          document.getElementById('test3').innerHTML = elm.textContent;
         </script>
       </li>
 
       <li>
-        <code>document.title</code>
+        <code>get document.title</code>
         <span id="test4"></span>
         <script type="text/partytown">
           document.getElementById('test4').textContent = document.title;
+        </script>
+      </li>
+
+      <li>
+        <code>set document.title</code>
+        <span id="test5"></span>
+        <script type="text/partytown">
+          document.title += '!!!';
+          document.getElementById('test5').textContent = document.title;
         </script>
       </li>
 

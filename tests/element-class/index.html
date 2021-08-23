@@ -15,22 +15,78 @@
     <h1>Element Class</h1>
     <ul>
       <li>
-        <span id="test0"></span>
+        <strong>set/get className</strong>
+        <code id="test0"></code>
         <script type="text/partytown">
-          const test0 = document.getElementById('test0');
-          test0.className = 'test0';
-          test0.textContent = test0.className;
+          const elm = document.getElementById('test0');
+          elm.className = 'test0';
+          elm.textContent = elm.className;
         </script>
       </li>
 
       <li>
-        <span id="test1"></span>
+        <strong>classList.add()</strong>
+        <code id="test1"></code>
         <script type="text/partytown">
-          const test1 = document.getElementById('test1');
-          test1.classList.add('test0');
+          const elm = document.getElementById('test1');
+          elm.classList.add('test1');
+          elm.textContent = elm.className;
+        </script>
+      </li>
+
+      <li>
+        <strong>classList.remove()</strong>
+        <code id="test2" class="remove-me test2"></code>
+        <script type="text/partytown">
+          const elm = document.getElementById('test2');
+          elm.classList.remove('remove-me');
+          elm.textContent = elm.className;
+        </script>
+      </li>
+
+      <li>
+        <strong>classList.toggle() on</strong>
+        <code id="test3"></code>
+        <script type="text/partytown">
+          const elm = document.getElementById('test3');
+          elm.classList.toggle('test3');
+          elm.textContent = elm.className;
+        </script>
+      </li>
+
+      <li>
+        <strong>classList.toggle() off</strong>
+        <code id="test4" class="remove-me test4"></code>
+        <script type="text/partytown">
+          const elm = document.getElementById('test4');
+          elm.classList.toggle('remove-me');
+          elm.textContent = elm.className;
+        </script>
+      </li>
+
+      <li>
+        <strong>classList.value</strong>
+        <code id="test5" class="test5"></code>
+        <script type="text/partytown">
+          const elm = document.getElementById('test5');
+          elm.textContent = elm.classList.value;
+        </script>
+      </li>
+
+      <li>
+        <strong>classList.length</strong>
+        <code id="test6" class="a b c"></code>
+        <script type="text/partytown">
+          const elm = document.getElementById('test6');
+          elm.textContent = elm.classList.length;
         </script>
       </li>
     </ul>
+
+    <script type="text/partytown">
+      document.body.classList.add('completed');
+    </script>
+
     <hr />
     <p><a href="/">All Tests</a></p>
 

@@ -10,8 +10,9 @@
     "build": "rollup -c",
     "dev": "rollup -c -w --configDev",
     "serve": "sirv tests --port 4000 --dev",
+    "serve.test": "sirv tests --port 5000 --quiet",
     "playwright": "playwright test",
-    "test": "start-server-and-test serve http://localhost:4000/ playwright"
+    "test": "start-server-and-test serve.test http://localhost:5000/ playwright"
   },
   "devDependencies": {
     "@playwright/test": "^1.14.0",
