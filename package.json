@@ -10,29 +10,20 @@
     "build": "rollup -c",
     "dev": "rollup -c -w --configDev",
     "serve": "sirv --port 4000 --dev",
-    "test": "jest",
-    "test.watch": "jest --watch"
+    "playwright": "playwright test",
+    "test": "start-server-and-test serve http://localhost:4000/tests/ playwright"
   },
   "devDependencies": {
+    "@playwright/test": "^1.14.0",
     "@rollup/plugin-typescript": "^8.2.5",
-    "@types/jest": "^27.0.1",
-    "jest": "^27.0.6",
     "prettier": "^2.3.2",
-    "rollup": "^2.56.2",
+    "rollup": "^2.56.3",
     "rollup-plugin-terser": "^7.0.2",
     "sirv-cli": "^1.0.14",
+    "start-server-and-test": "^1.13.1",
     "ts-jest": "^27.0.5",
     "tslib": "^2.3.1",
     "typescript": "^4.3.5"
-  },
-  "jest": {
-    "preset": "ts-jest",
-    "testEnvironment": "node",
-    "testPathIgnorePatterns": [
-      "/.cache/",
-      "/~partytown/",
-      "/node_modules/"
-    ]
   },
   "prettier": {
     "trailingComma": "es5",

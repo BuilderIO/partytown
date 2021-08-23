@@ -1,4 +1,5 @@
 import type { MainAccessRequest, MainAccessResponse } from '../types';
+import { debug } from '../utils';
 
 const resolves = new Map<number, MessageResolve>();
 
@@ -20,6 +21,7 @@ const sendMessageToSandboxFromServiceWorker = (
     const clients = await self.clients.matchAll();
     const client = clients[0];
     if (client) {
+      const timeout = debug ? 120000 : 10000;
       const msgResolve: MessageResolve = [
         resolve,
         setTimeout(() => {
@@ -30,7 +32,7 @@ const sendMessageToSandboxFromServiceWorker = (
             $error$: `partytown timeout`,
           });
           console.warn(`partytown timeout`, accessReq);
-        }, 5000),
+        }, timeout),
       ];
       resolves.set(accessReq.$msgId$, msgResolve);
       client.postMessage(accessReq);

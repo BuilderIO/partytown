@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>Element Class</title>
+    <link
+      rel="icon"
+      id="favicon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎉</text></svg>"
+    />
+  </head>
+  <body>
+    <h1>Element Class</h1>
+    <ul>
+      <li>
+        <span id="test0"></span>
+        <script type="text/partytown">
+          const test0 = document.getElementById('test0');
+          test0.className = 'test0';
+          test0.textContent = test0.className;
+        </script>
+      </li>
+
+      <li>
+        <span id="test1"></span>
+        <script type="text/partytown">
+          const test1 = document.getElementById('test1');
+          test1.classList.add('test0');
+        </script>
+      </li>
+    </ul>
+    <hr />
+    <p><a href="/tests/">All Tests</a></p>
+
+    <script src="/~partytown/partytown.debug.js" async defer></script>
+  </body>
+</html>

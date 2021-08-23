@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>Document</title>
+    <link
+      rel="icon"
+      id="favicon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎉</text></svg>"
+    />
+  </head>
+  <body>
+    <h1>Document</h1>
+    <ul>
+      <li>
+        <code>getElementById()</code>
+        <span id="test0"></span>
+        <script type="text/partytown">
+          document.getElementById('test0').textContent = 'textContent';
+          document.body.className = 'test0'
+        </script>
+      </li>
+
+      <li>
+        <code>getElementsByTagName('h1')[0]</code>
+        <span id="test1"></span>
+        <script type="text/partytown">
+          const elm = document.getElementsByTagName('h1')[0];
+          document.getElementById('test1').innerText = elm.textContent;
+        </script>
+      </li>
+
+      <li>
+        <code>querySelector('h1')</code>
+        <span id="test2"></span>
+        <script type="text/partytown">
+          const elm = document.querySelector('h1');
+          document.getElementById('test2').innerHTML = elm.textContent;
+        </script>
+      </li>
+
+      <li>
+        <code>querySelector('p')</code>
+        <span id="test3"></span>
+        <script type="text/partytown">
+          const elm = document.querySelector('p');
+          document.getElementById('test3').textContent = elm.textContent;
+        </script>
+      </li>
+
+      <li>
+        <code>document.title</code>
+        <span id="test4"></span>
+        <script type="text/partytown">
+          document.getElementById('test4').textContent = document.title;
+        </script>
+      </li>
+
+      <li class="completed">
+        <script type="text/partytown">
+          const elm = document.createElement('code');
+          elm.textContent = 'completed';
+          elm.id = 'completed';
+          document.querySelector('.completed').appendChild(elm);
+        </script>
+      </li>
+    </ul>
+
+    <hr />
+    <p><a href="/tests/">All Tests</a></p>
+
+    <script src="/~partytown/partytown.debug.js" async defer></script>
+  </body>
+</html>
