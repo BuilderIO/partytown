@@ -6,6 +6,13 @@ import { setLocation, WorkerLocation } from './worker-location';
 import { webWorkerCtx } from './worker-constants';
 
 export class WorkerDocument extends WorkerElement {
+  get cookie() {
+    return webWorkerCtx.$documentCookie$;
+  }
+  set cookie(cookie: string) {
+    setter(this, ['cookie'], (webWorkerCtx.$documentCookie$ = cookie));
+  }
+
   createElement(tagName: string) {
     tagName = toLower(tagName);
 

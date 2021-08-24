@@ -1,15 +1,15 @@
-import type { InitializeScriptData } from '../types';
 import { logWorker } from '../utils';
 import { webWorkerCtx } from './worker-constants';
 
-export const initMainScriptsInWebWorker = (initializeScripts: InitializeScriptData[]) => {
-  initializeScripts.forEach((initializeScript) => {
-    if (initializeScript.$url$) {
-      importScriptUrl(initializeScript.$instanceId$, initializeScript.$url$);
-    } else if (initializeScript.$content$) {
-      initializeScriptContent(initializeScript.$instanceId$, initializeScript.$content$);
+export const initNextScriptsInWebWorker = () => {
+  const script = webWorkerCtx.$initializeScripts$.shift();
+  if (script) {
+    if (script.$url$) {
+      importScriptUrl(script.$instanceId$, script.$url$);
+    } else if (script.$content$) {
+      initializeScriptContent(script.$instanceId$, script.$content$);
     }
-  });
+  }
 };
 
 const initializeScriptContent = (instanceId: number, scriptContent: string) => {

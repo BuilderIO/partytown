@@ -1,4 +1,12 @@
-import { CreateWorker, InitWebWorkerData, InstanceId, MainWindow } from '../types';
+import {
+  CreateWorker,
+  InitWebWorkerData,
+  InstanceId,
+  MainWindow,
+  WebWorkerRequestFromMain,
+  WebWorkerResponseFromMain,
+  WebWorkerResponseFromMainMessage,
+} from '../types';
 import { getInstanceId, setInstanceId } from './main-instances';
 import { logMain } from '../utils';
 import { mainAccessHandler } from './main-access-handler';
@@ -10,50 +18,61 @@ export const initSandbox = async (
   sandboxDocument: Document,
   createWebWorker: CreateWorker
 ) => {
-  const key = Math.random();
   const mainWindow: MainWindow = sandboxWindow.parent!;
   const mainDocument = mainWindow.document;
-  const currentLocationUrl = mainWindow.location + '';
-  const config = mainWindow.partytown || {};
-  const documentReadyState = mainDocument.readyState;
-  const documentReferrer = mainDocument.referrer;
-  const mainInterfaces = readMainInterfaces(sandboxDocument);
+  const workerGroups = readMainScripts(mainDocument);
+  const key = Math.random();
+
   const swContainer = sandboxWindow.navigator.serviceWorker;
   const swRegistration = await swContainer.getRegistration();
 
-  const workerGroups = readMainScripts(mainDocument);
-  const firstScriptId = getInstanceId(mainDocument.querySelector('script'));
+  const onMessageFromWorker = (
+    webWorker: Worker,
+    workerName: string,
+    ev: MessageEvent<WebWorkerRequestFromMain>
+  ) => {
+    const msgType = ev.data;
+    if (msgType === WebWorkerRequestFromMain.MainDataRequest) {
+      const firstScriptId = getInstanceId(mainDocument.querySelector('script'));
+      const mainInterfaces = readMainInterfaces(sandboxDocument);
+      const initWebWorkerData: InitWebWorkerData = {
+        $config$: mainWindow.partytown || {},
+        $documentCookie$: mainDocument.cookie,
+        $documentReadyState$: mainDocument.readyState,
+        $documentReferrer$: mainDocument.referrer,
+        $firstScriptId$: firstScriptId,
+        $initializeScripts$: workerGroups[workerName],
+        $interfaces$: mainInterfaces,
+        $key$: key,
+        $scopePath$: swRegistration!.scope!,
+        $url$: mainWindow.location + '',
+      };
+      const msgToWorker: WebWorkerResponseFromMainMessage = [
+        WebWorkerResponseFromMain.MainDataResponse,
+        initWebWorkerData,
+      ];
+      webWorker.postMessage(msgToWorker);
+    } else if (msgType === WebWorkerRequestFromMain.NextScriptRequest) {
+      const msgToWorker: WebWorkerResponseFromMainMessage = [
+        WebWorkerResponseFromMain.NextScriptResponse,
+      ];
+      webWorker.postMessage(msgToWorker);
+    }
+  };
 
   setInstanceId(mainWindow, InstanceId.window);
   setInstanceId(mainDocument, InstanceId.document);
 
-  swContainer.addEventListener('message', (ev) => {
-    requestAnimationFrame(async () => {
-      const accessRsp = await mainAccessHandler(key, ev.data);
-      if (swRegistration && swRegistration.active) {
-        swRegistration.active.postMessage(accessRsp);
-      }
-    });
+  swContainer.addEventListener('message', async (ev) => {
+    const accessRsp = await mainAccessHandler(key, ev.data);
+    if (swRegistration && swRegistration.active) {
+      swRegistration.active.postMessage(accessRsp);
+    }
   });
 
-  logMain(`Loaded sandbox for ${currentLocationUrl}`);
-
   for (const workerName in workerGroups) {
-    const initWebWorkerData: InitWebWorkerData = {
-      $config$: config,
-      $documentReadyState$: documentReadyState,
-      $documentReferrer$: documentReferrer,
-      $firstScriptId$: firstScriptId,
-      $initializeScripts$: workerGroups[workerName],
-      $interfaces$: mainInterfaces,
-      $key$: key,
-      $scopePath$: swRegistration!.scope!,
-      $url$: currentLocationUrl,
-    };
-    logMain(
-      `Creating "${workerName}" web worker, total scripts: ${initWebWorkerData.$initializeScripts$.length}`
-    );
+    logMain(`Creating "${workerName}" web worker`);
     const webWorker = createWebWorker(workerName);
-    webWorker.postMessage(initWebWorkerData);
+    webWorker.onmessage = (ev) => onMessageFromWorker(webWorker, workerName, ev);
   }
 };

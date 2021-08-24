@@ -1,5 +1,4 @@
 import type { InitWebWorkerData } from '../types';
-import { initMainScriptsInWebWorker } from './worker-script';
 import { initWebWorkerGlobal } from './worker-global';
 import { logWorker } from '../utils';
 import { webWorkerCtx } from './worker-constants';
@@ -13,5 +12,4 @@ export const initWebWorker = (self: Worker, initWebWorkerData: InitWebWorkerData
   (self as any).importScripts = null;
 
   initWebWorkerGlobal(self);
-  initMainScriptsInWebWorker(webWorkerCtx.$initializeScripts$);
 };

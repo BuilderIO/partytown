@@ -1,7 +1,22 @@
 export type CreateWorker = (workerName: string) => Worker;
 
+export const enum WebWorkerRequestFromMain {
+  MainDataRequest,
+  NextScriptRequest,
+}
+
+export const enum WebWorkerResponseFromMain {
+  MainDataResponse,
+  NextScriptResponse,
+}
+
+export type WebWorkerResponseFromMainMessage =
+  | [WebWorkerResponseFromMain, any]
+  | [WebWorkerResponseFromMain];
+
 export interface InitWebWorkerData {
   $config$: PartytownConfig;
+  $documentCookie$: string;
   $documentReferrer$: string;
   $documentReadyState$: string;
   $firstScriptId$: number;
