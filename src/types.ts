@@ -1,18 +1,20 @@
 export type CreateWorker = (workerName: string) => Worker;
 
-export const enum WebWorkerRequestFromMain {
+export type WebWorkerRequestToSandboxMessage = [WebWorkerMessageToSandbox, number, number];
+
+export const enum WebWorkerMessageToSandbox {
   MainDataRequest,
-  NextScriptRequest,
+  ScriptInitialized,
 }
 
-export const enum WebWorkerResponseFromMain {
+export const enum SandboxMessageToWebWorker {
   MainDataResponse,
-  NextScriptResponse,
+  InitializeNextScript,
 }
 
-export type WebWorkerResponseFromMainMessage =
-  | [WebWorkerResponseFromMain, any]
-  | [WebWorkerResponseFromMain];
+export type WebWorkerResponseFromSandboxMessage =
+  | [SandboxMessageToWebWorker, any]
+  | [SandboxMessageToWebWorker];
 
 export interface InitWebWorkerData {
   $config$: PartytownConfig;

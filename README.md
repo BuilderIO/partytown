@@ -12,7 +12,8 @@ Partytown runs 3rd-party scripts in a web worker to free up resources for your a
 
 - Relocate resource intensive scripts to into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)
 - Main thread performance is, without question, more important than web worker thread performance
-- Throttle 3rd-party code and isolate their long-running tasks within the worker thread
+- Throttle 3rd-party script's main thread access using `requestIdleCallback`
+- Isolate long-running tasks within the web worker thread
 - Sandbox scripts and have the ability to restrict their usage of specific browser APIs
 - Debug what 3rd-party scripts are calling into
 - Web worker DOM implementation within `3kb`
@@ -53,12 +54,14 @@ Below are just a few examples of 3rd-party scripts that may be a good candidate 
   - Partytown service worker requests are intercepted by the client, and transfer `0 bytes` over the network
   - [Lighthouse scores](https://web.dev/performance-scoring/) are unaffected by the intercepted requests
 
-### Browser Feature Requirements
+### Browser Features
 
 - [Web Worker](https://caniuse.com/webworkers)
 - [Service Worker](https://caniuse.com/serviceworkers)
 - [JavaScript Proxy](https://caniuse.com/proxy)
 - [JavaScript Symbol](https://caniuse.com/mdn-javascript_builtins_symbol)
+
+If the browser does not support any of the features above, then it'll fallback to run 3rd-party scripts the traditional way.
 
 ---
 
@@ -148,7 +151,7 @@ When using the `partytown.debug.js` file there is a minimal set of default debug
 
 ## What About Atomics?
 
-[Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics) seem to be the latest and greatest way to accomplish the challenge of _synchronously_ sending data between the main thread and web worker. Honestly, it looks like Atomics may be preferred and "correct" way to do it, but as of right now, it may need to held off for later. Currently [Safari does not support Atomics](https://caniuse.com/mdn-javascript_builtins_atomics) because it appears to have been removed due to [Spectre Attacks: Exploiting Speculative Execution](https://spectreattack.com/spectre.pdf). When Spectre attacks were first documented, the other browsers removed Atomics too, but they have since added it back. Due to this uncertainy, we're opting for a solution that works everywhere, today. That said, we'd love to do more research here and hopefully use Atomics instead of the current hack.
+[Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics) seem to be the latest and greatest way to accomplish the challenge of _synchronously_ sending data between the main thread and web worker. Honestly, it looks like Atomics may be preferred and "correct" way to do it, but as of right now, it may need to be held off for later. Currently [Safari does not support Atomics](https://caniuse.com/mdn-javascript_builtins_atomics) because it appears to have been removed due to [Spectre Attacks: Exploiting Speculative Execution](https://spectreattack.com/spectre.pdf). When Spectre attacks were first documented, the other browsers removed Atomics too, but they have since added it back. Due to this uncertainy, we're opting for a solution that works everywhere, today. That said, we'd love to do more research here and hopefully migrate to use Atomics in the future instead of the current hack.
 
 ---
 

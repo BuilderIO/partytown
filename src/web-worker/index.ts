@@ -2,24 +2,34 @@ import { initNextScriptsInWebWorker } from './worker-script';
 import { initWebWorker } from './init-worker';
 import { webWorkerCtx } from './worker-constants';
 import {
-  WebWorkerRequestFromMain,
-  WebWorkerResponseFromMain,
-  WebWorkerResponseFromMainMessage,
+  SandboxMessageToWebWorker,
+  WebWorkerMessageToSandbox,
+  WebWorkerResponseFromSandboxMessage,
 } from '../types';
 
-self.onmessage = (ev: MessageEvent<WebWorkerResponseFromMainMessage>) => {
+self.onmessage = (ev: MessageEvent<WebWorkerResponseFromSandboxMessage>) => {
   const msg = ev.data;
   const msgType = msg[0];
-  if (msgType === WebWorkerResponseFromMain.MainDataResponse) {
+  let initializedId = -1;
+
+  if (msgType === SandboxMessageToWebWorker.MainDataResponse) {
     initWebWorker(self as any, msg[1]);
-  } else if (msgType === WebWorkerResponseFromMain.NextScriptResponse) {
-    initNextScriptsInWebWorker();
+  } else if (msgType === SandboxMessageToWebWorker.InitializeNextScript) {
+    const script = initNextScriptsInWebWorker();
+    if (script) {
+      initializedId = script.$instanceId$;
+    }
   }
 
-  if (webWorkerCtx.$initializeScripts$.length > 0) {
-    self.postMessage(WebWorkerRequestFromMain.NextScriptRequest);
-  }
+  self.postMessage([
+    WebWorkerMessageToSandbox.ScriptInitialized,
+    initializedId,
+    webWorkerCtx.$initializeScripts$.length,
+  ]);
 };
 
 // trigger loading main data
-self.postMessage(WebWorkerRequestFromMain.MainDataRequest);
+console.log('[WebWorkerMessageToSandbox.MainDataRequest]', [
+  WebWorkerMessageToSandbox.MainDataRequest,
+]);
+self.postMessage([WebWorkerMessageToSandbox.MainDataRequest]);

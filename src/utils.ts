@@ -58,3 +58,4 @@ export const logValue = (v: any) => {
 };
 
 export const PT_PROXY_URL = `partytown-proxy`;
+export const PT_INITIALIZED_EVENT = `ptinit`;

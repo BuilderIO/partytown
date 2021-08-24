@@ -3,12 +3,13 @@ import {
   InitWebWorkerData,
   InstanceId,
   MainWindow,
-  WebWorkerRequestFromMain,
-  WebWorkerResponseFromMain,
-  WebWorkerResponseFromMainMessage,
+  SandboxMessageToWebWorker,
+  WebWorkerMessageToSandbox,
+  WebWorkerRequestToSandboxMessage,
+  WebWorkerResponseFromSandboxMessage,
 } from '../types';
-import { getInstanceId, setInstanceId } from './main-instances';
-import { logMain } from '../utils';
+import { getInstance, getInstanceId, setInstanceId } from './main-instances';
+import { logMain, PT_INITIALIZED_EVENT } from '../utils';
 import { mainAccessHandler } from './main-access-handler';
 import { readMainInterfaces } from './read-interfaces';
 import { readMainScripts } from './read-main-scripts';
@@ -29,10 +30,11 @@ export const initSandbox = async (
   const onMessageFromWorker = (
     webWorker: Worker,
     workerName: string,
-    ev: MessageEvent<WebWorkerRequestFromMain>
+    ev: MessageEvent<WebWorkerRequestToSandboxMessage>
   ) => {
-    const msgType = ev.data;
-    if (msgType === WebWorkerRequestFromMain.MainDataRequest) {
+    const msg = ev.data;
+    const msgType = msg[0];
+    if (msgType === WebWorkerMessageToSandbox.MainDataRequest) {
       const firstScriptId = getInstanceId(mainDocument.querySelector('script'));
       const mainInterfaces = readMainInterfaces(sandboxDocument);
       const initWebWorkerData: InitWebWorkerData = {
@@ -46,16 +48,24 @@ export const initSandbox = async (
         $scopePath$: swRegistration!.scope!,
         $url$: mainWindow.location + '',
       };
-      const msgToWorker: WebWorkerResponseFromMainMessage = [
-        WebWorkerResponseFromMain.MainDataResponse,
+      const msgToWorker: WebWorkerResponseFromSandboxMessage = [
+        SandboxMessageToWebWorker.MainDataResponse,
         initWebWorkerData,
       ];
       webWorker.postMessage(msgToWorker);
-    } else if (msgType === WebWorkerRequestFromMain.NextScriptRequest) {
-      const msgToWorker: WebWorkerResponseFromMainMessage = [
-        WebWorkerResponseFromMain.NextScriptResponse,
-      ];
-      webWorker.postMessage(msgToWorker);
+    } else if (msgType === WebWorkerMessageToSandbox.ScriptInitialized) {
+      const script: HTMLScriptElement = getInstance(msg[1]);
+      script && script.setAttribute('type', 'text/partytown-initialized');
+
+      const remainingScripts = msg[2];
+      if (remainingScripts > 0) {
+        const msgToWorker: WebWorkerResponseFromSandboxMessage = [
+          SandboxMessageToWebWorker.InitializeNextScript,
+        ];
+        webWorker.postMessage(msgToWorker);
+      } else {
+        mainDocument.dispatchEvent(new CustomEvent(PT_INITIALIZED_EVENT));
+      }
     }
   };
 

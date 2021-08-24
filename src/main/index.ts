@@ -1,7 +1,13 @@
-import { debug } from '../utils';
+import { debug, PT_INITIALIZED_EVENT } from '../utils';
 import SandboxHash from '@sandbox-hash';
 
-(function (document: Document, navigator: Navigator, scope: string, sandbox?: HTMLIFrameElement) {
+(function (
+  document: Document,
+  navigator: Navigator,
+  scope: string,
+  sandbox?: HTMLIFrameElement,
+  timeout?: any
+) {
   function ready() {
     if (!sandbox) {
       sandbox = document.createElement('iframe');
@@ -11,6 +17,24 @@ import SandboxHash from '@sandbox-hash';
       document.body.appendChild(sandbox);
     }
   }
+
+  function fallback(
+    scripts?: NodeListOf<HTMLScriptElement>,
+    i?: number,
+    script?: HTMLScriptElement
+  ) {
+    if (debug) {
+      console.warn(`Partytown script fallback`);
+    }
+    sandbox = 1 as any;
+    scripts = document.querySelectorAll('script[type="text/partytown"]');
+    for (i = 0; i < scripts.length; i++) {
+      script = document.createElement('script');
+      script.innerHTML = scripts[i].innerHTML;
+      document.body.appendChild(script);
+    }
+  }
+
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker
       .register(scope + (debug ? 'partytown-sw.debug.js' : 'partytown-sw.js'), {
@@ -34,5 +58,12 @@ import SandboxHash from '@sandbox-hash';
           console.error(e);
         }
       );
+
+    timeout = setTimeout(fallback, 10000);
+    document.addEventListener(PT_INITIALIZED_EVENT, function () {
+      clearTimeout(timeout);
+    });
+  } else {
+    fallback();
   }
 })(document, navigator, '/~partytown/');

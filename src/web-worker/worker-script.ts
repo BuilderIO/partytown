@@ -10,6 +10,7 @@ export const initNextScriptsInWebWorker = () => {
       initializeScriptContent(script.$instanceId$, script.$content$);
     }
   }
+  return script;
 };
 
 const initializeScriptContent = (instanceId: number, scriptContent: string) => {
