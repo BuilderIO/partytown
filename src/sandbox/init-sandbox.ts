@@ -16,7 +16,8 @@ import { readMainScripts } from './read-main-scripts';
 export const initSandbox = async (
   sandboxWindow: Window,
   sandboxDocument: Document,
-  createWebWorker: CreateWorker
+  createWebWorker: CreateWorker,
+  requestIdleCallback: typeof window.requestIdleCallback
 ) => {
   const mainWindow: MainWindow = sandboxWindow.parent!;
   const mainDocument = mainWindow.document;
@@ -73,6 +74,7 @@ export const initSandbox = async (
   for (const workerName in workerGroups) {
     logMain(`Creating "${workerName}" web worker`);
     const webWorker = createWebWorker(workerName);
-    webWorker.onmessage = (ev) => onMessageFromWorker(webWorker, workerName, ev);
+    webWorker.onmessage = (ev) =>
+      requestIdleCallback(() => onMessageFromWorker(webWorker, workerName, ev));
   }
 };
