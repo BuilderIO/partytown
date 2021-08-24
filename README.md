@@ -146,6 +146,10 @@ When using the `partytown.debug.js` file there is a minimal set of default debug
 
 > Note that debug logs and configuration is not available in the `partytown.js` version.
 
+## What About Atomics?
+
+[Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics) seem to be the latest and greatest way to accomplish the challenge of _synchronously_ sending data between the main thread and web worker. Honestly, it looks like Atomics may be preferred and "correct" way to do it, but as of right now, it may need to held off for later. Currently [Safari does not support Atomics](https://caniuse.com/mdn-javascript_builtins_atomics) because it appears to have been removed due to [Spectre Attacks: Exploiting Speculative Execution](https://spectreattack.com/spectre.pdf). When Spectre attacks were first documented, the other browsers removed Atomics too, but they have since added it back. Due to this uncertainy, we're opting for a solution that works everywhere, today. That said, we'd love to do more research here and hopefully use Atomics instead of the current hack.
+
 ---
 
 ## Development
