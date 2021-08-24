@@ -1,4 +1,5 @@
 import { InterfaceInfo, InterfaceType, MemberTypeInfo } from '../types';
+import { toLower } from '../utils';
 
 export const readMainInterfaces = (doc: Document) => {
   const docImpl = doc.implementation.createHTMLDocument();
@@ -28,7 +29,7 @@ const readImplementationMembers = (impl: any, members: MemberTypeInfo) => {
   let type: string;
 
   for (memberName in impl) {
-    if (!memberName.startsWith('webkit')) {
+    if (isValidMemberName(memberName)) {
       value = impl[memberName];
       type = typeof value;
       if (type === 'function') {
@@ -43,6 +44,16 @@ const readImplementationMembers = (impl: any, members: MemberTypeInfo) => {
   }
 
   return members;
+};
+
+const isValidMemberName = (memberName: string) => {
+  if (memberName.startsWith('webkit')) {
+    return false;
+  } else if (memberName.startsWith('on') && toLower(memberName) === memberName) {
+    return false;
+  } else {
+    return true;
+  }
 };
 
 const InterfaceWhitelist: { [key: string]: InterfaceType } = {

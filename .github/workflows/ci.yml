@@ -1,0 +1,71 @@
+name: Partytown CI
+on: [push, pull_request]
+
+jobs:
+  test-chromium:
+    name: Test Chromium (Ubuntu)
+    strategy:
+      fail-fast: false
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install Chromium Playwright
+        run: npx playwright install chromium && npx playwright install-deps chromium
+
+      - name: Run Chromium Tests
+        run: npm test
+
+      - name: Upload Videos
+        uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: Chromium Videos
+          path: tests/videos
+
+  test-webkit:
+    name: Test WebKit (MacOS)
+    strategy:
+      fail-fast: false
+
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+
+      - name: Install Node Dependencies
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Install WebKit Playwright
+        run: npx playwright install webkit && npx playwright install-deps webkit
+
+      - name: Run WebKit Tests
+        run: npm run test.webkit
+
+      - name: Upload Videos
+        uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: WebKit Videos
+          path: tests/videos

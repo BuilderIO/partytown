@@ -21,7 +21,6 @@ export interface InitWebWorkerData {
   $documentReadyState$: string;
   $firstScriptId$: number;
   $initializeScripts$: InitializeScriptData[];
-  $key$: number;
   $interfaces$: InterfaceInfo[];
   $scopePath$: string;
   $url$: string;
@@ -74,7 +73,6 @@ export const enum InstanceId {
 }
 
 export interface MainAccessRequest {
-  $key$: number;
   $msgId$: number;
   $accessType$: AccessType;
   $instanceId$: number;

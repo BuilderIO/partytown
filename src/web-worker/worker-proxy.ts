@@ -20,7 +20,6 @@ const syncRequestToServiceWorker = (
   $extraInstructions$?: ExtraInstruction[]
 ) => {
   const accessReq: MainAccessRequest = {
-    $key$: webWorkerCtx.$key$,
     $msgId$: webWorkerCtx.$msgId$++,
     $accessType$,
     $instanceId$: target[InstanceIdKey],

@@ -10,9 +10,11 @@
     "build": "rollup -c",
     "dev": "rollup -c -w --configDev",
     "serve": "sirv tests --port 4000 --dev",
-    "serve.test": "sirv tests --port 5000 --quiet",
-    "playwright": "playwright test",
-    "test": "start-server-and-test serve.test http://localhost:5000/ playwright"
+    "serve.test": "sirv tests --port 5000 --dev",
+    "playwright": "playwright test --browser=chromium",
+    "playwright.webkit": "playwright test --browser=webkit",
+    "test": "start-server-and-test serve.test http://localhost:5000/ playwright",
+    "test.webkit": "start-server-and-test serve.test http://localhost:5000/ playwright.webkit"
   },
   "devDependencies": {
     "@playwright/test": "^1.14.0",

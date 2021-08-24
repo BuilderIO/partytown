@@ -22,7 +22,6 @@ export const initSandbox = async (
   const mainWindow: MainWindow = sandboxWindow.parent!;
   const mainDocument = mainWindow.document;
   const workerGroups = readMainScripts(mainDocument);
-  const key = Math.random();
 
   const swContainer = sandboxWindow.navigator.serviceWorker;
   const swRegistration = await swContainer.getRegistration();
@@ -44,7 +43,6 @@ export const initSandbox = async (
         $firstScriptId$: firstScriptId,
         $initializeScripts$: workerGroups[workerName],
         $interfaces$: mainInterfaces,
-        $key$: key,
         $scopePath$: swRegistration!.scope!,
         $url$: mainWindow.location + '',
       };
@@ -65,7 +63,7 @@ export const initSandbox = async (
   setInstanceId(mainDocument, InstanceId.document);
 
   swContainer.addEventListener('message', async (ev) => {
-    const accessRsp = await mainAccessHandler(key, ev.data);
+    const accessRsp = await mainAccessHandler(ev.data);
     if (swRegistration && swRegistration.active) {
       swRegistration.active.postMessage(accessRsp);
     }

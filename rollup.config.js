@@ -285,7 +285,6 @@ function managlePropsPlugin() {
     $interfaces$: '',
     $interfaceType$: '',
     $isPromise$: '',
-    $key$: '',
     $memberPath$: '',
     $msgId$: '',
     $nodeName$: '',
