@@ -6,6 +6,7 @@
     <meta name="description" content="Partytown Test Page" />
 
     <title>Google Tag Manager (GTM) 🎉</title>
+
     <!-- Google Tag Manager -->
     <script type="text/partytown" data-worker="GTM">
       (function (window, document, i) {
@@ -18,26 +19,12 @@
         var dataLayer = 'dataLayer' != 'dataLayer' ? '&l=' + 'dataLayer' : '';
 
         gtmScript.async = true;
-        gtmScript.src = './gtm.js?id=' + i + dataLayer;
+        gtmScript.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dataLayer;
 
         firstScript.parentNode.insertBefore(gtmScript, firstScript);
       })(window, document, 'GTM-W275NLW');
     </script>
-
-    <!-- Google Tag Manager 
-    <script>
-      (function (w, d, s, l, i) {
-        w[l] = w[l] || [];
-        w[l].push({ 'gtm.start': new Date().getTime(), 'event': 'gtm.js' });
-        var f = d.getElementsByTagName(s)[0],
-          j = d.createElement(s),
-          dl = l != 'dataLayer' ? '&l=' + l : '';
-        j.async = true;
-        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
-        f.parentNode.insertBefore(j, f);
-      })(window, document, 'script', 'dataLayer', 'GTM-W275NLW');
-    </script>
-    -->
+    <!-- End Google Tag Manager -->
 
     <link
       rel="icon"
@@ -48,8 +35,19 @@
   <body>
     <h1>Google Tag Manager (GTM) 🎉</h1>
 
+    <button onclick="pushFromData()">Partytown dataLayer.push()</button>
+    <script>
+      function pushFromData() {
+        console.log('dataLayer.push()');
+        dataLayer.push({ from: 'partytown' });
+      }
+    </script>
+
     <hr />
-    <p><a href="/">All Tests</a></p>
+    <ul>
+      <li><a href="/gtm/standard.html">Standard GTM</a></li>
+      <li><a href="/">All Tests</a></li>
+    </ul>
 
     <script>
       partytown = {

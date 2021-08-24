@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+
+    <title>Standard Google Tag Manager (GTM)</title>
+
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ 'gtm.start': new Date().getTime(), 'event': 'gtm.js' });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != 'dataLayer' ? '&l=' + l : '';
+        j.async = true;
+        j.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, 'script', 'dataLayer', 'GTM-W275NLW');
+    </script>
+    <!-- End Google Tag Manager -->
+
+    <link
+      rel="icon"
+      id="favicon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌎</text></svg>"
+    />
+  </head>
+  <body>
+    <h1>Standard Google Tag Manager (GTM)</h1>
+
+    <button onclick="pushFromData()">Standard dataLayer.push()</button>
+    <script>
+      function pushFromData() {
+        console.log('dataLayer.push()');
+        dataLayer.push({ from: 'standard' });
+      }
+    </script>
+
+    <hr />
+    <ul>
+      <li><a href="/gtm/">Partytown GTM</a></li>
+      <li><a href="/">All Tests</a></li>
+    </ul>
+
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: true,
+      };
+    </script>
+    <script src="/~partytown/partytown.debug.js" async defer></script>
+  </body>
+</html>
