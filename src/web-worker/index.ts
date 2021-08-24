@@ -29,7 +29,4 @@ self.onmessage = (ev: MessageEvent<WebWorkerResponseFromSandboxMessage>) => {
 };
 
 // trigger loading main data
-console.log('[WebWorkerMessageToSandbox.MainDataRequest]', [
-  WebWorkerMessageToSandbox.MainDataRequest,
-]);
 self.postMessage([WebWorkerMessageToSandbox.MainDataRequest]);

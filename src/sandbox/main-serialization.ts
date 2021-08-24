@@ -77,7 +77,7 @@ export const serializeValue = (value: any, added: Set<any>): SerializedValueTran
 
 export const deserializeValue = (serializedValue: any): any => {
   const type = typeof serializedValue;
-  if (type === 'string' || type === 'boolean' || type === 'number' || serializeValue == null) {
+  if (type === 'string' || type === 'boolean' || type === 'number' || serializedValue == null) {
     return serializedValue;
   }
   if (Array.isArray(serializedValue)) {
