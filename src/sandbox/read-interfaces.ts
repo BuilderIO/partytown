@@ -1,6 +1,6 @@
 import { InterfaceInfo, InterfaceType, MemberTypeInfo } from '../types';
 
-export const readMainInterfaces = (win: Window, doc: Document) => {
+export const readMainInterfaces = (doc: Document) => {
   const docImpl = doc.implementation.createHTMLDocument();
   const documentElement = docImpl.documentElement;
   const elmImpl = docImpl.createElement('i');
@@ -12,7 +12,6 @@ export const readMainInterfaces = (win: Window, doc: Document) => {
     [InterfaceType.HTMLCollection, documentElement.children],
     [InterfaceType.Element, elmImpl],
     [InterfaceType.TextNode, textNodeImpl],
-    [InterfaceType.Window, win],
   ];
 
   return implementations.map(([interfaceType, impl]) => {
@@ -24,19 +23,21 @@ export const readMainInterfaces = (win: Window, doc: Document) => {
 
 const readImplementationMembers = (impl: any, members: MemberTypeInfo) => {
   let memberName: string;
-  let type: string;
   let interfaceType: InterfaceType;
+  let value: any;
+  let type: string;
 
   for (memberName in impl) {
-    if (!memberName.startsWith('webkit') && impl[memberName]) {
-      type = typeof impl[memberName];
-      if (type === 'object' && impl[memberName].constructor) {
-        interfaceType = InterfaceWhitelist[impl[memberName].constructor.name];
-        if (typeof interfaceType === 'number') {
+    if (!memberName.startsWith('webkit')) {
+      value = impl[memberName];
+      type = typeof value;
+      if (type === 'function') {
+        members[memberName] = InterfaceType.Method;
+      } else if (type === 'object' && value != null && value.constructor) {
+        interfaceType = InterfaceWhitelist[value.constructor.name];
+        if (interfaceType > 0) {
           members[memberName] = interfaceType;
         }
-      } else if (type === 'function') {
-        members[memberName] = InterfaceType.Method;
       }
     }
   }

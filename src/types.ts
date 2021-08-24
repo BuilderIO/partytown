@@ -2,7 +2,6 @@ export type CreateWorker = (workerName: string) => Worker;
 
 export interface InitWebWorkerData {
   $config$: PartytownConfig;
-  $documentCookie$: string;
   $documentReferrer$: string;
   $documentReadyState$: string;
   $firstScriptId$: number;
@@ -20,7 +19,6 @@ export interface MemberTypeInfo {
 }
 
 export const enum InterfaceType {
-  Window = 0,
   Element = 1, // same as NodeType,
   Method = 2,
   TextNode = 3, // same as NodeType

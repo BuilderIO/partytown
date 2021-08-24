@@ -15,10 +15,9 @@ export const initSandbox = async (
   const mainDocument = mainWindow.document;
   const currentLocationUrl = mainWindow.location + '';
   const config = mainWindow.partytown || {};
-  const documentCookie = mainDocument.cookie;
   const documentReadyState = mainDocument.readyState;
   const documentReferrer = mainDocument.referrer;
-  const mainInterfaces = readMainInterfaces(sandboxWindow, sandboxDocument);
+  const mainInterfaces = readMainInterfaces(sandboxDocument);
   const swContainer = sandboxWindow.navigator.serviceWorker;
   const swRegistration = await swContainer.getRegistration();
 
@@ -42,7 +41,6 @@ export const initSandbox = async (
   for (const workerName in workerGroups) {
     const initWebWorkerData: InitWebWorkerData = {
       $config$: config,
-      $documentCookie$: documentCookie,
       $documentReadyState$: documentReadyState,
       $documentReferrer$: documentReferrer,
       $firstScriptId$: firstScriptId,

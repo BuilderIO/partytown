@@ -97,7 +97,7 @@ const createComplexMember = (interfaceType: InterfaceType, target: any, memberPa
     const memberInfo = memberTypeInfo[memberPath[memberPath.length - 1]];
     if (memberInfo === InterfaceType.Method) {
       return (...args: any[]) => callMethod(target, memberPath, args);
-    } else if (typeof memberInfo === 'number') {
+    } else if (memberInfo > 0) {
       return proxy(memberInfo, target, [...memberPath]);
     }
   }
