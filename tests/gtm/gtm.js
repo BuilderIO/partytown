@@ -122,7 +122,9 @@ console.warn('loaded gtm');
         ma.__proto__ = ja;
         ia = ma.a;
         break a;
-      } catch (a) {}
+      } catch (a) {
+        console.error('hack', a);
+      }
       ia = !1;
     }
     ha = ia
@@ -249,7 +251,9 @@ console.warn('loaded gtm');
           b = void 0;
           try {
             c();
-          } catch (d) {}
+          } catch (d) {
+            console.error('hack', d);
+          }
         }
       };
     },
@@ -292,6 +296,7 @@ console.warn('loaded gtm');
               createScriptURL: ra,
             });
           } catch (c) {
+            console.error('hack', c);
             qa.console && qa.console.error(c.message);
           }
           eb = a;
@@ -517,6 +522,7 @@ console.warn('loaded gtm');
         if (a.constructor && !Yb(a, 'constructor') && !Yb(a.constructor.prototype, 'isPrototypeOf'))
           return !1;
       } catch (c) {
+        console.error('hack', c);
         return !1;
       }
       for (var b in a);
@@ -635,6 +641,7 @@ console.warn('loaded gtm');
               d = Nc(k, b);
               Mc && (d = Mc.Yh(d, k));
             } catch (y) {
+              console.error('hack', y);
               b.lg && b.lg(y, Number(f)), (d = !1);
             }
             c[f] = !1;
@@ -684,6 +691,7 @@ console.warn('loaded gtm');
       try {
         return Kc(Pc(a, b, c));
       } catch (d) {
+        console.error('hack', d);
         JSON.stringify(a);
       }
       return 2;
@@ -912,7 +920,9 @@ console.warn('loaded gtm');
           c.ii({
             Xh: a,
           });
-        } catch (d) {}
+        } catch (d) {
+          console.error('hack', d);
+        }
       }
     }
   }
@@ -1030,6 +1040,7 @@ console.warn('loaded gtm');
         try {
           return a.closest(b);
         } catch (e) {
+          console.error('hack', e);
           return null;
         }
       var c =
@@ -1044,6 +1055,7 @@ console.warn('loaded gtm');
         try {
           if (c.call(d, b)) return d;
         } catch (e) {
+          console.error('hack', e);
           break;
         }
         d = d.parentElement || d.parentNode;
@@ -1055,7 +1067,9 @@ console.warn('loaded gtm');
     try {
       var me = A.querySelectorAll(':root');
       me && 1 == me.length && me[0] == A.documentElement && (le = !0);
-    } catch (a) {}
+    } catch (a) {
+      console.error('hack', a);
+    }
   var ie = le;
   var ne,
     oe = !1;
@@ -1430,7 +1444,8 @@ console.warn('loaded gtm');
         .then(function () {
           c(a, b);
         })
-        .catch(function () {
+        .catch(function (err) {
+          console.error('hack', err);
           c([], []);
         });
     },
@@ -1449,10 +1464,12 @@ console.warn('loaded gtm');
                 .join('');
               return m.btoa(d).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
             })
-            .catch(function () {
+            .catch(function (err) {
+              console.error('hack', err);
               return 'e2';
             });
         } catch (c) {
+          console.error('hack', c);
           return Promise.resolve('e2');
         }
       else return Promise.resolve('e1');
@@ -1600,7 +1617,9 @@ console.warn('loaded gtm');
               });
             });
           });
-        } catch (c) {}
+        } catch (c) {
+          console.error('hack', c);
+        }
     },
     hf = function (a) {
       return -1 !== ['email', 'phone_number', 'first_name', 'last_name', 'street'].indexOf(a);
@@ -2374,7 +2393,9 @@ console.warn('loaded gtm');
             }
           }
         }
-      } catch (t) {}
+      } catch (t) {
+        console.error('hack', t);
+      }
     };
   function lh(a, b, c, d) {
     function e(p) {
@@ -2484,7 +2505,9 @@ console.warn('loaded gtm');
           var f = e.protocol;
           ('http:' !== f && 'https:' !== f) || mh(e, e.hostname);
         }
-      } catch (h) {}
+      } catch (h) {
+        console.error('hack', h);
+      }
     },
     Xg = function (a) {
       try {
@@ -2492,7 +2515,9 @@ console.warn('loaded gtm');
           var b = Ce(Ee(a.action), 'host');
           mh(a, b);
         }
-      } catch (c) {}
+      } catch (c) {
+        console.error('hack', c);
+      }
     },
     ph = function (a, b, c, d) {
       Zg();
@@ -3076,7 +3101,9 @@ console.warn('loaded gtm');
               ic: [],
               oe: d,
             });
-      } catch (e) {}
+      } catch (e) {
+        console.error('hack', e);
+      }
   };
   function yi(a) {
     if (N(L.D)) return a;
@@ -3245,6 +3272,7 @@ console.warn('loaded gtm');
       try {
         A.documentElement.doScroll('left'), Mi();
       } catch (a) {
+        console.error('hack', a);
         m.setTimeout(Ni, 50);
       }
     }
@@ -3602,6 +3630,7 @@ console.warn('loaded gtm');
         try {
           Nc(x, c);
         } catch (E) {
+          console.error('hack', E);
           C(E);
         }
       }
@@ -3702,6 +3731,7 @@ console.warn('loaded gtm');
             });
           } else xk(d, b), f();
         } catch (t) {
+          console.error('hack', t);
           f();
         }
       }
@@ -3890,6 +3920,7 @@ console.warn('loaded gtm');
         try {
           e = !(!c.frames || !c.frames[b]);
         } catch (k) {
+          console.error('hack', k);
           e = !1;
         }
         if (e) return c;
@@ -3901,7 +3932,9 @@ console.warn('loaded gtm');
               f = h;
               break a;
             }
-          } catch (k) {}
+          } catch (k) {
+            console.error('hack', k);
+          }
           f = null;
         }
         if (!(c = f)) break;
@@ -3966,6 +3999,7 @@ console.warn('loaded gtm');
     try {
       Zk(this, 'addEventListener', e);
     } catch (f) {
+      console.error('hack', f);
       (b.tcString = 'tcunavailable'),
         (b.internalErrorState = 3),
         d && (clearTimeout(d), (d = 0)),
@@ -4054,7 +4088,9 @@ console.warn('loaded gtm');
             var c;
             c = ('string' === typeof b.data ? JSON.parse(b.data) : b.data).__tcfapiReturn;
             a.F[c.callId](c.returnValue, c.success);
-          } catch (d) {}
+          } catch (d) {
+            console.error('hack', d);
+          }
         }),
         Pk(a.s, a.C));
     };
@@ -4154,6 +4190,7 @@ console.warn('loaded gtm');
           }),
             jl(c);
         } catch (e) {
+          console.error('hack', e);
           d && (clearTimeout(d), (d = null)), ml(a), nl(a);
         }
       }
@@ -4385,8 +4422,11 @@ console.warn('loaded gtm');
             return e();
           }, Kl);
         }),
-      ]).catch(function () {});
+      ]).catch(function (err) {
+        console.error('hack', err);
+      });
     } catch (e) {
+      console.error('hack', e);
       return;
     }
     return d;
@@ -4523,6 +4563,7 @@ console.warn('loaded gtm');
             kk(q, r, '1');
             f(d.U, b, d.C, t);
           } catch (v) {
+            console.error('hack', v);
             kk(q, r, '4');
           }
         }
@@ -4778,6 +4819,7 @@ console.warn('loaded gtm');
       f || ((f = new RegExp(b, d)), Yn.set(e, f));
       return f.test(a);
     } catch (h) {
+      console.error('hack', h);
       return !1;
     }
   }
@@ -4836,7 +4878,9 @@ console.warn('loaded gtm');
                   f = b[h[k]](c);
                   break a;
                 }
-            } catch (n) {}
+            } catch (n) {
+              console.error('hack', n);
+            }
           }
           f = !1;
         }
@@ -5085,7 +5129,9 @@ console.warn('loaded gtm');
           if (ya(d))
             try {
               d.call(Xf);
-            } catch (y) {}
+            } catch (y) {
+              console.error('hack', y);
+            }
           else if (Aa(d)) {
             var p = d;
             if (g(p[0])) {
@@ -5096,7 +5142,9 @@ console.warn('loaded gtm');
               if (void 0 !== t && null !== t)
                 try {
                   t[r].apply(t, u);
-                } catch (y) {}
+                } catch (y) {
+                  console.error('hack', y);
+                }
             }
           } else {
             if (Oa(d)) {
@@ -5130,7 +5178,9 @@ console.warn('loaded gtm');
     var b = So();
     try {
       qo(m['dataLayer'], Df.M);
-    } catch (c) {}
+    } catch (c) {
+      console.error('hack', c);
+    }
     return b;
   }
   var Vo = function () {
@@ -5330,7 +5380,9 @@ console.warn('loaded gtm');
             d && RegExp('^[\\da-zA-Z-]{1,20}$').test(d) && (a = d);
           }
         });
-      } catch (b) {}
+      } catch (b) {
+        console.error('hack', b);
+      }
       return a;
     }
   };
@@ -5342,7 +5394,9 @@ console.warn('loaded gtm');
       try {
         var c = Fs.external;
         if (c && c._gaUserPrefs && 'oo' == c._gaUserPrefs) return !0;
-      } catch (f) {}
+      } catch (f) {
+        console.error('hack', f);
+      }
       for (var d = jg('AMP_TOKEN', String(Gs.cookie), !0), e = 0; e < d.length; e++)
         if ('$OPT_OUT' == d[e]) return !0;
       return Gs.getElementById('__gaOptOutExtension') ? !0 : !1;
@@ -5543,7 +5597,9 @@ console.warn('loaded gtm');
           var t = !0;
           try {
             t = !m.frameElement;
-          } catch (z) {}
+          } catch (z) {
+            console.error('hack', z);
+          }
           t && Ni();
         }
         Lb(m, 'load', Mi);
