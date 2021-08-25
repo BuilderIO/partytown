@@ -19,7 +19,8 @@
         var dataLayer = 'dataLayer' != 'dataLayer' ? '&l=' + 'dataLayer' : '';
 
         gtmScript.async = true;
-        gtmScript.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dataLayer;
+
+        gtmScript.src = './gtm.js?id=' + i + dataLayer;
 
         firstScript.parentNode.insertBefore(gtmScript, firstScript);
       })(window, document, 'GTM-W275NLW');
@@ -51,10 +52,10 @@
 
     <script>
       partytown = {
-        logCalls: true,
-        logGetters: true,
-        logSetters: true,
-        logStackTraces: true,
+        logCalls: false,
+        logGetters: false,
+        logSetters: false,
+        logStackTraces: false,
       };
     </script>
     <script src="/~partytown/partytown.debug.js" async defer></script>

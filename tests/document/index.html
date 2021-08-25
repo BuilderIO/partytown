@@ -15,8 +15,8 @@
     <h1>Document</h1>
     <ul>
       <li>
-        <code>getElementById()</code>
-        <span id="test0"></span>
+        <strong>getElementById()</strong>
+        <code id="test0"></code>
         <script type="text/partytown">
           document.getElementById('test0').textContent = 'textContent';
           document.body.className = 'test0'
@@ -24,8 +24,8 @@
       </li>
 
       <li>
-        <code>getElementsByTagName('h1')[0]</code>
-        <span id="test1"></span>
+        <strong>getElementsByTagName('h1')[0]</strong>
+        <code id="test1"></code>
         <script type="text/partytown">
           const elm = document.getElementsByTagName('h1')[0];
           document.getElementById('test1').innerText = elm.textContent;
@@ -33,8 +33,8 @@
       </li>
 
       <li>
-        <code>querySelector('h1')</code>
-        <span id="test2"></span>
+        <strong>querySelector('h1')</strong>
+        <code id="test2"></code>
         <script type="text/partytown">
           const elm = document.querySelector('h1');
           document.getElementById('test2').innerHTML = elm.textContent;
@@ -42,8 +42,8 @@
       </li>
 
       <li>
-        <code>querySelectorAll('h1')[0]</code>
-        <span id="test3"></span>
+        <strong>querySelectorAll('h1')[0]</strong>
+        <code id="test3"></code>
         <script type="text/partytown">
           const elm = querySelectorAll('h1')[0];
           document.getElementById('test3').innerHTML = elm.textContent;
@@ -51,16 +51,16 @@
       </li>
 
       <li>
-        <code>get document.title</code>
-        <span id="test4"></span>
+        <strong>get document.title</strong>
+        <code id="test4"></code>
         <script type="text/partytown">
           document.getElementById('test4').textContent = document.title;
         </script>
       </li>
 
       <li>
-        <code>set document.title</code>
-        <span id="test5"></span>
+        <strong>set document.title</strong>
+        <code id="test5"></code>
         <script type="text/partytown">
           document.title += '!!!';
           document.getElementById('test5').textContent = document.title;
@@ -69,7 +69,7 @@
 
       <li class="completed">
         <script type="text/partytown">
-          const elm = document.createElement('code');
+          const elm = document.createElement('strong');
           elm.textContent = 'completed';
           elm.id = 'completed';
           document.querySelector('.completed').appendChild(elm);
