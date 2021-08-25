@@ -1,4 +1,4 @@
-import { ElementConstructors, WorkerElement } from './worker-element';
+import { ElementConstructors, WorkerElement } from './worker-node';
 import {
   InterfaceType,
   SerializedHTMLCollection,

@@ -16,7 +16,7 @@ Partytown runs 3rd-party scripts in a web worker to free up resources for your a
 - Isolate long-running tasks within the web worker thread
 - Sandbox scripts and have the ability to restrict their usage of specific browser APIs
 - Debug what 3rd-party scripts are calling into
-- Web worker DOM implementation within `3kb`
+- Web worker DOM implementation within `4kb`
 
 > If you're looking to instead run _your_ app within a web worker, then we recommend the [WorkerDom](https://github.com/ampproject/worker-dom) project.
 
@@ -141,6 +141,8 @@ When using the `partytown.debug.js` file there is a minimal set of default debug
     logCalls: true,
     logGetters: true,
     logSetters: true,
+    logImageRequests: true,
+    logScriptExecution: true,
     logStackTraces: true,
   };
 </script>

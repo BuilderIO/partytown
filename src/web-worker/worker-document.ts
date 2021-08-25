@@ -1,7 +1,6 @@
 import { callMethod, getter, setter } from './worker-proxy';
-import { createScript, WorkerElement } from './worker-element';
-import type { ExtraInstruction } from '../types';
-import { logWorker, toLower } from '../utils';
+import { createElement, createScript, WorkerElement } from './worker-node';
+import { toLower } from '../utils';
 import { setLocation, WorkerLocation } from './worker-location';
 import { webWorkerCtx } from './worker-constants';
 
@@ -14,22 +13,7 @@ export class WorkerDocument extends WorkerElement {
   }
 
   createElement(tagName: string) {
-    tagName = toLower(tagName);
-
-    const $extraInstructions$: ExtraInstruction[] = [];
-
-    if (tagName === 'script') {
-      $extraInstructions$.push(
-        {
-          $setAttributeName$: 'type',
-          $setAttributeValue$: 'text/partytown',
-        },
-        { $setPartytownId$: true }
-      );
-      logWorker(`Create inert <script>`);
-    }
-
-    return callMethod(this, ['createElement'], [tagName], $extraInstructions$);
+    return createElement(this, tagName, []);
   }
 
   get createEventObject() {

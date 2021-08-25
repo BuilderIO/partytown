@@ -1,7 +1,7 @@
 import { AccessType, ExtraInstruction, MainAccessRequest, MainAccessResponse } from '../types';
 import { deserializeValue, serializeValue } from './main-serialization';
 import { getInstance, getInstanceId } from './main-instances';
-import { isPromise } from '../utils';
+import { isPromise, PT_SCRIPT_INIT_TYPE } from '../utils';
 
 export const mainAccessHandler = async (accessReq: MainAccessRequest) => {
   const accessType = accessReq.$accessType$;
@@ -80,10 +80,13 @@ const callInstanceMethod = async (
 
   if (extraInstructions) {
     extraInstructions.forEach((extra) => {
-      if (extra.$setAttributeName$) {
-        rtnValue.setAttribute(extra.$setAttributeName$, extra.$setAttributeValue$);
+      if (extra === ExtraInstruction.SET_INERT_IMG) {
+        (rtnValue as HTMLImageElement).hidden = true;
       }
-      if (extra.$setPartytownId$) {
+      if (extra === ExtraInstruction.SET_INERT_SCRIPT) {
+        (rtnValue as HTMLScriptElement).type = PT_SCRIPT_INIT_TYPE;
+      }
+      if (extra === ExtraInstruction.SET_PARTYTOWN_ID) {
         rtnValue.dataset.partytownId = getInstanceId(rtnValue);
       }
     });

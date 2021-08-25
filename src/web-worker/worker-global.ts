@@ -1,3 +1,4 @@
+import { createElement } from './worker-node';
 import { InstanceId, InterfaceType, NodeName } from '../types';
 import { InstanceIdKey } from './worker-constants';
 import { setLocation, WorkerLocation } from './worker-location';
@@ -17,6 +18,15 @@ export const initWebWorkerGlobal = (self: any) => {
     document: {
       get() {
         return doc;
+      },
+    },
+    Image: {
+      get() {
+        return class {
+          constructor() {
+            return createElement(doc, 'img', []);
+          }
+        };
       },
     },
     location: {

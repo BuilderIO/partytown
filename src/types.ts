@@ -83,10 +83,10 @@ export interface MainAccessRequest {
   $extraInstructions$?: ExtraInstruction[];
 }
 
-export interface ExtraInstruction {
-  $setAttributeName$?: string;
-  $setAttributeValue$?: string | number | boolean;
-  $setPartytownId$?: boolean;
+export const enum ExtraInstruction {
+  SET_INERT_IMG,
+  SET_INERT_SCRIPT,
+  SET_PARTYTOWN_ID,
 }
 
 export interface MainAccessResponse {
@@ -134,6 +134,8 @@ export interface PartytownConfig {
   logCalls?: boolean;
   logGetters?: boolean;
   logSetters?: boolean;
+  logImageRequests?: boolean;
+  logScriptExecution?: boolean;
   logStackTraces?: boolean;
 }
 

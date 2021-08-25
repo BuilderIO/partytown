@@ -9,7 +9,7 @@ import {
   WebWorkerResponseFromSandboxMessage,
 } from '../types';
 import { getInstance, getInstanceId, setInstanceId } from './main-instances';
-import { logMain, PT_INITIALIZED_EVENT } from '../utils';
+import { logMain, PT_INITIALIZED_EVENT, PT_SCRIPT_INIT_TYPE } from '../utils';
 import { mainAccessHandler } from './main-access-handler';
 import { readMainInterfaces } from './read-interfaces';
 import { readMainScripts } from './read-main-scripts';
@@ -34,6 +34,8 @@ export const initSandbox = async (
   ) => {
     const msg = ev.data;
     const msgType = msg[0];
+    const remainingScripts = msg[2];
+
     if (msgType === WebWorkerMessageToSandbox.MainDataRequest) {
       const firstScriptId = getInstanceId(mainDocument.querySelector('script'));
       const mainInterfaces = readMainInterfaces(sandboxDocument);
@@ -55,9 +57,10 @@ export const initSandbox = async (
       webWorker.postMessage(msgToWorker);
     } else if (msgType === WebWorkerMessageToSandbox.ScriptInitialized) {
       const script: HTMLScriptElement = getInstance(msg[1]);
-      script && script.setAttribute('type', 'text/partytown-initialized');
+      if (script) {
+        script.type = PT_SCRIPT_INIT_TYPE;
+      }
 
-      const remainingScripts = msg[2];
       if (remainingScripts > 0) {
         const msgToWorker: WebWorkerResponseFromSandboxMessage = [
           SandboxMessageToWebWorker.InitializeNextScript,
