@@ -1,0 +1,7 @@
+{
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/image/404.gif", "status": 404, "dest": "/404.html" }
+  ],
+  "public": true
+}
