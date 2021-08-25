@@ -38,7 +38,7 @@ export const initSandbox = async (
 
     if (msgType === WebWorkerMessageToSandbox.MainDataRequest) {
       const firstScriptId = getInstanceId(mainDocument.querySelector('script'));
-      const mainInterfaces = readMainInterfaces(sandboxDocument);
+      const mainInterfaces = readMainInterfaces(sandboxWindow, sandboxDocument);
       const initWebWorkerData: InitWebWorkerData = {
         $config$: mainWindow.partytown || {},
         $documentCookie$: mainDocument.cookie,
@@ -56,7 +56,7 @@ export const initSandbox = async (
       ];
       webWorker.postMessage(msgToWorker);
     } else if (msgType === WebWorkerMessageToSandbox.ScriptInitialized) {
-      const script: HTMLScriptElement = getInstance(msg[1]);
+      const script = getInstance<HTMLScriptElement>(msg[1]);
       if (script) {
         script.type = PT_SCRIPT_INIT_TYPE;
       }
@@ -72,6 +72,7 @@ export const initSandbox = async (
     }
   };
 
+  setInstanceId(mainWindow.history, InstanceId.history);
   setInstanceId(mainWindow, InstanceId.window);
   setInstanceId(mainDocument, InstanceId.document);
 

@@ -6590,7 +6590,6 @@ console.warn('loaded gtag');
     }, f);
   };
   ba.rg = function (a) {
-    console.warn('hack', 'ba.rg', a);
     this.s = a;
     try {
       Hs(a.C) && (vd(28), a.abort());

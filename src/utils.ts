@@ -42,7 +42,7 @@ export const logValue = (v: any) => {
   if (isPromise(v)) {
     return `Promise`;
   }
-  if (v) {
+  if (type === 'object') {
     if ((v as Node).nodeName) {
       if (v.nodeType === 1) {
         return `<${toLower(v.nodeName)}>`;
@@ -52,6 +52,7 @@ export const logValue = (v: any) => {
     if ('value' in v) {
       return JSON.stringify(v.value);
     }
+    return JSON.stringify(v);
   }
 
   return '¯\\_(ツ)_/¯';

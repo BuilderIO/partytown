@@ -1,10 +1,10 @@
 import { callMethod, proxy } from './worker-proxy';
 import { ExtraInstruction, InterfaceType, SerializedNode } from '../types';
+import { imageRequest, importScriptUrl } from './worker-requests';
 import { InstanceIdKey, NodeNameKey, NodeTypeKey, PrivateValues } from './worker-constants';
 import { toLower } from '../utils';
 import { webWorkerCtx } from './worker-constants';
 import type { WorkerDocument } from './worker-document';
-import { imageRequest, importScriptUrl } from './worker-requests';
 
 export class WorkerNode {
   [InstanceIdKey]: number;
@@ -83,25 +83,6 @@ export class WorkerAnchorElement extends WorkerElement {
   }
 }
 
-export class WorkerScriptElement extends WorkerElement {
-  [PrivateValues]: { a: boolean; $url$: string };
-
-  get async() {
-    return !!this[PrivateValues].a;
-  }
-  set async(value: boolean) {
-    this[PrivateValues].a = value;
-  }
-  get src() {
-    return getUrl(this) + '';
-  }
-  set src(url: string) {
-    this[PrivateValues].$url$ = url;
-    const instanceId = this[InstanceIdKey];
-    importScriptUrl(instanceId, url);
-  }
-}
-
 export class WorkerImageElement extends WorkerElement {
   [PrivateValues]: {
     /** completed */
@@ -172,7 +153,27 @@ export class WorkerImageElement extends WorkerElement {
   }
 }
 
-const getUrl = (elm: WorkerElement) => new URL(elm[PrivateValues].$url$ || '', webWorkerCtx.$url$);
+export class WorkerScriptElement extends WorkerElement {
+  [PrivateValues]: { a: boolean; $url$: string };
+
+  get async() {
+    return !!this[PrivateValues].a;
+  }
+  set async(value: boolean) {
+    this[PrivateValues].a = value;
+  }
+  get src() {
+    return getUrl(this) + '';
+  }
+  set src(url: string) {
+    this[PrivateValues].$url$ = url;
+    const instanceId = this[InstanceIdKey];
+    importScriptUrl(instanceId, url);
+  }
+}
+
+const getUrl = (elm: WorkerElement) =>
+  new URL(elm[PrivateValues].$url$ || '', webWorkerCtx.$location$ + '');
 
 export const ElementConstructors: { [tagname: string]: any } = {
   A: WorkerAnchorElement,

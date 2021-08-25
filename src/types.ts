@@ -1,3 +1,7 @@
+import type { WorkerDocument } from './web-worker/worker-document';
+import type { WorkerHistory } from './web-worker/worker-history';
+import type { WorkerLocation } from './web-worker/worker-location';
+
 export type CreateWorker = (workerName: string) => Worker;
 
 export type WebWorkerRequestToSandboxMessage = [WebWorkerMessageToSandbox, number, number];
@@ -28,6 +32,15 @@ export interface InitWebWorkerData {
   $url$: string;
 }
 
+export interface InitWebWorkerContext {
+  $currentScript$?: number;
+  $document$?: WorkerDocument;
+  $history$?: WorkerHistory;
+  $importScripts$?: (...urls: string[]) => void;
+  $location$?: WorkerLocation;
+  $msgId$: number;
+}
+
 export type InterfaceInfo = [InterfaceType, MemberTypeInfo];
 
 export interface MemberTypeInfo {
@@ -42,13 +55,8 @@ export const enum InterfaceType {
   DOMStringMap = 5,
   DOMTokenList = 6,
   HTMLCollection = 7,
+  History = 8,
   Document = 9, // same as NodeType,
-}
-
-export interface InitWebWorkerContext {
-  $currentScript$?: number;
-  $importScripts$?: (...urls: string[]) => void;
-  $msgId$: number;
 }
 
 export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {}
@@ -70,8 +78,9 @@ export const enum AccessType {
 }
 
 export const enum InstanceId {
-  window = 0,
-  document = 1,
+  history = 0,
+  window = 1,
+  document = 2,
 }
 
 export interface MainAccessRequest {

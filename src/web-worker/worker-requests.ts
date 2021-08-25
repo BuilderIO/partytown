@@ -4,7 +4,7 @@ import type { WorkerImageElement } from './worker-node';
 
 export const importScriptUrl = (instanceId: number, scriptUrl: string) => {
   try {
-    scriptUrl = new URL(scriptUrl, webWorkerCtx.$url$) + '';
+    scriptUrl = new URL(scriptUrl, webWorkerCtx.$location$ + '') + '';
     webWorkerCtx.$currentScript$ = instanceId;
 
     if (debug && webWorkerCtx.$config$.logScriptExecution) {

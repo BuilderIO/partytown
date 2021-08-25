@@ -1,32 +1,35 @@
 import { InstanceId } from '../types';
 
 let instanceIds = InstanceId.document + 1;
-let cleanupTmr: any = 0;
 
-const instancesById = new Map<number, any>();
+const instances: [number, InstanceType][] = [];
 const InstanceIdKey = Symbol();
 
-const cleanupInstanceRefs = () => {
-  instancesById.forEach((nodeInstance: Node, instanceId) => {
-    if (instanceId > InstanceId.document && !nodeInstance.isConnected) {
-      instancesById.delete(instanceId);
-    }
-  });
-};
-
-export const setInstanceId = (instance: Node | Window, instanceId: number) => {
+export const setInstanceId = (instance: InstanceType | null | undefined, instanceId: number) => {
   if (instance) {
-    instancesById.set(instanceId, instance);
-    (instance as any)[InstanceIdKey] = instanceId;
+    instances.push([instanceId, instance]);
+    instance[InstanceIdKey] = instanceId;
 
-    clearTimeout(cleanupTmr);
-    cleanupTmr = setTimeout(cleanupInstanceRefs, 5000);
+    while (true) {
+      let disconnectedNodes = instances.filter((i) => i[1].nodeType && !i[1].isConnected);
+      let i: number;
+      if (disconnectedNodes.length > 99) {
+        for (i = 0; i < instances.length; i++) {
+          if (!instances[i][1].isConnected) {
+            instances.slice(i, 1);
+            break;
+          }
+        }
+      } else {
+        break;
+      }
+    }
   }
 };
 
-export const getInstanceId = (instance: Node | Window | null | undefined, instanceId?: number) => {
+export const getInstanceId = (instance: InstanceType | null | undefined, instanceId?: number) => {
   if (instance) {
-    instanceId = (instance as any)[InstanceIdKey];
+    instanceId = instance[InstanceIdKey];
     if (typeof instanceId !== 'number') {
       instanceId = instanceIds++;
       setInstanceId(instance, instanceId);
@@ -36,31 +39,22 @@ export const getInstanceId = (instance: Node | Window | null | undefined, instan
   return -1;
 };
 
-const getInstanceBySymbolProp = (instanceId: number, childNodes: NodeListOf<ChildNode>): any => {
-  if (childNodes) {
-    for (let i = 0, l = childNodes.length, n: Node; i < l; i++) {
-      n = childNodes[i];
-
-      if ((n as any)[InstanceIdKey] === instanceId) {
-        return n;
-      }
-
-      n = getInstanceBySymbolProp(instanceId, n.childNodes);
-      if (n) {
-        return n;
-      }
-    }
-  }
-  return null;
+export const getInstance = <T = InstanceType | null>(instanceId: number, instanceItem?: any): T => {
+  instanceItem = instances.find((i) => i[0] === instanceId);
+  return instanceItem ? instanceItem[1] : null;
 };
 
-export const getInstance = (instanceId: number, instance?: any) => {
-  instance = instancesById.get(instanceId);
-  if (!instance) {
-    instance = getInstanceBySymbolProp(instanceId, document.childNodes);
-    if (instance) {
-      instancesById.set(instanceId, instance);
-    }
-  }
-  return instance;
-};
+interface InstanceObj {
+  [InstanceIdKey]?: number;
+  [key: string]: any;
+}
+
+interface InstanceNode extends Node, InstanceObj {}
+
+interface InstanceWindow extends Window, InstanceObj {}
+
+interface InstanceHistory extends History, InstanceObj {}
+
+interface InstanceStorage extends Storage, InstanceObj {}
+
+type InstanceType = InstanceNode | InstanceWindow | InstanceHistory | InstanceStorage;

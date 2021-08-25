@@ -1,7 +1,6 @@
 import { callMethod, getter, setter } from './worker-proxy';
 import { createElement, createScript, WorkerElement } from './worker-node';
 import { toLower } from '../utils';
-import { setLocation, WorkerLocation } from './worker-location';
 import { webWorkerCtx } from './worker-constants';
 
 export class WorkerDocument extends WorkerElement {
@@ -42,10 +41,12 @@ export class WorkerDocument extends WorkerElement {
   }
 
   get location() {
-    return new WorkerLocation(webWorkerCtx.$url$) as any;
+    return webWorkerCtx.$location$;
   }
-  set location(url: string) {
-    setLocation(url);
+  set location(url: any) {
+    if (typeof url === 'string') {
+      webWorkerCtx.$location$!.href = url;
+    }
   }
 
   get ownerDocument() {

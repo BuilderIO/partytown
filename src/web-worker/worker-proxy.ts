@@ -170,7 +170,11 @@ const constructValue = (
     }
 
     if (serializedType === SerializedType.Object) {
-      return {};
+      const obj: { [key: string]: any } = {};
+      for (const key in serializedValue) {
+        obj[key] = constructValue(target, memberPath, serializedValue[key]);
+      }
+      return obj;
     }
 
     if (serializedType === SerializedType.Array) {

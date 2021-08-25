@@ -1,7 +1,7 @@
 import { InterfaceInfo, InterfaceType, MemberTypeInfo } from '../types';
 import { toLower } from '../utils';
 
-export const readMainInterfaces = (doc: Document) => {
+export const readMainInterfaces = (win: Window, doc: Document) => {
   const docImpl = doc.implementation.createHTMLDocument();
   const documentElement = docImpl.documentElement;
   const elmImpl = docImpl.createElement('i');
@@ -13,6 +13,7 @@ export const readMainInterfaces = (doc: Document) => {
     [InterfaceType.HTMLCollection, documentElement.children],
     [InterfaceType.Element, elmImpl],
     [InterfaceType.TextNode, textNodeImpl],
+    [InterfaceType.History, win.history],
   ];
 
   return implementations.map(([interfaceType, impl]) => {
