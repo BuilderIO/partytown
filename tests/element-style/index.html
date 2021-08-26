@@ -4,8 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Partytown Test Page" />
-
-    <title>Partytown Tests 🎉</title>
+    <title>Element Style</title>
     <link
       rel="icon"
       id="favicon"
@@ -25,38 +24,53 @@
         margin: 0;
         padding: 0;
       }
-      ul a {
+      a {
         display: block;
-        padding: 10px 8px;
+        padding: 16px 8px;
       }
-      ul a:link,
-      ul a:visited {
+      a:link,
+      a:visited {
         text-decoration: none;
         color: blue;
       }
-      ul a:hover {
+      a:hover {
         background-color: #eee;
       }
     </style>
   </head>
   <body>
-    <h1>Partytown Tests 🎉</h1>
+    <h1>Element Style</h1>
     <ul>
-      <li><a href="/document/">Document</a></li>
-      <li><a href="/element-class/">Element Class</a></li>
-      <li><a href="/element-method/">Element Method</a></li>
-      <li><a href="/element-style/">Element Style</a></li>
-      <li><a href="/gtm/">Google Tag Manager (GTM)</a></li>
-      <li><a href="/history/">History</a></li>
-      <li><a href="/image/">Image</a></li>
-      <li><a href="/storage/">Storage</a></li>
+      <li>
+        <strong id="test0-label">style.color set/get</strong>
+        <code id="test0"></code>
+        <script type="text/partytown">
+          (function () {
+            const label = document.getElementById('test0-label');
+            label.style.color = 'red';
+
+            const elm = document.getElementById('test0');
+            elm.textContent = label.style.color;
+          })();
+        </script>
+      </li>
     </ul>
+
+    <script type="text/partytown">
+      document.body.classList.add('completed');
+    </script>
+
     <hr />
-    <ul>
-      <li><a href="https://github.com/BuilderIO/partytown#readme">Readme</a></li>
-    </ul>
-    <p style="font-size: 12px; padding: 0 5px">
-      Made with ❤️ by the <a href="https://github.com/BuilderIO/">Builder.io Team</a>
-    </p>
+    <p><a href="/">All Tests</a></p>
+
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+      };
+    </script>
+    <script src="/~partytown/partytown.debug.js" async defer></script>
   </body>
 </html>

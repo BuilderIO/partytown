@@ -57,6 +57,7 @@ const isValidMemberName = (memberName: string) => {
 };
 
 const InterfaceWhitelist: { [key: string]: InterfaceType } = {
+  CSSStyleDeclaration: InterfaceType.CSSStyleDeclaration,
   DOMStringMap: InterfaceType.DOMStringMap,
   DOMTokenList: InterfaceType.DOMTokenList,
   HTMLCollection: InterfaceType.HTMLCollection,

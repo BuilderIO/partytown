@@ -22,7 +22,7 @@ export const mainAccessHandler = async (accessReq: MainAccessRequest) => {
       } else if (accessType === AccessType.CallMethod) {
         await callInstanceMethod(accessRsp, instance, memberPath, data, extraInstructions);
       } else if (accessType === AccessType.Set) {
-        instance[memberPath[memberPath.length - 1]] = deserializeValue(data);
+        setInstanceMember(instance, memberPath, deserializeValue(data));
       }
     } else {
       accessRsp.$error$ = `Instance ${instanceId} not found`;
@@ -39,12 +39,12 @@ const getInstanceMember = async (
   instance: any,
   memberPath: string[]
 ) => {
-  let memberName = memberPath[0];
-  let getterValue: any = instance[memberName];
-
-  for (let i = 1; i < memberPath.length; i++) {
-    memberName = memberPath[i];
-    getterValue = getterValue[memberName];
+  let memberPathLength = memberPath.length;
+  let getterValue: any = undefined;
+  if (memberPathLength === 1) {
+    getterValue = instance[memberPath[0]];
+  } else if (memberPathLength === 2) {
+    getterValue = instance[memberPath[0]][memberPath[1]];
   }
 
   if (isPromise(getterValue)) {
@@ -52,6 +52,15 @@ const getInstanceMember = async (
     accessRsp.$isPromise$ = true;
   }
   accessRsp.$rtnValue$ = serializeValue(getterValue, new Set());
+};
+
+const setInstanceMember = (instance: any, memberPath: string[], setterValue: any) => {
+  const memberPathLength = memberPath.length;
+  if (memberPathLength === 1) {
+    instance[memberPath[0]] = setterValue;
+  } else if (memberPathLength === 2) {
+    instance[memberPath[0]][memberPath[1]] = setterValue;
+  }
 };
 
 const callInstanceMethod = async (

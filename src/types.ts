@@ -61,6 +61,7 @@ export const enum InterfaceType {
   History = 8,
   Document = 9, // same as NodeType
   Storage = 10,
+  CSSStyleDeclaration = 11,
 }
 
 export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {}
