@@ -1,7 +1,7 @@
 import { AccessType, ExtraInstruction, MainAccessRequest, MainAccessResponse } from '../types';
 import { deserializeValue, serializeValue } from './main-serialization';
 import { getInstance, getInstanceId } from './main-instances';
-import { isPromise, PT_SCRIPT_INIT_TYPE } from '../utils';
+import { isPromise, len, PT_SCRIPT_INIT_TYPE } from '../utils';
 
 export const mainAccessHandler = async (accessReq: MainAccessRequest) => {
   const accessType = accessReq.$accessType$;
@@ -39,7 +39,7 @@ const getInstanceMember = async (
   instance: any,
   memberPath: string[]
 ) => {
-  let memberPathLength = memberPath.length;
+  let memberPathLength = len(memberPath);
   let getterValue: any = undefined;
   if (memberPathLength === 1) {
     getterValue = instance[memberPath[0]];
@@ -55,7 +55,7 @@ const getInstanceMember = async (
 };
 
 const setInstanceMember = (instance: any, memberPath: string[], setterValue: any) => {
-  const memberPathLength = memberPath.length;
+  const memberPathLength = len(memberPath);
   if (memberPathLength === 1) {
     instance[memberPath[0]] = setterValue;
   } else if (memberPathLength === 2) {
@@ -71,7 +71,7 @@ const callInstanceMethod = async (
   extraInstructions?: ExtraInstruction[]
 ) => {
   const args = deserializeValue(serializedArgs);
-  const memberPathLength = memberPath.length;
+  const memberPathLength = len(memberPath);
   let rtnValue: any = undefined;
 
   if (memberPathLength === 1) {

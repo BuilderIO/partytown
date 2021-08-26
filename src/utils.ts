@@ -1,4 +1,5 @@
-import { webWorkerCtx } from './web-worker/worker-constants';
+import { InstanceId } from './types';
+import { InstanceIdKey, webWorkerCtx } from './web-worker/worker-constants';
 
 export const debug = (globalThis as any).partytownDebug;
 
@@ -34,13 +35,39 @@ export const logWorker = (msg: string) => {
   }
 };
 
-export const logValue = (v: any) => {
+export const logTargetProp = (target: any, memberPath: string[]) => {
+  let n = '';
+  if (target) {
+    if (target.nodeType === 1) {
+      n = toLower(target.nodeName) + '.';
+    } else if (target.nodeType === 3) {
+      n = 'node.';
+    } else if (target[InstanceIdKey] === InstanceId.document) {
+      n = 'document.';
+    } else if (target[InstanceIdKey] === InstanceId.history) {
+      n = 'history.';
+    } else if (target[InstanceIdKey] === InstanceId.localStorage) {
+      n = 'localStorage.';
+    } else if (target[InstanceIdKey] === InstanceId.sessionStorage) {
+      n = 'sessionStorage.';
+    }
+  }
+  return (n += memberPath.join('.'));
+};
+
+/**
+ * Helper just to have pretty console logs while debugging
+ */
+export const logValue = (v: any): string => {
   const type = typeof v;
   if (type === 'boolean' || type === 'number' || type === 'string' || v == null) {
     return JSON.stringify(v);
   }
   if (isPromise(v)) {
     return `Promise`;
+  }
+  if (Array.isArray(v)) {
+    return `[${v.map(logValue).join(', ')}]`;
   }
   if (type === 'object') {
     if ((v as Node).nodeName) {
@@ -49,14 +76,25 @@ export const logValue = (v: any) => {
       }
       return v.nodeName;
     }
+    if (v[Symbol.iterator]) {
+      return `[${Array.from(v).map(logValue).join(', ')}]`;
+    }
     if ('value' in v) {
       return JSON.stringify(v.value);
     }
     return JSON.stringify(v);
   }
+  if (type === 'function') {
+    return `ƒ() ${v.name || ''}`.trim();
+  }
 
-  return '¯\\_(ツ)_/¯';
+  return `¯\\_(ツ)_/¯ ${String(v)}`.trim();
 };
+
+export const len = (obj: { length: number }) => obj.length;
+
+export const getConstructorName = (obj: { constructor?: { name?: string } } | undefined | null) =>
+  (obj && obj.constructor && obj.constructor.name) || '';
 
 export const PT_PROXY_URL = `proxytown`;
 export const PT_INITIALIZED_EVENT = `ptinit`;

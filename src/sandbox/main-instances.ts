@@ -1,4 +1,5 @@
 import { InstanceId } from '../types';
+import { len } from '../utils';
 
 let instanceIds = InstanceId.body + 1;
 
@@ -13,8 +14,9 @@ export const setInstanceId = (instance: InstanceType | null | undefined, instanc
     while (true) {
       let disconnectedNodes = instances.filter((i) => i[1].nodeType && !i[1].isConnected);
       let i: number;
-      if (disconnectedNodes.length > 99) {
-        for (i = 0; i < instances.length; i++) {
+      let l: number;
+      if (len(disconnectedNodes) > 99) {
+        for (i = 0, l = len(instances); i < l; i++) {
           if (!instances[i][1].isConnected) {
             instances.slice(i, 1);
             break;

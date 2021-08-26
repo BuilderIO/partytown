@@ -1,6 +1,6 @@
 import { InitWebWorkerData, InstanceId, InterfaceType, NodeName } from '../types';
 import { initWebWorkerGlobal } from './worker-global';
-import { logWorker } from '../utils';
+import { len, logWorker } from '../utils';
 import { webWorkerCtx } from './worker-constants';
 import { WorkerDocument } from './worker-document';
 import { WorkerHistory } from './worker-history';
@@ -10,7 +10,7 @@ import { WorkerStorage } from './worker-storage';
 export const initWebWorker = (self: Worker, initWebWorkerData: InitWebWorkerData) => {
   Object.assign(webWorkerCtx, initWebWorkerData);
 
-  logWorker(`Loaded web worker, scripts: ${webWorkerCtx.$initializeScripts$.length}`);
+  logWorker(`Loaded web worker, scripts: ${len(webWorkerCtx.$initializeScripts$)}`);
 
   webWorkerCtx.$importScripts$ = importScripts.bind(self);
   (self as any).importScripts = null;
@@ -22,7 +22,7 @@ export const initWebWorker = (self: Worker, initWebWorkerData: InitWebWorkerData
   webWorkerCtx.$document$ = new WorkerDocument({
     $instanceId$: InstanceId.document,
     $interfaceType$: InterfaceType.Document,
-    $nodeName$: NodeName.Document,
+    $data$: NodeName.Document,
   });
 
   initWebWorkerGlobal(self);

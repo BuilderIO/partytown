@@ -1,5 +1,6 @@
 import { initNextScriptsInWebWorker } from './worker-script';
 import { initWebWorker } from './init-worker';
+import { len } from '../utils';
 import { webWorkerCtx } from './worker-constants';
 import {
   SandboxMessageToWebWorker,
@@ -24,7 +25,7 @@ self.onmessage = (ev: MessageEvent<WebWorkerResponseFromSandboxMessage>) => {
   self.postMessage([
     WebWorkerMessageToSandbox.ScriptInitialized,
     initializedId,
-    webWorkerCtx.$initializeScripts$.length,
+    len(webWorkerCtx.$initializeScripts$),
   ]);
 };
 

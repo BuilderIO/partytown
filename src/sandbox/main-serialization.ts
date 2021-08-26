@@ -1,16 +1,17 @@
+import { getConstructorName } from '../utils';
 import { getInstance, getInstanceId } from './main-instances';
 import {
   InterfaceType,
-  SerializedHTMLCollection,
   SerializedInstance,
   SerializedNode,
+  SerializedNodeList,
   SerializedType,
   SerializedValueTransfer,
 } from '../types';
 
 export const serializeValue = (value: any, added: Set<any>): SerializedValueTransfer => {
   const type = typeof value;
-  if (type === 'string' || type === 'number' || type === 'boolean' || value === null) {
+  if (type === 'string' || type === 'number' || type === 'boolean' || value == null) {
     return [SerializedType.Primitive, value];
   }
 
@@ -27,18 +28,11 @@ export const serializeValue = (value: any, added: Set<any>): SerializedValueTran
   }
 
   if (type === 'object') {
-    if (value === window.parent) {
-      return [SerializedType.Window];
-    }
-    if (value === window.parent!.document) {
-      return [SerializedType.Document];
-    }
-
     if (value.nodeType) {
       const nodeInstance: SerializedNode = {
         $interfaceType$: value.nodeType,
         $instanceId$: getInstanceId(value),
-        $nodeName$: value.nodeName,
+        $data$: value.nodeName,
       };
       return [SerializedType.Instance, nodeInstance];
     }
@@ -46,27 +40,19 @@ export const serializeValue = (value: any, added: Set<any>): SerializedValueTran
     if (!added.has(value)) {
       added.add(value);
 
-      if (value.constructor) {
-        const cstrName = value.constructor.name;
-        if (cstrName === 'HTMLCollection') {
-          const htmlCollection: SerializedHTMLCollection = {
-            $interfaceType$: InterfaceType.HTMLCollection,
-            $data$: Array.from(value).map((v) => serializeValue(v, added)[1]),
-          };
-          const htmlCollectionTransfer: SerializedValueTransfer = [
-            SerializedType.Instance,
-            htmlCollection,
-          ];
-          return htmlCollectionTransfer;
-        }
+      if (isNodeList(getConstructorName(value))) {
+        const nodeList: SerializedNodeList = {
+          $interfaceType$: InterfaceType.NodeList,
+          $data$: Array.from(value).map((v) => serializeValue(v, added)[1]),
+        };
+        return [SerializedType.Instance, nodeList];
       }
 
       const obj: { [key: string]: any } = {};
-      const objTransfer: SerializedValueTransfer = [SerializedType.Object, obj];
       for (const k in value) {
         obj[k] = serializeValue(value[k], added);
       }
-      return objTransfer;
+      return [SerializedType.Object, obj];
     }
 
     return [SerializedType.Object, {}];
@@ -74,6 +60,8 @@ export const serializeValue = (value: any, added: Set<any>): SerializedValueTran
 
   return [];
 };
+
+const isNodeList = (cstrName: string) => cstrName === 'HTMLCollection' || cstrName === 'NodeList';
 
 export const deserializeValue = (serializedValue: any): any => {
   const type = typeof serializedValue;

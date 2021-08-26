@@ -9,8 +9,8 @@ import {
   SerializedValueTransfer,
 } from '../types';
 import { constructInstance } from './worker-implementations';
+import { debug, len, logTargetProp, logValue, logWorker, PT_PROXY_URL } from '../utils';
 import { InstanceIdKey, ProxyKey, webWorkerCtx } from './worker-constants';
-import { debug, logValue, logWorker, PT_PROXY_URL } from '../utils';
 
 const syncRequestToServiceWorker = (
   $accessType$: AccessType,
@@ -54,14 +54,14 @@ const syncRequestToServiceWorker = (
 export const getter = (target: any, memberPath: string[]) => {
   const rtn = syncRequestToServiceWorker(AccessType.Get, target, memberPath);
   if (debug && webWorkerCtx.$config$.logGetters) {
-    logWorker(`Get ${memberPath.join('.')}, returned: ${logValue(rtn)}`);
+    logWorker(`Get ${logTargetProp(target, memberPath)}, returned: ${logValue(rtn)}`);
   }
   return rtn;
 };
 
 export const setter = (target: any, memberPath: string[], value: any) => {
   if (debug && webWorkerCtx.$config$.logSetters) {
-    logWorker(`Set ${memberPath.join('.')}, value: ${logValue(value)}`);
+    logWorker(`Set ${logTargetProp(target, memberPath)}, value: ${logValue(value)}`);
   }
   return syncRequestToServiceWorker(AccessType.Set, target, memberPath, value);
 };
@@ -82,7 +82,9 @@ export const callMethod = (
 
   if (debug && webWorkerCtx.$config$.logCalls) {
     logWorker(
-      `Call ${memberPath.join('.')}(${args.map(logValue).join(', ')}), returned: ${logValue(rtn)}`
+      `Call ${logTargetProp(target, memberPath)}(${args
+        .map(logValue)
+        .join(', ')}), returned: ${logValue(rtn)}`
     );
   }
 
@@ -93,7 +95,7 @@ const createComplexMember = (interfaceType: InterfaceType, target: any, memberPa
   const interfaceInfo = webWorkerCtx.$interfaces$.find((i) => i[0] === interfaceType);
   if (interfaceInfo) {
     const memberTypeInfo = interfaceInfo[1];
-    const memberInfo = memberTypeInfo[memberPath[memberPath.length - 1]];
+    const memberInfo = memberTypeInfo[memberPath[len(memberPath) - 1]];
     if (memberInfo === InterfaceType.Method) {
       return (...args: any[]) => callMethod(target, memberPath, args);
     } else if (memberInfo > 0) {

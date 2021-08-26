@@ -291,7 +291,6 @@ function managlePropsPlugin() {
     $location$: '',
     $memberPath$: '',
     $msgId$: '',
-    $nodeName$: '',
     $onerror$: '',
     $onload$: '',
     $rtnValue$: '',

@@ -47,40 +47,107 @@
         <script type="text/partytown">
           (function () {
             const elm = document.querySelector('h1');
-            document.getElementById('test0').innerHTML = elm.textContent;
+            document.getElementById('test0').innerHTML = elm.tagName;
           })();
         </script>
       </li>
 
       <li>
-        <strong>querySelectorAll('h1')[0]</strong>
+        <strong>querySelectorAll('h1,ul').length</strong>
         <code id="test1"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.querySelectorAll('h1')[0];
-            document.getElementById('test1').innerHTML = elm.textContent;
+            const elms = document.querySelectorAll('h1,ul');
+            document.getElementById('test1').innerHTML = elms.length;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>querySelectorAll('h1,ul').forEach()</strong>
+        <code id="test2"></code>
+        <script type="text/partytown">
+          (function () {
+            const elms = document.querySelectorAll('h1,ul');
+            let tags = [];
+            elms.forEach((elm) => {
+              tags.push(elm.tagName);
+            });
+            document.getElementById('test2').innerHTML = tags.join(',');
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>querySelectorAll('h1,ul')[0]</strong>
+        <code id="test3"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.querySelectorAll('h1,ul')[0];
+            document.getElementById('test3').innerHTML = elm.nodeName;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>querySelectorAll('h1,ul').item(1)</strong>
+        <code id="test4"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.querySelectorAll('h1,ul').item(1);
+            document.getElementById('test4').innerHTML = elm.nodeName;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>querySelectorAll('h1,ul') iterable</strong>
+        <code id="test5"></code>
+        <script>
+          (function () {
+            const elms = document.querySelectorAll('h1,ul');
+            let tags = [];
+            for (const elm of elms) {
+              tags.push(elm.tagName);
+            }
+            document.getElementById('test5').innerHTML = tags.join(',');
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>Array.from(querySelectorAll('h1,ul'))</strong>
+        <code id="test6"></code>
+        <script>
+          (function () {
+            const elms = Array.from(document.querySelectorAll('h1,ul'));
+            let tags = [];
+            for (const elm of elms) {
+              tags.push(elm.tagName);
+            }
+            document.getElementById('test6').innerHTML = tags.join(',');
           })();
         </script>
       </li>
 
       <li>
         <strong>getAttribute()</strong>
-        <code id="test2"></code>
+        <code id="test7"></code>
         <script type="text/partytown">
           (function () {
             const attrValue = document.body.getAttribute('mph');
-            document.getElementById('test2').innerHTML = attrValue;
+            document.getElementById('test7').innerHTML = attrValue;
           })();
         </script>
       </li>
 
       <li>
         <strong>setAttribute()</strong>
-        <code id="test3"></code>
+        <code id="test8"></code>
         <script type="text/partytown">
           (function () {
             document.body.setAttribute('year', '1985');
-            document.getElementById('test3').innerHTML = document.body.getAttribute('year');
+            document.getElementById('test8').innerHTML = document.body.getAttribute('year');
           })();
         </script>
       </li>
@@ -95,6 +162,14 @@
     <hr />
     <p><a href="/">All Tests</a></p>
 
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+      };
+    </script>
     <script src="/~partytown/partytown.debug.js" async defer></script>
   </body>
 </html>

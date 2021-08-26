@@ -57,7 +57,7 @@ export const enum InterfaceType {
   NamedNodeMap = 4,
   DOMStringMap = 5,
   DOMTokenList = 6,
-  HTMLCollection = 7,
+  NodeList = 7,
   History = 8,
   Document = 9, // same as NodeType
   Storage = 10,
@@ -142,10 +142,11 @@ export interface SerializedInstance {
 }
 
 export interface SerializedNode extends SerializedInstance {
-  $nodeName$: string;
+  /** Node Name */
+  $data$: string;
 }
 
-export interface SerializedHTMLCollection extends SerializedInstance {
+export interface SerializedNodeList extends SerializedInstance {
   $data$: SerializedNode[];
 }
 

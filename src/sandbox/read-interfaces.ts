@@ -1,5 +1,5 @@
+import { getConstructorName, toLower } from '../utils';
 import { InterfaceInfo, InterfaceType, MemberTypeInfo } from '../types';
-import { toLower } from '../utils';
 
 export const readMainInterfaces = (win: Window, doc: Document) => {
   const docImpl = doc.implementation.createHTMLDocument();
@@ -10,7 +10,7 @@ export const readMainInterfaces = (win: Window, doc: Document) => {
     [InterfaceType.DOMTokenList, documentElement.classList],
     [InterfaceType.Element, docImpl.createElement('i')],
     [InterfaceType.History, win.history],
-    [InterfaceType.HTMLCollection, documentElement.children],
+    [InterfaceType.NodeList, documentElement.childNodes],
     [InterfaceType.Storage, win.localStorage],
     [InterfaceType.TextNode, docImpl.createTextNode('')],
   ];
@@ -34,9 +34,9 @@ const readImplementationMembers = (impl: any, members: MemberTypeInfo) => {
       type = typeof value;
       if (type === 'function') {
         members[memberName] = InterfaceType.Method;
-      } else if (type === 'object' && value != null && value.constructor) {
-        interfaceType = InterfaceWhitelist[value.constructor.name];
-        if (interfaceType > 0) {
+      } else if (type === 'object') {
+        interfaceType = InterfaceWhitelist[getConstructorName(value)];
+        if (interfaceType) {
           members[memberName] = interfaceType;
         }
       }
@@ -60,6 +60,6 @@ const InterfaceWhitelist: { [key: string]: InterfaceType } = {
   CSSStyleDeclaration: InterfaceType.CSSStyleDeclaration,
   DOMStringMap: InterfaceType.DOMStringMap,
   DOMTokenList: InterfaceType.DOMTokenList,
-  HTMLCollection: InterfaceType.HTMLCollection,
   NamedNodeMap: InterfaceType.NamedNodeMap,
+  NodeList: InterfaceType.NodeList,
 };

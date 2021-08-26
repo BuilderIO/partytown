@@ -98,7 +98,7 @@ const getElementProp = (
     privateValues[tagName] = new WorkerElement({
       $interfaceType$: InterfaceType.Element,
       $instanceId$: instanceId,
-      $nodeName$: tagName,
+      $data$: tagName,
     });
   }
   return privateValues[tagName];

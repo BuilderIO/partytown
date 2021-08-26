@@ -1,4 +1,4 @@
-import { callMethod, proxy } from './worker-proxy';
+import { callMethod, getter, proxy, setter } from './worker-proxy';
 import { ExtraInstruction, InterfaceType, SerializedNode } from '../types';
 import { imageRequest, importScriptUrl } from './worker-requests';
 import { InstanceIdKey, NodeNameKey, NodeTypeKey, PrivateValues } from './worker-constants';
@@ -15,7 +15,7 @@ export class WorkerNode {
   constructor(nodeCstr: SerializedNode) {
     this[InstanceIdKey] = nodeCstr.$instanceId$!;
     this[NodeTypeKey] = nodeCstr.$interfaceType$;
-    this[NodeNameKey] = nodeCstr.$nodeName$;
+    this[NodeNameKey] = nodeCstr.$data$;
     this[PrivateValues] = {};
     return proxy(nodeCstr.$interfaceType$, this, []);
   }
@@ -36,7 +36,7 @@ export class WorkerNode {
     return {
       $interfaceType$: this[NodeTypeKey],
       $instanceId$: this[InstanceIdKey],
-      $nodeName$: this[NodeNameKey],
+      $data$: this[NodeNameKey],
     };
   }
 }
@@ -170,6 +170,14 @@ export class WorkerScriptElement extends WorkerElement {
     const instanceId = this[InstanceIdKey];
     importScriptUrl(instanceId, url);
   }
+  get type() {
+    return getter(this, ['type']);
+  }
+  set type(type: string) {
+    if (type !== 'text/javascript') {
+      setter(this, ['type'], type);
+    }
+  }
 }
 
 const getUrl = (elm: WorkerElement) =>
@@ -185,7 +193,7 @@ export const createScript = ($instanceId$: number) =>
   new WorkerScriptElement({
     $interfaceType$: InterfaceType.Element,
     $instanceId$,
-    $nodeName$: 'SCRIPT',
+    $data$: 'SCRIPT',
   });
 
 export const createElement = (

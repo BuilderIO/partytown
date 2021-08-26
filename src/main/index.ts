@@ -1,4 +1,4 @@
-import { debug, PT_INITIALIZED_EVENT } from '../utils';
+import { debug, len, PT_INITIALIZED_EVENT } from '../utils';
 import SandboxHash from '@sandbox-hash';
 
 (function (
@@ -25,7 +25,7 @@ import SandboxHash from '@sandbox-hash';
     }
 
     sandbox = 1 as any;
-    for (i = 0; i < scripts!.length; i++) {
+    for (i = 0; i < len(scripts!); i++) {
       script = document.createElement('script');
       script.innerHTML = scripts![i].innerHTML;
       document.body.appendChild(script);
@@ -33,7 +33,7 @@ import SandboxHash from '@sandbox-hash';
   }
 
   scripts = document.querySelectorAll('script[type="text/partytown"]');
-  if (scripts.length) {
+  if (len(scripts)) {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register(scope + (debug ? 'partytown-sw.debug.js' : 'partytown-sw.js'), {
