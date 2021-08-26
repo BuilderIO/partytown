@@ -1,6 +1,7 @@
 import type { WorkerDocument } from './web-worker/worker-document';
 import type { WorkerHistory } from './web-worker/worker-history';
 import type { WorkerLocation } from './web-worker/worker-location';
+import type { WorkerStorage } from './web-worker/worker-storage';
 
 export type CreateWorker = (workerName: string) => Worker;
 
@@ -37,8 +38,10 @@ export interface InitWebWorkerContext {
   $document$?: WorkerDocument;
   $history$?: WorkerHistory;
   $importScripts$?: (...urls: string[]) => void;
+  $localStorage$?: WorkerStorage;
   $location$?: WorkerLocation;
   $msgId$: number;
+  $sessionStorage$?: WorkerStorage;
 }
 
 export type InterfaceInfo = [InterfaceType, MemberTypeInfo];
@@ -48,7 +51,7 @@ export interface MemberTypeInfo {
 }
 
 export const enum InterfaceType {
-  Element = 1, // same as NodeType,
+  Element = 1, // same as NodeType
   Method = 2,
   TextNode = 3, // same as NodeType
   NamedNodeMap = 4,
@@ -56,7 +59,8 @@ export const enum InterfaceType {
   DOMTokenList = 6,
   HTMLCollection = 7,
   History = 8,
-  Document = 9, // same as NodeType,
+  Document = 9, // same as NodeType
+  Storage = 10,
 }
 
 export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {}
@@ -79,8 +83,10 @@ export const enum AccessType {
 
 export const enum InstanceId {
   history = 0,
-  window = 1,
-  document = 2,
+  localStorage = 1,
+  sessionStorage = 2,
+  window = 3,
+  document = 4,
 }
 
 export interface MainAccessRequest {

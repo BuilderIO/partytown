@@ -73,6 +73,8 @@ export const initSandbox = async (
   };
 
   setInstanceId(mainWindow.history, InstanceId.history);
+  setInstanceId(mainWindow.localStorage, InstanceId.localStorage);
+  setInstanceId(mainWindow.sessionStorage, InstanceId.sessionStorage);
   setInstanceId(mainWindow, InstanceId.window);
   setInstanceId(mainDocument, InstanceId.document);
 

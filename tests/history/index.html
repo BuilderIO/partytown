@@ -49,10 +49,10 @@
             history.pushState(88, '');
             const elm = document.getElementById('test0');
             elm.textContent = history.state;
-            elm.className = 'test0';
           })();
         </script>
       </li>
+
       <li>
         <strong>history.pushState({...}, '')</strong>
         <code id="test1"></code>
@@ -61,10 +61,10 @@
             history.pushState({ mph: 88 }, '');
             const elm = document.getElementById('test1');
             elm.textContent = JSON.stringify(history.state);
-            elm.className = 'test1';
           })();
         </script>
       </li>
+
       <li>
         <strong>history.pushState({ year: 1955 }, '', '/history/1.21gw')</strong>
         <code id="test2"></code>
@@ -73,10 +73,15 @@
             history.pushState({ year: 1955 }, '', '/history/1.21gw');
             const elm = document.getElementById('test2');
             elm.textContent = JSON.stringify(history.state);
-            elm.className = 'test2';
           })();
         </script>
       </li>
+
+      <script type="text/partytown">
+        (function () {
+          document.body.classList.add('completed');
+        })();
+      </script>
     </ul>
 
     <hr />
@@ -87,7 +92,7 @@
         logCalls: true,
         logGetters: true,
         logSetters: true,
-        logStackTraces: true,
+        logStackTraces: false,
       };
     </script>
     <script src="/~partytown/partytown.debug.js" async defer></script>

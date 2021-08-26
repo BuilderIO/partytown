@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Partytown Test Page" />
-    <title>Element Method</title>
+    <title>Storage</title>
     <link
       rel="icon"
       id="favicon"
@@ -37,50 +37,80 @@
         background-color: #eee;
       }
     </style>
+    <script>
+      localStorage.clear();
+      sessionStorage.clear();
+    </script>
   </head>
-  <body mph="88">
-    <h1>Element Method</h1>
+  <body>
+    <h1>Storage</h1>
     <ul>
       <li>
-        <strong>querySelector('h1')</strong>
+        <strong>localStorage set/get</strong>
         <code id="test0"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.querySelector('h1');
-            document.getElementById('test0').innerHTML = elm.textContent;
+            localStorage.setItem('mph', '88');
+            const elm = document.getElementById('test0');
+            elm.textContent = localStorage.getItem('mph');
           })();
         </script>
       </li>
 
       <li>
-        <strong>querySelectorAll('h1')[0]</strong>
+        <strong>localStorage length</strong>
         <code id="test1"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.querySelectorAll('h1')[0];
-            document.getElementById('test1').innerHTML = elm.textContent;
+            const elm = document.getElementById('test1');
+            elm.textContent = localStorage.length;
           })();
         </script>
       </li>
 
       <li>
-        <strong>getAttribute()</strong>
+        <strong>localStorage clear</strong>
         <code id="test2"></code>
         <script type="text/partytown">
           (function () {
-            const attrValue = document.body.getAttribute('mph');
-            document.getElementById('test2').innerHTML = attrValue;
+            localStorage.clear();
+            const elm = document.getElementById('test2');
+            elm.textContent = localStorage.length;
           })();
         </script>
       </li>
 
       <li>
-        <strong>setAttribute()</strong>
+        <strong>sessionStorage set/get</strong>
         <code id="test3"></code>
         <script type="text/partytown">
           (function () {
-            document.body.setAttribute('year', '1985');
-            document.getElementById('test3').innerHTML = document.body.getAttribute('year');
+            sessionStorage.setItem('mph', '88');
+            const elm = document.getElementById('test3');
+            elm.textContent = sessionStorage.getItem('mph');
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>sessionStorage length</strong>
+        <code id="test4"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('test4');
+            elm.textContent = sessionStorage.length;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>sessionStorage clear</strong>
+        <code id="test5"></code>
+        <script type="text/partytown">
+          (function () {
+            sessionStorage.clear();
+            const elm = document.getElementById('test5');
+            elm.textContent = sessionStorage.length;
           })();
         </script>
       </li>
@@ -95,6 +125,14 @@
     <hr />
     <p><a href="/">All Tests</a></p>
 
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+      };
+    </script>
     <script src="/~partytown/partytown.debug.js" async defer></script>
   </body>
 </html>

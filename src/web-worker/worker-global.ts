@@ -16,11 +16,13 @@ export const initWebWorkerGlobal = (self: any) => {
         }
       },
     ],
+    ['localStorage', webWorkerCtx.$localStorage$],
     [
       'location',
       webWorkerCtx.$location$,
       (href: any) => (typeof href === 'string' ? (webWorkerCtx.$location$!.href = href) : 0),
     ],
+    ['sessionStorage', webWorkerCtx.$sessionStorage$],
   ];
 
   globalProps.forEach((globalProp) =>

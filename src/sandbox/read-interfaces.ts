@@ -4,16 +4,15 @@ import { toLower } from '../utils';
 export const readMainInterfaces = (win: Window, doc: Document) => {
   const docImpl = doc.implementation.createHTMLDocument();
   const documentElement = docImpl.documentElement;
-  const elmImpl = docImpl.createElement('i');
-  const textNodeImpl = docImpl.createTextNode('');
 
   const implementations: [InterfaceType, any][] = [
-    [InterfaceType.DOMTokenList, documentElement.classList],
     [InterfaceType.Document, docImpl],
-    [InterfaceType.HTMLCollection, documentElement.children],
-    [InterfaceType.Element, elmImpl],
-    [InterfaceType.TextNode, textNodeImpl],
+    [InterfaceType.DOMTokenList, documentElement.classList],
+    [InterfaceType.Element, docImpl.createElement('i')],
     [InterfaceType.History, win.history],
+    [InterfaceType.HTMLCollection, documentElement.children],
+    [InterfaceType.Storage, win.localStorage],
+    [InterfaceType.TextNode, docImpl.createTextNode('')],
   ];
 
   return implementations.map(([interfaceType, impl]) => {
