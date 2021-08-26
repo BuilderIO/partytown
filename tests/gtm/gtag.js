@@ -343,7 +343,7 @@ console.warn('loaded gtag');
         ia = ma.a;
         break a;
       } catch (a) {
-        console.error('hack', a);
+        console.error(a);
       }
       ia = !1;
     }
@@ -472,7 +472,7 @@ console.warn('loaded gtag');
           try {
             c();
           } catch (d) {
-            console.error('hack', d);
+            console.error(d);
           }
         }
       };
@@ -516,7 +516,7 @@ console.warn('loaded gtag');
               createScriptURL: ra,
             });
           } catch (c) {
-            console.error('hack', c);
+            console.error(c);
             qa.console && qa.console.error(c.message);
           }
           eb = a;
@@ -737,7 +737,7 @@ console.warn('loaded gtag');
         if (a.constructor && !Yb(a, 'constructor') && !Yb(a.constructor.prototype, 'isPrototypeOf'))
           return !1;
       } catch (c) {
-        console.error('hack', c);
+        console.error(c);
         return !1;
       }
       for (var b in a);
@@ -856,7 +856,7 @@ console.warn('loaded gtag');
               d = Nc(k, b);
               Mc && (d = Mc.Yh(d, k));
             } catch (y) {
-              console.error('hack', y);
+              console.error(y);
               b.lg && b.lg(y, Number(f)), (d = !1);
             }
             c[f] = !1;
@@ -899,7 +899,7 @@ console.warn('loaded gtag');
       try {
         return Kc(Pc(a, b, c));
       } catch (d) {
-        console.error('hack', d);
+        console.error(d);
         JSON.stringify(a);
       }
       return 2;
@@ -1400,7 +1400,7 @@ console.warn('loaded gtag');
         try {
           c.ii({ Xh: a });
         } catch (d) {
-          console.error('hack', d);
+          console.error(d);
         }
       }
     }
@@ -1509,7 +1509,7 @@ console.warn('loaded gtag');
         try {
           return a.closest(b);
         } catch (e) {
-          console.error('hack', e);
+          console.error(e);
           return null;
         }
       var c =
@@ -1524,7 +1524,7 @@ console.warn('loaded gtag');
         try {
           if (c.call(d, b)) return d;
         } catch (e) {
-          console.error('hack', e);
+          console.error(e);
           break;
         }
         d = d.parentElement || d.parentNode;
@@ -1537,7 +1537,7 @@ console.warn('loaded gtag');
       var me = A.querySelectorAll(':root');
       me && 1 == me.length && me[0] == A.documentElement && (le = !0);
     } catch (a) {
-      console.error('hack', A);
+      console.error(A);
     }
   var ie = le;
   var ne,
@@ -1914,7 +1914,7 @@ console.warn('loaded gtag');
           c(a, b);
         })
         .catch(function (e) {
-          console.error('hack', e);
+          console.error(e);
           c([], []);
         });
     },
@@ -1934,11 +1934,11 @@ console.warn('loaded gtag');
               return m.btoa(d).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
             })
             .catch(function (e) {
-              console.error('hack', e);
+              console.error(e);
               return 'e2';
             });
         } catch (c) {
-          console.error('hack', c);
+          console.error(c);
           return Promise.resolve('e2');
         }
       else return Promise.resolve('e1');
@@ -2068,7 +2068,7 @@ console.warn('loaded gtag');
             });
           });
         } catch (c) {
-          console.error('hack', c);
+          console.error(c);
         }
     },
     hf = function (a) {
@@ -2801,7 +2801,7 @@ console.warn('loaded gtag');
           }
         }
       } catch (t) {
-        console.error('hack', t);
+        console.error(t);
       }
     };
   function lh(a, b, c, d) {
@@ -2913,7 +2913,7 @@ console.warn('loaded gtag');
           ('http:' !== f && 'https:' !== f) || mh(e, e.hostname);
         }
       } catch (h) {
-        console.error('hack', h);
+        console.error(h);
       }
     },
     Xg = function (a) {
@@ -2923,7 +2923,7 @@ console.warn('loaded gtag');
           mh(a, b);
         }
       } catch (c) {
-        console.error('hack', c);
+        console.error(c);
       }
     },
     ph = function (a, b, c, d) {
@@ -3467,7 +3467,7 @@ console.warn('loaded gtag');
             })
           : Promise.resolve({ vc: '', ic: [], oe: d });
       } catch (e) {
-        console.error('hack', e);
+        console.error(e);
       }
   };
   function yi(a) {
@@ -3638,7 +3638,7 @@ console.warn('loaded gtag');
       try {
         A.documentElement.doScroll('left'), Mi();
       } catch (a) {
-        console.error('hack', a);
+        console.error(a);
         m.setTimeout(Ni, 50);
       }
     }
@@ -3975,7 +3975,7 @@ console.warn('loaded gtag');
         try {
           Nc(x, c);
         } catch (E) {
-          console.error('hack', E);
+          console.error(E);
           C(E);
         }
       }
@@ -4054,7 +4054,7 @@ console.warn('loaded gtag');
             l.call(k, { Cg: n, qg: q ? q.priorityOverride || 0 : 0, hi: h });
           } else xk(d, b), f();
         } catch (t) {
-          console.error('hack', t);
+          console.error(t);
           f();
         }
       }
@@ -4245,7 +4245,7 @@ console.warn('loaded gtag');
         try {
           e = !(!c.frames || !c.frames[b]);
         } catch (k) {
-          console.error('hack', k);
+          console.error(k);
           e = !1;
         }
         if (e) return c;
@@ -4258,7 +4258,7 @@ console.warn('loaded gtag');
               break a;
             }
           } catch (k) {
-            console.error('hack', k);
+            console.error(k);
           }
           f = null;
         }
@@ -4324,7 +4324,7 @@ console.warn('loaded gtag');
     try {
       Zk(this, 'addEventListener', e);
     } catch (f) {
-      console.error('hack', f);
+      console.error(f);
       (b.tcString = 'tcunavailable'),
         (b.internalErrorState = 3),
         d && (clearTimeout(d), (d = 0)),
@@ -4408,7 +4408,7 @@ console.warn('loaded gtag');
             c = ('string' === typeof b.data ? JSON.parse(b.data) : b.data).__tcfapiReturn;
             a.F[c.callId](c.returnValue, c.success);
           } catch (d) {
-            console.error('hack', d);
+            console.error(d);
           }
         }),
         Pk(a.s, a.C));
@@ -4502,7 +4502,7 @@ console.warn('loaded gtag');
           }),
             jl(c);
         } catch (e) {
-          console.error('hack', e);
+          console.error(e);
           d && (clearTimeout(d), (d = null)), ml(a), nl(a);
         }
       }
@@ -4732,10 +4732,10 @@ console.warn('loaded gtag');
           }, Kl);
         }),
       ]).catch(function (e) {
-        console.error('hack', e);
+        console.error(e);
       });
     } catch (e) {
-      console.error('hack', e);
+      console.error(e);
       return;
     }
     return d;
@@ -4865,7 +4865,7 @@ console.warn('loaded gtag');
             kk(q, r, '1');
             f(d.U, b, d.C, t);
           } catch (v) {
-            console.error('hack', v);
+            console.error(v);
             kk(q, r, '4');
           }
         }
@@ -5153,7 +5153,7 @@ console.warn('loaded gtag');
       f || ((f = new RegExp(b, d)), Yn.set(e, f));
       return f.test(a);
     } catch (h) {
-      console.error('hack', h);
+      console.error(h);
       return !1;
     }
   }
@@ -5207,7 +5207,7 @@ console.warn('loaded gtag');
                   break a;
                 }
             } catch (n) {
-              console.error('hack', n);
+              console.error(n);
             }
           }
           f = !1;
@@ -5533,7 +5533,7 @@ console.warn('loaded gtag');
             try {
               d.call(Xf);
             } catch (y) {
-              console.error('hack', y);
+              console.error(y);
             }
           else if (Aa(d)) {
             var p = d;
@@ -5546,7 +5546,7 @@ console.warn('loaded gtag');
                 try {
                   t[r].apply(t, u);
                 } catch (y) {
-                  console.error('hack', y);
+                  console.error(y);
                 }
             }
           } else {
@@ -5582,7 +5582,7 @@ console.warn('loaded gtag');
     try {
       qo(m['dataLayer'], Df.M);
     } catch (c) {
-      console.error('hack', c);
+      console.error(c);
     }
     return b;
   }
@@ -5906,7 +5906,7 @@ console.warn('loaded gtag');
           try {
             return new URL(c).pathname;
           } catch (e) {
-            console.error('hack', e);
+            console.error(e);
             return;
           }
         var d = Ee(c);
@@ -6214,7 +6214,7 @@ console.warn('loaded gtag');
           }
         });
       } catch (b) {
-        console.error('hack', b);
+        console.error(b);
       }
       return a;
     }
@@ -6417,7 +6417,7 @@ console.warn('loaded gtag');
                   r = JSON.parse(v.substring(v.indexOf(':') + 1));
                   break a;
                 } catch (w) {
-                  console.error('hack', w);
+                  console.error(w);
                 }
               r = void 0;
             }
@@ -6464,7 +6464,7 @@ console.warn('loaded gtag');
     try {
       d = new qs(a, this.F, b);
     } catch (l) {
-      console.error('hack', l);
+      console.error(l);
       a.abort();
     }
     var e = jr(a);
@@ -6489,7 +6489,7 @@ console.warn('loaded gtag');
     }
   };
   As.prototype.add = function (a) {
-    console.warn('hack', 'add', a);
+    console.warn('add', a);
     a.fe ? this.aa(a) : this.C(a);
   };
   As.prototype.flush = function () {
@@ -6531,7 +6531,7 @@ console.warn('loaded gtag');
       }
     },
     xs = function (a, b, c) {
-      console.warn('hack', 'sendBeacon', a, b, c);
+      console.warn('sendBeacon', a, b, c);
       var d = a + '?' + b;
       c ? Bb.sendBeacon && Bb.sendBeacon(d, c) : Rb(d);
     },
@@ -6547,7 +6547,7 @@ console.warn('loaded gtag');
         var c = Fs.external;
         if (c && c._gaUserPrefs && 'oo' == c._gaUserPrefs) return !0;
       } catch (f) {
-        console.error('hack', f);
+        console.error(f);
       }
       for (var d = jg('AMP_TOKEN', String(Gs.cookie), !0), e = 0; e < d.length; e++)
         if ('$OPT_OUT' == d[e]) return !0;
@@ -6863,7 +6863,7 @@ console.warn('loaded gtag');
       this.Sf(a);
       a.s.onSuccess();
     } catch (Zs) {
-      console.error('hack', Zs);
+      console.error(Zs);
       a.s.onFailure();
     }
     delete sa.GA4_EVENT;
@@ -7000,7 +7000,7 @@ console.warn('loaded gtag');
               p({ source: l, state: u, url: np(lp()), ba: mp(lp()) });
             };
           } catch (u) {
-            console.error('hack', u);
+            console.error(u);
           }
       }
       function e() {
@@ -7695,7 +7695,7 @@ console.warn('loaded gtag');
               try {
                 w = new RegExp(w.domain);
               } catch (B) {
-                console.error('hack', B);
+                console.error(B);
                 continue;
               }
             else w = w.domain;
@@ -7855,7 +7855,7 @@ console.warn('loaded gtag');
           try {
             e.push(new RegExp(d[f]));
           } catch (h) {
-            console.error('hack', h);
+            console.error(h);
           }
         return e;
       }
@@ -7978,7 +7978,7 @@ console.warn('loaded gtag');
                             try {
                               x = new MouseEvent(f.type, { bubbles: !0 });
                             } catch (y) {
-                              console.error('hack', y);
+                              console.error(y);
                               if (!c.createEvent) {
                                 v = !1;
                                 break a;
@@ -8103,7 +8103,7 @@ console.warn('loaded gtag');
           try {
             t = !m.frameElement;
           } catch (z) {
-            console.error('hack', z);
+            console.error(z);
           }
           t && Ni();
         }
