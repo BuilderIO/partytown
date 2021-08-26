@@ -41,9 +41,11 @@ export const initSandbox = async (
       const mainInterfaces = readMainInterfaces(sandboxWindow, sandboxDocument);
       const initWebWorkerData: InitWebWorkerData = {
         $config$: mainWindow.partytown || {},
+        $documentCompatMode$: mainDocument.compatMode,
         $documentCookie$: mainDocument.cookie,
         $documentReadyState$: mainDocument.readyState,
         $documentReferrer$: mainDocument.referrer,
+        $documentTitle$: mainDocument.title,
         $firstScriptId$: firstScriptId,
         $initializeScripts$: workerGroups[workerName],
         $interfaces$: mainInterfaces,

@@ -23,9 +23,11 @@ export type WebWorkerResponseFromSandboxMessage =
 
 export interface InitWebWorkerData {
   $config$: PartytownConfig;
+  $documentCompatMode$: string;
   $documentCookie$: string;
-  $documentReferrer$: string;
   $documentReadyState$: string;
+  $documentReferrer$: string;
+  $documentTitle$: string;
   $firstScriptId$: number;
   $initializeScripts$: InitializeScriptData[];
   $interfaces$: InterfaceInfo[];

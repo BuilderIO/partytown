@@ -162,6 +162,17 @@
         </script>
       </li>
 
+      <li>
+        <strong>document.compatMode</strong>
+        <code id="test11"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('test11');
+            elm.textContent = document.compatMode;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

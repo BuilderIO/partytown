@@ -38,18 +38,24 @@ export const logWorker = (msg: string) => {
 export const logTargetProp = (target: any, memberPath: string[]) => {
   let n = '';
   if (target) {
-    if (target.nodeType === 1) {
-      n = toLower(target.nodeName) + '.';
-    } else if (target.nodeType === 3) {
-      n = 'node.';
-    } else if (target[InstanceIdKey] === InstanceId.document) {
+    if (target[InstanceIdKey] === InstanceId.document) {
       n = 'document.';
+    } else if (target[InstanceIdKey] === InstanceId.documentElement) {
+      n = 'document.documentElement.';
+    } else if (target[InstanceIdKey] === InstanceId.head) {
+      n = 'document.head.';
+    } else if (target[InstanceIdKey] === InstanceId.body) {
+      n = 'document.body.';
     } else if (target[InstanceIdKey] === InstanceId.history) {
       n = 'history.';
     } else if (target[InstanceIdKey] === InstanceId.localStorage) {
       n = 'localStorage.';
     } else if (target[InstanceIdKey] === InstanceId.sessionStorage) {
       n = 'sessionStorage.';
+    } else if (target.nodeType === 1) {
+      n = toLower(target.nodeName) + '.';
+    } else if (target.nodeType === 3) {
+      n = 'node.';
     }
   }
   return (n += memberPath.join('.'));

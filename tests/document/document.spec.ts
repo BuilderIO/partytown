@@ -37,4 +37,7 @@ test('document', async ({ page }) => {
 
   const test10 = page.locator('#test10');
   await expect(test10).toHaveText('BODY');
+
+  const test11 = page.locator('#test11');
+  await expect(test11).toHaveText('CSS1Compat');
 });

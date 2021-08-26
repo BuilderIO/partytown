@@ -27,6 +27,11 @@ export class WorkerDocument extends WorkerElement {
     return createElement(this, tagName, []);
   }
 
+  get compatMode() {
+    return webWorkerCtx.$documentCompatMode$;
+  }
+  set compatMode(_: string) {}
+
   get createEventObject() {
     // common check we can just avoid
     return undefined;
@@ -85,6 +90,13 @@ export class WorkerDocument extends WorkerElement {
   }
   set referrer(value: string) {
     webWorkerCtx.$documentReferrer$ = value;
+  }
+
+  get title() {
+    return webWorkerCtx.$documentTitle$;
+  }
+  set title(value: string) {
+    setter(this, ['title'], (webWorkerCtx.$documentTitle$ = value));
   }
 }
 
