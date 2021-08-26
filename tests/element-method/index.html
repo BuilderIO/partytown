@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>Document</title>
+    <link
+      rel="icon"
+      id="favicon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎉</text></svg>"
+    />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        line-height: 2em;
+      }
+      h1 {
+        margin: 0 0 15px 0;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        display: block;
+        padding: 16px 8px;
+      }
+      a:link,
+      a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover {
+        background-color: #eee;
+      }
+    </style>
+  </head>
+  <body mph="88">
+    <h1>Element Method</h1>
+    <ul>
+      <li>
+        <strong>querySelector('h1')</strong>
+        <code id="test0"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.querySelector('h1');
+            document.getElementById('test0').innerHTML = elm.textContent;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>querySelectorAll('h1')[0]</strong>
+        <code id="test1"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.querySelectorAll('h1')[0];
+            document.getElementById('test1').innerHTML = elm.textContent;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>getAttribute()</strong>
+        <code id="test2"></code>
+        <script type="text/partytown">
+          (function () {
+            const attrValue = document.body.getAttribute('mph');
+            document.getElementById('test2').innerHTML = attrValue;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>setAttribute()</strong>
+        <code id="test3"></code>
+        <script type="text/partytown">
+          (function () {
+            document.body.setAttribute('year', '1985');
+            document.getElementById('test3').innerHTML = document.body.getAttribute('year');
+          })();
+        </script>
+      </li>
+
+      <script type="text/partytown">
+        (function () {
+          document.body.classList.add('completed');
+        })();
+      </script>
+    </ul>
+
+    <hr />
+    <p><a href="/">All Tests</a></p>
+
+    <script src="/~partytown/partytown.debug.js" async defer></script>
+  </body>
+</html>
