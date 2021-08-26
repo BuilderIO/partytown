@@ -58,6 +58,6 @@ export const logValue = (v: any) => {
   return '¯\\_(ツ)_/¯';
 };
 
-export const PT_PROXY_URL = `partytown-proxy`;
+export const PT_PROXY_URL = `proxytown`;
 export const PT_INITIALIZED_EVENT = `ptinit`;
 export const PT_SCRIPT_INIT_TYPE = `text/partytown-initialized`;
