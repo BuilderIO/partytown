@@ -6,8 +6,4 @@ export const NodeTypeKey = Symbol();
 export const PrivateValues = Symbol();
 export const ProxyKey = Symbol();
 
-const initWebWorkerContext: InitWebWorkerContext = {
-  $msgId$: 0,
-};
-
-export const webWorkerCtx: WebWorkerContext = initWebWorkerContext as any;
+export const webWorkerCtx: WebWorkerContext = {} as any;

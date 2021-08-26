@@ -35,7 +35,38 @@ export const logWorker = (msg: string) => {
   }
 };
 
-export const logTargetProp = (target: any, memberPath: string[]) => {
+export const logWorkerGetter = (
+  target: any,
+  memberPath: string[],
+  rtn: any,
+  isCached?: boolean
+) => {
+  if (debug && webWorkerCtx.$config$.logGetters) {
+    logWorker(
+      `Get ${logTargetProp(target, memberPath)}, returned: ${logValue(memberPath, rtn)}${
+        isCached ? ' (cached)' : ''
+      }`
+    );
+  }
+};
+
+export const logWorkerSetter = (target: any, memberPath: string[], value: any) => {
+  if (debug && webWorkerCtx.$config$.logSetters) {
+    logWorker(`Set ${logTargetProp(target, memberPath)}, value: ${logValue(memberPath, value)}`);
+  }
+};
+
+export const logWorkerCall = (target: any, memberPath: string[], args: any[], rtn: any) => {
+  if (debug && webWorkerCtx.$config$.logCalls) {
+    logWorker(
+      `Call ${logTargetProp(target, memberPath)}(${args
+        .map((v) => logValue(memberPath, v))
+        .join(', ')}), returned: ${logValue(memberPath, rtn)}`
+    );
+  }
+};
+
+const logTargetProp = (target: any, memberPath: string[]) => {
   let n = '';
   if (target) {
     if (target[InstanceIdKey] === InstanceId.document) {
@@ -64,9 +95,15 @@ export const logTargetProp = (target: any, memberPath: string[]) => {
 /**
  * Helper just to have pretty console logs while debugging
  */
-export const logValue = (v: any): string => {
+const logValue = (memberPath: string[], v: any): string => {
   const type = typeof v;
-  if (type === 'boolean' || type === 'number' || type === 'string' || v == null) {
+  if (type === 'boolean' || type === 'number' || v == null) {
+    return JSON.stringify(v);
+  }
+  if (type === 'string') {
+    if (memberPath.includes('cookie')) {
+      return JSON.stringify(v.substr(0, 10) + '...');
+    }
     return JSON.stringify(v);
   }
   if (isPromise(v)) {
@@ -83,7 +120,9 @@ export const logValue = (v: any): string => {
       return v.nodeName;
     }
     if (v[Symbol.iterator]) {
-      return `[${Array.from(v).map(logValue).join(', ')}]`;
+      return `[${Array.from(v)
+        .map((i) => logValue(memberPath, i))
+        .join(', ')}]`;
     }
     if ('value' in v) {
       return JSON.stringify(v.value);

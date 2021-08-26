@@ -1,8 +1,8 @@
 import { callMethod, getter, setter } from './worker-proxy';
 import { createElement, createScript, WorkerElement } from './worker-node';
 import { InstanceId, InterfaceType } from '../types';
+import { logWorkerGetter, logWorkerSetter, toLower } from '../utils';
 import { PrivateValues, webWorkerCtx } from './worker-constants';
-import { toLower } from '../utils';
 
 export class WorkerDocument extends WorkerElement {
   [PrivateValues]: {
@@ -17,6 +17,7 @@ export class WorkerDocument extends WorkerElement {
   }
 
   get cookie() {
+    logWorkerGetter(this, ['cookie'], webWorkerCtx.$documentCookie$, true);
     return webWorkerCtx.$documentCookie$;
   }
   set cookie(cookie: string) {
@@ -66,9 +67,11 @@ export class WorkerDocument extends WorkerElement {
   }
 
   get location() {
+    logWorkerGetter(this, ['location'], webWorkerCtx.$location$, true);
     return webWorkerCtx.$location$;
   }
   set location(url: any) {
+    logWorkerSetter(this, ['location'], url);
     if (typeof url === 'string') {
       webWorkerCtx.$location$!.href = url;
     }
@@ -81,11 +84,14 @@ export class WorkerDocument extends WorkerElement {
   get readyState() {
     if (webWorkerCtx.$documentReadyState$ !== 'complete') {
       webWorkerCtx.$documentReadyState$ = getter(this, ['readyState']);
+    } else {
+      logWorkerGetter(this, ['readyState'], webWorkerCtx.$documentReadyState$, true);
     }
     return webWorkerCtx.$documentReadyState$;
   }
 
   get referrer() {
+    logWorkerGetter(this, ['referrer'], webWorkerCtx.$documentReferrer$, true);
     return webWorkerCtx.$documentReferrer$;
   }
   set referrer(value: string) {
@@ -93,6 +99,7 @@ export class WorkerDocument extends WorkerElement {
   }
 
   get title() {
+    logWorkerGetter(this, ['title'], webWorkerCtx.$documentTitle$, true);
     return webWorkerCtx.$documentTitle$;
   }
   set title(value: string) {

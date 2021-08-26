@@ -2,6 +2,7 @@ import { InstanceId } from '../types';
 import { len } from '../utils';
 
 let instanceIds = InstanceId.body + 1;
+let cleanupInc = 0;
 
 const instances: [number, InstanceType][] = [];
 const InstanceIdKey = Symbol();
@@ -11,19 +12,23 @@ export const setInstanceId = (instance: InstanceType | null | undefined, instanc
     instances.push([instanceId, instance]);
     instance[InstanceIdKey] = instanceId;
 
-    while (true) {
-      let disconnectedNodes = instances.filter((i) => i[1].nodeType && !i[1].isConnected);
-      let i: number;
-      let l: number;
-      if (len(disconnectedNodes) > 99) {
-        for (i = 0, l = len(instances); i < l; i++) {
-          if (!instances[i][1].isConnected) {
-            instances.slice(i, 1);
-            break;
+    cleanupInc++;
+    if (cleanupInc > 99) {
+      cleanupInc = 0;
+      while (true) {
+        let disconnectedNodes = instances.filter((i) => i[1].nodeType && !i[1].isConnected);
+        let i: number;
+        let l: number;
+        if (len(disconnectedNodes) > 99) {
+          for (i = 0, l = len(instances); i < l; i++) {
+            if (!instances[i][1].isConnected) {
+              instances.slice(i, 1);
+              break;
+            }
           }
+        } else {
+          break;
         }
-      } else {
-        break;
       }
     }
   }

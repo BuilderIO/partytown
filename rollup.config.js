@@ -274,9 +274,11 @@ function managlePropsPlugin() {
     $currentScript$: '',
     $data$: '',
     $document$: '',
+    $documentCompatMode$: '',
     $documentCookie$: '',
     $documentReadyState$: '',
     $documentReferrer$: '',
+    $documentTitle$: '',
     $extraInstructions$: '',
     $error$: '',
     $firstScriptId$: '',
@@ -299,6 +301,10 @@ function managlePropsPlugin() {
     $url$: '',
     $workerName$: '',
   };
+  if (chars.length < Object.keys(mangleProps).length) {
+    throw new Error('Figure out a better property renaming plan');
+  }
+
   Object.keys(mangleProps).forEach((key, i) => {
     mangleProps[key] = chars[i];
   });

@@ -9,8 +9,10 @@ import {
   SerializedValueTransfer,
 } from '../types';
 import { constructInstance } from './worker-implementations';
-import { debug, len, logTargetProp, logValue, logWorker, PT_PROXY_URL } from '../utils';
 import { InstanceIdKey, ProxyKey, webWorkerCtx } from './worker-constants';
+import { len, logWorkerCall, logWorkerGetter, logWorkerSetter, PT_PROXY_URL } from '../utils';
+
+let msgIds = 0;
 
 const syncRequestToServiceWorker = (
   $accessType$: AccessType,
@@ -20,7 +22,7 @@ const syncRequestToServiceWorker = (
   $extraInstructions$?: ExtraInstruction[]
 ) => {
   const accessReq: MainAccessRequest = {
-    $msgId$: webWorkerCtx.$msgId$++,
+    $msgId$: msgIds++,
     $accessType$,
     $instanceId$: target[InstanceIdKey],
     $memberPath$: memberPath,
@@ -53,16 +55,12 @@ const syncRequestToServiceWorker = (
 
 export const getter = (target: any, memberPath: string[]) => {
   const rtn = syncRequestToServiceWorker(AccessType.Get, target, memberPath);
-  if (debug && webWorkerCtx.$config$.logGetters) {
-    logWorker(`Get ${logTargetProp(target, memberPath)}, returned: ${logValue(rtn)}`);
-  }
+  logWorkerGetter(target, memberPath, rtn);
   return rtn;
 };
 
 export const setter = (target: any, memberPath: string[], value: any) => {
-  if (debug && webWorkerCtx.$config$.logSetters) {
-    logWorker(`Set ${logTargetProp(target, memberPath)}, value: ${logValue(value)}`);
-  }
+  logWorkerSetter(target, memberPath, value);
   return syncRequestToServiceWorker(AccessType.Set, target, memberPath, value);
 };
 
@@ -79,15 +77,7 @@ export const callMethod = (
     args,
     extraInstructions
   );
-
-  if (debug && webWorkerCtx.$config$.logCalls) {
-    logWorker(
-      `Call ${logTargetProp(target, memberPath)}(${args
-        .map(logValue)
-        .join(', ')}), returned: ${logValue(rtn)}`
-    );
-  }
-
+  logWorkerCall(target, memberPath, args, rtn);
   return rtn;
 };
 

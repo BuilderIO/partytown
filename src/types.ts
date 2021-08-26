@@ -42,7 +42,6 @@ export interface InitWebWorkerContext {
   $importScripts$?: (...urls: string[]) => void;
   $localStorage$?: WorkerStorage;
   $location$?: WorkerLocation;
-  $msgId$: number;
   $sessionStorage$?: WorkerStorage;
 }
 
