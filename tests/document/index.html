@@ -39,15 +39,14 @@
     </style>
   </head>
   <body>
-    <h1>Document</h1>
+    <h1 class="title">Document</h1>
     <ul>
       <li>
         <strong>getElementById()</strong>
         <code id="test0"></code>
         <script type="text/partytown">
           (function () {
-            document.getElementById('test0').textContent = 'textContent';
-            document.body.className = 'test0';
+            document.getElementById('test0').textContent = 'test0';
           })();
         </script>
       </li>
@@ -64,44 +63,57 @@
       </li>
 
       <li>
-        <strong>querySelector('h1')</strong>
+        <strong>getElementsByClassName('title')[0]</strong>
         <code id="test2"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.querySelector('h1');
-            document.getElementById('test2').innerHTML = elm.textContent;
-          })();
-        </script>
-      </li>
-
-      <li>
-        <strong>querySelectorAll('h1')[0]</strong>
-        <code id="test3"></code>
-        <script type="text/partytown">
-          (function () {
-            const elm = querySelectorAll('h1')[0];
-            document.getElementById('test3').innerHTML = elm.textContent;
+            const elm = document.getElementsByTagName('h1')[0];
+            document.getElementById('test2').innerText = elm.textContent;
           })();
         </script>
       </li>
 
       <li>
         <strong>get document.title</strong>
-        <code id="test4"></code>
+        <code id="test3"></code>
         <script type="text/partytown">
           (function () {
-            document.getElementById('test4').textContent = document.title;
+            document.getElementById('test3').textContent = document.title;
           })();
         </script>
       </li>
 
       <li>
         <strong>set document.title</strong>
-        <code id="test5"></code>
+        <code id="test4"></code>
         <script type="text/partytown">
           (function () {
             document.title += '!!!';
-            document.getElementById('test5').textContent = document.title;
+            document.getElementById('test4').textContent = document.title;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set/get document.cookie</strong>
+        <code id="test5"></code>
+        <script>
+          document.cookie = '';
+        </script>
+        <script type="text/partytown">
+          (function () {
+            document.cookie = 'mph=88';
+            document.getElementById('test5').textContent = document.cookie;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>get document.location</strong>
+        <code id="test6"></code>
+        <script type="text/partytown">
+          (function () {
+            document.getElementById('test6').textContent = document.location.pathname;
           })();
         </script>
       </li>
