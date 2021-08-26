@@ -20,7 +20,7 @@ export const initWebWorkerGlobal = (self: any) => {
     [
       'location',
       webWorkerCtx.$location$,
-      (href: any) => (typeof href === 'string' ? (webWorkerCtx.$location$!.href = href) : 0),
+      (href: any) => (webWorkerCtx.$location$!.href = href + ''),
     ],
     ['sessionStorage', webWorkerCtx.$sessionStorage$],
   ];

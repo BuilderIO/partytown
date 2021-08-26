@@ -2,7 +2,7 @@ import { callMethod, getter, proxy, setter } from './worker-proxy';
 import { ExtraInstruction, InterfaceType, SerializedNode } from '../types';
 import { imageRequest, importScriptUrl } from './worker-requests';
 import { InstanceIdKey, NodeNameKey, NodeTypeKey, PrivateValues } from './worker-constants';
-import { toLower } from '../utils';
+import { len, toLower } from '../utils';
 import { webWorkerCtx } from './worker-constants';
 import type { WorkerDocument } from './worker-document';
 
@@ -177,6 +177,35 @@ export class WorkerScriptElement extends WorkerElement {
     if (type !== 'text/javascript') {
       setter(this, ['type'], type);
     }
+  }
+}
+
+export class WorkerNodeList {
+  [PrivateValues]: WorkerNode[];
+
+  constructor(workerNodes: WorkerNode[]) {
+    (this[PrivateValues] = workerNodes).forEach((node, index) => ((this as any)[index] = node));
+  }
+  entries() {
+    return this[PrivateValues].entries();
+  }
+  forEach(cb: (value: WorkerNode, index: number) => void, thisArg?: any) {
+    this[PrivateValues].forEach(cb, thisArg);
+  }
+  item(index: number) {
+    return (this as any)[index];
+  }
+  keys() {
+    return this[PrivateValues].keys();
+  }
+  get length() {
+    return len(this[PrivateValues]);
+  }
+  values() {
+    return this[PrivateValues].values();
+  }
+  [Symbol.iterator]() {
+    return this[PrivateValues][Symbol.iterator]();
   }
 }
 

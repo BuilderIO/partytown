@@ -4,11 +4,8 @@ import {
   InterfaceType,
   MainAccessRequest,
   MainAccessResponse,
-  SerializedInstance,
-  SerializedType,
-  SerializedValueTransfer,
 } from '../types';
-import { constructInstance } from './worker-implementations';
+import { deserializeFromMain, serializeForMain } from './worker-serialization';
 import { InstanceIdKey, ProxyKey, webWorkerCtx } from './worker-constants';
 import { len, logWorkerCall, logWorkerGetter, logWorkerSetter, PT_PROXY_URL } from '../utils';
 
@@ -26,7 +23,7 @@ const syncRequestToServiceWorker = (
     $accessType$,
     $instanceId$: target[InstanceIdKey],
     $memberPath$: memberPath,
-    $data$,
+    $data$: serializeForMain($data$),
     $extraInstructions$,
   };
 
@@ -46,7 +43,7 @@ const syncRequestToServiceWorker = (
     throw new Error(error);
   }
 
-  const rtn = constructValue(target, memberPath, accessRsp.$rtnValue$!);
+  const rtn = deserializeFromMain(target, memberPath, accessRsp.$rtnValue$!);
   if (isPromise) {
     return Promise.resolve(rtn);
   }
@@ -137,43 +134,4 @@ export const proxy = <T = any>(
       return true;
     },
   });
-};
-
-const constructValue = (
-  target: any,
-  memberPath: string[],
-  serializedValueTransfer: SerializedValueTransfer
-): any => {
-  if (Array.isArray(serializedValueTransfer)) {
-    const serializedType = serializedValueTransfer[0];
-    const serializedValue = serializedValueTransfer[1] as any;
-
-    if (serializedType === SerializedType.Primitive) {
-      return serializedValue;
-    }
-
-    if (serializedType === SerializedType.Method) {
-      return (...args: any[]) => callMethod(target, memberPath, args);
-    }
-
-    if (serializedType === SerializedType.Instance) {
-      const serializedInstance: SerializedInstance = serializedValue;
-      return constructInstance(serializedInstance);
-    }
-
-    if (serializedType === SerializedType.Object) {
-      const obj: { [key: string]: any } = {};
-      for (const key in serializedValue) {
-        obj[key] = constructValue(target, memberPath, serializedValue[key]);
-      }
-      return obj;
-    }
-
-    if (serializedType === SerializedType.Array) {
-      const serializedArray: SerializedValueTransfer[] = serializedValue;
-      return serializedArray.map((v) => constructValue(target, memberPath, v));
-    }
-  }
-
-  return undefined;
 };

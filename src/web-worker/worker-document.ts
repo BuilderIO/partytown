@@ -31,7 +31,6 @@ export class WorkerDocument extends WorkerElement {
   get compatMode() {
     return webWorkerCtx.$documentCompatMode$;
   }
-  set compatMode(_: string) {}
 
   get createEventObject() {
     // common check we can just avoid
@@ -72,9 +71,7 @@ export class WorkerDocument extends WorkerElement {
   }
   set location(url: any) {
     logWorkerSetter(this, ['location'], url);
-    if (typeof url === 'string') {
-      webWorkerCtx.$location$!.href = url;
-    }
+    webWorkerCtx.$location$!.href = url + '';
   }
 
   get ownerDocument() {
@@ -93,9 +90,6 @@ export class WorkerDocument extends WorkerElement {
   get referrer() {
     logWorkerGetter(this, ['referrer'], webWorkerCtx.$documentReferrer$, true);
     return webWorkerCtx.$documentReferrer$;
-  }
-  set referrer(value: string) {
-    webWorkerCtx.$documentReferrer$ = value;
   }
 
   get title() {

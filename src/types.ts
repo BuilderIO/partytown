@@ -112,29 +112,27 @@ export const enum ExtraInstruction {
 export interface MainAccessResponse {
   $msgId$: number;
   $instanceId$: number;
-  $rtnValue$?: SerializedValueTransfer;
+  $rtnValue$?: SerializedTransfer;
   $isPromise$?: any;
   $error$?: string;
 }
 
 export const enum SerializedType {
-  Window,
-  Document,
-  Method,
-  Primitive,
   Array,
-  Object,
   Instance,
+  InstanceById,
+  Method,
+  Object,
+  Primitive,
 }
 
-export type SerializedValueTransfer =
-  | [SerializedType.Window]
-  | [SerializedType.Document]
-  | [SerializedType.Method]
-  | [SerializedType.Primitive, string | number | boolean]
-  | [SerializedType.Array, SerializedValueTransfer[]]
+export type SerializedTransfer =
+  | [SerializedType.Primitive, string | number | boolean | null | undefined]
+  | [SerializedType.Array, SerializedTransfer[]]
+  | [SerializedType.InstanceById, number]
   | [SerializedType.Instance, SerializedInstance]
-  | [SerializedType.Object, any]
+  | [SerializedType.Object, { [key: string]: SerializedTransfer }]
+  | [SerializedType.Method]
   | [];
 
 export interface SerializedInstance {

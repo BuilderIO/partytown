@@ -2,27 +2,22 @@ import { getConstructorName } from '../utils';
 import { getInstance, getInstanceId } from './main-instances';
 import {
   InterfaceType,
-  SerializedInstance,
   SerializedNode,
   SerializedNodeList,
+  SerializedTransfer,
   SerializedType,
-  SerializedValueTransfer,
 } from '../types';
 
-export const serializeValue = (value: any, added: Set<any>): SerializedValueTransfer => {
+export const serializeForWorker = (value: any, added: Set<any>): SerializedTransfer => {
   const type = typeof value;
   if (type === 'string' || type === 'number' || type === 'boolean' || value == null) {
     return [SerializedType.Primitive, value];
   }
 
-  if (type === 'function') {
-    return [SerializedType.Method];
-  }
-
   if (Array.isArray(value)) {
     if (!added.has(value)) {
       added.add(value);
-      return [SerializedType.Array, value.map((v) => serializeValue(v, added))];
+      return [SerializedType.Array, value.map((v) => serializeForWorker(v, added))];
     }
     return [SerializedType.Array, []];
   }
@@ -43,14 +38,14 @@ export const serializeValue = (value: any, added: Set<any>): SerializedValueTran
       if (isNodeList(getConstructorName(value))) {
         const nodeList: SerializedNodeList = {
           $interfaceType$: InterfaceType.NodeList,
-          $data$: Array.from(value).map((v) => serializeValue(v, added)[1]),
+          $data$: Array.from(value).map((v) => serializeForWorker(v, added)[1]) as any,
         };
         return [SerializedType.Instance, nodeList];
       }
 
-      const obj: { [key: string]: any } = {};
+      const obj: { [key: string]: SerializedTransfer } = {};
       for (const k in value) {
-        obj[k] = serializeValue(value[k], added);
+        obj[k] = serializeForWorker(value[k], added);
       }
       return [SerializedType.Object, obj];
     }
@@ -58,29 +53,38 @@ export const serializeValue = (value: any, added: Set<any>): SerializedValueTran
     return [SerializedType.Object, {}];
   }
 
+  if (type === 'function') {
+    return [SerializedType.Method];
+  }
+
   return [];
 };
 
 const isNodeList = (cstrName: string) => cstrName === 'HTMLCollection' || cstrName === 'NodeList';
 
-export const deserializeValue = (serializedValue: any): any => {
-  const type = typeof serializedValue;
-  if (type === 'string' || type === 'boolean' || type === 'number' || serializedValue == null) {
+export const deserializeFromWorker = (serializedTransfer: SerializedTransfer): any => {
+  const serializedType = serializedTransfer[0];
+  const serializedValue = serializedTransfer[1] as any;
+
+  if (serializedType === SerializedType.Primitive) {
     return serializedValue;
   }
-  if (Array.isArray(serializedValue)) {
-    return serializedValue.map(deserializeValue);
+
+  if (serializedType === SerializedType.InstanceById) {
+    return getInstance(serializedValue);
   }
-  if (type === 'object') {
-    const instance = getInstance((serializedValue as SerializedInstance).$instanceId$!);
-    if (instance) {
-      return instance;
-    }
-    const deserializedValue: { [key: string]: any } = {};
+
+  if (serializedType === SerializedType.Array) {
+    return (serializedValue as SerializedTransfer[]).map(deserializeFromWorker);
+  }
+
+  if (serializedType === SerializedType.Object) {
+    const obj: { [key: string]: any } = {};
     for (const k in serializedValue) {
-      deserializedValue[k] = deserializeValue(serializedValue[k]);
+      obj[k] = deserializeFromWorker(serializedValue[k]);
     }
-    return deserializedValue;
+    return obj;
   }
+
   return undefined;
 };

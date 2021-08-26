@@ -1,5 +1,5 @@
 import { AccessType, ExtraInstruction, MainAccessRequest, MainAccessResponse } from '../types';
-import { deserializeValue, serializeValue } from './main-serialization';
+import { deserializeFromWorker, serializeForWorker } from './main-serialization';
 import { getInstance, getInstanceId } from './main-instances';
 import { isPromise, len, PT_SCRIPT_INIT_TYPE } from '../utils';
 
@@ -7,7 +7,7 @@ export const mainAccessHandler = async (accessReq: MainAccessRequest) => {
   const accessType = accessReq.$accessType$;
   const instanceId = accessReq.$instanceId$;
   const memberPath = accessReq.$memberPath$!;
-  const data = accessReq.$data$;
+  const data = deserializeFromWorker(accessReq.$data$);
   const extraInstructions = accessReq.$extraInstructions$;
   const accessRsp: MainAccessResponse = {
     $msgId$: accessReq.$msgId$,
@@ -22,7 +22,7 @@ export const mainAccessHandler = async (accessReq: MainAccessRequest) => {
       } else if (accessType === AccessType.CallMethod) {
         await callInstanceMethod(accessRsp, instance, memberPath, data, extraInstructions);
       } else if (accessType === AccessType.Set) {
-        setInstanceMember(instance, memberPath, deserializeValue(data));
+        setInstanceMember(instance, memberPath, data);
       }
     } else {
       accessRsp.$error$ = `Instance ${instanceId} not found`;
@@ -51,7 +51,7 @@ const getInstanceMember = async (
     getterValue = await getterValue;
     accessRsp.$isPromise$ = true;
   }
-  accessRsp.$rtnValue$ = serializeValue(getterValue, new Set());
+  accessRsp.$rtnValue$ = serializeForWorker(getterValue, new Set());
 };
 
 const setInstanceMember = (instance: any, memberPath: string[], setterValue: any) => {
@@ -67,10 +67,9 @@ const callInstanceMethod = async (
   accessRsp: MainAccessResponse,
   instance: any,
   memberPath: string[],
-  serializedArgs: any[],
+  args: any[],
   extraInstructions?: ExtraInstruction[]
 ) => {
-  const args = deserializeValue(serializedArgs);
   const memberPathLength = len(memberPath);
   let rtnValue: any = undefined;
 
@@ -85,7 +84,7 @@ const callInstanceMethod = async (
     accessRsp.$isPromise$ = true;
   }
 
-  accessRsp.$rtnValue$ = serializeValue(rtnValue, new Set());
+  accessRsp.$rtnValue$ = serializeForWorker(rtnValue, new Set());
 
   if (extraInstructions) {
     extraInstructions.forEach((extra) => {
