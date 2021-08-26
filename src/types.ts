@@ -64,6 +64,17 @@ export const enum InterfaceType {
   CSSStyleDeclaration = 11,
 }
 
+export const enum InstanceId {
+  history = 0,
+  localStorage = 1,
+  sessionStorage = 2,
+  window = 3,
+  document = 4,
+  documentElement = 5,
+  head = 6,
+  body = 7,
+}
+
 export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {}
 
 export interface WorkerGroups {
@@ -80,14 +91,6 @@ export const enum AccessType {
   Get,
   Set,
   CallMethod,
-}
-
-export const enum InstanceId {
-  history = 0,
-  localStorage = 1,
-  sessionStorage = 2,
-  window = 3,
-  document = 4,
 }
 
 export interface MainAccessRequest {

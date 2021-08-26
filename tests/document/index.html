@@ -118,6 +118,50 @@
         </script>
       </li>
 
+      <li>
+        <strong>document.defaultView</strong>
+        <code id="test7"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('test7');
+            elm.textContent = (document.defaultView === window) ? 'window' : '';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>document.documentElement</strong>
+        <code id="test8"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('test8');
+            elm.textContent = document.documentElement.tagName;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>document.head</strong>
+        <code id="test9"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('test9');
+            elm.textContent = document.head.tagName;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>document.body</strong>
+        <code id="test10"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('test10');
+            elm.textContent = document.body.tagName;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

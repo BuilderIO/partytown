@@ -1,9 +1,21 @@
 import { callMethod, getter, setter } from './worker-proxy';
 import { createElement, createScript, WorkerElement } from './worker-node';
+import { InstanceId, InterfaceType } from '../types';
+import { PrivateValues, webWorkerCtx } from './worker-constants';
 import { toLower } from '../utils';
-import { webWorkerCtx } from './worker-constants';
 
 export class WorkerDocument extends WorkerElement {
+  [PrivateValues]: {
+    BODY?: WorkerElement;
+    HEAD?: WorkerElement;
+    HTML?: WorkerElement;
+    $url$?: string;
+  };
+
+  get body() {
+    return getElementProp(this, InstanceId.body, 'BODY');
+  }
+
   get cookie() {
     return webWorkerCtx.$documentCookie$;
   }
@@ -32,12 +44,20 @@ export class WorkerDocument extends WorkerElement {
     return self;
   }
 
+  get documentElement() {
+    return getElementProp(this, InstanceId.documentElement, 'HTML');
+  }
+
   getElementsByTagName(tagName: string) {
     if (toLower(tagName) === 'script') {
       // always return just the first script
       return [createScript(webWorkerCtx.$firstScriptId$)];
     }
     return callMethod(this, ['getElementsByTagName'], [tagName]);
+  }
+
+  get head() {
+    return getElementProp(this, InstanceId.head, 'HEAD');
   }
 
   get location() {
@@ -67,3 +87,19 @@ export class WorkerDocument extends WorkerElement {
     webWorkerCtx.$documentReferrer$ = value;
   }
 }
+
+const getElementProp = (
+  doc: WorkerDocument,
+  instanceId: number,
+  tagName: 'BODY' | 'HEAD' | 'HTML'
+) => {
+  const privateValues = doc[PrivateValues];
+  if (!privateValues[tagName]) {
+    privateValues[tagName] = new WorkerElement({
+      $interfaceType$: InterfaceType.Element,
+      $instanceId$: instanceId,
+      $nodeName$: tagName,
+    });
+  }
+  return privateValues[tagName];
+};

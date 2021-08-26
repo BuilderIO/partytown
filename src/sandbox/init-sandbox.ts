@@ -77,6 +77,9 @@ export const initSandbox = async (
   setInstanceId(mainWindow.sessionStorage, InstanceId.sessionStorage);
   setInstanceId(mainWindow, InstanceId.window);
   setInstanceId(mainDocument, InstanceId.document);
+  setInstanceId(mainDocument.documentElement, InstanceId.documentElement);
+  setInstanceId(mainDocument.head, InstanceId.head);
+  setInstanceId(mainDocument.body, InstanceId.body);
 
   swContainer.addEventListener('message', async (ev) => {
     const accessRsp = await mainAccessHandler(ev.data);

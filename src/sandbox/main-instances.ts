@@ -1,6 +1,6 @@
 import { InstanceId } from '../types';
 
-let instanceIds = InstanceId.document + 1;
+let instanceIds = InstanceId.body + 1;
 
 const instances: [number, InstanceType][] = [];
 const InstanceIdKey = Symbol();

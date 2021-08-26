@@ -25,4 +25,16 @@ test('document', async ({ page }) => {
 
   const test6 = page.locator('#test6');
   await expect(test6).toHaveText('/document/');
+
+  const test7 = page.locator('#test7');
+  await expect(test7).toHaveText('window');
+
+  const test8 = page.locator('#test8');
+  await expect(test8).toHaveText('HTML');
+
+  const test9 = page.locator('#test9');
+  await expect(test9).toHaveText('HEAD');
+
+  const test10 = page.locator('#test10');
+  await expect(test10).toHaveText('BODY');
 });
