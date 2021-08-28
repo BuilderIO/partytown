@@ -66,20 +66,39 @@
       </li>
 
       <li>
-        <strong>pushState() / replaceState()</strong>
-        <button id="buttonPushState121">/history/1.21gw</button>
+        <strong>replaceState()</strong>
+        <button id="buttonReplaceState121">/history/1.21gw</button>
         <button id="buttonReplaceState">/history/</button>
-        <code id="testPushStateUrl"></code>
-        <script>
+        <code id="testReplaceState"></code>
+        <script type="text/partytown">
           (function () {
-            const buttonPushState121 = document.getElementById('buttonPushState121');
-            buttonPushState121.addEventListener('click', () => {
+            const buttonReplaceState121 = document.getElementById('buttonReplaceState121');
+            buttonReplaceState121.addEventListener('click', () => {
               history.pushState({ year: 1955 }, '', '/history/1.21gw');
+              document.getElementById('testReplaceState').textContent = history.state.year;
             });
 
             const buttonReplaceState = document.getElementById('buttonReplaceState');
             buttonReplaceState.addEventListener('click', () => {
-              history.replaceState({ year: 1955 }, '', '/history/');
+              history.replaceState({ year: 1985 }, '', '/history/');
+              document.getElementById('testReplaceState').textContent = history.state.year;
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>patch pushState()</strong>
+        <button id="buttonPatchPushState">patch</button>
+        <code id="testPatchPushState"></code>
+        <script type="text/partytown">
+          (function () {
+            const buttonPatchPushState = document.getElementById('buttonPatchPushState');
+            buttonPatchPushState.addEventListener('click', () => {
+              history.pushState = function (data, title) {
+                document.getElementById('testPatchPushState').textContent = data + ' Valley';
+              };
+              history.pushState('Hill', '');
             });
           })();
         </script>

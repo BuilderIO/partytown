@@ -130,6 +130,17 @@
       </li>
 
       <li>
+        <strong>document.defaultView.document</strong>
+        <code id="testDefaultViewDoc"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDefaultViewDoc');
+            elm.textContent = (document.defaultView.document === document) ? 'document' : '';
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>document.documentElement</strong>
         <code id="testDocElement"></code>
         <script type="text/partytown">
