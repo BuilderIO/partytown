@@ -3,10 +3,12 @@ import { InterfaceInfo, InterfaceType, MemberTypeInfo } from '../types';
 import { mainCtx } from './main-context';
 
 export const readMainInterfaces = (
+  sandboxWindow: Window,
   sandboxDocument: Document,
   sandboxDocumentElement: HTMLElement
 ) => {
   const implementations: [InterfaceType, any][] = [
+    [InterfaceType.Window, sandboxWindow],
     [InterfaceType.Document, sandboxDocument],
     [InterfaceType.DOMTokenList, sandboxDocumentElement.classList],
     [InterfaceType.Element, sandboxDocumentElement],

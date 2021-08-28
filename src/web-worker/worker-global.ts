@@ -1,41 +1,37 @@
 import { createElement } from './worker-node';
 import { InstanceIdKey, webWorkerCtx } from './worker-constants';
-import { PlatformApiId } from '../types';
+import { InterfaceType, MemberTypeInfo, PlatformApiId } from '../types';
+import { callMethod } from './worker-proxy';
 
-export const initWebWorkerGlobal = (self: any) => {
+export const initWebWorkerGlobal = (self: any, windowMemberTypeInfo: MemberTypeInfo) => {
   self[InstanceIdKey] = PlatformApiId.window;
 
-  const globalProps: GlobalProp[] = [
-    ['document', webWorkerCtx.$document$],
-    ['history', webWorkerCtx.$history$],
-    [
-      'Image',
-      class {
-        constructor() {
-          return createElement(webWorkerCtx.$document$!, 'img', []);
-        }
-      },
-    ],
-    ['localStorage', webWorkerCtx.$localStorage$],
-    [
-      'location',
-      webWorkerCtx.$location$,
-      (href: any) => (webWorkerCtx.$location$!.href = href + ''),
-    ],
-    ['sessionStorage', webWorkerCtx.$sessionStorage$],
-  ];
+  Object.defineProperty(self, 'location', {
+    get: () => webWorkerCtx.$location$,
+    set: (href) => (webWorkerCtx.$location$!.href = href + ''),
+  });
 
-  globalProps.forEach((globalProp) =>
-    Object.defineProperty(self, globalProp[0], {
-      get: () => globalProp[1],
-      set: (val) => (globalProp[2] ? globalProp[2](val) : 0),
-    })
-  );
+  self.document = webWorkerCtx.$document$;
+  self.history = webWorkerCtx.$history$;
 
-  self.requestAnimationFrame = (cb: (t: number) => void) => setTimeout(() => cb(Date.now()), 16);
-  self.cancelAnimationFrame = (id: number) => clearTimeout(id);
+  self.Image = class {
+    constructor() {
+      return createElement(webWorkerCtx.$document$!, 'img', []);
+    }
+  };
+
+  self.localStorage = webWorkerCtx.$localStorage$;
+  self.sessionStorage = webWorkerCtx.$sessionStorage$;
+
+  self.requestIdleCallback = self.requestAnimationFrame = (cb: (t: number) => void) =>
+    setTimeout(() => cb(Date.now()), 16);
+  self.cancelIdleCallback = self.cancelAnimationFrame = (id: number) => clearTimeout(id);
 
   self.self = self.parent = self.top = self.window = self;
-};
 
-type GlobalProp = [string, any] | [string, any, (value: any) => void];
+  Object.keys(windowMemberTypeInfo).forEach((memberName) => {
+    if (!self[memberName] && windowMemberTypeInfo[memberName] === InterfaceType.Method) {
+      self[memberName] = (...args: any[]) => callMethod(self, [memberName], args);
+    }
+  });
+};

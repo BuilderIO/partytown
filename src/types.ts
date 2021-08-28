@@ -72,6 +72,7 @@ export interface MemberTypeInfo {
 }
 
 export const enum InterfaceType {
+  Window = 0,
   Element = 1, // same as NodeType
   Method = 2,
   TextNode = 3, // same as NodeType
@@ -140,6 +141,7 @@ export interface MainAccessResponse {
 export const enum SerializedType {
   Array,
   Instance,
+  InstanceById,
   Method,
   Object,
   PlatformApi,
@@ -150,6 +152,8 @@ export const enum SerializedType {
 export type SerializedArrayTransfer = [SerializedType.Array, SerializedTransfer[]];
 
 export type SerializedInstanceTransfer = [SerializedType.Instance, SerializedInstance];
+
+export type SerializedInstanceByIdTransfer = [SerializedType.InstanceById, number];
 
 export type SerializedMethodTransfer = [SerializedType.Method];
 
@@ -170,6 +174,7 @@ export type SerializedRefTransfer = [SerializedType.Ref, number];
 export type SerializedTransfer =
   | SerializedArrayTransfer
   | SerializedInstanceTransfer
+  | SerializedInstanceByIdTransfer
   | SerializedMethodTransfer
   | SerializedObjectTransfer
   | SerializedPlatformApiTransfer

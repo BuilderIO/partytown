@@ -25,5 +25,5 @@ export const initWebWorker = (self: Worker, initWebWorkerData: InitWebWorkerData
     $data$: NodeName.Document,
   });
 
-  initWebWorkerGlobal(self);
+  initWebWorkerGlobal(self, initWebWorkerData.$interfaces$[0][1]);
 };
