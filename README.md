@@ -49,6 +49,7 @@ Below are just a few examples of 3rd-party scripts that may be a good candidate 
 - DOM operations within the worker are purposely throttled, slowing down worker execution
 - Not ideal for scripts that are required to block the main document (blocking is bad)
 - A total of three threads are used: Main Thread, Web Worker, Service Worker
+- `event.preventDefault()` will have no effect, similar to [passive event listeners](https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md)
 - Service worker network requests
   - Many service worker network requests may show up in the network tab
   - Partytown service worker requests are intercepted by the client, and transfer `0 bytes` over the network
