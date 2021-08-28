@@ -5,12 +5,19 @@ test('history', async ({ page }) => {
 
   await page.waitForSelector('.completed');
 
-  const test0 = page.locator('#test0');
-  await expect(test0).toHaveText('88');
+  const testPushStateStr = page.locator('#testPushStateStr');
+  await expect(testPushStateStr).toHaveText('88');
 
-  const test1 = page.locator('#test1');
-  await expect(test1).toHaveText(JSON.stringify({ mph: 88 }));
+  const testPushStateObj = page.locator('#testPushStateObj');
+  await expect(testPushStateObj).toHaveText(JSON.stringify({ mph: 88 }));
 
-  const test2 = page.locator('#test2');
-  await expect(test2).toHaveText(JSON.stringify({ year: 1955 }));
+  const buttonPushState121 = page.locator('#buttonPushState121');
+  await buttonPushState121.click();
+  const expected121 = new URL('/history/1.21gw', page.url());
+  await expect(page).toHaveURL(expected121.href);
+
+  const buttonReplaceState = page.locator('#buttonReplaceState');
+  await buttonReplaceState.click();
+  const expectedHistory = new URL('/history/', page.url());
+  await expect(page).toHaveURL(expectedHistory.href);
 });
