@@ -5,39 +5,39 @@ test('document', async ({ page }) => {
 
   await page.waitForSelector('.completed');
 
-  const test0 = page.locator('#test0');
-  await expect(test0).toHaveText('test0');
+  const testGetElementById = page.locator('#testGetElementById');
+  await expect(testGetElementById).toHaveText('testGetElementById');
 
-  const test1 = page.locator('#test1');
-  await expect(test1).toHaveText('Document');
+  const testGetElementsByTagName = page.locator('#testGetElementsByTagName');
+  await expect(testGetElementsByTagName).toHaveText('Document');
 
-  const test2 = page.locator('#test2');
-  await expect(test2).toHaveText('Document');
+  const testGetElementsByClassName = page.locator('#testGetElementsByClassName');
+  await expect(testGetElementsByClassName).toHaveText('Document');
 
-  const test3 = page.locator('#test3');
-  await expect(test3).toHaveText('Document');
+  const testTitleGet = page.locator('#testTitleGet');
+  await expect(testTitleGet).toHaveText('Document');
 
-  const test4 = page.locator('#test4');
-  await expect(test4).toHaveText('Document!!!');
+  const testTitleSet = page.locator('#testTitleSet');
+  await expect(testTitleSet).toHaveText('Document!!!');
 
-  const test5 = page.locator('#test5');
-  await expect(test5).toHaveText('mph=88');
+  const testCookie = page.locator('#testCookie');
+  await expect(testCookie).toHaveText('mph=88');
 
-  const test6 = page.locator('#test6');
-  await expect(test6).toHaveText('/document/');
+  const testLocationGet = page.locator('#testLocationGet');
+  await expect(testLocationGet).toHaveText('/document/');
 
-  const test7 = page.locator('#test7');
-  await expect(test7).toHaveText('window');
+  const testDefaultView = page.locator('#testDefaultView');
+  await expect(testDefaultView).toHaveText('window');
 
-  const test8 = page.locator('#test8');
-  await expect(test8).toHaveText('HTML');
+  const testDocElement = page.locator('#testDocElement');
+  await expect(testDocElement).toHaveText('HTML');
 
-  const test9 = page.locator('#test9');
-  await expect(test9).toHaveText('HEAD');
+  const testHead = page.locator('#testHead');
+  await expect(testHead).toHaveText('HEAD');
 
-  const test10 = page.locator('#test10');
-  await expect(test10).toHaveText('BODY');
+  const testBody = page.locator('#testBody');
+  await expect(testBody).toHaveText('BODY');
 
-  const test11 = page.locator('#test11');
-  await expect(test11).toHaveText('CSS1Compat');
+  const testCompatMode = page.locator('#testCompatMode');
+  await expect(testCompatMode).toHaveText('CSS1Compat');
 });

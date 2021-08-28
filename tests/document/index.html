@@ -43,87 +43,87 @@
     <ul>
       <li>
         <strong>getElementById()</strong>
-        <code id="test0"></code>
+        <code id="testGetElementById"></code>
         <script type="text/partytown">
           (function () {
-            document.getElementById('test0').textContent = 'test0';
+            document.getElementById('testGetElementById').textContent = 'testGetElementById';
           })();
         </script>
       </li>
 
       <li>
         <strong>getElementsByTagName('h1')[0]</strong>
-        <code id="test1"></code>
+        <code id="testGetElementsByTagName"></code>
         <script type="text/partytown">
           (function () {
             const elm = document.getElementsByTagName('h1')[0];
-            document.getElementById('test1').innerText = elm.textContent;
+            document.getElementById('testGetElementsByTagName').innerText = elm.textContent;
           })();
         </script>
       </li>
 
       <li>
         <strong>getElementsByClassName('title')[0]</strong>
-        <code id="test2"></code>
+        <code id="testGetElementsByClassName"></code>
         <script type="text/partytown">
           (function () {
             const elm = document.getElementsByTagName('h1')[0];
-            document.getElementById('test2').innerText = elm.textContent;
+            document.getElementById('testGetElementsByClassName').innerText = elm.textContent;
           })();
         </script>
       </li>
 
       <li>
         <strong>document.title get</strong>
-        <code id="test3"></code>
+        <code id="testTitleGet"></code>
         <script type="text/partytown">
           (function () {
-            document.getElementById('test3').textContent = document.title;
+            document.getElementById('testTitleGet').textContent = document.title;
           })();
         </script>
       </li>
 
       <li>
         <strong>document.title set</strong>
-        <code id="test4"></code>
+        <code id="testTitleSet"></code>
         <script type="text/partytown">
           (function () {
             document.title += '!!!';
-            document.getElementById('test4').textContent = document.title;
+            document.getElementById('testTitleSet').textContent = document.title;
           })();
         </script>
       </li>
 
       <li>
         <strong>document.cookie set/get</strong>
-        <code id="test5"></code>
+        <code id="testCookie"></code>
         <script>
           document.cookie = '';
         </script>
         <script type="text/partytown">
           (function () {
             document.cookie = 'mph=88';
-            document.getElementById('test5').textContent = document.cookie;
+            document.getElementById('testCookie').textContent = document.cookie;
           })();
         </script>
       </li>
 
       <li>
         <strong>document.location get</strong>
-        <code id="test6"></code>
+        <code id="testLocationGet"></code>
         <script type="text/partytown">
           (function () {
-            document.getElementById('test6').textContent = document.location.pathname;
+            document.getElementById('testLocationGet').textContent = document.location.pathname;
           })();
         </script>
       </li>
 
       <li>
         <strong>document.defaultView</strong>
-        <code id="test7"></code>
+        <code id="testDefaultView"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('test7');
+            const elm = document.getElementById('testDefaultView');
             elm.textContent = (document.defaultView === window) ? 'window' : '';
           })();
         </script>
@@ -131,10 +131,10 @@
 
       <li>
         <strong>document.documentElement</strong>
-        <code id="test8"></code>
+        <code id="testDocElement"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('test8');
+            const elm = document.getElementById('testDocElement');
             elm.textContent = document.documentElement.tagName;
           })();
         </script>
@@ -142,10 +142,10 @@
 
       <li>
         <strong>document.head</strong>
-        <code id="test9"></code>
+        <code id="testHead"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('test9');
+            const elm = document.getElementById('testHead');
             elm.textContent = document.head.tagName;
           })();
         </script>
@@ -153,10 +153,10 @@
 
       <li>
         <strong>document.body</strong>
-        <code id="test10"></code>
+        <code id="testBody"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('test10');
+            const elm = document.getElementById('testBody');
             elm.textContent = document.body.tagName;
           })();
         </script>
@@ -164,10 +164,10 @@
 
       <li>
         <strong>document.compatMode</strong>
-        <code id="test11"></code>
+        <code id="testCompatMode"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('test11');
+            const elm = document.getElementById('testCompatMode');
             elm.textContent = document.compatMode;
           })();
         </script>
