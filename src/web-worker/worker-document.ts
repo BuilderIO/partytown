@@ -1,6 +1,6 @@
 import { callMethod, getter, setter } from './worker-proxy';
 import { createElement, createScript, WorkerElement } from './worker-node';
-import { InstanceId, InterfaceType } from '../types';
+import { InterfaceType, PlatformApiId } from '../types';
 import { logWorkerGetter, logWorkerSetter, toLower } from '../utils';
 import { PrivateValues, webWorkerCtx } from './worker-constants';
 
@@ -13,7 +13,7 @@ export class WorkerDocument extends WorkerElement {
   };
 
   get body() {
-    return getElementProp(this, InstanceId.body, 'BODY');
+    return getElementProp(this, PlatformApiId.body, 'BODY');
   }
 
   get cookie() {
@@ -50,7 +50,7 @@ export class WorkerDocument extends WorkerElement {
   }
 
   get documentElement() {
-    return getElementProp(this, InstanceId.documentElement, 'HTML');
+    return getElementProp(this, PlatformApiId.documentElement, 'HTML');
   }
 
   getElementsByTagName(tagName: string) {
@@ -62,7 +62,7 @@ export class WorkerDocument extends WorkerElement {
   }
 
   get head() {
-    return getElementProp(this, InstanceId.head, 'HEAD');
+    return getElementProp(this, PlatformApiId.head, 'HEAD');
   }
 
   get location() {

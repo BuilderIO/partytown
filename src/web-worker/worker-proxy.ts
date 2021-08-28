@@ -15,7 +15,7 @@ const syncRequestToServiceWorker = (
   $accessType$: AccessType,
   target: any,
   memberPath: string[],
-  $data$?: any,
+  data?: any,
   $extraInstructions$?: ExtraInstruction[]
 ) => {
   const accessReq: MainAccessRequest = {
@@ -23,7 +23,7 @@ const syncRequestToServiceWorker = (
     $accessType$,
     $instanceId$: target[InstanceIdKey],
     $memberPath$: memberPath,
-    $data$: serializeForMain($data$),
+    $data$: serializeForMain(data),
     $extraInstructions$,
   };
 

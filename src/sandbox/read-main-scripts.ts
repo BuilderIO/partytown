@@ -1,5 +1,5 @@
-import type { InitializeScriptData, WorkerGroups } from '../types';
 import { getInstanceId } from './main-instances';
+import type { InitializeScriptData, WorkerGroups } from '../types';
 
 export const readMainScripts = (mainDocument: Document) => {
   const workerGroups: WorkerGroups = {};

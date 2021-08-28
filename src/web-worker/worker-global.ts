@@ -1,9 +1,9 @@
 import { createElement } from './worker-node';
-import { InstanceId } from '../types';
 import { InstanceIdKey, webWorkerCtx } from './worker-constants';
+import { PlatformApiId } from '../types';
 
 export const initWebWorkerGlobal = (self: any) => {
-  self[InstanceIdKey] = InstanceId.window;
+  self[InstanceIdKey] = PlatformApiId.window;
 
   const globalProps: GlobalProp[] = [
     ['document', webWorkerCtx.$document$],

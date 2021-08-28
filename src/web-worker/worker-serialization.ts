@@ -1,13 +1,21 @@
 import { callMethod } from './worker-proxy';
+import { debug, logWorker } from '../utils';
 import { ElementConstructors, WorkerElement, WorkerNode, WorkerNodeList } from './worker-node';
+import { getWorkerPlatformApi, getWorkerPlatformApiId } from './worker-platform-api';
 import {
   InterfaceType,
   SerializedInstance,
   SerializedNode,
   SerializedNodeList,
+  SerializedRefTransfer,
   SerializedTransfer,
   SerializedType,
 } from '../types';
+import { webWorkerCtx } from './worker-constants';
+
+let refIds = 1;
+const refsByRefId = new Map<number, Ref>();
+const refIdsByRef = new WeakMap<Ref, number>();
 
 export const serializeForMain = (value: any): SerializedTransfer => {
   const type = typeof value;
@@ -15,17 +23,27 @@ export const serializeForMain = (value: any): SerializedTransfer => {
     return [SerializedType.Primitive, value];
   }
 
+  const platformApiId = getWorkerPlatformApiId(value, webWorkerCtx.$document$!);
+  if (platformApiId > -1) {
+    return [SerializedType.PlatformApi, platformApiId];
+  }
+
+  if (type === 'function') {
+    return serializeRef(value);
+  }
+
   if (Array.isArray(value)) {
     return [SerializedType.Array, value.map(serializeForMain)];
   }
 
   if (type === 'object') {
-    const serializedValue: { [key: string]: SerializedTransfer } = {};
+    const serializedObj: { [key: string]: SerializedTransfer } = {};
     for (const k in value) {
-      serializedValue[k] = serializeForMain(value[k]);
+      serializedObj[k] = serializeForMain(value[k]);
     }
-    return [SerializedType.Object, serializedValue];
+    return [SerializedType.Object, serializedObj];
   }
+
   return [];
 };
 
@@ -40,6 +58,10 @@ export const deserializeFromMain = (
 
     if (serializedType === SerializedType.Primitive) {
       return serializedValue;
+    }
+
+    if (serializedType === SerializedType.PlatformApi) {
+      return getWorkerPlatformApi(serializedValue, webWorkerCtx.$document$!);
     }
 
     if (serializedType === SerializedType.Method) {
@@ -86,3 +108,34 @@ const constructInstance = (serializedInstance: SerializedInstance): any => {
 
   return {};
 };
+
+const serializeRef = (ref: any): SerializedRefTransfer => {
+  let refId = refIdsByRef.get(ref);
+  if (!refId) {
+    refId = refIds++;
+    refIdsByRef.set(ref, refId);
+    refsByRefId.set(refId, ref);
+  }
+  return [SerializedType.Ref, refId];
+};
+
+export const callRefHandler = (
+  refId: number,
+  serializedTarget: SerializedTransfer,
+  serializedArgs: SerializedTransfer
+) => {
+  const ref = refsByRefId.get(refId);
+  if (ref) {
+    try {
+      const target = deserializeFromMain(null, [], serializedTarget);
+      const args = deserializeFromMain(target, [], serializedArgs);
+      ref.apply(target, args);
+    } catch (e) {
+      console.error(e);
+    }
+  } else if (debug) {
+    logWorker(`Unable to find callRefHandler, ref "${refId}", args: ${serializedArgs}`);
+  }
+};
+
+type Ref = any;

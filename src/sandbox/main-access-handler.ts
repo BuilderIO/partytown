@@ -1,13 +1,14 @@
 import { AccessType, ExtraInstruction, MainAccessRequest, MainAccessResponse } from '../types';
 import { deserializeFromWorker, serializeForWorker } from './main-serialization';
 import { getInstance, getInstanceId } from './main-instances';
-import { isPromise, len, PT_SCRIPT_INIT_TYPE } from '../utils';
+import { isPromise, len, PT_SCRIPT_TYPE } from '../utils';
 
 export const mainAccessHandler = async (accessReq: MainAccessRequest) => {
   const accessType = accessReq.$accessType$;
   const instanceId = accessReq.$instanceId$;
-  const memberPath = accessReq.$memberPath$!;
-  const data = deserializeFromWorker(accessReq.$data$);
+  const memberPath = accessReq.$memberPath$;
+  const instance = getInstance(instanceId);
+  const data = deserializeFromWorker(instanceId, accessReq.$data$);
   const extraInstructions = accessReq.$extraInstructions$;
   const accessRsp: MainAccessResponse = {
     $msgId$: accessReq.$msgId$,
@@ -15,7 +16,6 @@ export const mainAccessHandler = async (accessReq: MainAccessRequest) => {
   };
 
   try {
-    const instance = getInstance(instanceId);
     if (instance) {
       if (accessType === AccessType.Get) {
         await getInstanceMember(accessRsp, instance, memberPath);
@@ -92,7 +92,7 @@ const callInstanceMethod = async (
         (rtnValue as HTMLImageElement).hidden = true;
       }
       if (extra === ExtraInstruction.SET_INERT_SCRIPT) {
-        (rtnValue as HTMLScriptElement).type = PT_SCRIPT_INIT_TYPE;
+        (rtnValue as HTMLScriptElement).type = PT_SCRIPT_TYPE;
       }
       if (extra === ExtraInstruction.SET_PARTYTOWN_ID) {
         rtnValue.dataset.partytownId = getInstanceId(rtnValue);

@@ -1,5 +1,5 @@
-import { InstanceId } from './types';
 import { InstanceIdKey, webWorkerCtx } from './web-worker/worker-constants';
+import { PlatformApiId } from './types';
 
 export const debug = (globalThis as any).partytownDebug;
 
@@ -69,19 +69,19 @@ export const logWorkerCall = (target: any, memberPath: string[], args: any[], rt
 const logTargetProp = (target: any, memberPath: string[]) => {
   let n = '';
   if (target) {
-    if (target[InstanceIdKey] === InstanceId.document) {
+    if (target[InstanceIdKey] === PlatformApiId.document) {
       n = 'document.';
-    } else if (target[InstanceIdKey] === InstanceId.documentElement) {
+    } else if (target[InstanceIdKey] === PlatformApiId.documentElement) {
       n = 'document.documentElement.';
-    } else if (target[InstanceIdKey] === InstanceId.head) {
+    } else if (target[InstanceIdKey] === PlatformApiId.head) {
       n = 'document.head.';
-    } else if (target[InstanceIdKey] === InstanceId.body) {
+    } else if (target[InstanceIdKey] === PlatformApiId.body) {
       n = 'document.body.';
-    } else if (target[InstanceIdKey] === InstanceId.history) {
+    } else if (target[InstanceIdKey] === PlatformApiId.history) {
       n = 'history.';
-    } else if (target[InstanceIdKey] === InstanceId.localStorage) {
+    } else if (target[InstanceIdKey] === PlatformApiId.localStorage) {
       n = 'localStorage.';
-    } else if (target[InstanceIdKey] === InstanceId.sessionStorage) {
+    } else if (target[InstanceIdKey] === PlatformApiId.sessionStorage) {
       n = 'sessionStorage.';
     } else if (target.nodeType === 1) {
       n = toLower(target.nodeName) + '.';
@@ -141,6 +141,18 @@ export const len = (obj: { length: number }) => obj.length;
 export const getConstructorName = (obj: { constructor?: { name?: string } } | undefined | null) =>
   (obj && obj.constructor && obj.constructor.name) || '';
 
+export const noop = () => {};
+
+export const isValidMemberName = (memberName: string) => {
+  if (memberName.startsWith('webkit')) {
+    return false;
+  } else if (memberName.startsWith('on') && toLower(memberName) === memberName) {
+    return false;
+  } else {
+    return true;
+  }
+};
+
 export const PT_PROXY_URL = `proxytown`;
 export const PT_INITIALIZED_EVENT = `ptinit`;
-export const PT_SCRIPT_INIT_TYPE = `text/partytown-initialized`;
+export const PT_SCRIPT_TYPE = `text/partytown`;

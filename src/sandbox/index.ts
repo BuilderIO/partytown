@@ -1,6 +1,7 @@
 import { createWebWorker } from './create-web-worker';
 import { initSandbox } from './init-sandbox';
+import { setMainContext } from './main-context';
 
-const ric = window.requestIdleCallback || setTimeout;
+setMainContext(window, document);
 
-initSandbox(window, document, createWebWorker, ric);
+initSandbox(createWebWorker, requestIdleCallback || setTimeout);

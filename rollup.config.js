@@ -114,6 +114,10 @@ export default async function (cmdArgs) {
           },
         },
       ],
+      onwarn(warning) {
+        if (warning.code === 'CIRCULAR_DEPENDENCY') return;
+        console.log(warning.code);
+      },
     });
 
     const generated = await build.generate({
@@ -269,6 +273,7 @@ function managlePropsPlugin() {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$'.split('');
   const mangleProps = {
     $accessType$: '',
+    $body$: '',
     $config$: '',
     $content$: '',
     $currentScript$: '',
@@ -276,12 +281,14 @@ function managlePropsPlugin() {
     $document$: '',
     $documentCompatMode$: '',
     $documentCookie$: '',
+    $documentElement$: '',
     $documentReadyState$: '',
     $documentReferrer$: '',
     $documentTitle$: '',
     $extraInstructions$: '',
     $error$: '',
     $firstScriptId$: '',
+    $head$: '',
     $history$: '',
     $importScripts$: '',
     $initializeScripts$: '',
@@ -296,10 +303,14 @@ function managlePropsPlugin() {
     $onerror$: '',
     $onload$: '',
     $rtnValue$: '',
+    $sandboxDocument$: '',
+    $sandboxWindow$: '',
     $sessionStorage$: '',
     $scopePath$: '',
     $url$: '',
+    $window$: '',
     $workerName$: '',
+    $workerPostMessage$: '',
   };
   if (chars.length < Object.keys(mangleProps).length) {
     throw new Error('Figure out a better property renaming plan');

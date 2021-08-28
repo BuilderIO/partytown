@@ -1,99 +1,80 @@
 import {
   CreateWorker,
   InitWebWorkerData,
-  InstanceId,
-  MainWindow,
-  SandboxMessageToWebWorker,
-  WebWorkerMessageToSandbox,
-  WebWorkerRequestToSandboxMessage,
-  WebWorkerResponseFromSandboxMessage,
+  MessageFromWorkerToSandbox,
+  PostMessageToWorker,
+  WorkerMessageType,
 } from '../types';
-import { getInstance, getInstanceId, setInstanceId } from './main-instances';
-import { logMain, PT_INITIALIZED_EVENT, PT_SCRIPT_INIT_TYPE } from '../utils';
+import { getInstanceId } from './main-instances';
+import { logMain, PT_INITIALIZED_EVENT } from '../utils';
 import { mainAccessHandler } from './main-access-handler';
+import { mainCtx } from './main-context';
 import { readMainInterfaces } from './read-interfaces';
 import { readMainScripts } from './read-main-scripts';
 
 export const initSandbox = async (
-  sandboxWindow: Window,
-  sandboxDocument: Document,
   createWebWorker: CreateWorker,
   requestIdleCallback: typeof window.requestIdleCallback
 ) => {
-  const mainWindow: MainWindow = sandboxWindow.parent!;
-  const mainDocument = mainWindow.document;
-  const workerGroups = readMainScripts(mainDocument);
-
-  const swContainer = sandboxWindow.navigator.serviceWorker;
+  const sandboxDocument = mainCtx.$sandboxDocument$;
+  const mainDocument = mainCtx.$document$;
+  const workerScripts = readMainScripts(mainDocument);
+  const swContainer = mainCtx.$sandboxWindow$.navigator.serviceWorker;
   const swRegistration = await swContainer.getRegistration();
 
   const onMessageFromWorker = (
-    webWorker: Worker,
+    postMessage: PostMessageToWorker,
     workerName: string,
-    ev: MessageEvent<WebWorkerRequestToSandboxMessage>
+    ev: MessageEvent<MessageFromWorkerToSandbox>
   ) => {
     const msg = ev.data;
     const msgType = msg[0];
-    const remainingScripts = msg[2];
 
-    if (msgType === WebWorkerMessageToSandbox.MainDataRequest) {
+    if (msgType === WorkerMessageType.MainDataRequestFromWorker) {
+      // web worker has requested data from the main thread
       const firstScriptId = getInstanceId(mainDocument.querySelector('script'));
-      const mainInterfaces = readMainInterfaces(sandboxWindow, sandboxDocument);
+      const mainInterfaces = readMainInterfaces(sandboxDocument, sandboxDocument.documentElement);
       const initWebWorkerData: InitWebWorkerData = {
-        $config$: mainWindow.partytown || {},
+        $config$: mainCtx.$config$,
         $documentCompatMode$: mainDocument.compatMode,
         $documentCookie$: mainDocument.cookie,
         $documentReadyState$: mainDocument.readyState,
         $documentReferrer$: mainDocument.referrer,
         $documentTitle$: mainDocument.title,
         $firstScriptId$: firstScriptId,
-        $initializeScripts$: workerGroups[workerName],
+        $initializeScripts$: workerScripts[workerName],
         $interfaces$: mainInterfaces,
         $scopePath$: swRegistration!.scope!,
-        $url$: mainWindow.location + '',
+        $url$: mainCtx.$url$,
       };
-      const msgToWorker: WebWorkerResponseFromSandboxMessage = [
-        SandboxMessageToWebWorker.MainDataResponse,
-        initWebWorkerData,
-      ];
-      webWorker.postMessage(msgToWorker);
-    } else if (msgType === WebWorkerMessageToSandbox.ScriptInitialized) {
-      const script = getInstance<HTMLScriptElement>(msg[1]);
-      if (script) {
-        script.type = PT_SCRIPT_INIT_TYPE;
-      }
-
-      if (remainingScripts > 0) {
-        const msgToWorker: WebWorkerResponseFromSandboxMessage = [
-          SandboxMessageToWebWorker.InitializeNextScript,
-        ];
-        webWorker.postMessage(msgToWorker);
-      } else {
-        mainDocument.dispatchEvent(new CustomEvent(PT_INITIALIZED_EVENT));
-      }
+      // send to the web worker the main data
+      postMessage([WorkerMessageType.MainDataResponseToWorker, initWebWorkerData]);
+    } else if (msgType === WorkerMessageType.WorkerInitialized) {
+      // web worker has been initialized with the main data
+      mainDocument.dispatchEvent(new CustomEvent(PT_INITIALIZED_EVENT));
+      // send to the web worker to initialize the next script
+      postMessage([WorkerMessageType.InitializeNextWorkerScript]);
+    } else if (msgType === WorkerMessageType.InitializeNextWorkerScript) {
+      // web worker has finished initializing the script, and has another one to do
+      // doing this postMessage back-and-forth so we don't have long running tasks
+      postMessage([WorkerMessageType.InitializeNextWorkerScript]);
     }
   };
 
-  setInstanceId(mainWindow.history, InstanceId.history);
-  setInstanceId(mainWindow.localStorage, InstanceId.localStorage);
-  setInstanceId(mainWindow.sessionStorage, InstanceId.sessionStorage);
-  setInstanceId(mainWindow, InstanceId.window);
-  setInstanceId(mainDocument, InstanceId.document);
-  setInstanceId(mainDocument.documentElement, InstanceId.documentElement);
-  setInstanceId(mainDocument.head, InstanceId.head);
-  setInstanceId(mainDocument.body, InstanceId.body);
-
-  swContainer.addEventListener('message', async (ev) => {
-    const accessRsp = await mainAccessHandler(ev.data);
-    if (swRegistration && swRegistration.active) {
-      swRegistration.active.postMessage(accessRsp);
-    }
+  swContainer.addEventListener('message', (ev) => {
+    mainAccessHandler(ev.data).then((accessRsp) => {
+      if (swRegistration && swRegistration.active) {
+        swRegistration.active.postMessage(accessRsp);
+      }
+    });
   });
 
-  for (const workerName in workerGroups) {
+  for (const workerName in workerScripts) {
     logMain(`Creating "${workerName}" web worker`);
     const webWorker = createWebWorker(workerName);
+    const postMessage: PostMessageToWorker = webWorker.postMessage.bind(webWorker);
     webWorker.onmessage = (ev) =>
-      requestIdleCallback(() => onMessageFromWorker(webWorker, workerName, ev));
+      requestIdleCallback(() => onMessageFromWorker(postMessage, workerName, ev));
+    mainCtx.$workerPostMessage$.push(postMessage);
   }
 };

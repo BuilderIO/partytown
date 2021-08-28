@@ -1,4 +1,4 @@
-import type { InitWebWorkerContext, WebWorkerContext } from '../types';
+import type { WebWorkerContext } from '../types';
 
 export const InstanceIdKey = Symbol();
 export const NodeNameKey = Symbol();

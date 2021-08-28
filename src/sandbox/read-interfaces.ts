@@ -1,18 +1,19 @@
-import { getConstructorName, toLower } from '../utils';
+import { getConstructorName, isValidMemberName } from '../utils';
 import { InterfaceInfo, InterfaceType, MemberTypeInfo } from '../types';
+import { mainCtx } from './main-context';
 
-export const readMainInterfaces = (win: Window, doc: Document) => {
-  const docImpl = doc.implementation.createHTMLDocument();
-  const documentElement = docImpl.documentElement;
-
+export const readMainInterfaces = (
+  sandboxDocument: Document,
+  sandboxDocumentElement: HTMLElement
+) => {
   const implementations: [InterfaceType, any][] = [
-    [InterfaceType.Document, docImpl],
-    [InterfaceType.DOMTokenList, documentElement.classList],
-    [InterfaceType.Element, docImpl.createElement('i')],
-    [InterfaceType.History, win.history],
-    [InterfaceType.NodeList, documentElement.childNodes],
-    [InterfaceType.Storage, win.localStorage],
-    [InterfaceType.TextNode, docImpl.createTextNode('')],
+    [InterfaceType.Document, sandboxDocument],
+    [InterfaceType.DOMTokenList, sandboxDocumentElement.classList],
+    [InterfaceType.Element, sandboxDocumentElement],
+    [InterfaceType.History, mainCtx.$history$],
+    [InterfaceType.NodeList, sandboxDocumentElement.childNodes],
+    [InterfaceType.Storage, mainCtx.$sessionStorage$],
+    [InterfaceType.TextNode, sandboxDocument.createTextNode('')],
   ];
 
   return implementations.map(([interfaceType, impl]) => {
@@ -44,16 +45,6 @@ const readImplementationMembers = (impl: any, members: MemberTypeInfo) => {
   }
 
   return members;
-};
-
-const isValidMemberName = (memberName: string) => {
-  if (memberName.startsWith('webkit')) {
-    return false;
-  } else if (memberName.startsWith('on') && toLower(memberName) === memberName) {
-    return false;
-  } else {
-    return true;
-  }
 };
 
 const InterfaceWhitelist: { [key: string]: InterfaceType } = {

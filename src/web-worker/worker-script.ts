@@ -1,9 +1,10 @@
 import { debug, logWorker } from '../utils';
 import { importScriptUrl } from './worker-requests';
+import type { InitializeScriptData } from '../types';
 import { webWorkerCtx } from './worker-constants';
 
-export const initNextScriptsInWebWorker = () => {
-  const script = webWorkerCtx.$initializeScripts$.shift();
+export const initNextScriptsInWebWorker = (script?: InitializeScriptData) => {
+  script = webWorkerCtx.$initializeScripts$.shift();
   if (script) {
     if (script.$url$) {
       importScriptUrl(script.$instanceId$, script.$url$);
@@ -11,7 +12,6 @@ export const initNextScriptsInWebWorker = () => {
       initializeScriptContent(script.$instanceId$, script.$content$);
     }
   }
-  return script;
 };
 
 const initializeScriptContent = (instanceId: number, scriptContent: string) => {

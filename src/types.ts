@@ -5,21 +5,41 @@ import type { WorkerStorage } from './web-worker/worker-storage';
 
 export type CreateWorker = (workerName: string) => Worker;
 
-export type WebWorkerRequestToSandboxMessage = [WebWorkerMessageToSandbox, number, number];
+export type MessageFromWorkerToSandbox =
+  | [WorkerMessageType.MainDataRequestFromWorker]
+  | [WorkerMessageType.WorkerInitialized]
+  | [WorkerMessageType.InitializeNextWorkerScript];
 
-export const enum WebWorkerMessageToSandbox {
-  MainDataRequest,
-  ScriptInitialized,
+export type MessageFromSandboxToWorker =
+  | [WorkerMessageType.MainDataResponseToWorker, InitWebWorkerData]
+  | [WorkerMessageType.InitializeNextWorkerScript]
+  | [WorkerMessageType.RefHandlerCallback, number, SerializedTransfer, SerializedTransfer];
+
+export const enum WorkerMessageType {
+  MainDataRequestFromWorker,
+  MainDataResponseToWorker,
+  WorkerInitialized,
+  InitializeNextWorkerScript,
+  RefHandlerCallback,
 }
 
-export const enum SandboxMessageToWebWorker {
-  MainDataResponse,
-  InitializeNextScript,
-}
+export type PostMessageToWorker = (msg: MessageFromSandboxToWorker) => void;
 
-export type WebWorkerResponseFromSandboxMessage =
-  | [SandboxMessageToWebWorker, any]
-  | [SandboxMessageToWebWorker];
+export interface MainContext {
+  $body$: HTMLElement;
+  $config$: PartytownConfig;
+  $document$: Document;
+  $documentElement$: HTMLElement;
+  $head$: HTMLElement;
+  $history$: History;
+  $localStorage$: Storage;
+  $sandboxDocument$: Document;
+  $sandboxWindow$: Window;
+  $sessionStorage$: Storage;
+  $url$: string;
+  $window$: Window;
+  $workerPostMessage$: PostMessageToWorker[];
+}
 
 export interface InitWebWorkerData {
   $config$: PartytownConfig;
@@ -65,15 +85,15 @@ export const enum InterfaceType {
   CSSStyleDeclaration = 11,
 }
 
-export const enum InstanceId {
-  history = 0,
-  localStorage = 1,
-  sessionStorage = 2,
-  window = 3,
-  document = 4,
-  documentElement = 5,
-  head = 6,
-  body = 7,
+export const enum PlatformApiId {
+  window,
+  history,
+  localStorage,
+  sessionStorage,
+  document,
+  documentElement,
+  head,
+  body,
 }
 
 export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {}
@@ -98,8 +118,8 @@ export interface MainAccessRequest {
   $msgId$: number;
   $accessType$: AccessType;
   $instanceId$: number;
-  $memberPath$?: string[];
-  $data$?: any;
+  $memberPath$: string[];
+  $data$: SerializedTransfer;
   $extraInstructions$?: ExtraInstruction[];
 }
 
@@ -120,19 +140,42 @@ export interface MainAccessResponse {
 export const enum SerializedType {
   Array,
   Instance,
-  InstanceById,
   Method,
   Object,
+  PlatformApi,
   Primitive,
+  Ref,
 }
 
+export type SerializedArrayTransfer = [SerializedType.Array, SerializedTransfer[]];
+
+export type SerializedInstanceTransfer = [SerializedType.Instance, SerializedInstance];
+
+export type SerializedMethodTransfer = [SerializedType.Method];
+
+export type SerializedObjectTransfer = [
+  SerializedType.Object,
+  { [key: string]: SerializedTransfer }
+];
+
+export type SerializedPlatformApiTransfer = [SerializedType.PlatformApi, number];
+
+export type SerializedPrimitiveTransfer = [
+  SerializedType.Primitive,
+  string | number | boolean | null | undefined
+];
+
+export type SerializedRefTransfer = [SerializedType.Ref, number];
+
 export type SerializedTransfer =
-  | [SerializedType.Primitive, string | number | boolean | null | undefined]
-  | [SerializedType.Array, SerializedTransfer[]]
-  | [SerializedType.InstanceById, number]
-  | [SerializedType.Instance, SerializedInstance]
-  | [SerializedType.Object, { [key: string]: SerializedTransfer }]
-  | [SerializedType.Method]
+  | SerializedArrayTransfer
+  | SerializedInstanceTransfer
+  | SerializedMethodTransfer
+  | SerializedObjectTransfer
+  | SerializedPlatformApiTransfer
+  | SerializedPrimitiveTransfer
+  | SerializedPrimitiveTransfer
+  | SerializedRefTransfer
   | [];
 
 export interface SerializedInstance {

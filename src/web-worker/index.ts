@@ -1,33 +1,41 @@
+import { callRefHandler } from './worker-serialization';
 import { initNextScriptsInWebWorker } from './worker-script';
 import { initWebWorker } from './init-worker';
+import {
+  InitWebWorkerData,
+  MessageFromSandboxToWorker,
+  MessageFromWorkerToSandbox,
+  WorkerMessageType,
+} from '../types';
 import { len } from '../utils';
 import { webWorkerCtx } from './worker-constants';
-import {
-  SandboxMessageToWebWorker,
-  WebWorkerMessageToSandbox,
-  WebWorkerResponseFromSandboxMessage,
-} from '../types';
 
-self.onmessage = (ev: MessageEvent<WebWorkerResponseFromSandboxMessage>) => {
+const postMessage = (msg: MessageFromWorkerToSandbox) => self.postMessage(msg);
+
+self.onmessage = (ev: MessageEvent<MessageFromSandboxToWorker>) => {
   const msg = ev.data;
   const msgType = msg[0];
-  let initializedId = -1;
 
-  if (msgType === SandboxMessageToWebWorker.MainDataResponse) {
-    initWebWorker(self as any, msg[1]);
-  } else if (msgType === SandboxMessageToWebWorker.InitializeNextScript) {
-    const script = initNextScriptsInWebWorker();
-    if (script) {
-      initializedId = script.$instanceId$;
+  if (msgType === WorkerMessageType.MainDataResponseToWorker) {
+    // initialize the web worker with the received the main data
+    initWebWorker(self as any, msg[1] as InitWebWorkerData);
+    // send back to main that the web worker is initialized
+    postMessage([WorkerMessageType.WorkerInitialized]);
+  } else if (msgType === WorkerMessageType.InitializeNextWorkerScript) {
+    // message from main to web worker that it should initialize the next script
+    initNextScriptsInWebWorker();
+
+    if (len(webWorkerCtx.$initializeScripts$)) {
+      // send back to main that there is another script to do yet
+      // doing this postMessage back-and-forth so we don't have long running tasks
+      postMessage([WorkerMessageType.InitializeNextWorkerScript]);
     }
+  } else if (msgType === WorkerMessageType.RefHandlerCallback) {
+    // main has called a ref handler
+    callRefHandler(msg[1] as number, msg[2]!, msg[3]!);
   }
-
-  self.postMessage([
-    WebWorkerMessageToSandbox.ScriptInitialized,
-    initializedId,
-    len(webWorkerCtx.$initializeScripts$),
-  ]);
 };
 
-// trigger loading main data
-self.postMessage([WebWorkerMessageToSandbox.MainDataRequest]);
+// web worker started up
+// request the data from main
+postMessage([WorkerMessageType.MainDataRequestFromWorker]);

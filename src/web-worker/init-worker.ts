@@ -1,4 +1,4 @@
-import { InitWebWorkerData, InstanceId, InterfaceType, NodeName } from '../types';
+import { InitWebWorkerData, InterfaceType, NodeName, PlatformApiId } from '../types';
 import { initWebWorkerGlobal } from './worker-global';
 import { len, logWorker } from '../utils';
 import { webWorkerCtx } from './worker-constants';
@@ -17,10 +17,10 @@ export const initWebWorker = (self: Worker, initWebWorkerData: InitWebWorkerData
 
   webWorkerCtx.$location$ = new WorkerLocation(initWebWorkerData.$url$);
   webWorkerCtx.$history$ = new WorkerHistory();
-  webWorkerCtx.$localStorage$ = new WorkerStorage(InstanceId.localStorage);
-  webWorkerCtx.$sessionStorage$ = new WorkerStorage(InstanceId.sessionStorage);
+  webWorkerCtx.$localStorage$ = new WorkerStorage(PlatformApiId.localStorage);
+  webWorkerCtx.$sessionStorage$ = new WorkerStorage(PlatformApiId.sessionStorage);
   webWorkerCtx.$document$ = new WorkerDocument({
-    $instanceId$: InstanceId.document,
+    $instanceId$: PlatformApiId.document,
     $interfaceType$: InterfaceType.Document,
     $data$: NodeName.Document,
   });
