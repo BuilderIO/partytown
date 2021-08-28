@@ -144,10 +144,12 @@ export const getConstructorName = (obj: { constructor?: { name?: string } } | un
 
 export const noop = () => {};
 
+const startsWith = (str: string, val: string) => str.startsWith(val);
+
 export const isValidMemberName = (memberName: string) => {
-  if (memberName.startsWith('webkit')) {
+  if (startsWith(memberName, 'webkit') || startsWith(memberName, 'toJSON')) {
     return false;
-  } else if (memberName.startsWith('on') && toLower(memberName) === memberName) {
+  } else if (startsWith(memberName, 'on') && toLower(memberName) === memberName) {
     return false;
   } else {
     return true;

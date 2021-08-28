@@ -8,27 +8,27 @@ test('element method', async ({ page }) => {
   const test0 = page.locator('#test0');
   await expect(test0).toHaveText('H1');
 
-  const test1 = page.locator('#test1');
-  await expect(test1).toHaveText('2');
+  const testQSLength = page.locator('#testQSLength');
+  await expect(testQSLength).toHaveText('2');
 
-  const test2 = page.locator('#test2');
-  await expect(test2).toHaveText('H1,UL');
+  const testQSForEach = page.locator('#testQSForEach');
+  await expect(testQSForEach).toHaveText('H1,UL');
 
-  const test3 = page.locator('#test3');
-  await expect(test3).toHaveText('H1');
+  const testQSIndex = page.locator('#testQSIndex');
+  await expect(testQSIndex).toHaveText('H1');
 
-  const test4 = page.locator('#test4');
-  await expect(test4).toHaveText('UL');
+  const testQSItem = page.locator('#testQSItem');
+  await expect(testQSItem).toHaveText('UL');
 
-  const test5 = page.locator('#test5');
-  await expect(test5).toHaveText('H1,UL');
+  const testQSIterable = page.locator('#testQSIterable');
+  await expect(testQSIterable).toHaveText('H1,UL');
 
-  const test6 = page.locator('#test6');
-  await expect(test6).toHaveText('H1,UL');
+  const testQSArrayFrom = page.locator('#testQSArrayFrom');
+  await expect(testQSArrayFrom).toHaveText('H1,UL');
 
-  const test7 = page.locator('#test7');
-  await expect(test7).toHaveText('88');
+  const testGetAttribute = page.locator('#testGetAttribute');
+  await expect(testGetAttribute).toHaveText('88');
 
-  const test8 = page.locator('#test8');
-  await expect(test8).toHaveText('1985');
+  const testSetAttribute = page.locator('#testSetAttribute');
+  await expect(testSetAttribute).toHaveText('1985');
 });

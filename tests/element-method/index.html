@@ -42,6 +42,22 @@
     <h1>Element Method</h1>
     <ul>
       <li>
+        <strong>getBoundingClientRect()</strong>
+        <code id="test-getBoundingClientRect-y"></code>
+        <code id="test-getBoundingClientRect"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementsByTagName('h1')[0];
+            const t = document.getElementById('test-getBoundingClientRect');
+            const y = document.getElementById('test-getBoundingClientRect-y');
+            const r = elm.getBoundingClientRect();
+            t.textContent = JSON.stringify(r);
+            y.textContent = r.y;
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>querySelector('h1')</strong>
         <code id="test0"></code>
         <script type="text/partytown">
@@ -54,18 +70,18 @@
 
       <li>
         <strong>querySelectorAll('h1,ul').length</strong>
-        <code id="test1"></code>
+        <code id="testQSLength"></code>
         <script type="text/partytown">
           (function () {
             const elms = document.querySelectorAll('h1,ul');
-            document.getElementById('test1').innerHTML = elms.length;
+            document.getElementById('testQSLength').innerHTML = elms.length;
           })();
         </script>
       </li>
 
       <li>
         <strong>querySelectorAll('h1,ul').forEach()</strong>
-        <code id="test2"></code>
+        <code id="testQSForEach"></code>
         <script type="text/partytown">
           (function () {
             const elms = document.querySelectorAll('h1,ul');
@@ -73,36 +89,36 @@
             elms.forEach((elm) => {
               tags.push(elm.tagName);
             });
-            document.getElementById('test2').innerHTML = tags.join(',');
+            document.getElementById('testQSForEach').innerHTML = tags.join(',');
           })();
         </script>
       </li>
 
       <li>
         <strong>querySelectorAll('h1,ul')[0]</strong>
-        <code id="test3"></code>
+        <code id="testQSIndex"></code>
         <script type="text/partytown">
           (function () {
             const elm = document.querySelectorAll('h1,ul')[0];
-            document.getElementById('test3').innerHTML = elm.nodeName;
+            document.getElementById('testQSIndex').innerHTML = elm.nodeName;
           })();
         </script>
       </li>
 
       <li>
         <strong>querySelectorAll('h1,ul').item(1)</strong>
-        <code id="test4"></code>
+        <code id="testQSItem"></code>
         <script type="text/partytown">
           (function () {
             const elm = document.querySelectorAll('h1,ul').item(1);
-            document.getElementById('test4').innerHTML = elm.nodeName;
+            document.getElementById('testQSItem').innerHTML = elm.nodeName;
           })();
         </script>
       </li>
 
       <li>
         <strong>querySelectorAll('h1,ul') iterable</strong>
-        <code id="test5"></code>
+        <code id="testQSIterable"></code>
         <script type="text/partytown">
           (function () {
             const elms = document.querySelectorAll('h1,ul');
@@ -110,14 +126,14 @@
             for (const elm of elms) {
               tags.push(elm.tagName);
             }
-            document.getElementById('test5').innerHTML = tags.join(',');
+            document.getElementById('testQSIterable').innerHTML = tags.join(',');
           })();
         </script>
       </li>
 
       <li>
         <strong>Array.from(querySelectorAll('h1,ul'))</strong>
-        <code id="test6"></code>
+        <code id="testQSArrayFrom"></code>
         <script type="text/partytown">
           (function () {
             const elms = Array.from(document.querySelectorAll('h1,ul'));
@@ -125,29 +141,29 @@
             for (const elm of elms) {
               tags.push(elm.tagName);
             }
-            document.getElementById('test6').innerHTML = tags.join(',');
+            document.getElementById('testQSArrayFrom').innerHTML = tags.join(',');
           })();
         </script>
       </li>
 
       <li>
         <strong>getAttribute()</strong>
-        <code id="test7"></code>
+        <code id="testGetAttribute"></code>
         <script type="text/partytown">
           (function () {
             const attrValue = document.body.getAttribute('mph');
-            document.getElementById('test7').innerHTML = attrValue;
+            document.getElementById('testGetAttribute').innerHTML = attrValue;
           })();
         </script>
       </li>
 
       <li>
         <strong>setAttribute()</strong>
-        <code id="test8"></code>
+        <code id="testSetAttribute"></code>
         <script type="text/partytown">
           (function () {
             document.body.setAttribute('year', '1985');
-            document.getElementById('test8').innerHTML = document.body.getAttribute('year');
+            document.getElementById('testSetAttribute').innerHTML = document.body.getAttribute('year');
           })();
         </script>
       </li>
