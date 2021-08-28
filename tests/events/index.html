@@ -43,16 +43,41 @@
     <ul>
       <li>
         <strong>button.addEventListener('click')</strong>
-        <button id="test0-button">test0</button>
-        <code id="test0">0</code>
-        <code id="test0-target"></code>
+        <button id="buttonAddEventListener">incremement</button>
+        <code id="testAddEventListener">0</code>
+        <code id="testTarget"></code>
         <script type="text/partytown">
           (function () {
             let count = 0;
-            const btn = document.getElementById('test0-button');
+            const btn = document.getElementById('buttonAddEventListener');
             btn.addEventListener('click', function (ev) {
-              document.getElementById('test0').textContent = ++count;
-              document.getElementById('test0-target').textContent = this.tagName;
+              document.getElementById('testAddEventListener').textContent = ++count;
+              document.getElementById('testTarget').textContent = this.tagName;
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>add/remove listener</strong>
+        <button id="buttonInc">inc</button>
+        <button id="buttonAdd">add</button>
+        <button id="buttonRemove">remove</button>
+        <code id="testInc">0</code>
+        <script>
+          (function () {
+            let count = 0;
+            const buttonAdd = document.getElementById('buttonAdd');
+            const buttonInc = document.getElementById('buttonInc');
+            const buttonRemove = document.getElementById('buttonRemove');
+            function inc() {
+              document.getElementById('testInc').textContent = ++count;
+            }
+            buttonAdd.addEventListener('click', (ev) => {
+              buttonInc.addEventListener('click', inc);
+            });
+            buttonRemove.addEventListener('click', (ev) => {
+              buttonInc.removeEventListener('click', inc);
             });
           })();
         </script>
