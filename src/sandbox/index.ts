@@ -4,4 +4,4 @@ import { setMainContext } from './main-context';
 
 setMainContext(window, document);
 
-initSandbox(createWebWorker, requestIdleCallback || setTimeout);
+initSandbox(createWebWorker, window.requestIdleCallback || (setTimeout as any));

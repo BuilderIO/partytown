@@ -9,7 +9,6 @@ test('window', async ({ page }) => {
   await expect(testComputedStyle).toHaveText('rgb(128, 0, 128)');
 
   await page.waitForSelector('.test-raf');
-  await page.waitForSelector('.test-ric');
 
   const testBtoa = page.locator('#test-btoa');
   await expect(testBtoa).toHaveText('ODg=');

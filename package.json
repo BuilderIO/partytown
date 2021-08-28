@@ -10,7 +10,7 @@
     "build": "rollup -c",
     "dev": "rollup -c -w --configDev",
     "serve": "sirv tests --port 4000 --dev",
-    "serve.test": "sirv tests --port 5000 --quiet",
+    "serve.test": "sirv tests --port 5000  --dev --quiet",
     "playwright": "playwright test --browser=chromium",
     "playwright.webkit": "playwright test --browser=webkit",
     "test": "start-server-and-test serve.test http://localhost:5000/ playwright",
