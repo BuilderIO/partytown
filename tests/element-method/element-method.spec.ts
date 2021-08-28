@@ -31,4 +31,9 @@ test('element method', async ({ page }) => {
 
   const testSetAttribute = page.locator('#testSetAttribute');
   await expect(testSetAttribute).toHaveText('1985');
+
+  const testGetBoundingClientRectY = page.locator('#testGetBoundingClientRectY');
+  const y = await testGetBoundingClientRectY.textContent();
+  const yInt = parseFloat(y);
+  expect(yInt).toBeGreaterThan(4);
 });

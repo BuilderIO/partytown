@@ -43,13 +43,13 @@
     <ul>
       <li>
         <strong>getBoundingClientRect()</strong>
-        <code id="test-getBoundingClientRect-y"></code>
-        <code id="test-getBoundingClientRect"></code>
+        <code id="testGetBoundingClientRectY"></code>
+        <code id="testGetBoundingClientRect"></code>
         <script type="text/partytown">
           (function () {
             const elm = document.getElementsByTagName('h1')[0];
-            const t = document.getElementById('test-getBoundingClientRect');
-            const y = document.getElementById('test-getBoundingClientRect-y');
+            const t = document.getElementById('testGetBoundingClientRect');
+            const y = document.getElementById('testGetBoundingClientRectY');
             const r = elm.getBoundingClientRect();
             t.textContent = JSON.stringify(r);
             y.textContent = r.y;
