@@ -94,6 +94,10 @@ export const deserializeFromWorker = (
     );
   }
 
+  if (serializedType === SerializedType.InstanceById) {
+    return getInstance(serializedValue);
+  }
+
   if (serializedType === SerializedType.Object) {
     const obj: { [key: string]: any } = {};
     for (const k in serializedValue) {

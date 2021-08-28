@@ -11,7 +11,7 @@ import {
   SerializedTransfer,
   SerializedType,
 } from '../types';
-import { webWorkerCtx } from './worker-constants';
+import { InstanceIdKey, webWorkerCtx } from './worker-constants';
 
 let refIds = 1;
 const refsByRefId = new Map<number, Ref>();
@@ -37,6 +37,10 @@ export const serializeForMain = (value: any): SerializedTransfer => {
   }
 
   if (type === 'object') {
+    if (typeof value[InstanceIdKey] === 'number') {
+      return [SerializedType.InstanceById, value[InstanceIdKey]];
+    }
+
     const serializedObj: { [key: string]: SerializedTransfer } = {};
     for (const k in value) {
       serializedObj[k] = serializeForMain(value[k]);
