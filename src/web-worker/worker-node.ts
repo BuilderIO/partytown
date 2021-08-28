@@ -1,52 +1,36 @@
 import { callMethod, getter, proxy, setter } from './worker-proxy';
 import { ExtraInstruction, InterfaceType, SerializedNode } from '../types';
 import { imageRequest, importScriptUrl } from './worker-requests';
-import { InstanceIdKey, NodeNameKey, NodeTypeKey, PrivateValues } from './worker-constants';
+import { InstanceIdKey, PrivateValues } from './worker-constants';
 import { len, toLower } from '../utils';
 import { webWorkerCtx } from './worker-constants';
 import type { WorkerDocument } from './worker-document';
 
 export class WorkerNode {
   [InstanceIdKey]: number;
-  [NodeNameKey]: string;
-  [NodeTypeKey]: InterfaceType;
+  nodeName: string;
+  nodeType: number;
   [PrivateValues]: { $url$?: string };
 
   constructor(nodeCstr: SerializedNode) {
     this[InstanceIdKey] = nodeCstr.$instanceId$!;
-    this[NodeTypeKey] = nodeCstr.$interfaceType$;
-    this[NodeNameKey] = nodeCstr.$data$;
+    this.nodeType = nodeCstr.$interfaceType$;
+    this.nodeName = nodeCstr.$data$;
     this[PrivateValues] = {};
     return proxy(nodeCstr.$interfaceType$, this, []);
-  }
-
-  get nodeName() {
-    return this[NodeNameKey];
-  }
-
-  get nodeType() {
-    return this[NodeTypeKey];
   }
 
   get ownerDocument() {
     return self.document;
   }
-
-  toJSON(): SerializedNode {
-    return {
-      $interfaceType$: this[NodeTypeKey],
-      $instanceId$: this[InstanceIdKey],
-      $data$: this[NodeNameKey],
-    };
-  }
 }
 
 export class WorkerElement extends WorkerNode {
   get localName() {
-    return toLower(this[NodeNameKey]);
+    return toLower(this.nodeName);
   }
   get tagName() {
-    return this[NodeNameKey];
+    return this.nodeName;
   }
 }
 

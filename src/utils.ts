@@ -69,19 +69,20 @@ export const logWorkerCall = (target: any, memberPath: string[], args: any[], rt
 const logTargetProp = (target: any, memberPath: string[]) => {
   let n = '';
   if (target) {
-    if (target[InstanceIdKey] === PlatformApiId.document) {
+    const instanceId = target[InstanceIdKey];
+    if (instanceId === PlatformApiId.document) {
       n = 'document.';
-    } else if (target[InstanceIdKey] === PlatformApiId.documentElement) {
+    } else if (instanceId === PlatformApiId.documentElement) {
       n = 'document.documentElement.';
-    } else if (target[InstanceIdKey] === PlatformApiId.head) {
+    } else if (instanceId === PlatformApiId.head) {
       n = 'document.head.';
-    } else if (target[InstanceIdKey] === PlatformApiId.body) {
+    } else if (instanceId === PlatformApiId.body) {
       n = 'document.body.';
-    } else if (target[InstanceIdKey] === PlatformApiId.history) {
+    } else if (instanceId === PlatformApiId.history) {
       n = 'history.';
-    } else if (target[InstanceIdKey] === PlatformApiId.localStorage) {
+    } else if (instanceId === PlatformApiId.localStorage) {
       n = 'localStorage.';
-    } else if (target[InstanceIdKey] === PlatformApiId.sessionStorage) {
+    } else if (instanceId === PlatformApiId.sessionStorage) {
       n = 'sessionStorage.';
     } else if (target.nodeType === 1) {
       n = toLower(target.nodeName) + '.';
