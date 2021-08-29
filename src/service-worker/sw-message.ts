@@ -21,7 +21,6 @@ const sendMessageToSandboxFromServiceWorker = (
     const clients = await self.clients.matchAll();
     const client = clients[0];
     if (client) {
-      const timeoutMsg = `Timeout`;
       const timeout = debug ? 120000 : 10000;
       const msgResolve: MessageResolve = [
         resolve,
@@ -30,9 +29,8 @@ const sendMessageToSandboxFromServiceWorker = (
           resolve({
             $msgId$: accessReq.$msgId$,
             $instanceId$: accessReq.$instanceId$,
-            $error$: timeoutMsg,
+            $error$: `Timeout`,
           });
-          console.warn(timeoutMsg, accessReq);
         }, timeout),
       ];
       resolves.set(accessReq.$msgId$, msgResolve);
