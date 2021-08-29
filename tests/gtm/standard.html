@@ -67,8 +67,9 @@
     <button onclick="pushFromData()">Standard dataLayer.push()</button>
     <script>
       function pushFromData() {
-        console.log('dataLayer.push()');
-        dataLayer.push({ from: 'standard' });
+        const data = { event: 'button-click', some: { data: true } };
+        console.log('dataLayer.push(' + JSON.stringify(data) + ')');
+        dataLayer.push(data);
       }
     </script>
 
