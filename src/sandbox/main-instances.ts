@@ -1,6 +1,5 @@
-import { getMainPlatformApi } from './main-platform-api';
 import { len } from '../utils';
-import { MainWindow, PlatformApiId } from '../types';
+import { PlatformApiId } from '../types';
 
 let instanceIds = PlatformApiId.body + 1;
 let cleanupInc = 0;
@@ -22,10 +21,10 @@ export const getInstanceId = (instance: InstanceType | null | undefined, instanc
 
 export const getInstance = <T = InstanceType | null>(instanceId: number, instanceItem?: any): T => {
   instanceItem = instances.find((i) => i[0] === instanceId);
-  return instanceItem ? instanceItem[1] : getMainPlatformApi(instanceId);
+  return instanceItem ? instanceItem[1] : null;
 };
 
-const setInstanceId = (instance: InstanceType | null | undefined, instanceId: number) => {
+export const setInstanceId = (instance: InstanceType | null | undefined, instanceId: number) => {
   if (instance) {
     instances.push([instanceId, instance]);
     instanceIdByInstance.set(instance, instanceId);

@@ -11,6 +11,9 @@ test('document', async ({ page }) => {
   const testGetElementsByTagName = page.locator('#testGetElementsByTagName');
   await expect(testGetElementsByTagName).toHaveText('Document');
 
+  const testGetElementsByTagNameHead = page.locator('#testGetElementsByTagNameHead');
+  await expect(testGetElementsByTagNameHead).toHaveText('[HEAD]');
+
   const testGetElementsByClassName = page.locator('#testGetElementsByClassName');
   await expect(testGetElementsByClassName).toHaveText('Document');
 

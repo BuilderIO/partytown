@@ -1,9 +1,9 @@
 import { callMethod } from './worker-proxy';
 import { debug, logWorker } from '../utils';
 import { ElementConstructors, WorkerElement, WorkerNode, WorkerNodeList } from './worker-node';
-import { getWorkerPlatformApi, getWorkerPlatformApiId } from './worker-platform-api';
 import {
   InterfaceType,
+  PlatformApiId,
   SerializedInstance,
   SerializedNode,
   SerializedNodeList,
@@ -21,11 +21,6 @@ export const serializeForMain = (value: any): SerializedTransfer => {
   const type = typeof value;
   if (type === 'string' || type === 'boolean' || type === 'number' || value == null) {
     return [SerializedType.Primitive, value];
-  }
-
-  const platformApiId = getWorkerPlatformApiId(value, webWorkerCtx.$document$!);
-  if (platformApiId > -1) {
-    return [SerializedType.PlatformApi, platformApiId];
   }
 
   if (type === 'function') {
@@ -64,10 +59,6 @@ export const deserializeFromMain = (
       return serializedValue;
     }
 
-    if (serializedType === SerializedType.PlatformApi) {
-      return getWorkerPlatformApi(serializedValue, webWorkerCtx.$document$!);
-    }
-
     if (serializedType === SerializedType.Method) {
       return (...args: any[]) => callMethod(target, memberPath, args);
     }
@@ -95,21 +86,44 @@ export const deserializeFromMain = (
 
 const constructInstance = (serializedInstance: SerializedInstance): any => {
   const interfaceType = serializedInstance.$interfaceType$;
+  const instanceId = serializedInstance.$instanceId$;
+  const doc = webWorkerCtx.$document$!;
+  const serializedNode: SerializedNode = serializedInstance as any;
 
+  if (instanceId === PlatformApiId.body) {
+    return doc.body;
+  }
+  if (instanceId === PlatformApiId.document) {
+    return doc;
+  }
+  if (instanceId === PlatformApiId.documentElement) {
+    return doc.documentElement;
+  }
+  if (instanceId === PlatformApiId.head) {
+    return doc.head;
+  }
+  if (instanceId === PlatformApiId.history) {
+    return webWorkerCtx.$history$;
+  }
+  if (instanceId === PlatformApiId.localStorage) {
+    return webWorkerCtx.$localStorage$;
+  }
+  if (instanceId === PlatformApiId.sessionStorage) {
+    return webWorkerCtx.$sessionStorage$;
+  }
+  if (instanceId === PlatformApiId.window) {
+    return self;
+  }
   if (interfaceType === InterfaceType.Element) {
-    const serializedNode: SerializedNode = serializedInstance as any;
     return new (ElementConstructors[serializedNode.$data$] || WorkerElement)(serializedNode);
   }
-
   if (interfaceType === InterfaceType.TextNode) {
     return new WorkerNode(serializedInstance as SerializedNode);
   }
-
   if (interfaceType === InterfaceType.NodeList) {
     const serializedNodeList: SerializedNodeList = serializedInstance as any;
     return new WorkerNodeList(serializedNodeList.$data$.map(constructInstance));
   }
-
   return {};
 };
 

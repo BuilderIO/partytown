@@ -63,6 +63,21 @@
       </li>
 
       <li>
+        <strong>getElementsByTagName('head')</strong>
+        <code id="testGetElementsByTagNameHead"></code>
+        <script type="text/partytown">
+          (function () {
+            const elms = document.getElementsByTagName('head');
+            const output = [];
+            elms.forEach(elm => {
+              output.push(elm.nodeName);
+            })
+            document.getElementById('testGetElementsByTagNameHead').innerText = '[' + output.join(', ') + ']';
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>getElementsByClassName('title')[0]</strong>
         <code id="testGetElementsByClassName"></code>
         <script type="text/partytown">

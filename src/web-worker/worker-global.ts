@@ -1,7 +1,7 @@
+import { callMethod } from './worker-proxy';
 import { createElement } from './worker-node';
 import { InstanceIdKey, webWorkerCtx } from './worker-constants';
 import { InterfaceType, MemberTypeInfo, PlatformApiId } from '../types';
-import { callMethod } from './worker-proxy';
 
 export const initWebWorkerGlobal = (self: any, windowMemberTypeInfo: MemberTypeInfo) => {
   self[InstanceIdKey] = PlatformApiId.window;

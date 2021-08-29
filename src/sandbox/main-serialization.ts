@@ -1,6 +1,5 @@
 import { getConstructorName, isValidMemberName, noop } from '../utils';
 import { getInstance, getInstanceId } from './main-instances';
-import { getMainPlatformApi, getMainPlatformApiId } from './main-platform-api';
 import {
   InterfaceType,
   SerializedNode,
@@ -15,11 +14,6 @@ export const serializeForWorker = (value: any, added: Set<any>): SerializedTrans
   const type = typeof value;
   if (type === 'string' || type === 'number' || type === 'boolean' || value == null) {
     return [SerializedType.Primitive, value];
-  }
-
-  const platformApiId = getMainPlatformApiId(value);
-  if (platformApiId > -1) {
-    return [SerializedType.PlatformApi, platformApiId];
   }
 
   if (type === 'function') {
@@ -78,10 +72,6 @@ export const deserializeFromWorker = (
 
   if (serializedType === SerializedType.Primitive) {
     return serializedValue;
-  }
-
-  if (serializedType === SerializedType.PlatformApi) {
-    return getMainPlatformApi(serializedValue);
   }
 
   if (serializedType === SerializedType.Ref) {

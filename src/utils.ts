@@ -3,7 +3,7 @@ import { PlatformApiId } from './types';
 
 export const debug = (globalThis as any).partytownDebug;
 
-export const isPromise = (v: any): v is Promise<unknown> => v instanceof Promise;
+export const isPromise = (v: any): v is Promise<unknown> => typeof v === 'object' && v && v.then;
 
 export const toLower = (str: string) => str.toLowerCase();
 
@@ -107,9 +107,6 @@ const logValue = (memberPath: string[], v: any): string => {
     }
     return JSON.stringify(v);
   }
-  if (isPromise(v)) {
-    return `Promise`;
-  }
   if (Array.isArray(v)) {
     return `[${v.map(logValue).join(', ')}]`;
   }
@@ -129,6 +126,9 @@ const logValue = (memberPath: string[], v: any): string => {
       return JSON.stringify(v.value);
     }
     return JSON.stringify(v);
+  }
+  if (isPromise(v)) {
+    return `Promise`;
   }
   if (type === 'function') {
     return `ƒ() ${v.name || ''}`.trim();

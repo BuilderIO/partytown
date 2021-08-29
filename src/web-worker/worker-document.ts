@@ -54,8 +54,14 @@ export class WorkerDocument extends WorkerElement {
   }
 
   getElementsByTagName(tagName: string) {
-    if (toLower(tagName) === 'script') {
-      // always return just the first script
+    tagName = toLower(tagName);
+    if (tagName === 'body') {
+      return [this.body];
+    }
+    if (tagName === 'head') {
+      return [this.head];
+    }
+    if (tagName === 'script') {
       return [createScript(webWorkerCtx.$firstScriptId$)];
     }
     return callMethod(this, ['getElementsByTagName'], [tagName]);

@@ -2,10 +2,11 @@ import {
   CreateWorker,
   InitWebWorkerData,
   MessageFromWorkerToSandbox,
+  PlatformApiId,
   PostMessageToWorker,
   WorkerMessageType,
 } from '../types';
-import { getInstanceId } from './main-instances';
+import { getInstanceId, setInstanceId } from './main-instances';
 import { logMain, PT_INITIALIZED_EVENT } from '../utils';
 import { mainAccessHandler } from './main-access-handler';
 import { mainCtx } from './main-context';
@@ -21,6 +22,15 @@ export const initSandbox = async (
   const workerScripts = readMainScripts(mainDocument);
   const swContainer = mainCtx.$sandboxWindow$.navigator.serviceWorker;
   const swRegistration = await swContainer.getRegistration();
+
+  setInstanceId(mainCtx.$window$, PlatformApiId.window);
+  setInstanceId(mainCtx.$document$, PlatformApiId.document);
+  setInstanceId(mainCtx.$documentElement$, PlatformApiId.documentElement);
+  setInstanceId(mainCtx.$head$, PlatformApiId.head);
+  setInstanceId(mainCtx.$body$, PlatformApiId.body);
+  setInstanceId(mainCtx.$history$, PlatformApiId.history);
+  setInstanceId(mainCtx.$localStorage$, PlatformApiId.localStorage);
+  setInstanceId(mainCtx.$sessionStorage$, PlatformApiId.sessionStorage);
 
   const onMessageFromWorker = (
     postMessage: PostMessageToWorker,

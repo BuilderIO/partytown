@@ -144,7 +144,6 @@ export const enum SerializedType {
   InstanceById,
   Method,
   Object,
-  PlatformApi,
   Primitive,
   Ref,
 }
@@ -162,8 +161,6 @@ export type SerializedObjectTransfer = [
   { [key: string]: SerializedTransfer }
 ];
 
-export type SerializedPlatformApiTransfer = [SerializedType.PlatformApi, number];
-
 export type SerializedPrimitiveTransfer = [
   SerializedType.Primitive,
   string | number | boolean | null | undefined
@@ -177,7 +174,6 @@ export type SerializedTransfer =
   | SerializedInstanceByIdTransfer
   | SerializedMethodTransfer
   | SerializedObjectTransfer
-  | SerializedPlatformApiTransfer
   | SerializedPrimitiveTransfer
   | SerializedPrimitiveTransfer
   | SerializedRefTransfer
