@@ -74,7 +74,7 @@
       </li>
 
       <li>
-        <strong>document.title get</strong>
+        <strong>title get</strong>
         <code id="testTitleGet"></code>
         <script type="text/partytown">
           (function () {
@@ -84,7 +84,7 @@
       </li>
 
       <li>
-        <strong>document.title set</strong>
+        <strong>title set</strong>
         <code id="testTitleSet"></code>
         <script type="text/partytown">
           (function () {
@@ -95,7 +95,7 @@
       </li>
 
       <li>
-        <strong>document.cookie set/get</strong>
+        <strong>cookie set/get</strong>
         <code id="testCookie"></code>
         <script>
           document.cookie = '';
@@ -109,7 +109,7 @@
       </li>
 
       <li>
-        <strong>document.location get</strong>
+        <strong>location get</strong>
         <code id="testLocationGet"></code>
         <script type="text/partytown">
           (function () {
@@ -119,7 +119,7 @@
       </li>
 
       <li>
-        <strong>document.defaultView</strong>
+        <strong>defaultView</strong>
         <code id="testDefaultView"></code>
         <script type="text/partytown">
           (function () {
@@ -130,7 +130,7 @@
       </li>
 
       <li>
-        <strong>document.defaultView.document</strong>
+        <strong>defaultView.document</strong>
         <code id="testDefaultViewDoc"></code>
         <script type="text/partytown">
           (function () {
@@ -141,7 +141,7 @@
       </li>
 
       <li>
-        <strong>document.documentElement</strong>
+        <strong>documentElement</strong>
         <code id="testDocElement"></code>
         <script type="text/partytown">
           (function () {
@@ -152,7 +152,7 @@
       </li>
 
       <li>
-        <strong>document.head</strong>
+        <strong>head</strong>
         <code id="testHead"></code>
         <script type="text/partytown">
           (function () {
@@ -163,7 +163,7 @@
       </li>
 
       <li>
-        <strong>document.body</strong>
+        <strong>body</strong>
         <code id="testBody"></code>
         <script type="text/partytown">
           (function () {
@@ -174,12 +174,24 @@
       </li>
 
       <li>
-        <strong>document.compatMode</strong>
+        <strong>compatMode</strong>
         <code id="testCompatMode"></code>
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testCompatMode');
             elm.textContent = document.compatMode;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>implementation.hasFeature()</strong>
+        <code id="testHasFeature"></code>
+        <script type="text/partytown">
+          (function () {
+            const hasFeature = document.implementation.hasFeature('whatever');
+            const elm = document.getElementById('testHasFeature');
+            elm.textContent = hasFeature;
           })();
         </script>
       </li>

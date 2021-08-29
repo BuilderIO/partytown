@@ -85,7 +85,7 @@ export const deserializeFromMain = (
     if (serializedType === SerializedType.Object) {
       const obj: { [key: string]: any } = {};
       for (const key in serializedValue) {
-        obj[key] = deserializeFromMain(target, memberPath, serializedValue[key]);
+        obj[key] = deserializeFromMain(target, [...memberPath, key], serializedValue[key]);
       }
       return obj;
     }

@@ -65,6 +65,12 @@ export class WorkerDocument extends WorkerElement {
     return getElementProp(this, PlatformApiId.head, 'HEAD');
   }
 
+  get implementation() {
+    return {
+      hasFeature: () => true,
+    };
+  }
+
   get location() {
     logWorkerGetter(this, ['location'], webWorkerCtx.$location$, true);
     return webWorkerCtx.$location$;
