@@ -67,6 +67,22 @@ export class WorkerAnchorElement extends WorkerElement {
   }
 }
 
+export class WorkerIFrameElement extends WorkerElement {
+  [PrivateValues]: { $url$?: string; $document$: any };
+
+  get contentDocument() {
+    if (!this[PrivateValues].$document$) {
+      this[PrivateValues].$document$ = proxy(InterfaceType.Document, this, ['contentDocument']);
+    }
+    return this[PrivateValues].$document$;
+  }
+  get contentWindow() {
+    return {
+      document: this.contentDocument,
+    };
+  }
+}
+
 class WorkerSrcElement extends WorkerElement {
   [PrivateValues]: {
     /** async */
@@ -198,6 +214,7 @@ const getUrl = (elm: WorkerElement) =>
 
 export const ElementConstructors: { [tagname: string]: any } = {
   A: WorkerAnchorElement,
+  IFRAME: WorkerIFrameElement,
   IMG: WorkerImageElement,
   SCRIPT: WorkerScriptElement,
 };
