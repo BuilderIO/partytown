@@ -150,9 +150,10 @@ export class WorkerScriptElement extends WorkerElement {
     return getUrl(this) + '';
   }
   set src(url: string) {
-    this[PrivateValues].$url$ = url;
-    const instanceId = this[InstanceIdKey];
-    importScriptUrl(instanceId, url);
+    if (this[PrivateValues].$url$ !== url) {
+      this[PrivateValues].$url$ = url;
+      setTimeout(() => importScriptUrl(this[InstanceIdKey], url));
+    }
   }
   get type() {
     return getter(this, ['type']);
