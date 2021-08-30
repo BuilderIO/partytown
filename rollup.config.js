@@ -302,6 +302,7 @@ function managlePropsPlugin() {
     $msgId$: '',
     $onerror$: '',
     $onload$: '',
+    $postMessage$: '',
     $rtnValue$: '',
     $sandboxDocument$: '',
     $sandboxWindow$: '',

@@ -1,6 +1,6 @@
 import { InitWebWorkerData, InterfaceType, NodeName, PlatformApiId } from '../types';
 import { initWebWorkerGlobal } from './worker-global';
-import { len, logWorker } from '../utils';
+import { debug, len, logWorker } from '../utils';
 import { webWorkerCtx } from './worker-constants';
 import { WorkerDocument } from './worker-document';
 import { WorkerHistory } from './worker-history';
@@ -13,7 +13,12 @@ export const initWebWorker = (self: Worker, initWebWorkerData: InitWebWorkerData
   logWorker(`Loaded web worker, scripts: ${len(webWorkerCtx.$initializeScripts$)}`);
 
   webWorkerCtx.$importScripts$ = importScripts.bind(self);
-  (self as any).importScripts = null;
+  (self as any).importScripts = undefined;
+
+  webWorkerCtx.$postMessage$ = postMessage.bind(self);
+  (self as any).postMessage = (msg: any, targetOrigin: string) => {
+    logWorker(`postMessage(${JSON.stringify(msg)}, "${targetOrigin}"})`);
+  };
 
   webWorkerCtx.$location$ = new WorkerLocation(initWebWorkerData.$url$);
   webWorkerCtx.$history$ = new WorkerHistory();

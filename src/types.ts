@@ -56,13 +56,14 @@ export interface InitWebWorkerData {
 }
 
 export interface InitWebWorkerContext {
-  $currentScript$?: number;
-  $document$?: WorkerDocument;
-  $history$?: WorkerHistory;
-  $importScripts$?: (...urls: string[]) => void;
-  $localStorage$?: WorkerStorage;
-  $location$?: WorkerLocation;
-  $sessionStorage$?: WorkerStorage;
+  $currentScript$: number;
+  $document$: WorkerDocument;
+  $history$: WorkerHistory;
+  $importScripts$: (...urls: string[]) => void;
+  $localStorage$: WorkerStorage;
+  $location$: WorkerLocation;
+  $postMessage$: (msg: MessageFromWorkerToSandbox) => void;
+  $sessionStorage$: WorkerStorage;
 }
 
 export type InterfaceInfo = [InterfaceType, MemberTypeInfo];
