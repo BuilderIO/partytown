@@ -85,10 +85,10 @@
         <script type="text/partytown">
           (function () {
             const elms = document.querySelectorAll('h1,ul');
-            let tags = [];
-            elms.forEach((elm) => {
-              tags.push(elm.tagName);
-            });
+            const tags = [];
+            for (let i = 0; i < elms.length; i++) {
+              tags.push(elms[i].nodeName);
+            }
             document.getElementById('testQSForEach').innerHTML = tags.join(',');
           })();
         </script>

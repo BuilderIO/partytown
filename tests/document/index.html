@@ -68,11 +68,11 @@
         <script type="text/partytown">
           (function () {
             const elms = document.getElementsByTagName('head');
-            const output = [];
-            elms.forEach(elm => {
-              output.push(elm.nodeName);
-            })
-            document.getElementById('testGetElementsByTagNameHead').innerText = '[' + output.join(', ') + ']';
+            const tags = [];
+            for (let i = 0; i < elms.length; i++) {
+              tags.push(elms[i].nodeName);
+            }
+            document.getElementById('testGetElementsByTagNameHead').innerText = '[' + tags.join(', ') + ']';
           })();
         </script>
       </li>
