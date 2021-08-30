@@ -25,22 +25,36 @@
         margin: 0;
         padding: 0;
       }
+      a:link,
+      a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover {
+        text-decoration: underline;
+      }
       ul a {
         display: block;
         padding: 10px 8px;
       }
-      ul a:link,
-      ul a:visited {
-        text-decoration: none;
-        color: blue;
-      }
       ul a:hover {
         background-color: #eee;
+        text-decoration: none;
       }
     </style>
   </head>
   <body>
     <h1>Partytown Tests 🎉</h1>
+    <p>
+      Stand-alone tests for
+      <a href="https://developer.mozilla.org/en-US/docs/Glossary/Main_thread">main thread</a>
+      APIs executed from within a
+      <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers"
+        >web worker</a
+      >. These pages are also tested using <a href="https://playwright.dev/">Playwright</a> from
+      Partytown's
+      <a href="https://github.com/BuilderIO/partytown/actions/workflows/ci.yml">CI Workerflow</a>.
+    </p>
     <ul>
       <li><a href="/document/">Document</a></li>
       <li><a href="/element-class/">Element Class</a></li>
@@ -59,6 +73,7 @@
     <hr />
     <ul>
       <li><a href="https://github.com/BuilderIO/partytown#readme">Readme</a></li>
+      <li><a href="https://github.com/BuilderIO/partytown/tree/main/tests">E2E Tests</a></li>
     </ul>
     <p style="font-size: 12px; padding: 0 5px">
       Made with ❤️ by the <a href="https://github.com/BuilderIO/">Builder.io Team</a>

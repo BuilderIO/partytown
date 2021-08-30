@@ -6,6 +6,8 @@
 
 Even with a fast and higly tuned website following all of the best practices, it's all too common for your performance wins to be erased the moment 3rd-party scripts are added. By 3rd-party scripts we mean code that is not directly under your control, such analytics, ads, trackers, etc., and their inclusion are often a double-edged sword. The [Loading Third-Party JavaScript](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/loading-third-party-javascript) doc is a great resource for different techniques to debug and minimize their impact, but for the most part your hands are still tied.
 
+[View the tests](https://partytown.vercel.app/)
+
 ### Web Workers
 
 Partytown runs 3rd-party scripts in a web worker to free up resources for your app on the main thread.
