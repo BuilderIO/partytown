@@ -6,24 +6,23 @@ import { webWorkerCtx } from './worker-constants';
 export const initNextScriptsInWebWorker = (script?: InitializeScriptData) => {
   script = webWorkerCtx.$initializeScripts$.shift();
   if (script) {
-    if (script.$url$) {
-      importScriptUrl(script.$instanceId$, script.$url$);
-    } else if (script.$content$) {
-      initializeScriptContent(script.$instanceId$, script.$content$);
+    const instanceId = script.$instanceId$;
+    const content = script.$content$;
+    const url = script.$url$;
+    try {
+      if (url) {
+        importScriptUrl(instanceId, url);
+      } else if (content) {
+        if (debug && webWorkerCtx.$config$.logScriptExecution) {
+          logWorker(`Execute script content [data-partytown-id="${instanceId}"]`);
+        }
+        webWorkerCtx.$currentScript$ = instanceId;
+        const runScript = new Function(content);
+        runScript();
+      }
+      webWorkerCtx.$currentScript$ = -1;
+    } catch (e) {
+      console.error('Party foul,', e, '\n' + (url || content));
     }
-  }
-};
-
-const initializeScriptContent = (instanceId: number, scriptContent: string) => {
-  try {
-    if (debug && webWorkerCtx.$config$.logScriptExecution) {
-      logWorker(`Execute script content [data-partytown-id="${instanceId}"]`);
-    }
-    webWorkerCtx.$currentScript$ = instanceId;
-    const runScript = new Function(scriptContent);
-    runScript();
-    webWorkerCtx.$currentScript$ = -1;
-  } catch (e) {
-    console.error('Party foul,', e, '\n' + scriptContent);
   }
 };

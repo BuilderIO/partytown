@@ -156,6 +156,8 @@ export const isValidMemberName = (memberName: string) => {
   }
 };
 
+export const nextTick = (cb: Function) => setTimeout(cb, 0);
+
 export const PT_PROXY_URL = `proxytown`;
 export const PT_INITIALIZED_EVENT = `ptinit`;
 export const PT_SCRIPT_TYPE = `text/partytown`;

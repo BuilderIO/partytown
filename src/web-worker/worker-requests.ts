@@ -1,22 +1,18 @@
-import { debug, logWorker } from '../utils';
-import { PrivateValues, webWorkerCtx } from './worker-constants';
-import type { WorkerImageElement } from './worker-node';
+import { debug, logWorker, nextTick } from '../utils';
+import { InstanceIdKey, PrivateValues, webWorkerCtx } from './worker-constants';
+import type { WorkerImageElement, WorkerScriptElement } from './worker-node';
 
 export const importScriptUrl = (instanceId: number, scriptUrl: string) => {
-  try {
-    scriptUrl = new URL(scriptUrl, webWorkerCtx.$location$ + '') + '';
-    webWorkerCtx.$currentScript$ = instanceId;
+  scriptUrl = new URL(scriptUrl, webWorkerCtx.$location$ + '') + '';
+  webWorkerCtx.$currentScript$ = instanceId;
 
-    if (debug && webWorkerCtx.$config$.logScriptExecution) {
-      logWorker(`Execute script [data-partytown-id="${instanceId}"] ${scriptUrl}`);
-    }
-
-    webWorkerCtx.$importScripts$!(scriptUrl);
-
-    webWorkerCtx.$currentScript$ = -1;
-  } catch (e) {
-    console.error('Party foul,', scriptUrl, e);
+  if (debug && webWorkerCtx.$config$.logScriptExecution) {
+    logWorker(`Execute script [data-partytown-id="${instanceId}"] ${scriptUrl}`);
   }
+
+  webWorkerCtx.$importScripts$!(scriptUrl);
+
+  webWorkerCtx.$currentScript$ = -1;
 };
 
 export const imageRequest = (image: WorkerImageElement) => {
@@ -24,9 +20,8 @@ export const imageRequest = (image: WorkerImageElement) => {
     logWorker(`Image request: ${image.src}`);
   }
 
-  image[PrivateValues].c = false;
-  const privateValues = image[PrivateValues];
   const xhr = new XMLHttpRequest();
+  const privateValues = image[PrivateValues];
 
   privateValues.c = false;
 
@@ -47,6 +42,24 @@ export const imageRequest = (image: WorkerImageElement) => {
   };
 
   xhr.open('GET', image.src, true);
-
   xhr.send();
+};
+
+export const scriptElementSetSrc = (script: WorkerScriptElement) => {
+  nextTick(() => {
+    const instanceId = script[InstanceIdKey];
+    const ev = { type: 'load', target: script, currentTarget: script };
+    try {
+      importScriptUrl(instanceId, script.src);
+      if (script[PrivateValues].$onload$) {
+        nextTick(() => script[PrivateValues].$onload$!.forEach((cb) => cb(ev)));
+      }
+    } catch (e) {
+      if (script[PrivateValues].$onerror$) {
+        nextTick(() =>
+          script[PrivateValues].$onerror$!.forEach((cb) => cb({ ...ev, type: 'error' }))
+        );
+      }
+    }
+  });
 };

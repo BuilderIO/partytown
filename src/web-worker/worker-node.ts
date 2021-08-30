@@ -1,6 +1,6 @@
 import { callMethod, getter, proxy, setter } from './worker-proxy';
 import { ExtraInstruction, InterfaceType, SerializedNode } from '../types';
-import { imageRequest, importScriptUrl } from './worker-requests';
+import { imageRequest, scriptElementSetSrc } from './worker-requests';
 import { InstanceIdKey, PrivateValues } from './worker-constants';
 import { len, toLower } from '../utils';
 import { webWorkerCtx } from './worker-constants';
@@ -67,13 +67,15 @@ export class WorkerAnchorElement extends WorkerElement {
   }
 }
 
-export class WorkerImageElement extends WorkerElement {
+class WorkerSrcElement extends WorkerElement {
   [PrivateValues]: {
+    /** async */
+    a?: boolean;
     /** completed */
     c?: boolean;
     $url$?: string;
     $onload$?: ((ev: any) => void)[];
-    $onerror$: ((ev: any) => void)[];
+    $onerror$?: ((ev: any) => void)[];
   };
 
   addEventListener(eventName: string, handler: (ev: any) => void) {
@@ -84,11 +86,6 @@ export class WorkerImageElement extends WorkerElement {
       (privateValues.$onerror$ = privateValues.$onerror$ || []).push(handler);
     }
   }
-
-  get alt() {
-    return '';
-  }
-  set alt(_: string) {}
 
   get complete() {
     const hasCompleted = this[PrivateValues].c;
@@ -110,13 +107,22 @@ export class WorkerImageElement extends WorkerElement {
   set onerror(cb: ((ev: any) => void) | null) {
     this[PrivateValues].$onerror$ = cb ? [cb] : [];
   }
+}
+
+export class WorkerImageElement extends WorkerSrcElement {
+  get alt() {
+    return '';
+  }
+  set alt(_: string) {}
 
   get src() {
     return getUrl(this) + '';
   }
   set src(url: string) {
-    this[PrivateValues].$url$ = url;
-    imageRequest(this);
+    if (url !== '' && this[PrivateValues].$url$ !== url) {
+      this[PrivateValues].$url$ = url;
+      imageRequest(this);
+    }
   }
 
   get width() {
@@ -137,24 +143,17 @@ export class WorkerImageElement extends WorkerElement {
   }
 }
 
-export class WorkerScriptElement extends WorkerElement {
-  [PrivateValues]: { a: boolean; $url$: string };
-
-  get async() {
-    return !!this[PrivateValues].a;
-  }
-  set async(value: boolean) {
-    this[PrivateValues].a = value;
-  }
+export class WorkerScriptElement extends WorkerSrcElement {
   get src() {
     return getUrl(this) + '';
   }
   set src(url: string) {
-    if (this[PrivateValues].$url$ !== url) {
+    if (url !== '' && this[PrivateValues].$url$ !== url) {
       this[PrivateValues].$url$ = url;
-      setTimeout(() => importScriptUrl(this[InstanceIdKey], url));
+      scriptElementSetSrc(this);
     }
   }
+
   get type() {
     return getter(this, ['type']);
   }
