@@ -14,8 +14,7 @@
       body {
         font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
           Apple Color Emoji, Segoe UI Emoji;
-        line-height: 2em;
-        font-size: 11px;
+        font-size: 12px;
       }
       h1 {
         margin: 0 0 15px 0;
@@ -36,6 +35,17 @@
       }
       a:hover {
         background-color: #eee;
+      }
+      li {
+        display: flex;
+        margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button {
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
       }
     </style>
   </head>
@@ -226,6 +236,10 @@
       <li>
         <strong>currentScript, src</strong>
         <code id="testCurrentScriptSrc"></code>
+      </li>
+
+      <li>
+        <strong>currentScript, src location</strong>
         <code id="testCurrentScriptSrcLocation"></code>
         <script
           type="text/partytown"

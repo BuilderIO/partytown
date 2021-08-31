@@ -7,6 +7,17 @@
 
     <title>Google Tag Manager (GTM) 🎉</title>
 
+    <!-- Partytown Push Proxy -->
+    <script>
+      (function (w, p) {
+        p.forEach(function (t) {
+          (w.partytownPush = w.partytownPush || []).push(t);
+          w[t] = w[t] || [];
+        });
+      })(window, ['dataLayer']);
+    </script>
+    <!-- End Partytown Push Proxy -->
+
     <!-- Google Tag Manager -->
     <script type="text/partytown" data-worker="GTM">
       (function (window, document, i) {
@@ -36,7 +47,7 @@
       body {
         font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
           Apple Color Emoji, Segoe UI Emoji;
-        line-height: 2em;
+        font-size: 12px;
       }
       h1 {
         margin: 0 0 15px 0;
@@ -58,24 +69,33 @@
       a:hover {
         background-color: #eee;
       }
+      li {
+        display: flex;
+        margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button {
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
+      }
     </style>
   </head>
   <body>
     <h1>Google Tag Manager (GTM) 🎉</h1>
 
-    <button onclick="pushFromData()">Partytown dataLayer.push()</button>
+    <button onclick="gtmPush()">Partytown dataLayer.push()</button>
     <script>
-      function pushFromData() {
-        console.log('dataLayer.push()');
-        dataLayer.push({ from: 'partytown' });
+      function gtmPush() {
+        const data = { event: 'button-click', from: 'partytown' };
+        console.log(`GTM dataLayer.push(${JSON.stringify(data)})`);
+        dataLayer.push({ event: 'button-click', from: 'partytown' });
       }
     </script>
 
-    <hr />
-    <ul>
-      <li><a href="/gtm/standard.html">Standard GTM</a></li>
-      <li><a href="/">All Tests</a></li>
-    </ul>
+    <p><a href="/gtm/standard.html">Standard GTM</a></p>
+    <p><a href="/">All Tests</a></p>
 
     <script>
       partytown = {

@@ -37,7 +37,7 @@
       body {
         font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
           Apple Color Emoji, Segoe UI Emoji;
-        line-height: 2em;
+        font-size: 12px;
       }
       h1 {
         margin: 0 0 15px 0;
@@ -59,6 +59,17 @@
       a:hover {
         background-color: #eee;
       }
+      li {
+        display: flex;
+        margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button {
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
+      }
     </style>
   </head>
   <body>
@@ -68,15 +79,13 @@
     <script>
       function pushFromData() {
         const data = { event: 'button-click', some: { data: true } };
-        console.log('dataLayer.push(' + JSON.stringify(data) + ')');
+        console.log('dataLayer.push()');
         dataLayer.push(data);
       }
     </script>
 
     <hr />
-    <ul>
-      <li><a href="/gtm/">Partytown GTM</a></li>
-      <li><a href="/">All Tests</a></li>
-    </ul>
+    <p><a href="/gtm/">Partytown GTM</a></p>
+    <p><a href="/">All Tests</a></p>
   </body>
 </html>
