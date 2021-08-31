@@ -68,18 +68,24 @@ export class WorkerAnchorElement extends WorkerElement {
 }
 
 export class WorkerIFrameElement extends WorkerElement {
-  [PrivateValues]: { $url$?: string; $document$: any };
+  [PrivateValues]: { $url$?: string; $document$: any; $window$: any };
 
   get contentDocument() {
+    return this.document;
+  }
+
+  get document() {
     if (!this[PrivateValues].$document$) {
       this[PrivateValues].$document$ = proxy(InterfaceType.Document, this, ['contentDocument']);
     }
     return this[PrivateValues].$document$;
   }
+
   get contentWindow() {
-    return {
-      document: this.contentDocument,
-    };
+    if (!this[PrivateValues].$window$) {
+      this[PrivateValues].$window$ = proxy(InterfaceType.Window, this, ['contentWindow']);
+    }
+    return this[PrivateValues].$window$;
   }
 }
 

@@ -14,4 +14,12 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testContentDocument');
   const testContentDocument = page.locator('#testContentDocument');
   await expect(testContentDocument).toHaveText('contentDocument');
+
+  await page.waitForSelector('.testGetSomeGlobalVar');
+  const testGetSomeGlobalVar = page.locator('#testGetSomeGlobalVar');
+  await expect(testGetSomeGlobalVar).toHaveText('88');
+
+  await page.waitForSelector('.testSetSomeGlobalVar');
+  const testSetSomeGlobalVar = page.locator('#testSetSomeGlobalVar');
+  await expect(testSetSomeGlobalVar).toHaveText('99');
 });
