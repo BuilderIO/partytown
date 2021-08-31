@@ -1,7 +1,8 @@
 import { getConstructorName, isValidMemberName, noop } from '../utils';
-import { getInstance, getInstanceId } from './main-instances';
+import { getInstance, getAndSetInstanceId, getInstanceId } from './main-instances';
 import {
   InterfaceType,
+  SerializedInstance,
   SerializedNode,
   SerializedNodeList,
   SerializedTransfer,
@@ -32,10 +33,18 @@ export const serializeForWorker = (value: any, added: Set<any>): SerializedTrans
     if (value.nodeType) {
       const nodeInstance: SerializedNode = {
         $interfaceType$: value.nodeType,
-        $instanceId$: getInstanceId(value),
+        $instanceId$: getAndSetInstanceId(value),
         $data$: value.nodeName,
       };
       return [SerializedType.Instance, nodeInstance];
+    }
+
+    const instanceId = getInstanceId(value);
+    if (instanceId! > -1) {
+      const instance: SerializedInstance = {
+        $instanceId$: instanceId,
+      };
+      return [SerializedType.Instance, instance];
     }
 
     if (isNodeList(getConstructorName(value))) {

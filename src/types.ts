@@ -184,11 +184,14 @@ export type SerializedTransfer =
   | [];
 
 export interface SerializedInstance {
-  $interfaceType$: InterfaceType;
+  $interfaceType$?: InterfaceType;
   $instanceId$?: number;
 }
 
 export interface SerializedNode extends SerializedInstance {
+  $instanceId$: number;
+  /** Node Type */
+  $interfaceType$: InterfaceType;
   /** Node Name */
   $data$: string;
 }

@@ -7,9 +7,15 @@ let cleanupInc = 0;
 const instances: [number, InstanceType][] = [];
 const instanceIdByInstance = new WeakMap<InstanceType, number>();
 
-export const getInstanceId = (instance: InstanceType | null | undefined, instanceId?: number) => {
+export const getInstanceId = (instance: InstanceType | null | undefined) =>
+  instanceIdByInstance.get(instance!);
+
+export const getAndSetInstanceId = (
+  instance: InstanceType | null | undefined,
+  instanceId?: number
+) => {
   if (instance) {
-    instanceId = instanceIdByInstance.get(instance);
+    instanceId = getInstanceId(instance);
     if (typeof instanceId !== 'number') {
       instanceId = instanceIds++;
       setInstanceId(instance, instanceId);

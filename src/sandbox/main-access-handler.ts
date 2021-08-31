@@ -1,6 +1,6 @@
 import { AccessType, ExtraInstruction, MainAccessRequest, MainAccessResponse } from '../types';
 import { deserializeFromWorker, serializeForWorker } from './main-serialization';
-import { getInstance, getInstanceId } from './main-instances';
+import { getInstance, getAndSetInstanceId } from './main-instances';
 import { isPromise, len, PT_SCRIPT_TYPE } from '../utils';
 
 export const mainAccessHandler = async (accessReq: MainAccessRequest) => {
@@ -95,7 +95,7 @@ const callInstanceMethod = async (
         (rtnValue as HTMLScriptElement).type = PT_SCRIPT_TYPE;
       }
       if (extra === ExtraInstruction.SET_PARTYTOWN_ID) {
-        rtnValue.dataset.partytownId = getInstanceId(rtnValue);
+        rtnValue.dataset.partytownId = getAndSetInstanceId(rtnValue);
       }
     });
   }

@@ -7,7 +7,7 @@ import {
   WorkerMessageType,
 } from '../types';
 import { debug, logMain, PT_INITIALIZED_EVENT } from '../utils';
-import { getInstanceId, setInstanceId } from './main-instances';
+import { getAndSetInstanceId, setInstanceId } from './main-instances';
 import { mainAccessHandler } from './main-access-handler';
 import { mainCtx } from './main-context';
 import { readMainInterfaces } from './read-interfaces';
@@ -40,7 +40,7 @@ export const initSandbox = async (createWebWorker: CreateWorker) => {
 
     if (msgType === WorkerMessageType.MainDataRequestFromWorker) {
       // web worker has requested data from the main thread
-      const firstScriptId = getInstanceId(mainDocument.querySelector('script'));
+      const firstScriptId = getAndSetInstanceId(mainDocument.querySelector('script'));
       const mainInterfaces = readMainInterfaces(
         mainCtx.$sandboxWindow$,
         sandboxDocument,

@@ -1,4 +1,4 @@
-import { getInstanceId } from './main-instances';
+import { getAndSetInstanceId } from './main-instances';
 import type { InitializeScriptData, WorkerGroups } from '../types';
 
 export const readMainScripts = (mainDocument: Document) => {
@@ -7,7 +7,9 @@ export const readMainScripts = (mainDocument: Document) => {
 
   scripts.forEach((scriptElm) => {
     if (!scriptElm.dataset.partytownId) {
-      const instanceId: number = (scriptElm.dataset.partytownId = getInstanceId(scriptElm) as any);
+      const instanceId: number = (scriptElm.dataset.partytownId = getAndSetInstanceId(
+        scriptElm
+      ) as any);
       const workerName = scriptElm.dataset.worker || 'default';
       const scriptData: InitializeScriptData = {
         $instanceId$: instanceId,
