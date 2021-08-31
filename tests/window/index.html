@@ -50,14 +50,14 @@
     </style>
   </head>
   <body>
-    <h1 class="title">Window</h1>
+    <h1>Window</h1>
     <ul>
       <li>
         <strong>getComputedStyle()</strong>
-        <code id="test-getComputedStyle" style="color: purple"></code>
+        <code id="testGetComputedStyle" style="color: purple"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('test-getComputedStyle');
+            const elm = document.getElementById('testGetComputedStyle');
             const style = getComputedStyle(elm);
             elm.textContent = style.color;
           })();
@@ -66,31 +66,30 @@
 
       <li>
         <strong>requestAnimationFrame()</strong>
-        <code id="test-raf"></code>
+        <code id="testRaf"></code>
         <script type="text/partytown">
           (function () {
             requestAnimationFrame(() => {
-              const elm = document.getElementById('test-raf');
+              const elm = document.getElementById('testRaf');
               elm.textContent = true;
-              elm.classList.add('test-raf');
+              elm.classList.add('testRaf');
             });
           })();
         </script>
       </li>
 
       <li>
-        <div>
-          <strong>btoa</strong>
-          <code id="test-btoa"></code>
-        </div>
-        <div>
-          <strong>atob</strong>
-          <code id="test-atob"></code>
-        </div>
+        <strong>btoa</strong>
+        <code id="testBtoa"></code>
+      </li>
+
+      <li>
+        <strong>atob</strong>
+        <code id="testAtob"></code>
         <script type="text/partytown">
           (function () {
-            const b = document.getElementById('test-btoa');
-            const a = document.getElementById('test-atob');
+            const b = document.getElementById('testBtoa');
+            const a = document.getElementById('testAtob');
             b.textContent = btoa('88');
             a.textContent = atob(b.textContent);
           })();
@@ -99,12 +98,12 @@
 
       <li>
         <button id="button-prompt">prompt()</button>
-        <code id="test-prompt"></code>
+        <code id="testPrompt"></code>
         <script type="text/partytown">
           (function () {
             const btn = document.getElementById('button-prompt');
             btn.addEventListener('click', () => {
-              const elm = document.getElementById('test-prompt');
+              const elm = document.getElementById('testPrompt');
               elm.textContent = prompt('MPH');
             });
           })();

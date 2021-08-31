@@ -66,7 +66,7 @@
               elm.textContent = iframe.contentDocument.getElementById('output').textContent;
               elm.className = 'testSrc';
             });
-            iframe.src = './content.html';
+            iframe.src = 'content.html';
             elm.parentNode.insertBefore(iframe, null);
           })();
         </script>
@@ -142,11 +142,11 @@
             iframe.style.height = '36px';
             iframe.style.display = 'block';
             iframe.style.border = 'none';
-            iframe.src = './some-var.html';
             iframe.addEventListener('load', function (ev) {
               elm.textContent = iframe.contentWindow.someGlobalVar.mph;
               elm.className = 'testGetSomeGlobalVar';
             });
+            iframe.src = 'global-var.html';
             elm.parentNode.insertBefore(iframe, null);
           })();
         </script>
@@ -163,13 +163,86 @@
             iframe.style.height = '36px';
             iframe.style.display = 'block';
             iframe.style.border = 'none';
-            iframe.src = './some-var.html';
             iframe.addEventListener('load', function (ev) {
               iframe.contentWindow.someOtherVar = 99;
               elm.textContent = iframe.contentWindow.someOtherVar;
               elm.className = 'testSetSomeGlobalVar';
             });
+            iframe.src = 'global-var.html';
             elm.parentNode.insertBefore(iframe, null);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>get contentWindow, window.someWindowVar</strong>
+        <code id="testSetSomeWindowVar"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testSetSomeWindowVar');
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100%';
+            iframe.style.height = '36px';
+            iframe.style.display = 'block';
+            iframe.style.border = 'none';
+            iframe.src = 'external-js.html';
+            iframe.addEventListener('load', function (ev) {
+              elm.textContent = iframe.contentWindow.someWindowVar.year;
+              elm.className = 'testSetSomeWindowVar';
+            });
+            elm.parentNode.insertBefore(iframe, null);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>window.complex.obj.getter.fn(args)</strong>
+        <code id="testComplex"></code>
+        <script>
+          (function () {
+            function fn(...args) {
+              return {
+                mph: args[0],
+              };
+            }
+            class Obj {
+              get getter() {
+                return {
+                  fn,
+                };
+              }
+            }
+            class ComplexThing {
+              constructor() {
+                this.obj = new Obj();
+              }
+            }
+            window.complex = new ComplexThing();
+          })();
+        </script>
+        <script>
+          (function () {
+            const elm = document.getElementById('testComplex');
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100%';
+            iframe.style.height = '36px';
+            iframe.style.display = 'block';
+            iframe.style.border = 'none';
+            elm.parentNode.insertBefore(iframe, null);
+
+            iframe.contentDocument.head.innerHTML = `
+              <style>
+                body {
+                  background: peachpuff;
+                  font-weight: bold;
+                  text-align: center;
+                }
+              </style>
+            `;
+            iframe.contentDocument.body.innerHTML = `window.complex.obj.getter.fn(args)`;
+            const script = iframe.contentDocument.createElement('script');
+            script.src = 'complex-access.js';
+            iframe.contentDocument.body.appendChild(script);
           })();
         </script>
       </li>
