@@ -56,7 +56,8 @@ export interface InitWebWorkerData {
 }
 
 export interface InitWebWorkerContext {
-  $currentScript$: number;
+  $currentScriptId$: number;
+  $currentScriptUrl$: string;
   $document$: WorkerDocument;
   $history$: WorkerHistory;
   $importScripts$: (...urls: string[]) => void;

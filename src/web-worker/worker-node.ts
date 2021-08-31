@@ -1,7 +1,7 @@
 import { callMethod, getter, proxy, setter } from './worker-proxy';
 import { ExtraInstruction, InterfaceType, SerializedNode } from '../types';
-import { imageRequest, scriptElementSetSrc } from './worker-requests';
-import { InstanceIdKey, PrivateValues } from './worker-constants';
+import { imageRequest, scriptElementSetSrc } from './worker-exec';
+import { InstanceIdKey, PrivateValues, srcUrls } from './worker-constants';
 import { len, toLower } from '../utils';
 import { webWorkerCtx } from './worker-constants';
 import type { WorkerDocument } from './worker-document';
@@ -132,11 +132,12 @@ export class WorkerImageElement extends WorkerSrcElement {
   set alt(_: string) {}
 
   get src() {
-    return getUrl(this) + '';
+    return srcUrls.get(this[InstanceIdKey]) || '';
   }
   set src(url: string) {
-    if (url !== '' && this[PrivateValues].$url$ !== url) {
-      this[PrivateValues].$url$ = url;
+    url = resolveUrl(url) + '';
+    if (srcUrls.get(this[InstanceIdKey]) !== url) {
+      srcUrls.set(this[InstanceIdKey], url);
       imageRequest(this);
     }
   }
@@ -161,11 +162,11 @@ export class WorkerImageElement extends WorkerSrcElement {
 
 export class WorkerScriptElement extends WorkerSrcElement {
   get src() {
-    return getUrl(this) + '';
+    return srcUrls.get(this[InstanceIdKey]) || '';
   }
   set src(url: string) {
-    if (url !== '' && this[PrivateValues].$url$ !== url) {
-      this[PrivateValues].$url$ = url;
+    if (srcUrls.get(this[InstanceIdKey]) !== url) {
+      srcUrls.set(this[InstanceIdKey], url);
       scriptElementSetSrc(this);
     }
   }
@@ -209,8 +210,9 @@ export class WorkerNodeList {
   }
 }
 
-const getUrl = (elm: WorkerElement) =>
-  new URL(elm[PrivateValues].$url$ || '', webWorkerCtx.$location$ + '');
+const getUrl = (elm: WorkerElement) => resolveUrl(elm[PrivateValues].$url$);
+
+const resolveUrl = (url?: string) => new URL(url || '', webWorkerCtx.$location$ + '');
 
 export const ElementConstructors: { [tagname: string]: any } = {
   A: WorkerAnchorElement,

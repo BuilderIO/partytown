@@ -211,6 +211,28 @@
         </script>
       </li>
 
+      <li>
+        <strong>currentScript, inlined</strong>
+        <code id="testCurrentScript"></code>
+        <script type="text/partytown" data-current-script="inlined">
+          (function () {
+            const elm = document.getElementById('testCurrentScript');
+            elm.textContent = document.currentScript.dataset.currentScript;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>currentScript, src</strong>
+        <code id="testCurrentScriptSrc"></code>
+        <code id="testCurrentScriptSrcLocation"></code>
+        <script
+          type="text/partytown"
+          src="current-script-src.js"
+          data-current-script="src"
+        ></script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

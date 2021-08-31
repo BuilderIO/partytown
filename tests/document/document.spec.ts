@@ -43,4 +43,12 @@ test('document', async ({ page }) => {
 
   const testCompatMode = page.locator('#testCompatMode');
   await expect(testCompatMode).toHaveText('CSS1Compat');
+
+  const testCurrentScript = page.locator('#testCurrentScript');
+  await expect(testCurrentScript).toHaveText('inlined');
+
+  const testCurrentScriptSrc = page.locator('#testCurrentScriptSrc');
+  const testCurrentScriptSrcLocation = page.locator('#testCurrentScriptSrcLocation');
+  await expect(testCurrentScriptSrc).toHaveText('src');
+  await expect(testCurrentScriptSrcLocation).toHaveText('/document/current-script-src.js');
 });

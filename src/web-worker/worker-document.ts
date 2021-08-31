@@ -1,5 +1,5 @@
 import { callMethod, getter, setter } from './worker-proxy';
-import { createElement, createScript, WorkerElement } from './worker-node';
+import { createElement, createScript, WorkerElement, WorkerScriptElement } from './worker-node';
 import { InterfaceType, PlatformApiId } from '../types';
 import { logWorkerGetter, logWorkerSetter, toLower } from '../utils';
 import { PrivateValues, webWorkerCtx } from './worker-constants';
@@ -38,9 +38,8 @@ export class WorkerDocument extends WorkerElement {
   }
 
   get currentScript() {
-    const currentScriptInstanceId = webWorkerCtx.$currentScript$;
-    if (currentScriptInstanceId) {
-      return createScript(currentScriptInstanceId);
+    if (webWorkerCtx.$currentScriptId$) {
+      return createScript(webWorkerCtx.$currentScriptId$);
     }
     return null;
   }
@@ -62,7 +61,13 @@ export class WorkerDocument extends WorkerElement {
       return [this.head];
     }
     if (tagName === 'script') {
-      return [createScript(webWorkerCtx.$firstScriptId$)];
+      return [
+        new WorkerScriptElement({
+          $interfaceType$: InterfaceType.Element,
+          $instanceId$: webWorkerCtx.$firstScriptId$,
+          $data$: 'SCRIPT',
+        }),
+      ];
     }
     return callMethod(this, ['getElementsByTagName'], [tagName]);
   }

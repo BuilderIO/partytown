@@ -1,5 +1,5 @@
 import { callRefHandler } from './worker-serialization';
-import { initNextScriptsInWebWorker } from './worker-script';
+import { initNextScriptsInWebWorker } from './worker-exec';
 import { initWebWorker } from './init-worker';
 import { InitWebWorkerData, MessageFromSandboxToWorker, WorkerMessageType } from '../types';
 import { len } from '../utils';
