@@ -1,8 +1,8 @@
 import { callRefHandler } from './worker-serialization';
+import { debug, len } from '../utils';
 import { initNextScriptsInWebWorker } from './worker-exec';
 import { initWebWorker } from './init-worker';
 import { InitWebWorkerData, MessageFromSandboxToWorker, WorkerMessageType } from '../types';
-import { len } from '../utils';
 import { webWorkerCtx } from './worker-constants';
 
 self.onmessage = (ev: MessageEvent<MessageFromSandboxToWorker>) => {
@@ -13,7 +13,7 @@ self.onmessage = (ev: MessageEvent<MessageFromSandboxToWorker>) => {
     // initialize the web worker with the received the main data
     initWebWorker(self as any, msg[1] as InitWebWorkerData);
     // send back to main that the web worker is initialized
-    webWorkerCtx.$postMessage$([WorkerMessageType.WorkerInitialized]);
+    webWorkerCtx.$postMessage$([WorkerMessageType.WorkerInitializeStart]);
   } else if (msgType === WorkerMessageType.InitializeNextWorkerScript) {
     // message from main to web worker that it should initialize the next script
     initNextScriptsInWebWorker();
@@ -22,6 +22,8 @@ self.onmessage = (ev: MessageEvent<MessageFromSandboxToWorker>) => {
       // send back to main that there is another script to do yet
       // doing this postMessage back-and-forth so we don't have long running tasks
       webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextWorkerScript]);
+    } else if (debug) {
+      webWorkerCtx.$postMessage$([WorkerMessageType.WorkerInitializeEnd]);
     }
   } else if (msgType === WorkerMessageType.RefHandlerCallback) {
     // main has called a ref handler

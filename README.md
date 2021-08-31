@@ -14,7 +14,7 @@ Partytown runs 3rd-party scripts in a web worker to free up resources for your a
 
 - Relocate resource intensive scripts to into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)
 - Main thread performance is, without question, more important than web worker thread performance
-- Throttle 3rd-party script's main thread access using `requestIdleCallback`
+- Throttle 3rd-party script's main thread access
 - Isolate long-running tasks within the web worker thread
 - Sandbox scripts and have the ability to restrict their usage of specific browser APIs
 - Debug what 3rd-party scripts are calling into

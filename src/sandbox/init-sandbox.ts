@@ -6,17 +6,15 @@ import {
   PostMessageToWorker,
   WorkerMessageType,
 } from '../types';
+import { debug, logMain, PT_INITIALIZED_EVENT } from '../utils';
 import { getInstanceId, setInstanceId } from './main-instances';
-import { logMain, PT_INITIALIZED_EVENT } from '../utils';
 import { mainAccessHandler } from './main-access-handler';
 import { mainCtx } from './main-context';
 import { readMainInterfaces } from './read-interfaces';
 import { readMainScripts } from './read-main-scripts';
 
-export const initSandbox = async (
-  createWebWorker: CreateWorker,
-  requestIdleCallback: typeof window.requestIdleCallback
-) => {
+export const initSandbox = async (createWebWorker: CreateWorker) => {
+  const starTime = debug ? performance.now() : 0;
   const sandboxDocument = mainCtx.$sandboxDocument$;
   const mainDocument = mainCtx.$document$;
   const workerScripts = readMainScripts(mainDocument);
@@ -63,7 +61,7 @@ export const initSandbox = async (
       };
       // send to the web worker the main data
       postMessage([WorkerMessageType.MainDataResponseToWorker, initWebWorkerData]);
-    } else if (msgType === WorkerMessageType.WorkerInitialized) {
+    } else if (msgType === WorkerMessageType.WorkerInitializeStart) {
       // web worker has been initialized with the main data
       mainDocument.dispatchEvent(new CustomEvent(PT_INITIALIZED_EVENT));
       // send to the web worker to initialize the next script
@@ -72,6 +70,8 @@ export const initSandbox = async (
       // web worker has finished initializing the script, and has another one to do
       // doing this postMessage back-and-forth so we don't have long running tasks
       postMessage([WorkerMessageType.InitializeNextWorkerScript]);
+    } else if (debug && msgType === WorkerMessageType.WorkerInitializeEnd) {
+      logMain(`Startup ${(performance.now() - starTime).toFixed(1)}ms`);
     }
   };
 
@@ -87,8 +87,7 @@ export const initSandbox = async (
     logMain(`Creating "${workerName}" web worker`);
     const webWorker = createWebWorker(workerName);
     const postMessage: PostMessageToWorker = webWorker.postMessage.bind(webWorker);
-    webWorker.onmessage = (ev) =>
-      requestIdleCallback(() => onMessageFromWorker(postMessage, workerName, ev));
+    webWorker.onmessage = (ev) => onMessageFromWorker(postMessage, workerName, ev);
     mainCtx.$workerPostMessage$.push(postMessage);
   }
 };

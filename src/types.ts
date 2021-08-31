@@ -7,8 +7,9 @@ export type CreateWorker = (workerName: string) => Worker;
 
 export type MessageFromWorkerToSandbox =
   | [WorkerMessageType.MainDataRequestFromWorker]
-  | [WorkerMessageType.WorkerInitialized]
-  | [WorkerMessageType.InitializeNextWorkerScript];
+  | [WorkerMessageType.WorkerInitializeStart]
+  | [WorkerMessageType.InitializeNextWorkerScript]
+  | [WorkerMessageType.WorkerInitializeEnd];
 
 export type MessageFromSandboxToWorker =
   | [WorkerMessageType.MainDataResponseToWorker, InitWebWorkerData]
@@ -18,8 +19,9 @@ export type MessageFromSandboxToWorker =
 export const enum WorkerMessageType {
   MainDataRequestFromWorker,
   MainDataResponseToWorker,
-  WorkerInitialized,
+  WorkerInitializeStart,
   InitializeNextWorkerScript,
+  WorkerInitializeEnd,
   RefHandlerCallback,
 }
 
