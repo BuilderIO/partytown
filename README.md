@@ -251,37 +251,14 @@ The distribution comes with multiple files:
 
 ---
 
-## Development
+## Community
 
-### Installation
+- [Partytown Discord](https://discord.gg/hbuEtxdEZ3)
+- [@QwikDev](https://twitter.com/QwikDev)
+- [@builderio](https://twitter.com/builderio)
 
-```
-npm install
-npm run dev
-```
+## Related Projects
 
-Note that during development, the build of `partytown.js` is not minified.
-
-### Local Testing
-
-Tests to be ran on a browser are located in the `tests` directory. These pages can help to manually test out DOM apis and individual services.
-
-```
-npm run serve
-```
-
-http://localhost:4000/
-
-### E2E Testing
-
-E2E tests use [@playwright/test](https://playwright.dev/docs/intro#writing-assertions), which allows us to test on Chromium, Firefox and WebKit browsers.
-
-```
-npm test
-```
-
-### Deployed Tests
-
-The same pages found in `tests` are deployed to
-
-https://partytown.vercel.app/
+- [Qwik](https://github.com/BuilderIO/qwik): An Open-Source framework designed for best possible time to interactive, by focusing on resumability of server-side-rendering of HTML, and fine-grained lazy-loading of code.
+- [Mitosis](https://github.com/BuilderIO/mitosis): Write components once, run everywhere. Compiles to Vue, React, Solid, Angular, Svelte, and more.
+- [Builder](https://github.com/BuilderIO): Drag and drop page builder and CMS for React, Vue, Angular, and more
