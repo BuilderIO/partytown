@@ -1,5 +1,8 @@
 # Partytown 🎉
 
+[![hackmd-github-sync-badge](https://hackmd.io/cfpOAVjyQCi2TcKNCSU5GA/badge)](https://hackmd.io/cfpOAVjyQCi2TcKNCSU5GA)
+
+
 > A fun location for your third-party scripts to hang out
 
 ⚠️ Warning! This is experimental! ⚠️
@@ -59,7 +62,7 @@ Below is a summary of potential issues, referenced from [Loading Third-Party Jav
 - Third-party script's access to the main thread can be throttled
 - Opt-in only, and does not automatically update existing scripts
 - Allow third-party scripts to run exactly how they're coded and without any alterations
-- Read and write main thread DOM operations _synchronously_ from within a web worker
+- Read and write main thread DOM operations _synchronously_ from within a web worker, allowing scripts running from the web worker to execute as expected
 - No build-steps or bundling required, but rather update scripts the same as traditional third-party scripts are updated
 
 ### Web Workers
@@ -102,14 +105,14 @@ Partytown however, is able to isolate and sandbox third-party scripts within a w
 ## Trade-Offs
 
 - Partytown library scripts must be hosted from the same origin as the HTML document (not a CDN)
-- DOM operations within the worker are purposely throttled, slowing down worker execution compared to their executing on the main thread
-- A total of three threads are used: Main Thread, Web Worker, Service Worker
+- DOM operations within the worker are purposely throttled, slowing down execution compared to the same code running on the main thread
+- A total of three threads are used: Main Thread, Web Worker, Service Worker (In the future we may explore [Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics) which would bring it down to two.)
 - Not ideal for scripts that are required to block the main document (blocking is bad)
 - `event.preventDefault()` will have no effect, similar to [passive event listeners](https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md)
 - Intercepted network requests:
   - Many service worker network requests may show up in the network tab
   - Partytown service worker requests are intercepted by the client, and transfer `0 bytes` over the network
-  - [Lighthouse scores](https://web.dev/performance-scoring/) are unaffected by the intercepted requests
+  - [Lighthouse scores](https://web.dev/performance-scoring/) are unaffected by the intercepted requests (any work on thread other than `main` has no impact on Lighthouse.)
 
 ## Use-Cases
 
@@ -126,14 +129,14 @@ Below are just a few examples of third-party scripts that may be a good candidat
 
 Partytown relies [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API), [JavaScript Proxies](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy), and a communcation layer between them all.
 
-1. Scripts are disabled from running on the main thread by using the `type="text/partytown"` attribute.
+1. Scripts are disabled from running on the main thread by using the `type="text/partytown"` attribute on the `<script/>` tag.
 1. Service worker creates an `onfetch` handler to intercept specific requests.
 1. Web worker is given the scripts to execute within the worker thread.
-1. Web worker creates JS Proxies to replicate the main thread API.
-1. Any call to the JS proxy uses _syncrounous_ XHR requests.
+1. Web worker creates JS Proxies to replicate and forward calls to the main thread APIs (such as DOM operations).
+1. Any call to the JS proxy uses [_syncrounous_ XHR](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Synchronous_and_Asynchronous_Requests#example_http_synchronous_request) requests.
 1. Service worker intercepts requests, then is able to asyncrounsly communicate with the main thread.
 1. When the service worker receives the results from main, it responds to the web worker's request.
-1. According to the code executing from the web worker, everything was syncrounous, and each call to the document was blocking.
+1. From the point of view of code executing on the web worker, everything was synchronous, and each call to the document was blocking.
 
 #### What About Atomics?
 
