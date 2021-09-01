@@ -196,33 +196,17 @@
       </li>
 
       <li>
-        <strong>window.complex.obj.getter.fn(args)</strong>
-        <code id="testComplex"></code>
+        <strong>window.top / window.parent</strong>
+        <code id="testTopSomeValue"></code>
         <script>
           (function () {
-            function fn(...args) {
-              return {
-                mph: args[0],
-              };
-            }
-            class Obj {
-              get getter() {
-                return {
-                  fn,
-                };
-              }
-            }
-            class ComplexThing {
-              constructor() {
-                this.obj = new Obj();
-              }
-            }
-            window.complex = new ComplexThing();
+            window.year = 1955;
+            window.gw = 1.21;
           })();
         </script>
-        <script>
+        <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('testComplex');
+            const elm = document.getElementById('testTopSomeValue');
             const iframe = document.createElement('iframe');
             iframe.style.width = '100%';
             iframe.style.height = '36px';
@@ -231,17 +215,15 @@
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentDocument.head.innerHTML = `
-              <style>
-                body {
-                  background: peachpuff;
-                  font-weight: bold;
-                  text-align: center;
-                }
-              </style>
+              <style>body { background: peachpuff; font-weight: bold; text-align: center; }</style>
             `;
-            iframe.contentDocument.body.innerHTML = `window.complex.obj.getter.fn(args)`;
+            iframe.contentDocument.body.innerHTML = `window.top.someValue`;
             const script = iframe.contentDocument.createElement('script');
-            script.src = 'complex-access.js';
+            script.innerHTML = `
+              const elm = window.parent.document.getElementById('testTopSomeValue');
+              elm.textContent = window.top.year + window.parent.gw;
+              elm.className = 'testTopSomeValue';
+            `;
             iframe.contentDocument.body.appendChild(script);
           })();
         </script>

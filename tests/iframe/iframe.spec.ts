@@ -22,4 +22,8 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testSetSomeGlobalVar');
   const testSetSomeGlobalVar = page.locator('#testSetSomeGlobalVar');
   await expect(testSetSomeGlobalVar).toHaveText('99');
+
+  await page.waitForSelector('.testTopSomeValue');
+  const testTopSomeValue = page.locator('#testTopSomeValue');
+  await expect(testTopSomeValue).toHaveText('1956.21');
 });

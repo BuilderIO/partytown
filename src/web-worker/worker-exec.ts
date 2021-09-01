@@ -69,8 +69,8 @@ export const scriptElementSetSrc = (script: WorkerScriptElement) => {
         setCurrentScript(-1, '');
       }
     } catch (e) {
+      console.error(e);
       if (script[PrivateValues].$onerror$) {
-        console.error(e);
         nextTick(() =>
           script[PrivateValues].$onerror$!.forEach((cb) => cb({ ...ev, type: 'error' }))
         );
