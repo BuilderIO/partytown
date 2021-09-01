@@ -1,42 +1,117 @@
 # Partytown 🎉
 
-> A fun place for your 3rd-party scripts to hang out
+> A fun location for your third-party scripts to hang out
 
 ⚠️ Warning! This is experimental! ⚠️
 
-Even with a fast and higly tuned website following all of the best practices, it's all too common for your performance wins to be erased the moment 3rd-party scripts are added. By 3rd-party scripts we mean code that is not directly under your control, such analytics, ads, trackers, etc., and their inclusion are often a double-edged sword. The [Loading Third-Party JavaScript](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/loading-third-party-javascript) doc is a great resource for different techniques to debug and minimize their impact, but for the most part your hands are still tied.
+Partytown is a `5kb` library to help relocate resource intensive scripts to into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), and off of the [main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread). Its goal is to help speed up sites by dedicating the main thread to your code, and offloading third-party scripts to a web worker.
 
-[View the tests](https://partytown.vercel.app/)
+- [Information](#information)
 
-### Web Workers
+  - [Negative Impacts From Third-party scripts](#negative-impacts-from-Third-party-scripts)
+  - [Goals](#goals)
+  - [Web Workers](#web-workers)
+  - [Browser Window And DOM Access](#browser-window-and-dom-access)
+  - [Sandboxing](#sandboxing)
+  - [Trade-Offs](#trade-offs)
+  - [Use-Cases](#use-cases)
+  - [How Does It Work?](#how-does-it-work)
+  - [Browser Features And Fallback](#browser-features-and-fallback)
 
-Partytown runs 3rd-party scripts in a web worker to free up resources for your app on the main thread.
+- [Usage](#usage)
 
-- Relocate resource intensive scripts to into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)
-- Main thread performance is, without question, more important than web worker thread performance
-- Throttle 3rd-party script's main thread access
-- Isolate long-running tasks within the web worker thread
-- Sandbox scripts and have the ability to restrict their usage of specific browser APIs
-- Debug what 3rd-party scripts are calling into
-- Web worker DOM implementation within `4kb`
+  - [Partytown Library](#partytown-library)
+  - [Config](#config)
+  - [Debugging](#debugging)
+  - [Worker Instances](#worker-instances)
+  - [Distribution](#distribution)
 
-> If you're looking to instead run _your_ app within a web worker, then we recommend the [WorkerDom](https://github.com/ampproject/worker-dom) project.
+- [Development](#development)
+
+  - [Installation](#installation)
+  - [Local Testing](#local-testing)
+  - [E2E Testing](#e2e-testing)
+  - [Deployed Tests](#deployed-tests)
+
+---
+
+## Information
+
+### Negative Impacts From Third-party Scripts
+
+Even with a fast and higly tuned site and/or app following all of the best practices, it's all too common for your performance wins to be erased the moment third-party scripts are added. By third-party scripts we mean code that is embedded within your site, but not directly under your control. A few examples include: analytics, metics, ads, A/B testing, trackers, etc., and their inclusion are often a double-edged sword.
+
+Below is a summary of potential issues, referenced from [Loading Third-Party JavaScript](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/loading-third-party-javascript):
+
+- Firing too many network requests to multiple servers. The more requests a site has to make, the longer it can take to load.
+- Sending too much JavaScript that keeps the main thread busy. Too much JavaScript can block DOM construction, delaying how quickly pages can render.
+- CPU-intensive script parsing and execution can delay user interaction and cause battery drain.
+- Third-party scripts loaded without care can be a single-point of failure (SPOF)
+- Insufficient HTTP caching, forcing resources to be fetched from the network often
+- Use of legacy APIs (e.g `document.write()`) known to be harmful to the user experience
+- Excessive DOM elements or expensive CSS selectors.
+- Including multiple third party embeds can lead to multiple frameworks and libraries being pulled in several times, which exacerbates the performance issues.
+- Third-party scripts often use embed techniques that can block `window.onload`, even if the embed is using async or defer.
 
 ### Goals
 
 - Free up main thread resources to be used only for the primary webapp execution
-- Reduce layout thrashing coming from 3rd-party scripts
-- Isolate 3rd-party scripts within a sandbox ([web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API)) to give better insight as to what the scripts are doing
-- Configure which browser APIs specific scripts can, and cannot, execute
-- Webapp startup time unchanged when Partytown library is added
+- Isolate long-running tasks within the web worker thread
+- Reduce layout thrashing coming from third-party scripts
+- Third-party script's access to the main thread can be throttled
 - Opt-in only, and does not automatically update existing scripts
-- Allow 3rd-party scripts to run exactly how they're coded and without any alterations
+- Allow third-party scripts to run exactly how they're coded and without any alterations
 - Read and write main thread DOM operations _synchronously_ from within a web worker
-- No build-steps or bundling required, but rather update scripts the same as traditional 3rd-party scripts are updated
+- No build-steps or bundling required, but rather update scripts the same as traditional third-party scripts are updated
 
-### Use-Cases
+### Web Workers
 
-Below are just a few examples of 3rd-party scripts that may be a good candidate to run from within a web worker. The goal is to continue validating various services to ensure Partytown has the correct API proxies, but Partytown itself should not hardcode to any specific services. Help us test!
+Partytown's philosophy is that the main thead should be dedicated to your code, and any scripts that are not required to be in the [critical path](https://developers.google.com/web/fundamentals/performance/critical-rendering-path) should be moved to a web worker. Main thread performance is, without question, more important than web worker thread performance.
+
+> If you're looking to instead run _your_ app within a web worker, then we recommend the [WorkerDom](https://github.com/ampproject/worker-dom) project.
+
+### Browser Window And DOM Access
+
+Traditionallly, communicating between the main thread and worker thread _must_ be [asyncrounous](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Concepts). Meaning that for the two threads to communicated, they cannot using blocking calls.
+
+What's different with Partytown, is that code executed from the web worker can access the DOM _synchronously_. The benefit from this is that third-party scripts can continue to work exactly how they're coded .
+
+For example, the code below works exactly how it's expected within a worker:
+
+```javascript
+const rects = element.getClientRects();
+console.log(rects.x, rects.y);
+```
+
+First thing you'll notice, is that there's no async/await, Promise or callback. Instead, the call to `getClientRects()` is blocking, and the returned `rects` value contains the explected x and y properties.
+
+Additionally, data passed between the main thread and web worker must be [serializable](https://en.wikipedia.org/wiki/Serialization). Partytown automatically handles serializing and deserializing data passed between threads.
+
+### Sandboxing
+
+Third-party scripts are often a black-box with large amounts of code. What's buried within the obfuscated code is difficult to tell. It's minified for good reason, but regardless it becomes very difficult to understand what third-party scripts are executing on _your_ site and _your_ user's devices.
+
+Partytown however, is able to isolate and sandbox third-party scripts within a web worker, and allow, or deny, access to main thread APIs. This includes cookies, localStorage, or the entire document. Because the code is executed within the worker, and their access to the main thread _must_ go through the proxy, then Partytown is able to give developers control of what scripts can execute.
+
+- Isolate third-party scripts within a sandbox ([web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API))
+- Configure which browser APIs specific scripts can, and cannot, execute
+- Option to log API calls and passed in arguments in order to give better insight as to what the scripts are doing
+
+## Trade-Offs
+
+- Partytown library scripts must be hosted from the same origin as the HTML document (not a CDN)
+- DOM operations within the worker are purposely throttled, slowing down worker execution compared to their executing on the main thread
+- A total of three threads are used: Main Thread, Web Worker, Service Worker
+- Not ideal for scripts that are required to block the main document (blocking is bad)
+- `event.preventDefault()` will have no effect, similar to [passive event listeners](https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md)
+- Intercepted network requests:
+  - Many service worker network requests may show up in the network tab
+  - Partytown service worker requests are intercepted by the client, and transfer `0 bytes` over the network
+  - [Lighthouse scores](https://web.dev/performance-scoring/) are unaffected by the intercepted requests
+
+## Use-Cases
+
+Below are just a few examples of third-party scripts that may be a good candidate to run from within a web worker. The goal is to continue validating commonly used services to ensure Partytown has the correct API proxies, but Partytown itself should not hardcode to any specific services. Help us test!
 
 - [Google Tag Manager (GTM)](https://marketingplatform.google.com/about/tag-manager/)
 - [Google Analytics (GA)](https://analytics.google.com/)
@@ -45,39 +120,48 @@ Below are just a few examples of 3rd-party scripts that may be a good candidate 
 - [Segment](https://segment.com/)
 - [Amplitude](https://amplitude.com/)
 
-### Trade-offs
+### How Does It Work?
 
-- Partytown library scripts must be hosted from the same origin as the HTML document (not a CDN)
-- DOM operations within the worker are purposely throttled, slowing down worker execution
-- Not ideal for scripts that are required to block the main document (blocking is bad)
-- A total of three threads are used: Main Thread, Web Worker, Service Worker
-- `event.preventDefault()` will have no effect, similar to [passive event listeners](https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md)
-- Service worker network requests
-  - Many service worker network requests may show up in the network tab
-  - Partytown service worker requests are intercepted by the client, and transfer `0 bytes` over the network
-  - [Lighthouse scores](https://web.dev/performance-scoring/) are unaffected by the intercepted requests
+Partytown relies [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API), [JavaScript Proxies](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy), and a communcation layer between them all.
 
-### Browser Features
+1. Scripts are disabled from running on the main thread by using the `type="text/partytown"` attribute.
+1. Service worker creates an `onfetch` handler to intercept specific requests.
+1. Web worker is given the scripts to execute within the worker thread.
+1. Web worker creates JS Proxies to replicate the main thread API.
+1. Any call to the JS proxy uses _syncrounous_ XHR requests.
+1. Service worker intercepts requests, then is able to asyncrounsly communicate with the main thread.
+1. When the service worker receives the results from main, it responds to the web worker's request.
+1. According to the code executing from the web worker, everything was syncrounous, and each call to the document was blocking.
+
+#### What About Atomics?
+
+[Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics) are the latest and greatest way to accomplish the challenge of _synchronously_ sending data between the main thread and web worker. Honestly, it looks like Atomics may be preferred and "correct" way to perform these tasks. However, as of right now, more research is needed into how Atomics could be used in production.
+
+Currently [Safari does not support Atomics](https://caniuse.com/mdn-javascript_builtins_atomics) because it appears to have been removed due to [Spectre Attacks: Exploiting Speculative Execution](https://spectreattack.com/spectre.pdf). When Spectre attacks were first documented, the other browsers removed Atomics too, but they have since added it back. Due to this uncertainy, we're opting for a solution that works everywhere, today. That said, we'd love to do more research here and hopefully migrate to use Atomics in the future, and use the current system as the fallback.
+
+### Browser Features And Fallback
 
 - [Web Worker](https://caniuse.com/webworkers)
 - [Service Worker](https://caniuse.com/serviceworkers)
 - [JavaScript Proxy](https://caniuse.com/proxy)
 - [JavaScript Symbol](https://caniuse.com/mdn-javascript_builtins_symbol)
 
-If the browser does not support any of the features above, then it'll fallback to run 3rd-party scripts the traditional way.
+If the browser does not support any of the features above, then it'll fallback to run third-party scripts the traditional way.
 
 ---
 
-## Partytown Library
+## Usage
 
-For each 3rd-party script that should not run in the main thread, but instead party 🎉 in a web worker, its script element should set the `type` attribute to `text/partytown`. This does two things:
+### Partytown Library
+
+For each third-party script that should not run in the main thread, but instead party 🎉 in a web worker, its script element should set the `type` attribute to `text/partytown`. This does two things:
 
 1. Prevents the script from executing on the main thread.
 2. Provides an attribute selector for the Partytown library.
 
 ```html
 <script type="text/partytown">
-  // 3rd-party analytics scripts
+  // Third-party analytics scripts
 </script>
 ```
 
@@ -92,51 +176,20 @@ hosted from its own dedicated root directory `/~partytown/`. This root directory
 
 With scripts disabled from executing, the Partytown library can lazily begin loading and executing the scripts from inside a worker.
 
-## Worker Instances
+### Config
 
-By default all Partytown scripts will load in the same worker. However, each script could be placed in their own named web worker, or separated into groups by giving the script a `data-worker` attribute.
+Before the Partytown library script, you can configure the `partytown` global object, such as:
 
 ```html
-<script data-worker="GTM" type="text/partytown">
-  // Google Tag Manager
+<script>
+  partytown = {...};
 </script>
-
-<script data-worker="GA" type="text/partytown">
-  // Google Analytics
-</script>
+<script src="/~partytown/partytown.js" async defer></script>
 ```
 
-By placing each script in their own worker it may be easier to separate and debug what each script is executing. However, in production it may be preferred to share one worker.
+### Debugging
 
-## Distribution
-
-The distribution comes with multiple files:
-
-### `/~partytown/partytown.js`
-
-- The initial script to be loaded on the main thread
-- Minified and property renamed
-- Console logs removed
-- Contents of `partytown.js` could be inlined the HTML instead in order to reduce an extra HTTP request
-- Loads:
-  - `partytown-sw.js`: Minified service worker with inlined sandbox and web worker
-
-### `/~partytown/partytown.debug.js`
-
-- Debug version of `/~partytown/partytown.js`
-- Additional request for sandbox and web worker
-- Not minified
-- Includes console logs
-- Loads other debug library scripts
-- Not meant for production, but useful to inspect what scripts are up to
-- Loads:
-  - `partytown-sw.debug.js`: Service worker with separate sandbox request
-  - `partytown-sandbox.debug.js`: Sandbox with separate web worker request
-  - `partytown-ww.debug.js`: Web worker as separate file, not inlined
-
-## Configuring and Debugging
-
-When using the `partytown.debug.js` file there is a minimal set of default debug logs that print in the console. You can also opt-in to list out even more verbose logs that may help to debug scripts. Before the Partytown library script, you can configure the `partytown` global object, such as:
+When using the `partytown.debug.js` file there is a minimal set of default debug logs available that print in the console. You can also opt-in to list out even more verbose logs that may help to debug scripts.
 
 ```html
 <script>
@@ -154,13 +207,53 @@ When using the `partytown.debug.js` file there is a minimal set of default debug
 
 > Note that debug logs and configuration is not available in the `partytown.js` version.
 
-## What About Atomics?
+### Worker Instances
 
-[Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics) seem to be the latest and greatest way to accomplish the challenge of _synchronously_ sending data between the main thread and web worker. Honestly, it looks like Atomics may be preferred and "correct" way to do it, but as of right now, it may need to be held off for later. Currently [Safari does not support Atomics](https://caniuse.com/mdn-javascript_builtins_atomics) because it appears to have been removed due to [Spectre Attacks: Exploiting Speculative Execution](https://spectreattack.com/spectre.pdf). When Spectre attacks were first documented, the other browsers removed Atomics too, but they have since added it back. Due to this uncertainy, we're opting for a solution that works everywhere, today. That said, we'd love to do more research here and hopefully migrate to use Atomics in the future instead of the current hack.
+By default all Partytown scripts will load in the same worker. However, each script could be placed in their own named web worker, or separated into groups by giving the script
+a `data-worker` attribute.
+
+```html
+<script data-worker="GTM" type="text/partytown">
+  // Google Tag Manager
+</script>
+
+<script data-worker="GA" type="text/partytown">
+  // Google Analytics
+</script>
+```
+
+By placing each script in their own worker it may be easier to separate and debug what each script is executing. However, in production it may be preferred to share one worker.
+
+### Distribution
+
+The distribution comes with multiple files:
+
+- `/~partytown/partytown.js`
+
+  - The initial script to be loaded on the main thread
+  - Minified and property renamed
+  - Console logs removed
+  - Contents of `partytown.js` could be inlined the HTML instead in order to reduce an extra HTTP request
+  - Loads:
+    - `partytown-sw.js`: Minified service worker with inlined sandbox and web worker
+
+- `/~partytown/partytown.debug.js`
+  - Debug version of `/~partytown/partytown.js`
+  - Additional request for sandbox and web worker
+  - Not minified
+  - Includes console logs
+  - Loads other debug library scripts
+  - Not meant for production, but useful to inspect what scripts are up to
+  - Loads:
+    - `partytown-sw.debug.js`: Service worker with separate sandbox request
+    - `partytown-sandbox.debug.js`: Sandbox with separate web worker request
+    - `partytown-ww.debug.js`: Web worker as separate file, not inlined
 
 ---
 
 ## Development
+
+### Installation
 
 ```
 npm install
@@ -179,7 +272,7 @@ npm run serve
 
 http://localhost:4000/
 
-### E2E Tests
+### E2E Testing
 
 E2E tests use [@playwright/test](https://playwright.dev/docs/intro#writing-assertions), which allows us to test on Chromium, Firefox and WebKit browsers.
 
