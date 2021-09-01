@@ -95,6 +95,10 @@ Partytown however, is able to isolate and sandbox third-party scripts within a w
 - Configure which browser APIs specific scripts can, and cannot, execute
 - Option to log API calls and passed in arguments in order to give better insight as to what the scripts are doing
 
+#### Partytown Debug Logs
+
+![Partytown Console Logs](https://user-images.githubusercontent.com/452425/131688576-e207cb15-7ce5-4009-a358-3e3093d51957.png)
+
 ## Trade-Offs
 
 - Partytown library scripts must be hosted from the same origin as the HTML document (not a CDN)
