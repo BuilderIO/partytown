@@ -1,5 +1,4 @@
 // Pretty Printed https://www.googletagmanager.com/gtm.js
-console.warn('loaded gtm');
 
 // Copyright 2012 Google Inc. All rights reserved.
 (function () {

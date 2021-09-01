@@ -1,5 +1,3 @@
-console.warn('loaded gtag');
-
 // Copyright 2012 Google Inc. All rights reserved.
 (function () {
   var data = {
