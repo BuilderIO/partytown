@@ -32,10 +32,13 @@ http://localhost:4000/
 ## E2E Testing
 
 E2E tests use [@playwright/test](https://playwright.dev/docs/intro#writing-assertions), which allows us to test on Chromium, Firefox and WebKit browsers.
+These pages are also tested on every commit within the project's [CI Workflow](https://github.com/BuilderIO/partytown/actions/workflows/ci.yml).
 
 ```
 npm test
 ```
+
+[Test Results](https://github.com/BuilderIO/partytown/actions/workflows/ci.yml)
 
 ## Deployed Tests
 
