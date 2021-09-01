@@ -7,7 +7,6 @@
 Partytown is a `5kb` library to help relocate resource intensive scripts to into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), and off of the [main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread). Its goal is to help speed up sites by dedicating the main thread to your code, and offloading third-party scripts to a web worker.
 
 - [Information](#information)
-
   - [Negative Impacts From Third-party scripts](#negative-impacts-from-Third-party-scripts)
   - [Goals](#goals)
   - [Web Workers](#web-workers)
@@ -17,21 +16,20 @@ Partytown is a `5kb` library to help relocate resource intensive scripts to into
   - [Use-Cases](#use-cases)
   - [How Does It Work?](#how-does-it-work)
   - [Browser Features And Fallback](#browser-features-and-fallback)
-
 - [Usage](#usage)
-
   - [Partytown Library](#partytown-library)
   - [Config](#config)
   - [Debugging](#debugging)
   - [Worker Instances](#worker-instances)
   - [Distribution](#distribution)
-
-- [Development](#development)
-
-  - [Installation](#installation)
-  - [Local Testing](#local-testing)
-  - [E2E Testing](#e2e-testing)
-  - [Deployed Tests](#deployed-tests)
+- [Development](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#local-development)
+  - [Installation](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#installation)
+  - [Submitting Issues](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#submitting-issues-and-writing-tests)
+  - [Manual Testing](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#manual-testing)
+  - [E2E Testing](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#e2e-testing)
+  - [Deployed Tests](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#deployed-tests)
+- [Community](#community)
+- [Related Projects](#related-projects)
 
 ---
 
@@ -256,6 +254,7 @@ The distribution comes with multiple files:
 - [Partytown Discord](https://discord.gg/hbuEtxdEZ3)
 - [@QwikDev](https://twitter.com/QwikDev)
 - [@builderio](https://twitter.com/builderio)
+- [Development](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#local-development)
 
 ## Related Projects
 

@@ -1,11 +1,15 @@
 # Local Development
 
+Welcome 🎉!! If you've found a bug, or have an idea to add a feature we'd love to hear from you. It may save time to first ping the group on [Partytown's Discord channel](https://discord.gg/hbuEtxdEZ3) to talk through any ideas or any issues that may be a bug.
+
 ## Installation
 
 ```
 npm install
 npm run dev
 ```
+
+See the [distribution](https://github.com/BuilderIO/partytown#distribution) section about the various files created. Note that both the root directory, and the `tests` directory receive a copy of the build files, such as `tests/~partytown/partytown.js`.
 
 ## Submitting Issues And Writing Tests
 
