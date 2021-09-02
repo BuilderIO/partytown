@@ -1,6 +1,5 @@
 import { callMethod } from './worker-proxy';
 import { debug, logWorker } from '../utils';
-import { ElementConstructors, WorkerElement, WorkerNode, WorkerNodeList } from './worker-node';
 import {
   InterfaceType,
   PlatformApiId,
@@ -12,6 +11,16 @@ import {
   SerializedType,
 } from '../types';
 import { InstanceIdKey, webWorkerCtx } from './worker-constants';
+import {
+  WorkerAnchorElement,
+  WorkerElement,
+  WorkerIFrameElement,
+  WorkerImageElement,
+  WorkerNode,
+  WorkerNodeList,
+  WorkerScriptElement,
+} from './worker-node';
+import { WorkerDocument } from './worker-document';
 
 let refIds = 1;
 const refsByRefId = new Map<number, Ref>();
@@ -115,7 +124,17 @@ const constructInstance = (serializedInstance: SerializedInstance): any => {
     return self;
   }
   if (interfaceType === InterfaceType.Element) {
+    const ElementConstructors: { [tagname: string]: any } = {
+      A: WorkerAnchorElement,
+      IFRAME: WorkerIFrameElement,
+      IMG: WorkerImageElement,
+      SCRIPT: WorkerScriptElement,
+    };
     return new (ElementConstructors[serializedNode.$data$] || WorkerElement)(serializedNode);
+  }
+  if (interfaceType === InterfaceType.Document) {
+    // this scenario would be for an iframe's document, not the main document
+    return new WorkerDocument(serializedNode);
   }
   if (interfaceType === InterfaceType.TextNode) {
     return new WorkerNode(serializedInstance as SerializedNode);

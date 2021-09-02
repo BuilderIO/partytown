@@ -26,4 +26,8 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testTopSomeValue');
   const testTopSomeValue = page.locator('#testTopSomeValue');
   await expect(testTopSomeValue).toHaveText('1956.21');
+
+  await page.waitForSelector('.testScriptWindowParent');
+  const testScriptWindowParent = page.locator('#testScriptWindowParent');
+  await expect(testScriptWindowParent).toHaveText('1885');
 });

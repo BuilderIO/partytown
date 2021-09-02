@@ -1,4 +1,4 @@
-import type { WorkerDocument } from './web-worker/worker-document';
+import type { WorkerMainDocument } from './web-worker/worker-document';
 import type { WorkerHistory } from './web-worker/worker-history';
 import type { WorkerLocation } from './web-worker/worker-location';
 import type { WorkerStorage } from './web-worker/worker-storage';
@@ -60,7 +60,7 @@ export interface InitWebWorkerData {
 export interface InitWebWorkerContext {
   $currentScriptId$: number;
   $currentScriptUrl$: string;
-  $document$: WorkerDocument;
+  $document$: WorkerMainDocument;
   $history$: WorkerHistory;
   $importScripts$: (...urls: string[]) => void;
   $localStorage$: WorkerStorage;
@@ -194,6 +194,7 @@ export interface SerializedNode extends SerializedInstance {
   $interfaceType$: InterfaceType;
   /** Node Name */
   $data$: string;
+  $childDocument$?: boolean;
 }
 
 export interface SerializedNodeList extends SerializedInstance {

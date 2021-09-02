@@ -1,6 +1,7 @@
 import type { WebWorkerContext } from '../types';
 
 export const InstanceIdKey = Symbol();
+export const ChildDocument = Symbol();
 export const PrivateValues = Symbol();
 export const ProxyKey = Symbol();
 export const srcUrls = new Map<number, string>();

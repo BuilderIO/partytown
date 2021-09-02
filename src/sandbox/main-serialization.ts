@@ -2,6 +2,7 @@ import { getConstructorName, isValidMemberName, noop } from '../utils';
 import { getInstance, getAndSetInstanceId, getInstanceId } from './main-instances';
 import {
   InterfaceType,
+  PlatformApiId,
   SerializedInstance,
   SerializedNode,
   SerializedNodeList,
@@ -31,10 +32,13 @@ export const serializeForWorker = (value: any, added: Set<any>): SerializedTrans
 
   if (type === 'object') {
     if (value.nodeType) {
+      const ownerDocumentInstanceId = getAndSetInstanceId(value.ownerDocument);
       const nodeInstance: SerializedNode = {
         $interfaceType$: value.nodeType,
         $instanceId$: getAndSetInstanceId(value),
         $data$: value.nodeName,
+        $childDocument$:
+          ownerDocumentInstanceId > -1 && ownerDocumentInstanceId !== PlatformApiId.document,
       };
       return [SerializedType.Instance, nodeInstance];
     }

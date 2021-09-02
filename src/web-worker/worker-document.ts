@@ -1,5 +1,5 @@
 import { callMethod, getter, setter } from './worker-proxy';
-import { createElement, createScript, WorkerElement, WorkerScriptElement } from './worker-node';
+import { createElement, WorkerElement, WorkerScriptElement } from './worker-node';
 import { InterfaceType, PlatformApiId } from '../types';
 import { logWorkerGetter, logWorkerSetter, toLower } from '../utils';
 import { PrivateValues, webWorkerCtx } from './worker-constants';
@@ -12,20 +12,12 @@ export class WorkerDocument extends WorkerElement {
     $url$?: string;
   };
 
-  get body() {
-    return getElementProp(this, PlatformApiId.body, 'BODY');
-  }
-
   get cookie() {
     logWorkerGetter(this, ['cookie'], webWorkerCtx.$documentCookie$, true);
     return webWorkerCtx.$documentCookie$;
   }
   set cookie(cookie: string) {
     setter(this, ['cookie'], (webWorkerCtx.$documentCookie$ = cookie));
-  }
-
-  createElement(tagName: string) {
-    return createElement(this, tagName, []);
   }
 
   get compatMode() {
@@ -37,9 +29,38 @@ export class WorkerDocument extends WorkerElement {
     return undefined;
   }
 
+  get implementation() {
+    return {
+      hasFeature: () => true,
+    };
+  }
+
+  get location() {
+    logWorkerGetter(this, ['location'], webWorkerCtx.$location$, true);
+    return webWorkerCtx.$location$;
+  }
+  set location(url: any) {
+    logWorkerSetter(this, ['location'], url);
+    webWorkerCtx.$location$!.href = url + '';
+  }
+}
+
+export class WorkerMainDocument extends WorkerDocument {
+  get body() {
+    return getElementProp(this, PlatformApiId.body, 'BODY');
+  }
+
+  createElement(tagName: string) {
+    return createElement(this, tagName, []);
+  }
+
   get currentScript() {
     if (webWorkerCtx.$currentScriptId$) {
-      return createScript(webWorkerCtx.$currentScriptId$);
+      return new WorkerScriptElement({
+        $interfaceType$: InterfaceType.Element,
+        $instanceId$: webWorkerCtx.$currentScriptId$,
+        $data$: 'SCRIPT',
+      });
     }
     return null;
   }
@@ -76,25 +97,6 @@ export class WorkerDocument extends WorkerElement {
     return getElementProp(this, PlatformApiId.head, 'HEAD');
   }
 
-  get implementation() {
-    return {
-      hasFeature: () => true,
-    };
-  }
-
-  get location() {
-    logWorkerGetter(this, ['location'], webWorkerCtx.$location$, true);
-    return webWorkerCtx.$location$;
-  }
-  set location(url: any) {
-    logWorkerSetter(this, ['location'], url);
-    webWorkerCtx.$location$!.href = url + '';
-  }
-
-  get ownerDocument() {
-    return null as any;
-  }
-
   get readyState() {
     if (webWorkerCtx.$documentReadyState$ !== 'complete') {
       webWorkerCtx.$documentReadyState$ = getter(this, ['readyState']);
@@ -119,7 +121,7 @@ export class WorkerDocument extends WorkerElement {
 }
 
 const getElementProp = (
-  doc: WorkerDocument,
+  doc: WorkerMainDocument,
   instanceId: number,
   tagName: 'BODY' | 'HEAD' | 'HTML'
 ) => {

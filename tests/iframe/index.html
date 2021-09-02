@@ -86,15 +86,9 @@
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentWindow.document.head.innerHTML = `
-              <style>
-                body {
-                  background: cornflowerblue;
-                  color: white;
-                  font-weight: bold;
-                  text-align: center;
-                }
-              </style>
+              <style>body { background: cornflowerblue; color: white; font-weight: bold; text-align: center;}</style>
             `;
+
             iframe.contentWindow.document.body.innerHTML = `contentWindow`;
             elm.textContent = iframe.contentWindow.document.body.textContent;
             elm.className = 'testContentWindow';
@@ -116,13 +110,7 @@
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentDocument.head.innerHTML = `
-              <style>
-                body {
-                  background: aquamarine;
-                  font-weight: bold;
-                  text-align: center;
-                }
-              </style>
+              <style>body { background: aquamarine; font-weight: bold; text-align: center; }</style>
             `;
             iframe.contentDocument.body.innerHTML = `contentDocument`;
             elm.textContent = iframe.contentWindow.document.body.textContent;
@@ -220,11 +208,46 @@
             iframe.contentDocument.body.innerHTML = `window.top.someValue`;
             const script = iframe.contentDocument.createElement('script');
             script.innerHTML = `
+              window.name = 'iFrame Window';
+              console.log(window.name);
+              console.log(window.top.name);
               const elm = window.parent.document.getElementById('testTopSomeValue');
               elm.textContent = window.top.year + window.parent.gw;
               elm.className = 'testTopSomeValue';
             `;
             iframe.contentDocument.body.appendChild(script);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>script.src, window.parent</strong>
+        <code id="testScriptWindowParent"></code>
+        <script>
+          testScriptWindowParent = { year: 1885 };
+        </script>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testScriptWindowParent');
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100%';
+            iframe.style.height = '36px';
+            iframe.style.display = 'block';
+            iframe.style.border = 'none';
+            elm.parentNode.insertBefore(iframe, null);
+
+            const script = iframe.contentWindow.document.createElement('script');
+            script.addEventListener('load', () => {
+              elm.className = 'testScriptWindowParent';
+            });
+
+            iframe.contentWindow.document.head.innerHTML = `
+              <style>body { background: maroon; font-weight: bold; color: white; text-align: center; }</style>
+            `;
+            iframe.contentWindow.document.body.innerHTML = `script.src, window.parent`;
+
+            script.src = 'parent-window.js';
+            iframe.contentWindow.document.body.appendChild(script);
           })();
         </script>
       </li>

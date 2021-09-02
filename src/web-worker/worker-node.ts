@@ -1,27 +1,29 @@
 import { callMethod, getter, proxy, setter } from './worker-proxy';
-import { ExtraInstruction, InterfaceType, SerializedNode } from '../types';
+import { ExtraInstruction, InterfaceType, NodeName, PlatformApiId, SerializedNode } from '../types';
 import { imageRequest, scriptElementSetSrc } from './worker-exec';
-import { InstanceIdKey, PrivateValues, srcUrls } from './worker-constants';
+import { ChildDocument, InstanceIdKey, PrivateValues, srcUrls } from './worker-constants';
 import { len, toLower } from '../utils';
 import { webWorkerCtx } from './worker-constants';
-import type { WorkerDocument } from './worker-document';
+import type { WorkerDocument, WorkerMainDocument } from './worker-document';
 
 export class WorkerNode {
   [InstanceIdKey]: number;
+  [ChildDocument]: boolean;
   nodeName: string;
   nodeType: number;
   [PrivateValues]: { $url$?: string };
 
   constructor(nodeCstr: SerializedNode) {
     this[InstanceIdKey] = nodeCstr.$instanceId$!;
+    this[ChildDocument] = nodeCstr.$childDocument$!;
     this.nodeType = nodeCstr.$interfaceType$;
     this.nodeName = nodeCstr.$data$;
     this[PrivateValues] = {};
     return proxy(nodeCstr.$interfaceType$, this, []);
   }
 
-  get ownerDocument() {
-    return self.document;
+  get ownerDocument(): WorkerDocument {
+    return self.document as any;
   }
 }
 
@@ -71,12 +73,8 @@ export class WorkerIFrameElement extends WorkerElement {
   [PrivateValues]: { $url$?: string; $document$: any; $window$: any };
 
   get contentDocument() {
-    return this.document;
-  }
-
-  get document() {
     if (!this[PrivateValues].$document$) {
-      this[PrivateValues].$document$ = proxy(InterfaceType.Document, this, ['contentDocument']);
+      this[PrivateValues].$document$ = getter(this, ['contentDocument']);
     }
     return this[PrivateValues].$document$;
   }
@@ -168,12 +166,20 @@ export class WorkerImageElement extends WorkerSrcElement {
 
 export class WorkerScriptElement extends WorkerSrcElement {
   get src() {
-    return srcUrls.get(this[InstanceIdKey]) || '';
+    if (this[ChildDocument]) {
+      return getter(this, ['src']);
+    } else {
+      return srcUrls.get(this[InstanceIdKey]) || '';
+    }
   }
   set src(url: string) {
-    if (srcUrls.get(this[InstanceIdKey]) !== url) {
-      srcUrls.set(this[InstanceIdKey], url);
-      scriptElementSetSrc(this);
+    if (this[ChildDocument]) {
+      setter(this, ['src'], url);
+    } else {
+      if (srcUrls.get(this[InstanceIdKey]) !== url) {
+        srcUrls.set(this[InstanceIdKey], url);
+        scriptElementSetSrc(this);
+      }
     }
   }
 
@@ -220,22 +226,8 @@ const getUrl = (elm: WorkerElement) => resolveUrl(elm[PrivateValues].$url$);
 
 const resolveUrl = (url?: string) => new URL(url || '', webWorkerCtx.$location$ + '');
 
-export const ElementConstructors: { [tagname: string]: any } = {
-  A: WorkerAnchorElement,
-  IFRAME: WorkerIFrameElement,
-  IMG: WorkerImageElement,
-  SCRIPT: WorkerScriptElement,
-};
-
-export const createScript = ($instanceId$: number) =>
-  new WorkerScriptElement({
-    $interfaceType$: InterfaceType.Element,
-    $instanceId$,
-    $data$: 'SCRIPT',
-  });
-
 export const createElement = (
-  doc: WorkerDocument,
+  doc: WorkerMainDocument,
   tagName: string,
   $extraInstructions$: ExtraInstruction[]
 ) => {
