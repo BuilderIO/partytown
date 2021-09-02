@@ -38,4 +38,8 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testCurrentScript');
   const testCurrentScript = page.locator('#testCurrentScript');
   await expect(testCurrentScript).toHaveText('/iframe/current-script.js');
+
+  await page.waitForSelector('.testScriptOnload');
+  const testScriptOnload = page.locator('#testScriptOnload');
+  await expect(testScriptOnload).toHaveText('load');
 });

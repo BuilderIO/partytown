@@ -296,6 +296,38 @@
           })();
         </script>
       </li>
+
+      <li>
+        <strong>script.onload</strong>
+        <code id="testScriptOnload"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testScriptOnload');
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100%';
+            iframe.style.height = '36px';
+            iframe.style.display = 'block';
+            iframe.style.border = 'none';
+            elm.parentNode.insertBefore(iframe, null);
+
+            iframe.contentWindow.document.head.innerHTML = `
+              <style>body { background: green; font-weight: bold; color: white; text-align: center; }</style>
+            `;
+
+            const script = iframe.contentWindow.document.createElement('script');
+            script.onload = function (ev) {
+              const elm = window.parent.document.getElementById('testScriptOnload');
+              elm.textContent = ev.type;
+              elm.className = 'testScriptOnload';
+              const div = iframe.contentDocument.createElement('div');
+              div.textContent = elm.textContent;
+              iframe.contentDocument.body.appendChild(div);
+            };
+            script.src = 'onload.js';
+            iframe.contentWindow.document.body.appendChild(script);
+          })();
+        </script>
+      </li>
     </ul>
 
     <hr />

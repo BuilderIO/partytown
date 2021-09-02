@@ -98,34 +98,58 @@ class WorkerSrcElement extends WorkerElement {
     $onerror$?: ((ev: any) => void)[];
   };
 
-  addEventListener(eventName: string, handler: (ev: any) => void) {
-    const privateValues = this[PrivateValues];
-    if (eventName === 'load') {
-      (privateValues.$onload$ = privateValues.$onload$ || []).push(handler);
-    } else if (eventName === 'error') {
-      (privateValues.$onerror$ = privateValues.$onerror$ || []).push(handler);
+  addEventListener(...args: any[]) {
+    if (this[ChildDocument]) {
+      callMethod(this, ['addEventListener'], args);
+    } else {
+      const privateValues = this[PrivateValues];
+      if (args[0] === 'load') {
+        (privateValues.$onload$ = privateValues.$onload$ || []).push(args[1]);
+      } else if (args[0] === 'error') {
+        (privateValues.$onerror$ = privateValues.$onerror$ || []).push(args[1]);
+      }
     }
   }
 
   get complete() {
-    const hasCompleted = this[PrivateValues].c;
-    return hasCompleted !== false;
+    if (this[ChildDocument]) {
+      return getter(this, ['complete']);
+    } else {
+      const hasCompleted = this[PrivateValues].c;
+      return hasCompleted !== false;
+    }
   }
 
   get onload() {
-    const onload = this[PrivateValues].$onload$;
-    return (onload && onload[0]) || null;
+    if (this[ChildDocument]) {
+      return getter(this, ['onload']);
+    } else {
+      const onload = this[PrivateValues].$onload$;
+      return (onload && onload[0]) || null;
+    }
   }
   set onload(cb: ((ev: any) => void) | null) {
-    this[PrivateValues].$onload$ = cb ? [cb] : [];
+    if (this[ChildDocument]) {
+      setter(this, ['onload'], cb);
+    } else {
+      this[PrivateValues].$onload$ = cb ? [cb] : [];
+    }
   }
 
   get onerror() {
-    const onerror = this[PrivateValues].$onerror$;
-    return (onerror && onerror[0]) || null;
+    if (this[ChildDocument]) {
+      return getter(this, ['onerror']);
+    } else {
+      const onerror = this[PrivateValues].$onerror$;
+      return (onerror && onerror[0]) || null;
+    }
   }
   set onerror(cb: ((ev: any) => void) | null) {
-    this[PrivateValues].$onerror$ = cb ? [cb] : [];
+    if (this[ChildDocument]) {
+      setter(this, ['onerror'], cb);
+    } else {
+      this[PrivateValues].$onerror$ = cb ? [cb] : [];
+    }
   }
 }
 
