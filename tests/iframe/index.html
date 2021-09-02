@@ -73,6 +73,27 @@
       </li>
 
       <li>
+        <strong>iframe.onload</strong>
+        <code id="testOnload"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testOnload');
+            const iframe = document.createElement('iframe');
+            iframe.style.width = '100%';
+            iframe.style.height = '36px';
+            iframe.style.display = 'block';
+            iframe.style.border = 'none';
+            iframe.onload = function (ev) {
+              elm.textContent = 'onload';
+              elm.className = 'testOnload';
+            };
+            iframe.src = 'content.html';
+            elm.parentNode.insertBefore(iframe, null);
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>contentWindow.document</strong>
         <code id="testContentWindow"></code>
         <script type="text/partytown">
