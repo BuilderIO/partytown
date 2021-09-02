@@ -1,10 +1,11 @@
 import { callMethod, getter, proxy, setter } from './worker-proxy';
-import { ExtraInstruction, InterfaceType, NodeName, PlatformApiId, SerializedNode } from '../types';
+import { ExtraInstruction, SerializedNode } from '../types';
 import { imageRequest, scriptElementSetSrc } from './worker-exec';
 import { ChildDocument, InstanceIdKey, PrivateValues, srcUrls } from './worker-constants';
 import { len, toLower } from '../utils';
 import { webWorkerCtx } from './worker-constants';
 import type { WorkerDocument, WorkerMainDocument } from './worker-document';
+import { WorkerContentWindow } from './worker-content-window';
 
 export class WorkerNode {
   [InstanceIdKey]: number;
@@ -70,18 +71,15 @@ export class WorkerAnchorElement extends WorkerElement {
 }
 
 export class WorkerIFrameElement extends WorkerElement {
-  [PrivateValues]: { $url$?: string; $document$: any; $window$: any };
+  [PrivateValues]: { $url$?: string; $window$?: any };
 
   get contentDocument() {
-    if (!this[PrivateValues].$document$) {
-      this[PrivateValues].$document$ = getter(this, ['contentDocument']);
-    }
-    return this[PrivateValues].$document$;
+    return this.contentWindow.document;
   }
 
   get contentWindow() {
     if (!this[PrivateValues].$window$) {
-      this[PrivateValues].$window$ = proxy(InterfaceType.Window, this, ['contentWindow']);
+      this[PrivateValues].$window$ = new WorkerContentWindow(this[InstanceIdKey]);
     }
     return this[PrivateValues].$window$;
   }
