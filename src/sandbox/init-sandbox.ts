@@ -41,11 +41,7 @@ export const initSandbox = async (createWebWorker: CreateWorker) => {
     if (msgType === WorkerMessageType.MainDataRequestFromWorker) {
       // web worker has requested data from the main thread
       const firstScriptId = getAndSetInstanceId(mainDocument.querySelector('script'));
-      const mainInterfaces = readMainInterfaces(
-        mainCtx.$sandboxWindow$,
-        sandboxDocument,
-        sandboxDocument.documentElement
-      );
+      const mainInterfaces = readMainInterfaces(mainCtx.$sandboxWindow$, sandboxDocument);
       const initWebWorkerData: InitWebWorkerData = {
         $config$: mainCtx.$config$,
         $documentCompatMode$: mainDocument.compatMode,
