@@ -34,4 +34,8 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testScriptWindowParent');
   const testScriptWindowParent = page.locator('#testScriptWindowParent');
   await expect(testScriptWindowParent).toHaveText('1885');
+
+  await page.waitForSelector('.testCurrentScript');
+  const testCurrentScript = page.locator('#testCurrentScript');
+  await expect(testCurrentScript).toHaveText('/iframe/current-script.js');
 });
