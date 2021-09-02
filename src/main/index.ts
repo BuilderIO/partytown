@@ -14,7 +14,8 @@ import SandboxHash from '@sandbox-hash';
       sandbox = document.createElement('iframe');
       sandbox.setAttribute('style', 'display:block;width:0;height:0;border:0;visibility:hidden');
       sandbox.setAttribute('aria-hidden', 'true');
-      sandbox.src = scope + 'partytown-sandbox' + (debug ? '.debug' : '-' + SandboxHash);
+      sandbox.src =
+        scope + 'partytown-sandbox' + (debug ? '.debug' : '-' + SandboxHash) + '?' + Date.now();
       document.body.appendChild(sandbox);
     }
   }

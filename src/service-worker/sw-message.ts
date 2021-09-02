@@ -19,7 +19,12 @@ const sendMessageToSandboxFromServiceWorker = (
 ) =>
   new Promise<MainAccessResponse>(async (resolve) => {
     const clients = await self.clients.matchAll();
-    const client = clients[0];
+    const client = [...clients].sort((a, b) => {
+      if (a.url > b.url) return -1;
+      if (a.url < b.url) return 1;
+      return 0;
+    })[0];
+
     if (client) {
       const timeout = debug ? 120000 : 10000;
       const msgResolve: MessageResolve = [

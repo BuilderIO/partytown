@@ -75,13 +75,13 @@ export const initSandbox = async (createWebWorker: CreateWorker) => {
     }
   };
 
-  swContainer.addEventListener('message', (ev) => {
+  swContainer.addEventListener('message', (ev) =>
     mainAccessHandler(ev.data).then((accessRsp) => {
       if (swRegistration && swRegistration.active) {
         swRegistration.active.postMessage(accessRsp);
       }
-    });
-  });
+    })
+  );
 
   for (const workerName in workerScripts) {
     logMain(`Creating "${workerName}" web worker`);
