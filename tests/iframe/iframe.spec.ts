@@ -39,7 +39,11 @@ test('iframe', async ({ page }) => {
   const testCurrentScript = page.locator('#testCurrentScript');
   await expect(testCurrentScript).toHaveText('/iframe/current-script.js');
 
-  // await page.waitForSelector('.testScriptOnload');
-  // const testScriptOnload = page.locator('#testScriptOnload');
-  // await expect(testScriptOnload).toHaveText('load');
+  await page.waitForSelector('.testScriptOnload');
+  const testScriptOnload = page.locator('#testScriptOnload');
+  await expect(testScriptOnload).toHaveText('load');
+
+  await page.waitForSelector('.testMemberNames');
+  const testMemberNames = page.locator('#testMemberNames');
+  await expect(testMemberNames).toHaveText('1985');
 });

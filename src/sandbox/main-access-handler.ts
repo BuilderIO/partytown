@@ -71,14 +71,17 @@ const callInstanceMethod = async (
   args: any[],
   extraInstructions?: ExtraInstruction[]
 ) => {
-  const memberPathLength = len(memberPath);
   let rtnValue: any = undefined;
+  let thisArg = instance;
+  let fn = thisArg[memberPath[0]];
+  let i: number;
 
-  if (memberPathLength === 1) {
-    rtnValue = instance[memberPath[0]].apply(instance, args);
-  } else if (memberPathLength === 2) {
-    rtnValue = instance[memberPath[0]][memberPath[1]].apply(instance[memberPath[0]], args);
+  for (i = 1; i < len(memberPath); i++) {
+    thisArg = thisArg[memberPath[i - 1]];
+    fn = fn[memberPath[i]];
   }
+
+  rtnValue = fn.apply(thisArg, args);
 
   if (isPromise(rtnValue)) {
     rtnValue = await rtnValue;

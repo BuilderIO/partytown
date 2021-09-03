@@ -46,6 +46,11 @@
         white-space: nowrap;
         margin: 0 5px;
       }
+      iframe {
+        width: 100%;
+        height: 28px;
+        border: none;
+      }
     </style>
   </head>
   <body>
@@ -58,10 +63,6 @@
           (function () {
             const elm = document.getElementById('testSrc');
             const iframe = document.createElement('iframe');
-            iframe.style.width = '100%';
-            iframe.style.height = '36px';
-            iframe.style.display = 'block';
-            iframe.style.border = 'none';
             iframe.addEventListener('load', function (ev) {
               elm.textContent = iframe.contentDocument.getElementById('output').textContent;
               elm.className = 'testSrc';
@@ -79,10 +80,6 @@
           (function () {
             const elm = document.getElementById('testOnload');
             const iframe = document.createElement('iframe');
-            iframe.style.width = '100%';
-            iframe.style.height = '36px';
-            iframe.style.display = 'block';
-            iframe.style.border = 'none';
             iframe.onload = function (ev) {
               elm.textContent = 'onload';
               elm.className = 'testOnload';
@@ -100,10 +97,6 @@
           (function () {
             const elm = document.getElementById('testContentWindow');
             const iframe = document.createElement('iframe');
-            iframe.style.width = '100%';
-            iframe.style.height = '36px';
-            iframe.style.display = 'block';
-            iframe.style.border = 'none';
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentWindow.document.head.innerHTML = `
@@ -124,10 +117,6 @@
           (function () {
             const elm = document.getElementById('testContentDocument');
             const iframe = document.createElement('iframe');
-            iframe.style.width = '100%';
-            iframe.style.height = '36px';
-            iframe.style.display = 'block';
-            iframe.style.border = 'none';
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentDocument.head.innerHTML = `
@@ -147,10 +136,6 @@
           (function () {
             const elm = document.getElementById('testGetSomeGlobalVar');
             const iframe = document.createElement('iframe');
-            iframe.style.width = '100%';
-            iframe.style.height = '36px';
-            iframe.style.display = 'block';
-            iframe.style.border = 'none';
             iframe.addEventListener('load', function (ev) {
               elm.textContent = iframe.contentWindow.someGlobalVar.mph;
               elm.className = 'testGetSomeGlobalVar';
@@ -168,10 +153,6 @@
           (function () {
             const elm = document.getElementById('testSetSomeGlobalVar');
             const iframe = document.createElement('iframe');
-            iframe.style.width = '100%';
-            iframe.style.height = '36px';
-            iframe.style.display = 'block';
-            iframe.style.border = 'none';
             iframe.addEventListener('load', function (ev) {
               iframe.contentWindow.someOtherVar = 99;
               elm.textContent = iframe.contentWindow.someOtherVar;
@@ -190,10 +171,6 @@
           (function () {
             const elm = document.getElementById('testSetSomeWindowVar');
             const iframe = document.createElement('iframe');
-            iframe.style.width = '100%';
-            iframe.style.height = '36px';
-            iframe.style.display = 'block';
-            iframe.style.border = 'none';
             iframe.src = 'external-js.html';
             iframe.addEventListener('load', function (ev) {
               elm.textContent = iframe.contentWindow.someWindowVar.year;
@@ -217,10 +194,6 @@
           (function () {
             const elm = document.getElementById('testTopSomeValue');
             const iframe = document.createElement('iframe');
-            iframe.style.width = '100%';
-            iframe.style.height = '36px';
-            iframe.style.display = 'block';
-            iframe.style.border = 'none';
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentDocument.head.innerHTML = `
@@ -251,10 +224,6 @@
           (function () {
             const elm = document.getElementById('testScriptWindowParent');
             const iframe = document.createElement('iframe');
-            iframe.style.width = '100%';
-            iframe.style.height = '36px';
-            iframe.style.display = 'block';
-            iframe.style.border = 'none';
             elm.parentNode.insertBefore(iframe, null);
 
             const script = iframe.contentWindow.document.createElement('script');
@@ -280,10 +249,6 @@
           (function () {
             const elm = document.getElementById('testCurrentScript');
             const iframe = document.createElement('iframe');
-            iframe.style.width = '100%';
-            iframe.style.height = '36px';
-            iframe.style.display = 'block';
-            iframe.style.border = 'none';
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentWindow.document.head.innerHTML = `
@@ -304,10 +269,6 @@
           (function () {
             const elm = document.getElementById('testScriptOnload');
             const iframe = document.createElement('iframe');
-            iframe.style.width = '100%';
-            iframe.style.height = '36px';
-            iframe.style.display = 'block';
-            iframe.style.border = 'none';
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentWindow.document.head.innerHTML = `
@@ -326,6 +287,35 @@
             script.src = 'onload.js';
             iframe.contentWindow.document.body.appendChild(script);
           })();
+        </script>
+      </li>
+
+      <li>
+        <strong>parent call, one.two.three.fn(1955)</strong>
+        <code id="testMemberNames"></code>
+        <script type="text/partytown">
+          const elm = document.getElementById('testMemberNames');
+          const iframe = document.createElement('iframe');
+          elm.parentNode.insertBefore(iframe, null);
+          iframe.contentWindow.document.head.innerHTML = `
+            <style>body { background: orange; font-weight: bold; color: white; text-align: center; }</style>
+          `;
+          const script = iframe.contentDocument.createElement('script');
+          script.innerHTML = `
+            one = { two: { three: {
+              fn(year) {
+                return year;
+              },
+              num: 30
+            }}};
+          `;
+          iframe.contentDocument.body.appendChild(script);
+
+          const a = iframe.contentWindow.one.two.three.fn(1955);
+          const b = iframe.contentWindow.one.two.three.num;
+
+          elm.textContent = a + b;
+          elm.className = 'testMemberNames';
         </script>
       </li>
     </ul>
