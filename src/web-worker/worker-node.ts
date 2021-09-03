@@ -87,8 +87,6 @@ export class WorkerIFrameElement extends WorkerElement {
 
 class WorkerSrcElement extends WorkerElement {
   [PrivateValues]: {
-    /** async */
-    a?: boolean;
     /** completed */
     c?: boolean;
     $url$?: string;
@@ -109,6 +107,11 @@ class WorkerSrcElement extends WorkerElement {
     }
   }
 
+  get async() {
+    return true;
+  }
+  set async(_: boolean) {}
+
   get complete() {
     if (this[ChildDocument]) {
       return getter(this, ['complete']);
@@ -117,6 +120,11 @@ class WorkerSrcElement extends WorkerElement {
       return hasCompleted !== false;
     }
   }
+
+  get defer() {
+    return true;
+  }
+  set defer(_: boolean) {}
 
   get onload() {
     if (this[ChildDocument]) {
@@ -152,11 +160,6 @@ class WorkerSrcElement extends WorkerElement {
 }
 
 export class WorkerImageElement extends WorkerSrcElement {
-  get alt() {
-    return '';
-  }
-  set alt(_: string) {}
-
   get src() {
     return srcUrls.get(this[InstanceIdKey]) || '';
   }

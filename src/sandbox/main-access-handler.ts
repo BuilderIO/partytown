@@ -5,10 +5,8 @@ import { isPromise, len, PT_SCRIPT_TYPE } from '../utils';
 
 export const mainAccessHandler = async (accessReq: MainAccessRequest) => {
   const accessType = accessReq.$accessType$;
-  const instanceId = accessReq.$instanceId$;
   const memberPath = accessReq.$memberPath$;
-  const instance = getInstance(instanceId);
-  const data = deserializeFromWorker(instanceId, accessReq.$data$);
+  const instanceId = accessReq.$instanceId$;
   const extraInstructions = accessReq.$extraInstructions$;
   const accessRsp: MainAccessResponse = {
     $msgId$: accessReq.$msgId$,
@@ -16,6 +14,9 @@ export const mainAccessHandler = async (accessReq: MainAccessRequest) => {
   };
 
   try {
+    const instance = getInstance(instanceId);
+    const data = deserializeFromWorker(instanceId, accessReq.$data$);
+
     if (instance) {
       if (accessType === AccessType.Get) {
         await getInstanceMember(accessRsp, instance, memberPath);
