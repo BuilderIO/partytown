@@ -1,43 +1,79 @@
 import { len } from '../utils';
-import { PlatformApiId } from '../types';
+import { MainWindowContext, NodeName, PlatformApiId } from '../types';
 
-let instanceIds = PlatformApiId.body + 1;
-let cleanupInc = 0;
-
-const instances: [number, InstanceType][] = [];
-const instanceIdByInstance = new WeakMap<InstanceType, number>();
-
-export const getInstanceId = (instance: InstanceType | null | undefined) =>
-  instanceIdByInstance.get(instance!);
+export const getInstanceId = (
+  winCtx: MainWindowContext,
+  instance: InstanceType | null | undefined
+) => {
+  if (instance) {
+    const nodeName = (instance as any as Node).nodeName;
+    if (nodeName === NodeName.Document) {
+      return PlatformApiId.documentElement;
+    }
+    if (nodeName === NodeName.DocumentElement) {
+      return PlatformApiId.documentElement;
+    }
+    if (nodeName === NodeName.Head) {
+      return PlatformApiId.head;
+    }
+    if (nodeName === NodeName.Body) {
+      return PlatformApiId.body;
+    }
+    return winCtx.$instanceIdByInstance$.get(instance);
+  }
+};
 
 export const getAndSetInstanceId = (
+  winCtx: MainWindowContext,
   instance: InstanceType | null | undefined,
   instanceId?: number
 ) => {
   if (instance) {
-    instanceId = getInstanceId(instance);
+    instanceId = getInstanceId(winCtx, instance);
     if (typeof instanceId !== 'number') {
-      instanceId = instanceIds++;
-      setInstanceId(instance, instanceId);
+      instanceId = winCtx.$nextId$++;
+      setInstanceId(winCtx, instance, instanceId);
     }
     return instanceId;
   }
   return -1;
 };
 
-export const getInstance = <T = InstanceType | null>(instanceId: number, instanceItem?: any): T => {
-  instanceItem = instances.find((i) => i[0] === instanceId);
+export const getInstance = <T = InstanceType | null>(
+  winCtx: MainWindowContext,
+  instanceId: number,
+  instanceItem?: any
+): T => {
+  const doc = winCtx.$window$.document;
+  if (instanceId === PlatformApiId.document) {
+    return doc as any;
+  }
+  if (instanceId === PlatformApiId.documentElement) {
+    return doc.documentElement as any;
+  }
+  if (instanceId === PlatformApiId.head) {
+    return doc.head as any;
+  }
+  if (instanceId === PlatformApiId.body) {
+    return doc.body as any;
+  }
+  instanceItem = winCtx.$instances$.find((i) => i[0] === instanceId);
   return instanceItem ? instanceItem[1] : null;
 };
 
-export const setInstanceId = (instance: InstanceType | null | undefined, instanceId: number) => {
+export const setInstanceId = (
+  winCtx: MainWindowContext,
+  instance: InstanceType | null | undefined,
+  instanceId: number
+) => {
   if (instance) {
+    const instances = winCtx.$instances$;
     instances.push([instanceId, instance]);
-    instanceIdByInstance.set(instance, instanceId);
+    winCtx.$instanceIdByInstance$.set(instance, instanceId);
 
-    cleanupInc++;
-    if (cleanupInc > 99) {
-      cleanupInc = 0;
+    winCtx.$cleanupInc$++;
+    if (winCtx.$cleanupInc$ > 99) {
+      winCtx.$cleanupInc$ = 0;
       while (true) {
         let disconnectedNodes = instances.filter(
           (i) => (i[1] as InstanceNode).nodeType && !(i[1] as InstanceNode).isConnected

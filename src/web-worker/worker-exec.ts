@@ -1,68 +1,61 @@
 import { debug, logWorker, nextTick } from '../utils';
-import type { InitializeScriptData } from '../types';
-import { InstanceIdKey, PrivateValues, srcUrls, webWorkerCtx } from './worker-constants';
+import { InitializeScriptData, WorkerMessageType } from '../types';
+import { InstanceIdKey, PrivateValues, srcUrls, webWorkerCtx, WinIdKey } from './worker-constants';
 import type { WorkerImageElement, WorkerScriptElement } from './worker-node';
 
-export const initNextScriptsInWebWorker = (initScript?: InitializeScriptData) => {
-  initScript = webWorkerCtx.$initializeScripts$.shift();
-  if (initScript) {
-    const instanceId = initScript.$instanceId$;
-    const content = initScript.$content$;
-    const url = initScript.$url$;
-    try {
-      if (url) {
-        importScriptUrl(instanceId, url);
-      } else if (content) {
-        if (debug && webWorkerCtx.$config$.logScriptExecution) {
-          logWorker(`Execute script content [data-partytown-id="${instanceId}"]`);
-        }
-        setCurrentScript(instanceId, '');
-        const runScript = new Function(content);
-        runScript();
+export const initNextScriptsInWebWorker = (initScript: InitializeScriptData) => {
+  let instanceId = initScript.$instanceId$;
+  let content = initScript.$content$;
+  let url = initScript.$url$;
+  let errorMsg = '';
+
+  try {
+    if (url) {
+      importScriptUrl(initScript.$winId$, instanceId, url);
+    } else if (content) {
+      if (debug && webWorkerCtx.$config$.logScriptExecution) {
+        logWorker(`Execute script content [data-pt-id="${instanceId}"]`);
       }
-    } catch (e) {
-      console.error('Party foul,', e, '\n' + (url || content));
+      setCurrentScript(instanceId, '');
+      const runScript = new Function(content);
+      runScript();
     }
-    setCurrentScript(-1, '');
+  } catch (e) {
+    console.error('Party foul,', e, '\n' + (url || content));
+    errorMsg = e + '';
   }
+  setCurrentScript(-1, '');
+
+  webWorkerCtx.$postMessage$([WorkerMessageType.InitializedWorkerScript, instanceId, errorMsg]);
 };
 
-export const imageRequest = (image: WorkerImageElement) => {
+export const imageRequest = (elm: WorkerImageElement) => {
   if (debug && webWorkerCtx.$config$.logImageRequests) {
-    logWorker(`Image request: ${image.src}`);
+    logWorker(`Image Request: ${elm.src}`);
   }
 
-  const xhr = new XMLHttpRequest();
-  const privateValues = image[PrivateValues];
-
+  const privateValues = elm[PrivateValues];
   privateValues.c = false;
 
-  xhr.onreadystatechange = function (ev, xhrStatus?: number) {
-    if (xhr.readyState === 4 /* XMLHttpRequest.DONE */) {
-      xhrStatus = xhr.status;
-
-      privateValues.c = true;
-
-      if (xhrStatus === 0 || (xhrStatus >= 200 && xhrStatus < 400)) {
-        if (privateValues.$onload$) {
-          privateValues.$onload$.forEach((onload) => onload({ ...ev, type: 'load' }));
-        }
-      } else if (privateValues.$onerror$) {
-        privateValues.$onerror$.forEach((onerror) => onerror({ ...ev, type: 'error' }));
+  fetch(elm.src).then((rsp) => {
+    privateValues.c = true;
+    if (rsp.ok) {
+      if (privateValues.$onload$) {
+        privateValues.$onload$.forEach((onload) => onload({ type: 'load' }));
       }
+    } else if (privateValues.$onerror$) {
+      privateValues.$onerror$.forEach((onerror) => onerror({ type: 'error' }));
     }
-  };
-
-  xhr.open('GET', image.src, true);
-  xhr.send();
+  });
 };
 
 export const scriptElementSetSrc = (script: WorkerScriptElement) => {
   nextTick(() => {
-    const instanceId = script[InstanceIdKey];
+    const scripWinId = script[WinIdKey];
+    const scriptInstanceId = script[InstanceIdKey];
     const ev = { type: 'load', target: script, currentTarget: script };
     try {
-      if (importScriptUrl(instanceId, script.src)) {
+      if (importScriptUrl(scripWinId, scriptInstanceId, script.src)) {
         if (script[PrivateValues].$onload$) {
           nextTick(() => script[PrivateValues].$onload$!.forEach((cb) => cb(ev)));
         }
@@ -79,13 +72,19 @@ export const scriptElementSetSrc = (script: WorkerScriptElement) => {
   });
 };
 
-const importScriptUrl = (instanceId: number, scriptUrl: string) => {
+const importScriptUrl = (winId: number, instanceId: number, scriptUrl: string) => {
   scriptUrl = new URL(scriptUrl, webWorkerCtx.$location$ + '') + '';
-
   srcUrls.set(instanceId, scriptUrl);
+
+  if (debug && winId !== webWorkerCtx.$winId$) {
+    logWorker(
+      `Incorrect window context, winId: ${winId}, instanceId: ${instanceId}, scriptUrl: ${scriptUrl}`
+    );
+  }
+
   if (setCurrentScript(instanceId, scriptUrl)) {
     if (debug && webWorkerCtx.$config$.logScriptExecution) {
-      logWorker(`Execute script [data-partytown-id="${instanceId}"] ${scriptUrl}`);
+      logWorker(`Execute script [data-pt-id="${instanceId}"] ${scriptUrl}`);
     }
 
     webWorkerCtx.$importScripts$(scriptUrl);

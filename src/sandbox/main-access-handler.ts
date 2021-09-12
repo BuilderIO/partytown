@@ -1,106 +1,98 @@
-import { AccessType, ExtraInstruction, MainAccessRequest, MainAccessResponse } from '../types';
+import {
+  AccessType,
+  ExtraInstruction,
+  MainAccessRequest,
+  MainAccessResponse,
+  MainWindowContext,
+} from '../types';
 import { deserializeFromWorker, serializeForWorker } from './main-serialization';
+import { EMPTY_ARRAY, isPromise, len, PT_SCRIPT_TYPE } from '../utils';
+import { forwardToWinAccessHandler } from './messenger';
 import { getInstance, getAndSetInstanceId } from './main-instances';
-import { isPromise, len, PT_SCRIPT_TYPE } from '../utils';
 
-export const mainAccessHandler = async (accessReq: MainAccessRequest) => {
-  const accessType = accessReq.$accessType$;
-  const memberPath = accessReq.$memberPath$;
-  const instanceId = accessReq.$instanceId$;
-  const extraInstructions = accessReq.$extraInstructions$;
-  const accessRsp: MainAccessResponse = {
+export const mainAccessHandler = async (
+  winCtx: MainWindowContext,
+  accessReq: MainAccessRequest
+) => {
+  let instanceId = accessReq.$instanceId$;
+  let accessType = accessReq.$accessType$;
+  let memberPath = accessReq.$memberPath$;
+  let memberPathLength = len(memberPath);
+  let lastMemberName = memberPath[memberPathLength - 1];
+  let extraInstructions = accessReq.$extraInstructions$ || EMPTY_ARRAY;
+  let isSameWinContext = accessReq.$winId$ === accessReq.$contextWinId$;
+  let accessRsp: MainAccessResponse = {
+    $winId$: accessReq.$winId$,
     $msgId$: accessReq.$msgId$,
     $instanceId$: instanceId,
   };
+  let rtnValue: any = undefined;
+  let instance: any;
+  let data: any;
+  let i: number;
+  let count: number;
+  let tmr: any;
 
   try {
-    const instance = getInstance(instanceId);
-    const data = deserializeFromWorker(instanceId, accessReq.$data$);
+    if (!isSameWinContext) {
+      return forwardToWinAccessHandler(winCtx.$worker$!, accessReq);
+    }
+
+    instance = getInstance(winCtx, instanceId);
+    data = deserializeFromWorker(winCtx, instanceId, accessReq.$data$);
 
     if (instance) {
-      if (accessType === AccessType.Get) {
-        await getInstanceMember(accessRsp, instance, memberPath);
-      } else if (accessType === AccessType.CallMethod) {
-        await callInstanceMethod(accessRsp, instance, memberPath, data, extraInstructions);
-      } else if (accessType === AccessType.Set) {
-        setInstanceMember(instance, memberPath, data);
+      for (i = 0; i < memberPathLength - 1; i++) {
+        instance = instance[memberPath[i]];
       }
+
+      if (accessType === AccessType.Get) {
+        if (extraInstructions.includes(ExtraInstruction.WAIT_FOR_INSTANCE_MEMBER)) {
+          await new Promise<void>((resolve) => {
+            count = 0;
+            tmr = setInterval(() => {
+              if (isMemberInInstance(instance, memberPath) || count > 200) {
+                clearInterval(tmr);
+                resolve();
+              }
+              count++;
+            }, 40);
+          });
+        }
+        rtnValue = instance[lastMemberName];
+      } else if (accessType === AccessType.Set) {
+        instance[lastMemberName] = data;
+      } else if (accessType === AccessType.CallMethod) {
+        rtnValue = instance[lastMemberName].apply(instance, data);
+        extraInstructions.forEach((extra, i) => {
+          if (extra === ExtraInstruction.SET_INERT_IMG) {
+            (rtnValue as HTMLImageElement).hidden = true;
+          }
+          if (extra === ExtraInstruction.SET_INERT_SCRIPT) {
+            (rtnValue as HTMLScriptElement).type = PT_SCRIPT_TYPE;
+          }
+          if (extra === ExtraInstruction.SET_PARTYTOWN_ID) {
+            rtnValue.dataset.ptId = getAndSetInstanceId(winCtx, rtnValue);
+          }
+          if (extra === ExtraInstruction.SET_IFRAME_SRCDOC) {
+            (rtnValue as HTMLIFrameElement).srcdoc = extraInstructions[i + 1] as any;
+          }
+        });
+      }
+
+      if (isPromise(rtnValue)) {
+        rtnValue = await rtnValue;
+        accessRsp.$isPromise$ = true;
+      }
+      accessRsp.$rtnValue$ = serializeForWorker(winCtx, rtnValue, new Set());
     } else {
       accessRsp.$error$ = `Instance ${instanceId} not found`;
     }
-  } catch (e) {
+  } catch (e: any) {
     accessRsp.$error$ = String(e.stack || e);
   }
 
   return accessRsp;
 };
 
-const getInstanceMember = async (
-  accessRsp: MainAccessResponse,
-  instance: any,
-  memberPath: string[]
-) => {
-  let memberPathLength = len(memberPath);
-  let getterValue: any = undefined;
-  if (memberPathLength === 1) {
-    getterValue = instance[memberPath[0]];
-  } else if (memberPathLength === 2) {
-    getterValue = instance[memberPath[0]][memberPath[1]];
-  }
-
-  if (isPromise(getterValue)) {
-    getterValue = await getterValue;
-    accessRsp.$isPromise$ = true;
-  }
-  accessRsp.$rtnValue$ = serializeForWorker(getterValue, new Set());
-};
-
-const setInstanceMember = (instance: any, memberPath: string[], setterValue: any) => {
-  const memberPathLength = len(memberPath);
-  if (memberPathLength === 1) {
-    instance[memberPath[0]] = setterValue;
-  } else if (memberPathLength === 2) {
-    instance[memberPath[0]][memberPath[1]] = setterValue;
-  }
-};
-
-const callInstanceMethod = async (
-  accessRsp: MainAccessResponse,
-  instance: any,
-  memberPath: string[],
-  args: any[],
-  extraInstructions?: ExtraInstruction[]
-) => {
-  let rtnValue: any = undefined;
-  let thisArg = instance;
-  let fn = thisArg[memberPath[0]];
-  let i: number;
-
-  for (i = 1; i < len(memberPath); i++) {
-    thisArg = thisArg[memberPath[i - 1]];
-    fn = fn[memberPath[i]];
-  }
-
-  rtnValue = fn.apply(thisArg, args);
-
-  if (isPromise(rtnValue)) {
-    rtnValue = await rtnValue;
-    accessRsp.$isPromise$ = true;
-  }
-
-  accessRsp.$rtnValue$ = serializeForWorker(rtnValue, new Set());
-
-  if (extraInstructions) {
-    extraInstructions.forEach((extra) => {
-      if (extra === ExtraInstruction.SET_INERT_IMG) {
-        (rtnValue as HTMLImageElement).hidden = true;
-      }
-      if (extra === ExtraInstruction.SET_INERT_SCRIPT) {
-        (rtnValue as HTMLScriptElement).type = PT_SCRIPT_TYPE;
-      }
-      if (extra === ExtraInstruction.SET_PARTYTOWN_ID) {
-        rtnValue.dataset.partytownId = getAndSetInstanceId(rtnValue);
-      }
-    });
-  }
-};
+const isMemberInInstance = (instance: any, memberPath: string[]) => memberPath[0] in instance;

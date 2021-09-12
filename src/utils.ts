@@ -1,5 +1,11 @@
-import { InstanceIdKey, webWorkerCtx } from './web-worker/worker-constants';
-import { PlatformApiId } from './types';
+import {
+  InstanceIdKey,
+  InterfaceTypeKey,
+  NodeNameKey,
+  webWorkerCtx,
+  WinIdKey,
+} from './web-worker/worker-constants';
+import { InterfaceType, MainWindowContext, PlatformApiId } from './types';
 
 export const debug = (globalThis as any).partytownDebug;
 
@@ -9,29 +15,39 @@ export const toLower = (str: string) => str.toLowerCase();
 
 export const toUpper = (str: string) => str.toUpperCase();
 
-export const logMain = (msg: string) =>
-  debug &&
-  console.debug.apply(console, [
-    `%cMain Thread 🌎`,
-    `background: #717171; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
-    msg,
-  ]);
+export const logMain = (winCtx: MainWindowContext, msg: string) => {
+  if (debug) {
+    let prefix: string;
+    if (winCtx.$winId$ === 0) {
+      prefix = `Main (${winCtx.$winId$}) 🌎`;
+    } else {
+      prefix = `Iframe (${winCtx.$winId$}) 👾`;
+    }
+    console.debug.apply(console, [
+      `%c${prefix}`,
+      `background: #717171; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
+      msg,
+    ]);
+  }
+};
 
 export const logWorker = (msg: string) => {
   if (debug) {
-    const config = webWorkerCtx.$config$;
+    try {
+      const config = webWorkerCtx.$config$;
 
-    if (config.logStackTraces) {
-      const frames = new Error().stack!.split('\n');
-      const i = frames.findIndex((f) => f.includes('logWorker'));
-      msg += '\n' + frames.slice(i + 1).join('\n');
-    }
+      if (config.logStackTraces) {
+        const frames = new Error().stack!.split('\n');
+        const i = frames.findIndex((f) => f.includes('logWorker'));
+        msg += '\n' + frames.slice(i + 1).join('\n');
+      }
 
-    console.debug.apply(console, [
-      `%c${self.name}`,
-      `background: #3498db; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
-      msg,
-    ]);
+      console.debug.apply(console, [
+        `%c${self.name}`,
+        `background: #3498db; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
+        msg,
+      ]);
+    } catch (e) {}
   }
 };
 
@@ -42,27 +58,42 @@ export const logWorkerGetter = (
   isCached?: boolean
 ) => {
   if (debug && webWorkerCtx.$config$.logGetters) {
-    logWorker(
-      `Get ${logTargetProp(target, memberPath)}, returned: ${logValue(memberPath, rtn)}${
-        isCached ? ' (cached)' : ''
-      }`
-    );
+    try {
+      if (target && target[WinIdKey] !== webWorkerCtx.$winId$) {
+        return;
+      }
+      logWorker(
+        `Get ${logTargetProp(target, memberPath)}, returned: ${logValue(memberPath, rtn)}${
+          isCached ? ' (cached)' : ''
+        }`
+      );
+    } catch (e) {}
   }
 };
 
 export const logWorkerSetter = (target: any, memberPath: string[], value: any) => {
   if (debug && webWorkerCtx.$config$.logSetters) {
-    logWorker(`Set ${logTargetProp(target, memberPath)}, value: ${logValue(memberPath, value)}`);
+    try {
+      if (target && target[WinIdKey] !== webWorkerCtx.$winId$) {
+        return;
+      }
+      logWorker(`Set ${logTargetProp(target, memberPath)}, value: ${logValue(memberPath, value)}`);
+    } catch (e) {}
   }
 };
 
 export const logWorkerCall = (target: any, memberPath: string[], args: any[], rtn: any) => {
   if (debug && webWorkerCtx.$config$.logCalls) {
-    logWorker(
-      `Call ${logTargetProp(target, memberPath)}(${args
-        .map((v) => logValue(memberPath, v))
-        .join(', ')}), returned: ${logValue(memberPath, rtn)}`
-    );
+    try {
+      if (target && target[WinIdKey] !== webWorkerCtx.$winId$) {
+        return;
+      }
+      logWorker(
+        `Call ${logTargetProp(target, memberPath)}(${args
+          .map((v) => logValue(memberPath, v))
+          .join(', ')}), returned: ${logValue(memberPath, rtn)}`
+      );
+    } catch (e) {}
   }
 };
 
@@ -86,8 +117,12 @@ const logTargetProp = (target: any, memberPath: string[]) => {
       n = 'sessionStorage.';
     } else if (target.nodeType === 1) {
       n = toLower(target.nodeName) + '.';
-    } else if (target.nodeType === 3) {
+    } else if (target[InterfaceTypeKey] === InterfaceType.TextNode) {
       n = 'node.';
+    } else if (target[InterfaceTypeKey] === InterfaceType.Element && target[NodeNameKey]) {
+      n = `<${toLower(target[NodeNameKey])}>`;
+    } else {
+      n = '¯\\_(ツ)_/¯';
     }
   }
   return (n += memberPath.join('.'));
@@ -111,11 +146,36 @@ const logValue = (memberPath: string[], v: any): string => {
     return `[${v.map(logValue).join(', ')}]`;
   }
   if (type === 'object') {
-    if ((v as Node).nodeName) {
-      if (v.nodeType === 1) {
-        return `<${toLower(v.nodeName)}>`;
+    const instanceId = v[InstanceIdKey];
+    if (typeof instanceId === 'number') {
+      if (instanceId === PlatformApiId.body) {
+        return `<body>`;
       }
-      return v.nodeName;
+      if (instanceId === PlatformApiId.document) {
+        return `#document`;
+      }
+      if (instanceId === PlatformApiId.documentElement) {
+        return `<html>`;
+      }
+      if (instanceId === PlatformApiId.head) {
+        return `<head>`;
+      }
+      if (instanceId === PlatformApiId.localStorage) {
+        return `[localStorage]`;
+      }
+      if (instanceId === PlatformApiId.sessionStorage) {
+        return `[sessionStorage]`;
+      }
+      if (instanceId === PlatformApiId.window) {
+        return `[window]`;
+      }
+      if (v[InterfaceTypeKey] === InterfaceType.TextNode) {
+        return `#text`;
+      }
+      if (v[InterfaceTypeKey] === InterfaceType.Element && v[NodeNameKey]) {
+        return `<${toLower(v[NodeNameKey])}>`;
+      }
+      return 'unknown instance obj';
     }
     if (v[Symbol.iterator]) {
       return `[${Array.from(v)
@@ -157,7 +217,10 @@ export const isValidMemberName = (memberName: string) => {
 };
 
 export const nextTick = (cb: Function) => setTimeout(cb, 0);
+export const EMPTY_ARRAY = [];
 
 export const PT_PROXY_URL = `proxytown`;
 export const PT_INITIALIZED_EVENT = `ptinit`;
 export const PT_SCRIPT_TYPE = `text/partytown`;
+
+export const PT_SCRIPT = `<script src="/~partytown/partytown.debug.js" async defer></script>`;

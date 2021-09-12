@@ -1,4 +1,3 @@
-import type { WorkerMainDocument } from './web-worker/worker-document';
 import type { WorkerHistory } from './web-worker/worker-history';
 import type { WorkerLocation } from './web-worker/worker-location';
 import type { WorkerStorage } from './web-worker/worker-storage';
@@ -7,43 +6,55 @@ export type CreateWorker = (workerName: string) => Worker;
 
 export type MessageFromWorkerToSandbox =
   | [WorkerMessageType.MainDataRequestFromWorker]
-  | [WorkerMessageType.WorkerInitializeStart]
+  | [WorkerMessageType.InitializedWorkerScript, number, string]
   | [WorkerMessageType.InitializeNextWorkerScript]
-  | [WorkerMessageType.WorkerInitializeEnd];
+  | [WorkerMessageType.ForwardMainDataResponse, MainAccessResponse];
 
 export type MessageFromSandboxToWorker =
   | [WorkerMessageType.MainDataResponseToWorker, InitWebWorkerData]
-  | [WorkerMessageType.InitializeNextWorkerScript]
-  | [WorkerMessageType.RefHandlerCallback, number, SerializedTransfer, SerializedTransfer];
+  | [WorkerMessageType.InitializeNextWorkerScript, InitializeScriptData]
+  | [WorkerMessageType.RefHandlerCallback, number, SerializedTransfer, SerializedTransfer]
+  | [WorkerMessageType.ForwardMainDataRequest, MainAccessRequest];
 
 export const enum WorkerMessageType {
   MainDataRequestFromWorker,
   MainDataResponseToWorker,
-  WorkerInitializeStart,
+  InitializedWorkerScript,
   InitializeNextWorkerScript,
-  WorkerInitializeEnd,
   RefHandlerCallback,
+  ForwardMainDataRequest,
+  ForwardMainDataResponse,
 }
 
 export type PostMessageToWorker = (msg: MessageFromSandboxToWorker) => void;
 
-export interface MainContext {
-  $body$: HTMLElement;
-  $config$: PartytownConfig;
-  $document$: Document;
-  $documentElement$: HTMLElement;
-  $head$: HTMLElement;
+export interface MainWindowContext {
+  $winId$: number;
+  $parentWinId$: number;
+  $cleanupInc$: number;
+  $config$: PartytownConfig | undefined;
   $history$: History;
+  $instanceIdByInstance$: WeakMap<any, number>;
+  $instances$: [number, any][];
+  $interfaces$?: InterfaceInfo[];
+  $isInitialized$?: boolean;
   $localStorage$: Storage;
-  $sandboxDocument$: Document;
-  $sandboxWindow$: Window;
+  $nextId$: number;
+  $scopePath$: string;
   $sessionStorage$: Storage;
+  $startTime$?: number;
   $url$: string;
-  $window$: Window;
-  $workerPostMessage$: PostMessageToWorker[];
+  $window$: MainWindow;
+  $worker$?: PartytownWebWorker;
+}
+
+export interface PartytownWebWorker extends Worker {
+  postMessage: PostMessageToWorker;
 }
 
 export interface InitWebWorkerData {
+  $winId$: number;
+  $parentWinId$: number;
   $config$: PartytownConfig;
   $documentCompatMode$: string;
   $documentCookie$: string;
@@ -51,7 +62,6 @@ export interface InitWebWorkerData {
   $documentReferrer$: string;
   $documentTitle$: string;
   $firstScriptId$: number;
-  $initializeScripts$: InitializeScriptData[];
   $interfaces$: InterfaceInfo[];
   $scopePath$: string;
   $url$: string;
@@ -60,9 +70,9 @@ export interface InitWebWorkerData {
 export interface InitWebWorkerContext {
   $currentScriptId$: number;
   $currentScriptUrl$: string;
-  $document$: WorkerMainDocument;
   $history$: WorkerHistory;
   $importScripts$: (...urls: string[]) => void;
+  $isInitialized$?: boolean;
   $localStorage$: WorkerStorage;
   $location$: WorkerLocation;
   $postMessage$: (msg: MessageFromWorkerToSandbox) => void;
@@ -103,11 +113,8 @@ export const enum PlatformApiId {
 
 export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {}
 
-export interface WorkerGroups {
-  [workerName: string]: InitializeScriptData[];
-}
-
 export interface InitializeScriptData {
+  $winId$: number;
   $instanceId$: number;
   $content$?: string;
   $url$?: string;
@@ -120,21 +127,26 @@ export const enum AccessType {
 }
 
 export interface MainAccessRequest {
+  $winId$: number;
   $msgId$: number;
   $accessType$: AccessType;
   $instanceId$: number;
   $memberPath$: string[];
   $data$: SerializedTransfer;
   $extraInstructions$?: ExtraInstruction[];
+  $contextWinId$?: number;
 }
 
 export const enum ExtraInstruction {
   SET_INERT_IMG,
   SET_INERT_SCRIPT,
   SET_PARTYTOWN_ID,
+  SET_IFRAME_SRCDOC,
+  WAIT_FOR_INSTANCE_MEMBER,
 }
 
 export interface MainAccessResponse {
+  $winId$: number;
   $msgId$: number;
   $instanceId$: number;
   $rtnValue$?: SerializedTransfer;
@@ -145,7 +157,6 @@ export interface MainAccessResponse {
 export const enum SerializedType {
   Array,
   Instance,
-  InstanceById,
   Method,
   Object,
   Primitive,
@@ -156,8 +167,6 @@ export type SerializedArrayTransfer = [SerializedType.Array, SerializedTransfer[
 
 export type SerializedInstanceTransfer = [SerializedType.Instance, SerializedInstance];
 
-export type SerializedInstanceByIdTransfer = [SerializedType.InstanceById, number];
-
 export type SerializedMethodTransfer = [SerializedType.Method];
 
 export type SerializedObjectTransfer = [
@@ -165,17 +174,15 @@ export type SerializedObjectTransfer = [
   { [key: string]: SerializedTransfer }
 ];
 
-export type SerializedPrimitiveTransfer = [
-  SerializedType.Primitive,
-  string | number | boolean | null | undefined
-];
+export type SerializedPrimitiveTransfer =
+  | [SerializedType.Primitive, string | number | boolean | null | undefined]
+  | [SerializedType.Primitive];
 
 export type SerializedRefTransfer = [SerializedType.Ref, number];
 
 export type SerializedTransfer =
   | SerializedArrayTransfer
   | SerializedInstanceTransfer
-  | SerializedInstanceByIdTransfer
   | SerializedMethodTransfer
   | SerializedObjectTransfer
   | SerializedPrimitiveTransfer
@@ -184,21 +191,14 @@ export type SerializedTransfer =
   | [];
 
 export interface SerializedInstance {
-  $interfaceType$?: InterfaceType;
+  $winId$: number;
   $instanceId$?: number;
-}
-
-export interface SerializedNode extends SerializedInstance {
-  $instanceId$: number;
-  /** Node Type */
   $interfaceType$: InterfaceType;
-  /** Node Name */
-  $data$: string;
-  $childDocument$?: boolean;
+  $nodeName$?: string;
 }
 
 export interface SerializedNodeList extends SerializedInstance {
-  $data$: SerializedNode[];
+  $data$: SerializedInstance[];
 }
 
 export interface PartytownConfig {
@@ -211,12 +211,23 @@ export interface PartytownConfig {
 }
 
 export interface MainWindow extends Window {
+  frameElement: MainFrameElement | null;
   partytown?: PartytownConfig;
+  partyWin?: (win: MainWindow) => void;
+  partyWinId?: number;
+  parent: MainWindow;
+}
+
+export interface MainFrameElement extends HTMLIFrameElement {
+  partyWinId?: number;
 }
 
 export const enum NodeName {
+  Body = 'BODY',
   Comment = '#comment',
   Document = '#document',
+  DocumentElement = 'HTML',
   DocumentFragment = '#document-fragment',
+  Head = 'HEAD',
   Text = '#text',
 }

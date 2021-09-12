@@ -2,7 +2,6 @@
 
 [![hackmd-github-sync-badge](https://hackmd.io/cfpOAVjyQCi2TcKNCSU5GA/badge)](https://hackmd.io/cfpOAVjyQCi2TcKNCSU5GA)
 
-
 > A fun location for your third-party scripts to hang out
 
 ⚠️ Warning! This is experimental! ⚠️
@@ -23,7 +22,6 @@ Partytown is a `5kb` library to help relocate resource intensive scripts into a 
   - [Partytown Library](#partytown-library)
   - [Config](#config)
   - [Debugging](#debugging)
-  - [Worker Instances](#worker-instances)
   - [Distribution](#distribution)
 - [Development](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#local-development)
   - [Installation](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#installation)
@@ -59,11 +57,12 @@ Below is a summary of potential issues, referenced from [Loading Third-Party Jav
 We set out to solve this situation, so that apps of all sizes will be able to continue to use third-party scripts without the performance hit. Some of Partytown's goals include:
 
 - Free up main thread resources to be used only for the primary web app execution.
+- Sandbox third-party scripts and allow or deny their access main thread APIs.
 - Isolate long-running tasks within the web worker thread.
 - Reduce layout thrashing coming from third-party scripts.
 - Throttle third-party scripts' access to the main thread.
 - Allow third-party scripts to run exactly how they're coded and without any alterations.
-- Read and write main thread DOM operations ._synchronously_ from within a web worker, allowing scripts running from the web worker to execute as expected.
+- Read and write main thread DOM operations _synchronously_ from within a web worker, allowing scripts running from the web worker to execute as expected.
 - No build-steps or bundling required, but rather update scripts the same way as traditional third-party scripts are updated.
 
 ### Web Workers
@@ -74,11 +73,11 @@ Partytown's philosophy is that the main thead should be dedicated to your code, 
 
 ### Browser Window And DOM Access
 
-Traditionallly, communicating between the main thread and worker thread _must_ be [asyncrounous](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Concepts). Meaning that for the two threads to communicated, they cannot using blocking calls.
+Traditionallly, communicating between the main thread and worker thread _must_ be [asyncrounous](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Concepts). Meaning that for the two threads to communicated, they cannot use blocking calls.
 
 Party town is different. It allows code executed from the web worker to access DOM _synchronously_. The benefit from this is that third-party scripts can continue to work exactly how they're coded.
 
-For example, the code below works as expected within a worker:
+For example, the code below works as expected within a web worker:
 
 ```javascript
 const rects = element.getClientRects();
@@ -103,14 +102,16 @@ Essentially, Partytown lets you:
 
 #### Partytown Debug Logs
 
+With debug and logging enabled, below is an example of the Partytown logs showing all calls, getters and setters:
+
 ![Partytown Console Logs](https://user-images.githubusercontent.com/452425/131688576-e207cb15-7ce5-4009-a358-3e3093d51957.png)
 
 ## Trade-Offs
 
-Nothing is without trade-offs.  Using Partytown to orchestrate third-party scripts vs adding them to your pages has the following considerations to keep in mind:
+Nothing is without trade-offs. Using Partytown to orchestrate third-party scripts vs adding them to your pages has the following considerations to keep in mind:
 
 - Partytown library scripts must be hosted from the same origin as the HTML document (not a CDN).
-- DOM operations within the worker are purposely throttled, slowing down execution compared to the same code running on the main thread.
+- DOM operations within the worker are purposely throttled, slowing down execution compared to the same code running on the main thread. (We also see this as a feature.)
 - A total of three threads are used: Main Thread, Web Worker, Service Worker (in the future we may explore [Atomics](#what-about-atomics) which would bring it down to two).
 - Not ideal for scripts that are required to block the main document (blocking is bad).
 - `event.preventDefault()` will have no effect, similar to [passive event listeners](https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md).
@@ -214,23 +215,6 @@ When using the `partytown.debug.js` file there is a minimal set of default debug
 ```
 
 > Note that debug logs and configuration is not available in the `partytown.js` version.
-
-### Worker Instances
-
-By default all Partytown scripts will load in the same worker. However, each script could be placed in its own named web worker, or separated into groups by giving the script
-a `data-worker` attribute.
-
-```html
-<script data-worker="GTM" type="text/partytown">
-  // Google Tag Manager
-</script>
-
-<script data-worker="GA" type="text/partytown">
-  // Google Analytics
-</script>
-```
-
-By placing each script in its own worker it may be easier to separate and debug what each script is executing. However, in production it may be preferred to share one worker.
 
 ### Distribution
 

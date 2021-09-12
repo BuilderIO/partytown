@@ -1,4 +1,5 @@
-import { debug, len, PT_INITIALIZED_EVENT } from '../utils';
+import { debug, PT_INITIALIZED_EVENT } from '../utils';
+import type { MainWindow } from '../types';
 import SandboxHash from '@sandbox-hash';
 
 (function (
@@ -26,7 +27,7 @@ import SandboxHash from '@sandbox-hash';
     }
 
     sandbox = 1 as any;
-    for (i = 0; i < len(scripts!); i++) {
+    for (i = 0; i < scripts!.length; i++) {
       script = document.createElement('script');
       script.innerHTML = scripts![i].innerHTML;
       document.body.appendChild(script);
@@ -34,37 +35,41 @@ import SandboxHash from '@sandbox-hash';
   }
 
   scripts = document.querySelectorAll('script[type="text/partytown"]');
-  if (len(scripts)) {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker
-        .register(scope + (debug ? 'partytown-sw.debug.js' : 'partytown-sw.js'), {
-          scope: scope,
-        })
-        .then(
-          function (swRegistration) {
-            if (swRegistration.active) {
-              ready();
-            } else if (swRegistration.installing) {
-              swRegistration.installing.addEventListener('statechange', function (ev) {
-                if ((ev.target as any as ServiceWorker).state === 'activated') {
-                  ready();
-                }
-              });
-            } else {
-              console.warn(swRegistration);
+  if (location !== parent.location) {
+    (parent as MainWindow).partyWin!(window as MainWindow);
+  } else {
+    if (scripts!.length) {
+      if ('serviceWorker' in navigator) {
+        navigator.serviceWorker
+          .register(scope + (debug ? 'partytown-sw.debug.js' : 'partytown-sw.js'), {
+            scope: scope,
+          })
+          .then(
+            function (swRegistration) {
+              if (swRegistration.active) {
+                ready();
+              } else if (swRegistration.installing) {
+                swRegistration.installing.addEventListener('statechange', function (ev) {
+                  if ((ev.target as any as ServiceWorker).state === 'activated') {
+                    ready();
+                  }
+                });
+              } else {
+                console.warn(swRegistration);
+              }
+            },
+            function (e) {
+              console.error(e);
             }
-          },
-          function (e) {
-            console.error(e);
-          }
-        );
+          );
 
-      timeout = setTimeout(fallback, 10000);
-      document.addEventListener(PT_INITIALIZED_EVENT, function () {
-        clearTimeout(timeout);
-      });
-    } else {
-      fallback();
+        timeout = setTimeout(fallback, debug ? 60000 : 10000);
+        document.addEventListener(PT_INITIALIZED_EVENT, function () {
+          clearTimeout(timeout);
+        });
+      } else {
+        fallback();
+      }
     }
   }
 })(document, navigator, '/~partytown/');

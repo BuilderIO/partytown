@@ -1,25 +1,33 @@
 import { callMethod, getter, proxy, setter } from './worker-proxy';
-import { ExtraInstruction, SerializedNode } from '../types';
+import { ExtraInstruction, SerializedInstance } from '../types';
 import { imageRequest, scriptElementSetSrc } from './worker-exec';
-import { ChildDocument, InstanceIdKey, PrivateValues, srcUrls } from './worker-constants';
-import { len, toLower } from '../utils';
+import {
+  InstanceIdKey,
+  InterfaceTypeKey,
+  NodeNameKey,
+  PrivateValues,
+  srcUrls,
+  WinIdKey,
+} from './worker-constants';
+import { len, PT_SCRIPT, toLower } from '../utils';
 import { webWorkerCtx } from './worker-constants';
-import type { WorkerDocument, WorkerMainDocument } from './worker-document';
-import { WorkerContentWindow } from './worker-content-window';
+import type { WorkerDocument } from './worker-document';
 
 export class WorkerNode {
+  [WinIdKey]: number;
   [InstanceIdKey]: number;
-  [ChildDocument]: boolean;
+  [InterfaceTypeKey]: number;
+  [NodeNameKey]: string;
+  [PrivateValues]: { $url$?: string };
   nodeName: string;
   nodeType: number;
-  [PrivateValues]: { $url$?: string };
 
-  constructor(nodeCstr: SerializedNode) {
-    this[InstanceIdKey] = nodeCstr.$instanceId$!;
-    this[ChildDocument] = nodeCstr.$childDocument$!;
-    this.nodeType = nodeCstr.$interfaceType$;
-    this.nodeName = nodeCstr.$data$;
+  constructor(nodeCstr: SerializedInstance) {
     this[PrivateValues] = {};
+    this[WinIdKey] = nodeCstr.$winId$;
+    this[InstanceIdKey] = nodeCstr.$instanceId$!;
+    this.nodeType = this[InterfaceTypeKey] = nodeCstr.$interfaceType$;
+    this.nodeName = this[NodeNameKey] = nodeCstr.$nodeName$!;
     return proxy(nodeCstr.$interfaceType$, this, []);
   }
 
@@ -70,22 +78,7 @@ export class WorkerAnchorElement extends WorkerElement {
   }
 }
 
-export class WorkerIFrameElement extends WorkerElement {
-  [PrivateValues]: { $url$?: string; $window$?: any };
-
-  get contentDocument() {
-    return this.contentWindow.document;
-  }
-
-  get contentWindow() {
-    if (!this[PrivateValues].$window$) {
-      this[PrivateValues].$window$ = new WorkerContentWindow(this[InstanceIdKey]);
-    }
-    return this[PrivateValues].$window$;
-  }
-}
-
-class WorkerSrcElement extends WorkerElement {
+export class WorkerSrcElement extends WorkerElement {
   [PrivateValues]: {
     /** completed */
     c?: boolean;
@@ -95,15 +88,11 @@ class WorkerSrcElement extends WorkerElement {
   };
 
   addEventListener(...args: any[]) {
-    if (this[ChildDocument]) {
-      callMethod(this, ['addEventListener'], args);
-    } else {
-      const privateValues = this[PrivateValues];
-      if (args[0] === 'load') {
-        (privateValues.$onload$ = privateValues.$onload$ || []).push(args[1]);
-      } else if (args[0] === 'error') {
-        (privateValues.$onerror$ = privateValues.$onerror$ || []).push(args[1]);
-      }
+    const privateValues = this[PrivateValues];
+    if (args[0] === 'load') {
+      (privateValues.$onload$ = privateValues.$onload$ || []).push(args[1]);
+    } else if (args[0] === 'error') {
+      (privateValues.$onerror$ = privateValues.$onerror$ || []).push(args[1]);
     }
   }
 
@@ -113,12 +102,8 @@ class WorkerSrcElement extends WorkerElement {
   set async(_: boolean) {}
 
   get complete() {
-    if (this[ChildDocument]) {
-      return getter(this, ['complete']);
-    } else {
-      const hasCompleted = this[PrivateValues].c;
-      return hasCompleted !== false;
-    }
+    const hasCompleted = this[PrivateValues].c;
+    return hasCompleted !== false;
   }
 
   get defer() {
@@ -127,35 +112,19 @@ class WorkerSrcElement extends WorkerElement {
   set defer(_: boolean) {}
 
   get onload() {
-    if (this[ChildDocument]) {
-      return getter(this, ['onload']);
-    } else {
-      const onload = this[PrivateValues].$onload$;
-      return (onload && onload[0]) || null;
-    }
+    const onload = this[PrivateValues].$onload$;
+    return (onload && onload[0]) || null;
   }
   set onload(cb: ((ev: any) => void) | null) {
-    if (this[ChildDocument]) {
-      setter(this, ['onload'], cb);
-    } else {
-      this[PrivateValues].$onload$ = cb ? [cb] : [];
-    }
+    this[PrivateValues].$onload$ = cb ? [cb] : [];
   }
 
   get onerror() {
-    if (this[ChildDocument]) {
-      return getter(this, ['onerror']);
-    } else {
-      const onerror = this[PrivateValues].$onerror$;
-      return (onerror && onerror[0]) || null;
-    }
+    const onerror = this[PrivateValues].$onerror$;
+    return (onerror && onerror[0]) || null;
   }
   set onerror(cb: ((ev: any) => void) | null) {
-    if (this[ChildDocument]) {
-      setter(this, ['onerror'], cb);
-    } else {
-      this[PrivateValues].$onerror$ = cb ? [cb] : [];
-    }
+    this[PrivateValues].$onerror$ = cb ? [cb] : [];
   }
 }
 
@@ -180,31 +149,23 @@ export class WorkerImageElement extends WorkerSrcElement {
     return 1;
   }
   set height(_: number) {}
-
-  get naturlaWidth() {
-    return 1;
-  }
-  get naturalHeight() {
-    return 1;
-  }
 }
 
 export class WorkerScriptElement extends WorkerSrcElement {
   get src() {
-    if (this[ChildDocument]) {
-      return getter(this, ['src']);
-    } else {
+    if (this[WinIdKey] === webWorkerCtx.$winId$) {
       return srcUrls.get(this[InstanceIdKey]) || '';
     }
+    return getter(this, ['src']);
   }
   set src(url: string) {
-    if (this[ChildDocument]) {
-      setter(this, ['src'], url);
-    } else {
+    if (this[WinIdKey] === webWorkerCtx.$winId$) {
       if (srcUrls.get(this[InstanceIdKey]) !== url) {
         srcUrls.set(this[InstanceIdKey], url);
         scriptElementSetSrc(this);
       }
+    } else {
+      setter(this, ['src'], url);
     }
   }
 
@@ -249,10 +210,10 @@ export class WorkerNodeList {
 
 const getUrl = (elm: WorkerElement) => resolveUrl(elm[PrivateValues].$url$);
 
-const resolveUrl = (url?: string) => new URL(url || '', webWorkerCtx.$location$ + '');
+export const resolveUrl = (url?: string) => new URL(url || '', webWorkerCtx.$location$ + '');
 
 export const createElement = (
-  doc: WorkerMainDocument,
+  doc: WorkerDocument,
   tagName: string,
   $extraInstructions$: ExtraInstruction[]
 ) => {
@@ -262,6 +223,8 @@ export const createElement = (
     $extraInstructions$.push(ExtraInstruction.SET_INERT_SCRIPT, ExtraInstruction.SET_PARTYTOWN_ID);
   } else if (tagName === 'img') {
     $extraInstructions$.push(ExtraInstruction.SET_INERT_IMG, ExtraInstruction.SET_PARTYTOWN_ID);
+  } else if (tagName === 'iframe') {
+    $extraInstructions$.push(ExtraInstruction.SET_IFRAME_SRCDOC, PT_SCRIPT as any);
   }
 
   return callMethod(doc, ['createElement'], [tagName], $extraInstructions$);

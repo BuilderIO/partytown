@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>Document Prod</title>
+    <link
+      rel="icon"
+      id="favicon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎉</text></svg>"
+    />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        font-size: 12px;
+      }
+      h1 {
+        margin: 0 0 15px 0;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        display: block;
+        padding: 16px 8px;
+      }
+      a:link,
+      a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover {
+        background-color: #eee;
+      }
+      li {
+        display: flex;
+        margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button {
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1 class="title">Document Prod</h1>
+    <ul>
+      <li>
+        <strong>getElementById()</strong>
+        <code id="testGetElementById"></code>
+        <script type="text/partytown">
+          (function () {
+            document.getElementById('testGetElementById').textContent = 'testGetElementById';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>getElementsByTagName('h1')[0]</strong>
+        <code id="testGetElementsByTagName"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementsByTagName('h1')[0];
+            document.getElementById('testGetElementsByTagName').innerText = elm.textContent;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>getElementsByTagName('head')</strong>
+        <code id="testGetElementsByTagNameHead"></code>
+        <script type="text/partytown">
+          (function () {
+            const elms = document.getElementsByTagName('head');
+            const tags = [];
+            for (let i = 0; i < elms.length; i++) {
+              tags.push(elms[i].nodeName);
+            }
+            document.getElementById('testGetElementsByTagNameHead').innerText = '[' + tags.join(', ') + ']';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>getElementsByClassName('title')[0]</strong>
+        <code id="testGetElementsByClassName"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementsByTagName('h1')[0];
+            document.getElementById('testGetElementsByClassName').innerText = elm.textContent;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>title get</strong>
+        <code id="testTitleGet"></code>
+        <script type="text/partytown">
+          (function () {
+            document.getElementById('testTitleGet').textContent = document.title;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>title set</strong>
+        <code id="testTitleSet"></code>
+        <script type="text/partytown">
+          (function () {
+            document.title += '!!!';
+            document.getElementById('testTitleSet').textContent = document.title;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>cookie set/get</strong>
+        <code id="testCookie"></code>
+        <script>
+          document.cookie = '';
+        </script>
+        <script type="text/partytown">
+          (function () {
+            document.cookie = 'mph=88';
+            document.getElementById('testCookie').textContent = document.cookie;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>location get</strong>
+        <code id="testLocationGet"></code>
+        <script type="text/partytown">
+          (function () {
+            document.getElementById('testLocationGet').textContent = document.location.pathname;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>defaultView</strong>
+        <code id="testDefaultView"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDefaultView');
+            elm.textContent = (document.defaultView === window) ? 'window' : '';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>defaultView.document</strong>
+        <code id="testDefaultViewDoc"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDefaultViewDoc');
+            elm.textContent = (document.defaultView.document === document) ? 'document' : '';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>documentElement</strong>
+        <code id="testDocElement"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDocElement');
+            elm.textContent = document.documentElement.tagName;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>head</strong>
+        <code id="testHead"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testHead');
+            elm.textContent = document.head.tagName;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>body</strong>
+        <code id="testBody"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testBody');
+            elm.textContent = document.body.tagName;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>compatMode</strong>
+        <code id="testCompatMode"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testCompatMode');
+            elm.textContent = document.compatMode;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>implementation.hasFeature()</strong>
+        <code id="testHasFeature"></code>
+        <script type="text/partytown">
+          (function () {
+            const hasFeature = document.implementation.hasFeature('whatever');
+            const elm = document.getElementById('testHasFeature');
+            elm.textContent = hasFeature;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>currentScript, inlined</strong>
+        <code id="testCurrentScript"></code>
+        <script type="text/partytown" data-current-script="inlined">
+          (function () {
+            const elm = document.getElementById('testCurrentScript');
+            elm.textContent = document.currentScript.dataset.currentScript;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>currentScript, src</strong>
+        <code id="testCurrentScriptSrc"></code>
+      </li>
+
+      <li>
+        <strong>currentScript, src location</strong>
+        <code id="testCurrentScriptSrcLocation"></code>
+        <script
+          type="text/partytown"
+          src="current-script-src.js"
+          data-current-script="src"
+        ></script>
+      </li>
+
+      <script type="text/partytown">
+        (function () {
+          document.body.classList.add('completed');
+        })();
+      </script>
+    </ul>
+
+    <hr />
+    <p><a href="/">All Tests</a></p>
+
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+      };
+    </script>
+    <script src="/~partytown/partytown.js" async defer></script>
+  </body>
+</html>

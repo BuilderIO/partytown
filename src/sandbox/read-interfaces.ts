@@ -1,19 +1,18 @@
 import { getConstructorName, isValidMemberName } from '../utils';
 import { InterfaceInfo, InterfaceType, MemberTypeInfo } from '../types';
-import { mainCtx } from './main-context';
 
-export const readMainInterfaces = (sandboxWindow: Window, sandboxDocument: Document) => {
-  const docImpl = sandboxDocument.implementation.createHTMLDocument();
+export const readMainInterfaces = (win: Window, doc: Document) => {
+  const docImpl = doc.implementation.createHTMLDocument();
   const docElement = docImpl.documentElement;
 
   const implementations: [InterfaceType, any][] = [
-    [InterfaceType.Window, sandboxWindow],
+    [InterfaceType.Window, win],
     [InterfaceType.Document, docImpl],
     [InterfaceType.DOMTokenList, docElement.classList],
     [InterfaceType.Element, docElement],
-    [InterfaceType.History, mainCtx.$history$],
+    [InterfaceType.History, win.history],
     [InterfaceType.NodeList, docElement.childNodes],
-    [InterfaceType.Storage, mainCtx.$sessionStorage$],
+    [InterfaceType.Storage, win.sessionStorage],
     [InterfaceType.TextNode, docImpl.createTextNode('')],
   ];
 

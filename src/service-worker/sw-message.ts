@@ -5,6 +5,7 @@ const resolves = new Map<number, MessageResolve>();
 
 export const receiveMessageFromSandboxToServiceWorker = (ev: ExtendableMessageEvent) => {
   const accessRsp: MainAccessResponse = ev.data;
+
   const r = resolves.get(accessRsp.$msgId$);
   if (r) {
     resolves.delete(accessRsp.$msgId$);
@@ -32,6 +33,7 @@ const sendMessageToSandboxFromServiceWorker = (
         setTimeout(() => {
           resolves.delete(accessReq.$msgId$);
           resolve({
+            $winId$: accessReq.$winId$,
             $msgId$: accessReq.$msgId$,
             $instanceId$: accessReq.$instanceId$,
             $error$: `Timeout`,
@@ -42,6 +44,7 @@ const sendMessageToSandboxFromServiceWorker = (
       client.postMessage(accessReq);
     } else {
       resolve({
+        $winId$: accessReq.$winId$,
         $msgId$: accessReq.$msgId$,
         $instanceId$: accessReq.$instanceId$,
         $error$: `No Partytown: ${accessReq}`,

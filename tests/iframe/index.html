@@ -45,10 +45,11 @@
       li button {
         white-space: nowrap;
         margin: 0 5px;
+        min-width: 10px;
       }
       iframe {
         width: 100%;
-        height: 28px;
+        height: 36px;
         border: none;
       }
     </style>
@@ -64,6 +65,8 @@
             const elm = document.getElementById('testSrc');
             const iframe = document.createElement('iframe');
             iframe.addEventListener('load', function (ev) {
+              const iframeDocument = iframe.contentDocument;
+              const iframeOutput = iframeDocument.getElementById('output');
               elm.textContent = iframe.contentDocument.getElementById('output').textContent;
               elm.className = 'testSrc';
             });
@@ -137,7 +140,12 @@
             const elm = document.getElementById('testGetSomeGlobalVar');
             const iframe = document.createElement('iframe');
             iframe.addEventListener('load', function (ev) {
-              elm.textContent = iframe.contentWindow.someGlobalVar.mph;
+              const iframeWindow = iframe.contentWindow;
+              const mph = iframeWindow.someGlobalVar.mph;
+              const iframeDocument = iframeWindow.document;
+              const iframeOutput = iframeDocument.getElementById('output');
+              iframeOutput.textContent = mph;
+              elm.textContent = mph;
               elm.className = 'testGetSomeGlobalVar';
             });
             iframe.src = 'global-var.html';
@@ -156,6 +164,8 @@
             iframe.addEventListener('load', function (ev) {
               iframe.contentWindow.someOtherVar = 99;
               elm.textContent = iframe.contentWindow.someOtherVar;
+              const iframeOutput = iframe.contentDocument.getElementById('output');
+              iframeOutput.textContent = iframe.contentWindow.someOtherVar;
               elm.className = 'testSetSomeGlobalVar';
             });
             iframe.src = 'global-var.html';
@@ -184,7 +194,7 @@
       <li>
         <strong>window.top / window.parent</strong>
         <code id="testTopSomeValue"></code>
-        <script>
+        <script type="text/partytown">
           (function () {
             window.year = 1955;
             window.gw = 1.21;
@@ -202,11 +212,19 @@
             iframe.contentDocument.body.innerHTML = `window.top.someValue`;
             const script = iframe.contentDocument.createElement('script');
             script.innerHTML = `
-              window.name = 'iFrame Window';
-              console.log(window.name);
-              console.log(window.top.name);
-              const elm = window.parent.document.getElementById('testTopSomeValue');
-              elm.textContent = window.top.year + window.parent.gw;
+              const parentWin = window.parent;
+              debugger;
+              const parentWinValue = parentWin.gw;
+
+              const topWin = window.top;
+              const topWinValue = topWin.year;
+
+              const value = parentWinValue + topWinValue;
+
+              console.log(value);
+              const parentDocument = parentWin.document;
+              const elm = parentDocument.getElementById('testTopSomeValue');
+              elm.textContent = value;
               elm.className = 'testTopSomeValue';
             `;
             iframe.contentDocument.body.appendChild(script);
@@ -314,7 +332,12 @@
           const a = iframe.contentWindow.one.two.three.fn(1955);
           const b = iframe.contentWindow.one.two.three.num;
 
-          elm.textContent = a + b;
+          const div = iframe.contentDocument.createElement('div');
+          div.id = 'output';
+          div.textContent = a + b;
+          iframe.contentWindow.document.body.appendChild(div);
+
+          elm.textContent = iframe.contentDocument.getElementById('output').textContent;
           elm.className = 'testMemberNames';
         </script>
       </li>

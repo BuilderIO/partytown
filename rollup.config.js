@@ -1,9 +1,18 @@
 import typescript from '@rollup/plugin-typescript';
 import { basename, join } from 'path';
 import { createHash } from 'crypto';
-import { copyFileSync, mkdirSync, readdirSync, statSync, unlinkSync, writeFileSync } from 'fs';
+import {
+  copyFileSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  statSync,
+  unlinkSync,
+  writeFileSync,
+} from 'fs';
 import { rollup } from 'rollup';
 import { terser } from 'rollup-plugin-terser';
+import gzipSize from 'gzip-size';
 
 export default async function (cmdArgs) {
   const isDev = !!cmdArgs.configDev;
@@ -273,46 +282,47 @@ function managlePropsPlugin() {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$'.split('');
   const mangleProps = {
     $accessType$: '',
-    $body$: '',
+    $cleanupInc$: '',
     $config$: '',
     $content$: '',
+    $contextWinId$: '',
     $currentScriptId$: '',
     $currentScriptUrl$: '',
     $data$: '',
-    $document$: '',
     $documentCompatMode$: '',
     $documentCookie$: '',
-    $documentElement$: '',
     $documentReadyState$: '',
     $documentReferrer$: '',
     $documentTitle$: '',
-    $extraInstructions$: '',
     $error$: '',
+    $extraInstructions$: '',
     $firstScriptId$: '',
-    $head$: '',
     $history$: '',
     $importScripts$: '',
-    $initializeScripts$: '',
     $instanceId$: '',
+    $instanceIdByInstance$: '',
+    $instances$: '',
     $interfaces$: '',
     $interfaceType$: '',
+    $isInitialized$: '',
     $isPromise$: '',
     $localStorage$: '',
     $location$: '',
     $memberPath$: '',
     $msgId$: '',
+    $nextId$: '',
+    $nodeName$: '',
     $onerror$: '',
     $onload$: '',
-    $postMessage$: '',
+    $parentWinId$: '',
+    postMessage$: '',
     $rtnValue$: '',
-    $sandboxDocument$: '',
-    $sandboxWindow$: '',
     $sessionStorage$: '',
     $scopePath$: '',
     $url$: '',
     $window$: '',
-    $workerName$: '',
-    $workerPostMessage$: '',
+    $winId$: '',
+    $worker$: '',
   };
   if (chars.length < Object.keys(mangleProps).length) {
     throw new Error('Figure out a better property renaming plan');
@@ -341,7 +351,9 @@ function fileSize() {
     name: 'fileSize',
     writeBundle(options) {
       const s = statSync(options.file);
-      console.log(`${basename(options.file)}: ${s.size} b`);
+      const gzip = gzipSize.sync(readFileSync(options.file, 'utf-8'));
+      console.log(`${basename(options.file)}: ${s.size} b 🐰`);
+      console.log(`${basename(options.file)}: ${gzip} b (gzip) 🗜`);
     },
   };
 }

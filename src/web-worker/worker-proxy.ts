@@ -6,27 +6,26 @@ import {
   MainAccessResponse,
 } from '../types';
 import { deserializeFromMain, serializeForMain } from './worker-serialization';
-import { InstanceIdKey, ProxyKey, webWorkerCtx } from './worker-constants';
+import { InstanceIdKey, ProxyKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { len, logWorkerCall, logWorkerGetter, logWorkerSetter, PT_PROXY_URL } from '../utils';
 
-let msgIds = 0;
-
-const syncRequestToServiceWorker = (
-  $accessType$: AccessType,
+export const syncRequestToServiceWorker = (
   target: any,
+  $accessType$: AccessType,
   memberPath: string[],
   data?: any,
   $extraInstructions$?: ExtraInstruction[]
 ) => {
   const accessReq: MainAccessRequest = {
-    $msgId$: msgIds++,
-    $accessType$,
+    $winId$: target[WinIdKey] || webWorkerCtx.$winId$,
     $instanceId$: target[InstanceIdKey],
+    $contextWinId$: webWorkerCtx.$winId$,
+    $msgId$: Math.random(),
+    $accessType$,
     $memberPath$: memberPath,
     $data$: serializeForMain(data),
     $extraInstructions$,
   };
-
   const xhr = new XMLHttpRequest();
   xhr.open('POST', webWorkerCtx.$scopePath$ + PT_PROXY_URL, false);
   xhr.send(JSON.stringify(accessReq));
@@ -50,15 +49,25 @@ const syncRequestToServiceWorker = (
   return rtn;
 };
 
-export const getter = (target: any, memberPath: string[]) => {
-  const rtn = syncRequestToServiceWorker(AccessType.Get, target, memberPath);
+export const getter = (
+  target: any,
+  memberPath: string[],
+  extraInstructions?: ExtraInstruction[]
+) => {
+  const rtn = syncRequestToServiceWorker(
+    target,
+    AccessType.Get,
+    memberPath,
+    undefined,
+    extraInstructions
+  );
   logWorkerGetter(target, memberPath, rtn);
   return rtn;
 };
 
 export const setter = (target: any, memberPath: string[], value: any) => {
   logWorkerSetter(target, memberPath, value);
-  return syncRequestToServiceWorker(AccessType.Set, target, memberPath, value);
+  return syncRequestToServiceWorker(target, AccessType.Set, memberPath, value);
 };
 
 export const callMethod = (
@@ -68,8 +77,8 @@ export const callMethod = (
   extraInstructions?: ExtraInstruction[]
 ) => {
   const rtn = syncRequestToServiceWorker(
-    AccessType.CallMethod,
     target,
+    AccessType.CallMethod,
     memberPath,
     args,
     extraInstructions
