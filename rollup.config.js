@@ -1,10 +1,20 @@
 import typescript from '@rollup/plugin-typescript';
 import { basename, join } from 'path';
 import { createHash } from 'crypto';
-import { copySync, emptyDir, readdirSync, readFileSync, statSync, writeFile } from 'fs-extra';
+import {
+  copySync,
+  emptyDir,
+  readdirSync,
+  readFileSync,
+  readJsonSync,
+  statSync,
+  writeFile,
+  writeJsonSync,
+} from 'fs-extra';
 import { rollup } from 'rollup';
 import { terser } from 'rollup-plugin-terser';
 import gzipSize from 'gzip-size';
+import { Extractor, ExtractorConfig } from '@microsoft/api-extractor';
 
 export default async function (cmdArgs) {
   const isDev = !!cmdArgs.configDev;
@@ -317,6 +327,20 @@ export default async function (cmdArgs) {
   }
 
   function react() {
+    if (!isDev) {
+      const extractorConfig = ExtractorConfig.loadFileAndPrepare(
+        join(srcReactDir, 'api-extractor.json')
+      );
+      extractorConfig.untrimmedFilePath;
+      const result = Extractor.invoke(extractorConfig, {
+        localBuild: true,
+        showVerboseMessages: true,
+      });
+      if (!result.succeeded) {
+        process.exit(1);
+      }
+    }
+
     return {
       input: join(srcReactDir, 'index.tsx'),
       output: [
@@ -350,7 +374,9 @@ export default async function (cmdArgs) {
         },
         {
           writeBundle() {
-            copySync(join(srcDir, 'react', 'package.json'), join(reactBuildDir, 'package.json'));
+            const pkg = readJsonSync(join(srcReactDir, 'package.json'));
+            pkg.name = '@builder.io/partytown/react';
+            writeJsonSync(join(reactBuildDir, 'package.json'), pkg, { spaces: 2 });
           },
         },
       ],

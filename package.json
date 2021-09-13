@@ -24,6 +24,7 @@
     "test.webkit": "start-server-and-test serve.test http://localhost:5000/ playwright.webkit"
   },
   "devDependencies": {
+    "@microsoft/api-extractor": "^7.18.8",
     "@playwright/test": "^1.14.0",
     "@rollup/plugin-typescript": "^8.2.5",
     "@types/fs-extra": "^9.0.12",
