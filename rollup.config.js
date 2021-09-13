@@ -299,7 +299,17 @@ export default async function (cmdArgs) {
         terser({
           compress: { ...minOpts.compress, negate_iife: false },
           format: { ...minOpts.format },
+          toplevel: false,
         }),
+        {
+          generateBundle(opts, b) {
+            for (const fileName in b) {
+              let code = b[fileName].code.trim();
+              code = code.substr(0, code.length - 1);
+              b[fileName].code = `(function(){${code}})();`;
+            }
+          },
+        },
         fileSize(),
       ],
     };
