@@ -1,15 +1,7 @@
 import typescript from '@rollup/plugin-typescript';
 import { basename, join } from 'path';
 import { createHash } from 'crypto';
-import {
-  copyFileSync,
-  mkdirSync,
-  readdirSync,
-  readFileSync,
-  statSync,
-  unlinkSync,
-  writeFileSync,
-} from 'fs';
+import { copySync, emptyDir, readdirSync, readFileSync, statSync, writeFile } from 'fs-extra';
 import { rollup } from 'rollup';
 import { terser } from 'rollup-plugin-terser';
 import gzipSize from 'gzip-size';
@@ -17,8 +9,13 @@ import gzipSize from 'gzip-size';
 export default async function (cmdArgs) {
   const isDev = !!cmdArgs.configDev;
   const rootDir = __dirname;
+  const srcDir = join(rootDir, 'src');
+  const srcLibDir = join(srcDir, 'lib');
+  const srcReactDir = join(srcDir, 'react');
+  const buildDir = join(rootDir, 'lib');
   const testsDir = join(rootDir, 'tests');
-  const buildDir = join(testsDir, '~partytown');
+  const testsBuildDir = join(testsDir, '~partytown');
+  const reactBuildDir = join(rootDir, 'react');
   const cacheDir = join(rootDir, '.cache');
   const cache = {};
   let sandboxHash = '';
@@ -58,13 +55,16 @@ export default async function (cmdArgs) {
     mangle: false,
   };
 
-  emptyDir(buildDir);
+  await emptyDir(buildDir);
+  await emptyDir(reactBuildDir);
+  await emptyDir(testsBuildDir);
+  await emptyDir(join(testsDir, 'videos'));
 
   async function getWebWorker(debug) {
     console.log('generate web worker', debug ? '(debug)' : '(minified)');
 
     const build = await rollup({
-      input: 'src/web-worker/index.ts',
+      input: join(srcLibDir, 'web-worker', 'index.ts'),
       plugins: [
         typescript({
           cacheDir: join(cacheDir, 'ww'),
@@ -89,9 +89,9 @@ export default async function (cmdArgs) {
 
     const webWorkerCode = generated.output[0].code;
     if (debug) {
-      writeFileSync(join(buildDir, `partytown-ww.debug.js`), webWorkerCode);
+      await writeFile(join(buildDir, `partytown-ww.debug.js`), webWorkerCode);
     } else {
-      writeFileSync(join(cacheDir, `partytown-ww.js`), webWorkerCode);
+      await writeFile(join(cacheDir, `partytown-ww.js`), webWorkerCode);
     }
 
     return webWorkerCode;
@@ -103,7 +103,7 @@ export default async function (cmdArgs) {
     const webWorkerCode = await getWebWorker(debug);
 
     const build = await rollup({
-      input: 'src/sandbox/index.ts',
+      input: join(srcLibDir, 'sandbox', 'index.ts'),
       plugins: [
         typescript({
           cacheDir: join(cacheDir, 'sb'),
@@ -140,13 +140,13 @@ export default async function (cmdArgs) {
     const sandboxJsCode = generated.output[0].code;
     let sandboxHtml;
     if (debug) {
-      writeFileSync(join(buildDir, `partytown-sandbox.debug.js`), sandboxJsCode);
+      await writeFile(join(buildDir, `partytown-sandbox.debug.js`), sandboxJsCode);
 
       sandboxHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><script src="./partytown-sandbox.debug.js"></script></head></html>`;
-      writeFileSync(join(cacheDir, `partytown-sandbox.debug.html`), sandboxHtml);
+      await writeFile(join(cacheDir, `partytown-sandbox.debug.html`), sandboxHtml);
     } else {
       sandboxHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><script type="module" async>${sandboxJsCode}</script></head></html>`;
-      writeFileSync(join(cacheDir, `partytown-sandbox.html`), sandboxHtml);
+      await writeFile(join(cacheDir, `partytown-sandbox.html`), sandboxHtml);
     }
 
     return sandboxHtml;
@@ -178,7 +178,7 @@ export default async function (cmdArgs) {
     }
 
     return {
-      input: 'src/service-worker/index.ts',
+      input: join(srcLibDir, 'service-worker', 'index.ts'),
       output,
       plugins: [
         typescript({
@@ -188,8 +188,6 @@ export default async function (cmdArgs) {
         {
           name: 'serviceWorker',
           buildStart() {
-            const srcDir = join(__dirname, 'src');
-
             const addWatchFile = (p) => {
               const s = statSync(p);
               if (s.isDirectory()) {
@@ -199,8 +197,8 @@ export default async function (cmdArgs) {
               }
             };
 
-            addWatchFile(join(srcDir, 'sandbox'));
-            addWatchFile(join(srcDir, 'web-worker'));
+            addWatchFile(join(srcLibDir, 'sandbox'));
+            addWatchFile(join(srcLibDir, 'web-worker'));
           },
           resolveId(id) {
             if (id.startsWith('@')) return id;
@@ -221,7 +219,7 @@ export default async function (cmdArgs) {
             }
           },
           writeBundle() {
-            copyBuildToRoot(buildDir, rootDir);
+            copySync(buildDir, testsBuildDir);
           },
         },
       ],
@@ -249,7 +247,7 @@ export default async function (cmdArgs) {
     }
 
     return {
-      input: 'src/main/index.ts',
+      input: join(srcLibDir, 'main', 'index.ts'),
       output,
       plugins: [
         typescript({
@@ -268,14 +266,98 @@ export default async function (cmdArgs) {
             }
           },
           writeBundle() {
-            copyBuildToRoot(buildDir, rootDir);
+            copySync(buildDir, testsBuildDir);
           },
         },
       ],
     };
   }
 
-  return [await serviceWorker(), main()];
+  function snippet() {
+    const partytownDebug = {
+      file: join(buildDir, 'partytown-snippet.debug.js'),
+      format: 'es',
+      exports: 'none',
+      plugins: [terser(debugOpts)],
+    };
+
+    const partytownMin = {
+      file: join(buildDir, 'partytown-snippet.js'),
+      format: 'es',
+      exports: 'none',
+      plugins: [
+        terser({
+          compress: { ...minOpts.compress, negate_iife: false },
+          format: { ...minOpts.format },
+        }),
+        fileSize(),
+      ],
+    };
+
+    const output = [partytownDebug];
+    if (!isDev) {
+      output.push(partytownMin);
+    }
+
+    return {
+      input: join(srcLibDir, 'main', 'snippet.ts'),
+      output,
+      plugins: [
+        typescript({
+          cacheDir: join(cacheDir, 'snippet'),
+          outputToFilesystem: false,
+        }),
+        {
+          writeBundle() {
+            copySync(buildDir, testsBuildDir);
+          },
+        },
+      ],
+    };
+  }
+
+  function react() {
+    return {
+      input: join(srcReactDir, 'index.tsx'),
+      output: [
+        {
+          file: join(reactBuildDir, 'index.cjs'),
+          format: 'cjs',
+        },
+        {
+          file: join(reactBuildDir, 'index.mjs'),
+          format: 'es',
+        },
+      ],
+      external: ['react'],
+      plugins: [
+        typescript({
+          cacheDir: join(cacheDir, 'react'),
+          outputToFilesystem: false,
+        }),
+        {
+          name: 'reactSnippet',
+          resolveId(id) {
+            if (id.startsWith('@')) return id;
+          },
+          async load(id) {
+            if (id === '@snippet') {
+              return `const PartytownSnippet = ${JSON.stringify(
+                readFileSync(join(buildDir, 'partytown-snippet.js'), 'utf-8').trim()
+              )}; export default PartytownSnippet;`;
+            }
+          },
+        },
+        {
+          writeBundle() {
+            copySync(join(srcDir, 'react', 'package.json'), join(reactBuildDir, 'package.json'));
+          },
+        },
+      ],
+    };
+  }
+
+  return [await serviceWorker(), main(), snippet(), react()];
 }
 
 function managlePropsPlugin() {
@@ -356,25 +438,4 @@ function fileSize() {
       console.log(`${basename(options.file)}: ${gzip} b (gzip) 🗜`);
     },
   };
-}
-
-function copyBuildToRoot(buildDir, rootDir) {
-  const files = readdirSync(buildDir);
-  files.forEach((file) => {
-    copyFileSync(join(buildDir, file), join(rootDir, file));
-  });
-}
-
-function ensureDir(dir) {
-  try {
-    mkdirSync(dir);
-  } catch (e) {}
-}
-
-function emptyDir(dir) {
-  ensureDir(dir);
-  const files = readdirSync(dir);
-  files.forEach((file) => {
-    unlinkSync(join(dir, file));
-  });
 }

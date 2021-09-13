@@ -1,6 +1,7 @@
 .cache/
 .DS_Store
 node_modules/
-~partytown/
-partytown*.js
-videos/
+/lib/
+/react/
+/tests/~partytown/
+/tests/videos/

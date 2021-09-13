@@ -8,7 +8,8 @@
     "importsNotUsedAsValues": "error",
     "esModuleInterop": true,
     "outDir": "tsc",
-    "sourceMap": false
+    "sourceMap": false,
+    "jsx": "react"
   },
-  "include": ["src/**/*.ts"]
+  "include": ["src/**/*"]
 }

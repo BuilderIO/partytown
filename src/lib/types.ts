@@ -202,6 +202,8 @@ export interface SerializedNodeList extends SerializedInstance {
 }
 
 export interface PartytownConfig {
+  debug?: boolean;
+  init?: PartytownConfigInit;
   logCalls?: boolean;
   logGetters?: boolean;
   logSetters?: boolean;
@@ -210,12 +212,17 @@ export interface PartytownConfig {
   logStackTraces?: boolean;
 }
 
+export interface PartytownConfigInit {
+  [key: string]: any;
+}
+
 export interface MainWindow extends Window {
   frameElement: MainFrameElement | null;
   partytown?: PartytownConfig;
   partyWin?: (win: MainWindow) => void;
   partyWinId?: number;
   parent: MainWindow;
+  _ptq?: any[];
 }
 
 export interface MainFrameElement extends HTMLIFrameElement {

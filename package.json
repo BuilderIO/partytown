@@ -3,8 +3,15 @@
   "version": "0.0.0",
   "description": "Relocate resource intensive 3rd-party scripts off of the main thread and into a web worker.",
   "license": "MIT",
+  "exports": {
+    "./react": {
+      "import": "./index.mjs",
+      "require": "./index.cjs"
+    }
+  },
   "files": [
-    "/~partytown/"
+    "/lib/",
+    "/react/"
   ],
   "scripts": {
     "build": "rollup -c",
@@ -19,6 +26,8 @@
   "devDependencies": {
     "@playwright/test": "^1.14.0",
     "@rollup/plugin-typescript": "^8.2.5",
+    "@types/fs-extra": "^9.0.12",
+    "fs-extra": "^10.0.0",
     "gzip-size": "^6.0.0",
     "prettier": "^2.3.2",
     "rollup": "^2.56.3",
@@ -52,6 +61,7 @@
     "webapp",
     "performance",
     "lighthouse",
-    "core web vitals"
+    "core web vitals",
+    "react"
   ]
 }

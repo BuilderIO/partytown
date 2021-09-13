@@ -1,10 +1,10 @@
-import { debug, PT_INITIALIZED_EVENT } from '../utils';
+import { debug, PT_INITIALIZED_EVENT, PT_SCRIPT_TYPE } from '../utils';
 import type { MainWindow } from '../types';
 import SandboxHash from '@sandbox-hash';
 
 (function (
-  document: Document,
-  navigator: Navigator,
+  doc: Document,
+  nav: Navigator,
   scope: string,
   sandbox?: HTMLIFrameElement,
   scripts?: NodeListOf<HTMLScriptElement>,
@@ -12,12 +12,12 @@ import SandboxHash from '@sandbox-hash';
 ) {
   function ready() {
     if (!sandbox) {
-      sandbox = document.createElement('iframe');
+      sandbox = doc.createElement('iframe');
       sandbox.setAttribute('style', 'display:block;width:0;height:0;border:0;visibility:hidden');
       sandbox.setAttribute('aria-hidden', 'true');
       sandbox.src =
         scope + 'partytown-sandbox' + (debug ? '.debug' : '-' + SandboxHash) + '?' + Date.now();
-      document.body.appendChild(sandbox);
+      doc.body.appendChild(sandbox);
     }
   }
 
@@ -28,19 +28,19 @@ import SandboxHash from '@sandbox-hash';
 
     sandbox = 1 as any;
     for (i = 0; i < scripts!.length; i++) {
-      script = document.createElement('script');
+      script = doc.createElement('script');
       script.innerHTML = scripts![i].innerHTML;
-      document.body.appendChild(script);
+      doc.body.appendChild(script);
     }
   }
 
-  scripts = document.querySelectorAll('script[type="text/partytown"]');
+  scripts = doc.querySelectorAll(`script[type="${PT_SCRIPT_TYPE}"]`);
   if (location !== parent.location) {
     (parent as MainWindow).partyWin!(window as MainWindow);
   } else {
     if (scripts!.length) {
-      if ('serviceWorker' in navigator) {
-        navigator.serviceWorker
+      if ('serviceWorker' in nav) {
+        nav.serviceWorker
           .register(scope + (debug ? 'partytown-sw.debug.js' : 'partytown-sw.js'), {
             scope: scope,
           })
@@ -64,7 +64,7 @@ import SandboxHash from '@sandbox-hash';
           );
 
         timeout = setTimeout(fallback, debug ? 60000 : 10000);
-        document.addEventListener(PT_INITIALIZED_EVENT, function () {
+        doc.addEventListener(PT_INITIALIZED_EVENT, function () {
           clearTimeout(timeout);
         });
       } else {

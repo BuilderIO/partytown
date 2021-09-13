@@ -13,6 +13,11 @@ declare module '@sandbox-debug' {
   export default str;
 }
 
+declare module '@snippet' {
+  const str: string;
+  export default str;
+}
+
 declare module '@web-worker-blob' {
   const str: string;
   export default str;
