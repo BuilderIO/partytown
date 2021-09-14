@@ -204,13 +204,49 @@ export interface SerializedNodeList extends SerializedInstance {
 }
 
 export interface PartytownConfig {
+  /**
+   * Partytown scripts are not inlined and not minified.
+   */
   debug?: boolean;
+  /**
+   * Many third-party scripts provide a global variable which user code calls
+   * in order to send data to the service. For example, Google Tag Manager uses
+   * a [Data Layer](https://developers.google.com/tag-manager/devguide) array,
+   * and by pushing data to the array, the data is then sent on to GTM. Because
+   * we're moving third-party scripts to a web worker, the main thread needs to
+   * know which variables to patch first, and when Partytown loads, it can then
+   * forward the event data on to the service.
+   *
+   * Below is an example of Google Tag Manager, Hubspot and Intercom forward configs:
+   *
+   * ```js
+   * ['dataLayer.push', '_hspt.push', 'intercom']
+   * ```
+   */
   forward?: PartytownForwardConfig;
+  /**
+   * Log method calls (debug mode required)
+   */
   logCalls?: boolean;
+  /**
+   * Log getter calls (debug mode required)
+   */
   logGetters?: boolean;
+  /**
+   * Log setter calls (debug mode required)
+   */
   logSetters?: boolean;
+  /**
+   * Log image requests (debug mode required)
+   */
   logImageRequests?: boolean;
+  /**
+   * Log script executions (debug mode required)
+   */
   logScriptExecution?: boolean;
+  /**
+   * Log stack traces (debug mode required)
+   */
   logStackTraces?: boolean;
 }
 

@@ -23,7 +23,6 @@ Partytown is a `5kb` library to help relocate resource intensive scripts into a 
   - [React](#react)
   - [Vanilla](#vanilla)
   - [Config](#config)
-  - [Debugging](#debugging)
   - [Distribution](#distribution)
 - [Development](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#local-development)
   - [Installation](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#installation)
@@ -269,25 +268,6 @@ React Forward Config:
 ```jsx
 <Partytown forward={['dataLayer.push', '_hspt.push', 'intercom']}>
 ```
-
-### Debugging
-
-When using the `partytown.debug.js` file there is a set of default debug logs available that print in the console. You can also opt-in to list out even more verbose logs that may help to debug scripts.
-
-```html
-<script>
-  partytown = {
-    logCalls: true,
-    logGetters: true,
-    logSetters: true,
-    logImageRequests: true,
-    logScriptExecution: true,
-    logStackTraces: true,
-  };
-</script>
-```
-
-> Note that debug logs and configuration is not available in the `partytown.js` version.
 
 ### Distribution
 
