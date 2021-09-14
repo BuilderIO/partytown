@@ -200,6 +200,12 @@ export default class MyDocument extends Document {
 }
 ```
 
+The component also has all of the [configuration properties](#config), such as:
+
+```jsx
+<Partytown debug={true} />
+```
+
 ### Vanilla
 
 To load Partytown with just HTML, the library script below should be added within the `<head>` of page. The snippet will patch any global variables needed so other library scripts, such as Google Tag Manager's [Data Layer](https://developers.google.com/tag-manager/devguide), continues to work. However, the actual Partytown library, and any of the third-party scripts, are not downloaded or executed until after the document has loaded.
@@ -218,24 +224,55 @@ hosted from its own dedicated root directory `/~partytown/`. This root directory
 
 With scripts disabled from executing, the Partytown library can lazily begin loading and executing the scripts from inside a worker.
 
+To set the [config](#config), add a `<script>` with a `partytown={};` global before the Partytown library script, such as:
+
+```html
+<script>
+  partytown = {...};
+</script>
+```
+
 ### Copy Tasks
 
 An additional requirement is that the `/~partytown/` directory should serves the static files found within [@builder.io/partytown/lib](https://unpkg.com/browse/@builder.io/partytown/lib/). The quickest way is to just copy the JavaScript files to the public directory of your server. Another option would be to setup a copy task within the project's bundler, such as Webpack.
 
 ### Config
 
-Before the Partytown library script, you can configure the `partytown` global object, such as:
+| Config               | Description                                                       |
+| -------------------- | ----------------------------------------------------------------- |
+| `debug`              | Partytown scripts are not inlined and not minified.               |
+| `forward`            | An array of strings. See [Forwarding Events](#forwarding-events). |
+| `logCalls`           | Log method calls (debug mode required)                            |
+| `logGetters`         | Log getter calls (debug mode required)                            |
+| `logSetters`         | Log setter calls (debug mode required)                            |
+| `logImageRequests`   | Log image requests (debug mode required)                          |
+| `logScriptExecution` | Log script executions (debug mode required)                       |
+| `logStackTraces`     | Log stack traces (debug mode required)                            |
 
+#### Forwarding Events
+
+Many third-party scripts provide a global variable which user code calls in order to send data to the service. For example, Google Tag Manager uses a [Data Layer](https://developers.google.com/tag-manager/devguide) array, and by pushing data to the array, the data is then sent on to GTM. Because we're moving third-party scripts to a web worker, the main thread needs to know which variables to patch first, and when Partytown loads, it can then forward the event data on to the service.
+
+The `forward` config is an array of strings, with each string representing a variable that should be patched. Below is a vanilla example of setting up the forwarding for Google Tag Manager, Hubspot and Intercom:
+
+<!-- prettier-ignore -->
 ```html
 <script>
-  partytown = {...};
+  partytown = {
+    forward: ['dataLayer.push', '_hspt.push', 'intercom']
+  };
 </script>
-<script src="/~partytown/partytown.js" async defer></script>
+```
+
+React Forward Config:
+
+```jsx
+<Partytown forward={['dataLayer.push', '_hspt.push', 'intercom']}>
 ```
 
 ### Debugging
 
-When using the `partytown.debug.js` file there is a minimal set of default debug logs available that print in the console. You can also opt-in to list out even more verbose logs that may help to debug scripts.
+When using the `partytown.debug.js` file there is a set of default debug logs available that print in the console. You can also opt-in to list out even more verbose logs that may help to debug scripts.
 
 ```html
 <script>
@@ -248,7 +285,6 @@ When using the `partytown.debug.js` file there is a minimal set of default debug
     logStackTraces: true,
   };
 </script>
-<script src="/~partytown/partytown.debug.js" async defer></script>
 ```
 
 > Note that debug logs and configuration is not available in the `partytown.js` version.
@@ -278,6 +314,11 @@ The distribution comes with multiple files:
     - `partytown-sw.debug.js`: Service worker with separate sandbox request.
     - `partytown-sandbox.debug.js`: Sandbox with separate web worker request.
     - `partytown-ww.debug.js`: Web worker as separate file, not inlined.
+
+- `/~partytown/partytown-snippet.js`
+
+  - The same snippet code which should be copy and pasted into the head.
+  - Provided for reference only.
 
 ---
 
