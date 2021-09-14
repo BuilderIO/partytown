@@ -248,6 +248,50 @@
         ></script>
       </li>
 
+      <li>
+        <strong>head.parentNode/Element</strong>
+        <code id="testHeadParentNode"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testHeadParentNode');
+            elm.textContent = document.head.parentNode.nodeName + ' ' + document.head.parentElement.nodeName;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>body.parentNode/Element</strong>
+        <code id="testBodyParentNode"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testBodyParentNode');
+            elm.textContent = document.body.parentNode.nodeName + ' ' + document.body.parentElement.nodeName;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>documentElement.parentNode/Element</strong>
+        <code id="testDocumentElementParentNode"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDocumentElementParentNode');
+            elm.textContent = document.documentElement.parentNode.nodeName + ' ' + String(document.documentElement.parentElement);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>document.parentNode/Element</strong>
+        <code id="testDocumentParentNode"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDocumentParentNode');
+            elm.textContent = String(document.parentNode) + ' ' + String(document.parentElement);
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

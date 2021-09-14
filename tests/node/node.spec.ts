@@ -16,4 +16,7 @@ test('node', async ({ page }) => {
 
   const testHrefProp = page.locator('#testHrefProp');
   await expect(testHrefProp).toHaveText('undefined');
+
+  const testParentNode = page.locator('#testParentNode');
+  await expect(testParentNode).toHaveText('hasParentNode');
 });

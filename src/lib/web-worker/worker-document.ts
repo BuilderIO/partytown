@@ -1,12 +1,12 @@
 import { callMethod, getter, setter } from './worker-proxy';
-import { createElement, WorkerElement, WorkerScriptElement } from './worker-node';
+import { createElement, WorkerElement, WorkerNode, WorkerScriptElement } from './worker-node';
 import { InterfaceType, PlatformApiId } from '../types';
 import { logWorkerGetter, logWorkerSetter, toLower } from '../utils';
 import { webWorkerCtx, WinIdKey } from './worker-constants';
 
 export class WorkerDocument extends WorkerElement {
   get body() {
-    return getElementProp(this, PlatformApiId.body, 'BODY');
+    return getNodeProp(this, PlatformApiId.body, 'BODY');
   }
 
   get compatMode() {
@@ -47,7 +47,7 @@ export class WorkerDocument extends WorkerElement {
   }
 
   get documentElement() {
-    return getElementProp(this, PlatformApiId.documentElement, 'HTML');
+    return getNodeProp(this, PlatformApiId.documentElement, 'HTML');
   }
 
   getElementsByTagName(tagName: string) {
@@ -72,7 +72,7 @@ export class WorkerDocument extends WorkerElement {
   }
 
   get head() {
-    return getElementProp(this, PlatformApiId.head, 'HEAD');
+    return getNodeProp(this, PlatformApiId.head, 'HEAD');
   }
 
   get implementation() {
@@ -88,6 +88,14 @@ export class WorkerDocument extends WorkerElement {
   set location(url: any) {
     logWorkerSetter(this, ['location'], url);
     webWorkerCtx.$location$!.href = url + '';
+  }
+
+  get parentNode() {
+    return null;
+  }
+
+  get parentElement() {
+    return null;
   }
 
   get readyState() {
@@ -113,15 +121,10 @@ export class WorkerDocument extends WorkerElement {
   }
 }
 
-const getElementProp = (
-  doc: WorkerDocument,
-  instanceId: number,
-  tagName: 'BODY' | 'HEAD' | 'HTML'
-) => {
-  return new WorkerElement({
-    $winId$: doc[WinIdKey],
+const getNodeProp = (node: WorkerNode, instanceId: number, tagName: string) =>
+  new WorkerElement({
+    $winId$: node[WinIdKey],
     $interfaceType$: InterfaceType.Element,
     $instanceId$: instanceId,
     $nodeName$: tagName,
   });
-};

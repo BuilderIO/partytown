@@ -22,6 +22,7 @@ import {
 } from './worker-constants';
 import {
   WorkerAnchorElement,
+  WorkerDocumentElementChild,
   WorkerElement,
   WorkerImageElement,
   WorkerNode,
@@ -132,18 +133,19 @@ const constructInstance = (serializedInstance: SerializedInstance): any => {
   if (instanceId === PlatformApiId.window) {
     return self;
   }
+  if (interfaceType === InterfaceType.Document) {
+    return new WorkerDocument(serializedNode);
+  }
   if (interfaceType === InterfaceType.Element) {
     const ElementConstructors: { [tagname: string]: any } = {
       A: WorkerAnchorElement,
+      BODY: WorkerDocumentElementChild,
+      HEAD: WorkerDocumentElementChild,
       IFRAME: WorkerIFrameElement,
       IMG: WorkerImageElement,
       SCRIPT: WorkerScriptElement,
     };
     return new (ElementConstructors[serializedNode.$nodeName$!] || WorkerElement)(serializedNode);
-  }
-  if (interfaceType === InterfaceType.Document) {
-    // this scenario would be for an iframe's document, not the main document
-    return new WorkerDocument(serializedNode);
   }
   if (interfaceType === InterfaceType.TextNode) {
     return new WorkerNode(serializedInstance);

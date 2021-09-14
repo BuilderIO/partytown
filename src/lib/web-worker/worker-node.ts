@@ -1,5 +1,5 @@
 import { callMethod, getter, proxy, setter } from './worker-proxy';
-import { ExtraInstruction, SerializedInstance } from '../types';
+import { ExtraInstruction, InterfaceType, PlatformApiId, SerializedInstance } from '../types';
 import { imageRequest, scriptElementSetSrc } from './worker-exec';
 import {
   InstanceIdKey,
@@ -32,7 +32,7 @@ export class WorkerNode {
   }
 
   get ownerDocument(): WorkerDocument {
-    return self.document as any;
+    return document as any;
   }
 
   get href() {
@@ -80,6 +80,24 @@ export class WorkerAnchorElement extends WorkerElement {
   }
   get search() {
     return getUrl(this).search;
+  }
+}
+
+export class WorkerDocumentElementChild extends WorkerElement {
+  get parentElement() {
+    return document.documentElement;
+  }
+  get parentNode() {
+    return document.documentElement;
+  }
+}
+
+export class WorkerDocumentElement extends WorkerElement {
+  get parentElement() {
+    return null;
+  }
+  get parentNode() {
+    return document;
   }
 }
 

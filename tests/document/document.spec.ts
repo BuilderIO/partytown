@@ -51,4 +51,16 @@ test('document', async ({ page }) => {
   const testCurrentScriptSrcLocation = page.locator('#testCurrentScriptSrcLocation');
   await expect(testCurrentScriptSrc).toHaveText('src');
   await expect(testCurrentScriptSrcLocation).toHaveText('/document/current-script-src.js');
+
+  const testHeadParentNode = page.locator('#testHeadParentNode');
+  await expect(testHeadParentNode).toHaveText('HTML HTML');
+
+  const testBodyParentNode = page.locator('#testBodyParentNode');
+  await expect(testBodyParentNode).toHaveText('HTML HTML');
+
+  const testDocumentElementParentNode = page.locator('#testDocumentElementParentNode');
+  await expect(testDocumentElementParentNode).toHaveText('#document null');
+
+  const testDocumentParentNode = page.locator('#testDocumentParentNode');
+  await expect(testDocumentParentNode).toHaveText('null null');
 });

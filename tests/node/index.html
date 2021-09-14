@@ -96,7 +96,19 @@
           (function () {
             const elm = document.getElementById('testHrefProp');
             elm.href = './some/other/path';
-            elm.textContent = elm.href === undefined ? 'undefined' : elm.href;
+            elm.textContent = String(elm.href);
+          })();
+        </script>
+      </li>
+
+      <li class="hasParentNode">
+        <strong>parentNode</strong>
+        <code id="testParentNode"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testParentNode');
+            const parentNode = elm.parentNode;
+            elm.textContent = parentNode.className;
           })();
         </script>
       </li>

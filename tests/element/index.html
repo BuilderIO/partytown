@@ -193,6 +193,18 @@
         </script>
       </li>
 
+      <li class="hasParentElement">
+        <strong>parentElement</strong>
+        <code id="testParentElement"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testParentElement');
+            const parentElement = elm.parentElement;
+            elm.textContent = parentElement.className;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

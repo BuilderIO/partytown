@@ -8,7 +8,7 @@ export const getInstanceId = (
   if (instance) {
     const nodeName = (instance as any as Node).nodeName;
     if (nodeName === NodeName.Document) {
-      return PlatformApiId.documentElement;
+      return PlatformApiId.document;
     }
     if (nodeName === NodeName.DocumentElement) {
       return PlatformApiId.documentElement;
