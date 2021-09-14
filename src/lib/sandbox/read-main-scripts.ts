@@ -8,7 +8,7 @@ export const readNextScript = (winCtx: MainWindowContext) => {
   const win = winCtx.$window$;
   const doc = win.document;
   const scriptElm = doc.querySelector<HTMLScriptElement>(
-    `script[type="${PT_SCRIPT_TYPE}"]:not([data-pt-error])`
+    `script[type="${PT_SCRIPT_TYPE}"]:not([data-pt-id]):not([data-pt-error])`
   );
 
   if (scriptElm) {
