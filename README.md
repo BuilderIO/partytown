@@ -20,6 +20,8 @@ Partytown is a `5kb` library to help relocate resource intensive scripts into a 
   - [Browser Features And Fallback](#browser-features-and-fallback)
 - [Usage](#usage)
   - [Partytown Library](#partytown-library)
+  - [React](#react)
+  - [Vanilla](#vanilla)
   - [Config](#config)
   - [Debugging](#debugging)
   - [Distribution](#distribution)
@@ -174,16 +176,51 @@ Each third-party script that shouldn't run in the main thread, but instead party
 </script>
 ```
 
-The Partytown library should be added to the bottom of the page and include the [async](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#attr-async) and [defer](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#attr-defer) attributes, which [helps tell the browser this is not a critical resource](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/loading-third-party-javascript#use_async_or_defer).
+### React
 
-```html
-<script src="/~partytown/partytown.js" async defer></script>
+A React `<Partytown/>` component is provided within [@builder.io/partytown/react](https://www.npmjs.com/package/@builder.io/partytown). The component is simply a wrapper to the [vanilla HTML](#vanilla) example below, and similarly should be added within the document's `<head>`. Below is an example of the React `<Partytown/>` component used within a [Next.js Document](https://nextjs.org/docs/advanced-features/custom-document).
+
+```jsx
+import Document, { Html, Head, Main, NextScript } from 'next/document';
+
+export default class MyDocument extends Document {
+  render() {
+    return (
+      <Html>
+        <Head>
+          <Partytown />
+        </Head>
+        <body>
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
+    );
+  }
+}
 ```
 
-Note that this script _must_ be hosted from the same origin as the HTML page, rather than a CDN. Additionally, the Partytown library should be
+### Vanilla
+
+To load Partytown with just HTML, the library script below should be added within the `<head>` of page. The snippet will patch any global variables needed so other library scripts, such as Google Tag Manager's [Data Layer](https://developers.google.com/tag-manager/devguide), continues to work. However, the actual Partytown library, and any of the third-party scripts, are not downloaded or executed until after the document has loaded.
+
+<!-- prettier-ignore -->
+```html
+<!--Partytown-->
+<script>
+(function(){var t,e=window,p=document,a=e.partytown||{},n=p.createElement("script");e._ptf=[],(a.forward||[]).map((p=>{t=e,p.split(".").map(((a,n,r)=>{t=t[a]=n<r.length-1?t[a]||{}:function(){e._ptf.push(p,arguments)}}))})),n.async=n.defer=!0,n.src="/~partytown/partytown."+(a.debug?"debug.js":"js"),p.head.appendChild(n)})();
+</script>
+<!--End Partytown-->
+```
+
+Note that the loaded script _must_ be hosted from the same origin as the HTML page, rather than a CDN. Additionally, the Partytown library should be
 hosted from its own dedicated root directory `/~partytown/`. This root directory becomes the [scope](https://developers.google.com/web/ilt/pwa/introduction-to-service-worker#registration_and_scope) for the service worker, and all client-side requests within that path are intercepted by Partytown.
 
 With scripts disabled from executing, the Partytown library can lazily begin loading and executing the scripts from inside a worker.
+
+### Copy Tasks
+
+An additional requirement is that the `/~partytown/` directory should serves the static files found within [@builder.io/partytown/lib](https://unpkg.com/browse/@builder.io/partytown/lib/). The quickest way is to just copy the JavaScript files to the public directory of your server. Another option would be to setup a copy task within the project's bundler, such as Webpack.
 
 ### Config
 
