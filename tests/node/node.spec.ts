@@ -5,12 +5,15 @@ test('node', async ({ page }) => {
 
   await page.waitForSelector('.completed');
 
-  const testCheckbox = page.locator('#test-checkbox');
+  const testCheckbox = page.locator('#testCheckbox');
   await expect(testCheckbox).toBeChecked();
 
-  const testText = page.locator('#test-text');
+  const testText = page.locator('#testText');
   await expect(testText).toHaveText('Hello World');
 
-  const testRemove = page.locator('#test-remove');
+  const testRemove = page.locator('#testRemove');
   await expect(testRemove).toHaveText('This is awesome');
+
+  const testHrefProp = page.locator('#testHrefProp');
+  await expect(testHrefProp).toHaveText('undefined');
 });

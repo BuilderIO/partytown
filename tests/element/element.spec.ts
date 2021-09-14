@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
-test('element method', async ({ page }) => {
-  await page.goto('/element-method/');
+test('element', async ({ page }) => {
+  await page.goto('/element/');
 
   await page.waitForSelector('.completed');
 
@@ -36,4 +36,7 @@ test('element method', async ({ page }) => {
   const y = await testGetBoundingClientRectY.textContent();
   const yInt = parseFloat(y);
   expect(yInt).toBeGreaterThan(4);
+
+  const testAnchor = page.locator('#testAnchor');
+  await expect(testAnchor).toHaveText('/element/some/other/path');
 });

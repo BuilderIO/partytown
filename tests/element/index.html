@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Partytown Test Page" />
-    <title>Element Method</title>
+    <title>Element</title>
     <link
       rel="icon"
       id="favicon"
@@ -42,15 +42,17 @@
       }
       li strong,
       li code,
-      li button {
+      li button,
+      li a {
         white-space: nowrap;
         flex: 1;
         margin: 0 5px;
+        padding: 0;
       }
     </style>
   </head>
   <body mph="88">
-    <h1>Element Method</h1>
+    <h1>Element</h1>
     <ul>
       <li>
         <strong>getBoundingClientRect()</strong>
@@ -175,6 +177,18 @@
           (function () {
             document.body.setAttribute('year', '1985');
             document.getElementById('testSetAttribute').innerHTML = document.body.getAttribute('year');
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set/get a.href</strong>
+        <a id="testAnchor"></a>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testAnchor');
+            elm.href = './some/other/path';
+            elm.textContent = elm.pathname;
           })();
         </script>
       </li>

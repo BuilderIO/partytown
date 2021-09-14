@@ -54,25 +54,25 @@
     <ul>
       <li>
         <strong>createElement() / appendChild()</strong>
-        <span id="test-input"></span>
+        <code id="testInput"></code>
         <script type="text/partytown">
           (function () {
             const input = document.createElement('input');
             input.type = 'checkbox';
             input.checked = true;
-            input.id = 'test-checkbox';
-            document.getElementById('test-input').appendChild(input);
+            input.id = 'testCheckbox';
+            document.getElementById('testInput').appendChild(input);
           })();
         </script>
       </li>
 
       <li>
         <strong>createTextNode() / insertBefore()</strong>
-        <span id="test-text"> World</span>
+        <code id="testText"> World</code>
         <script type="text/partytown">
           (function () {
             const text = document.createTextNode('Hello');
-            const i = document.getElementById('test-text');
+            const i = document.getElementById('testText');
             i.insertBefore(text, i.firstChild);
           })();
         </script>
@@ -80,11 +80,23 @@
 
       <li>
         <strong>removeChild()</strong>
-        <span id="test-remove">This is<span id="test-not"> not</span> awesome</span>
+        <code id="testRemove">This is<span id="testNot"> not</span> awesome</code>
         <script type="text/partytown">
           (function () {
-            const i = document.getElementById('test-not');
+            const i = document.getElementById('testNot');
             i.parentNode.removeChild(i);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set/get node.href undefined</strong>
+        <code id="testHrefProp"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testHrefProp');
+            elm.href = './some/other/path';
+            elm.textContent = elm.href === undefined ? 'undefined' : elm.href;
           })();
         </script>
       </li>

@@ -34,6 +34,11 @@ export class WorkerNode {
   get ownerDocument(): WorkerDocument {
     return self.document as any;
   }
+
+  get href() {
+    return undefined;
+  }
+  set href(_: any) {}
 }
 
 export class WorkerElement extends WorkerNode {
