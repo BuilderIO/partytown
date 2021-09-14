@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>Event Forwarding</title>
+
+    <script>
+      partytown = {
+        debug: true,
+        forward: ['superDuperAnalytics', 'dataLayer.push'],
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+      };
+    </script>
+    <script src="/~partytown/partytown-snippet.debug.js"></script>
+
+    <script type="text/partytown">
+      (function() {
+        let inc = 0;
+
+        const beforeReadyElm = document.getElementById('beforeReady');
+        const testForwardEventElm = document.getElementById('testForwardEvent');
+        const testForwardEventIncElm = document.getElementById('testForwardEventInc');
+
+        superDuperAnalytics = function() {
+          switch (arguments[0]) {
+            case 'ready': {
+              beforeReadyElm.textContent = arguments[0];
+              break;
+            }
+            case 'testForwardEvent': {
+              testForwardEventElm.textContent = arguments[1];
+              testForwardEventIncElm.textContent = ++inc;
+              break;
+            }
+          }
+        };
+      })();
+    </script>
+
+    <script type="text/partytown">
+      (function() {
+        const testDataLayerElm = document.getElementById('testDataLayer');
+
+        dataLayer = [];
+        dataLayer.push = function() {
+          testDataLayerElm.textContent = JSON.stringify(arguments[0]);
+        }
+      })();
+    </script>
+
+    <script>
+      superDuperAnalytics('ready');
+    </script>
+
+    <link
+      rel="icon"
+      id="favicon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎉</text></svg>"
+    />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        font-size: 12px;
+      }
+      h1 {
+        margin: 0 0 15px 0;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        display: block;
+        padding: 16px 8px;
+      }
+      a:link,
+      a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover {
+        background-color: #eee;
+      }
+      li {
+        display: flex;
+        margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button {
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Event Forwarding</h1>
+    <ul>
+      <li>
+        <strong>event before worker ready</strong>
+        <code id="beforeReady"></code>
+      </li>
+
+      <li>
+        <strong>superDuperAnalytics()</strong>
+        <button id="buttonForwardEvent">event</button>
+        <code id="testForwardEventInc"></code>
+        <code id="testForwardEvent"></code>
+        <script>
+          (function () {
+            const btn = document.getElementById('buttonForwardEvent');
+            btn.addEventListener('click', function (ev) {
+              superDuperAnalytics('testForwardEvent', ev.type);
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>dataLayer.push()</strong>
+        <button id="buttonDataLayer">push</button>
+        <code id="testDataLayer"></code>
+        <script>
+          (function () {
+            let mph = 88;
+            const btn = document.getElementById('buttonDataLayer');
+            btn.addEventListener('click', function (ev) {
+              dataLayer.push({ mph: mph++ });
+            });
+          })();
+        </script>
+      </li>
+    </ul>
+
+    <script type="text/partytown">
+      document.body.classList.add('completed');
+    </script>
+
+    <hr />
+    <p><a href="/">All Tests</a></p>
+  </body>
+</html>

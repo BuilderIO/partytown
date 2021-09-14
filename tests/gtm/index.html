@@ -7,19 +7,21 @@
 
     <title>Google Tag Manager (GTM) 🎉</title>
 
-    <!-- Partytown Push Proxy -->
     <script>
-      (function (w, p) {
-        p.forEach(function (t) {
-          (w.partytownPush = w.partytownPush || []).push(t);
-          w[t] = w[t] || [];
-        });
-      })(window, ['dataLayer']);
+      partytown = {
+        debug: true,
+        forward: ['dataLayer.push'],
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+      };
     </script>
-    <!-- End Partytown Push Proxy -->
+    <script src="/~partytown/partytown-snippet.debug.js"></script>
 
     <!-- Google Tag Manager -->
-    <script type="text/partytown" data-worker="GTM">
+    <script type="text/partytown">
       (function (window, document, i) {
         window['dataLayer'] = window[dataLayer] || [];
 
@@ -96,16 +98,5 @@
 
     <p><a href="/gtm/standard.html">Standard GTM</a></p>
     <p><a href="/">All Tests</a></p>
-
-    <script>
-      partytown = {
-        logCalls: true,
-        logGetters: true,
-        logSetters: true,
-        logStackTraces: false,
-        logScriptExecution: true,
-      };
-    </script>
-    <script src="/~partytown/partytown.debug.js" async defer></script>
   </body>
 </html>

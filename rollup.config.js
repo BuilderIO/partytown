@@ -65,10 +65,12 @@ export default async function (cmdArgs) {
     mangle: false,
   };
 
-  await emptyDir(buildDir);
-  await emptyDir(reactBuildDir);
-  await emptyDir(testsBuildDir);
-  await emptyDir(join(testsDir, 'videos'));
+  if (!isDev) {
+    await emptyDir(buildDir);
+    await emptyDir(reactBuildDir);
+    await emptyDir(testsBuildDir);
+    await emptyDir(join(testsDir, 'videos'));
+  }
 
   async function getWebWorker(debug) {
     console.log('generate web worker', debug ? '(debug)' : '(minified)');
@@ -286,7 +288,7 @@ export default async function (cmdArgs) {
   function snippet() {
     const partytownDebug = {
       file: join(buildDir, 'partytown-snippet.debug.js'),
-      format: 'es',
+      format: 'iife',
       exports: 'none',
       plugins: [terser(debugOpts)],
     };
@@ -296,11 +298,7 @@ export default async function (cmdArgs) {
       format: 'es',
       exports: 'none',
       plugins: [
-        terser({
-          compress: { ...minOpts.compress, negate_iife: false },
-          format: { ...minOpts.format },
-          toplevel: false,
-        }),
+        terser(minOpts),
         {
           generateBundle(opts, b) {
             for (const fileName in b) {
@@ -376,8 +374,10 @@ export default async function (cmdArgs) {
           },
           async load(id) {
             if (id === '@snippet') {
+              const codeFile = isDev ? 'partytown-snippet.debug.js' : 'partytown-snippet.js';
+              const code = readFileSync(join(buildDir, codeFile), 'utf-8').trim();
               return `const PartytownSnippet = ${JSON.stringify(
-                readFileSync(join(buildDir, 'partytown-snippet.js'), 'utf-8').trim()
+                code
               )}; export default PartytownSnippet;`;
             }
           },

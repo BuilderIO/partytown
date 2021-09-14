@@ -14,7 +14,8 @@ export type MessageFromSandboxToWorker =
   | [WorkerMessageType.MainDataResponseToWorker, InitWebWorkerData]
   | [WorkerMessageType.InitializeNextWorkerScript, InitializeScriptData]
   | [WorkerMessageType.RefHandlerCallback, number, SerializedTransfer, SerializedTransfer]
-  | [WorkerMessageType.ForwardMainDataRequest, MainAccessRequest];
+  | [WorkerMessageType.ForwardMainDataRequest, MainAccessRequest]
+  | [WorkerMessageType.ForwardEvent, string, any[]];
 
 export const enum WorkerMessageType {
   MainDataRequestFromWorker,
@@ -24,6 +25,7 @@ export const enum WorkerMessageType {
   RefHandlerCallback,
   ForwardMainDataRequest,
   ForwardMainDataResponse,
+  ForwardEvent,
 }
 
 export type PostMessageToWorker = (msg: MessageFromSandboxToWorker) => void;
@@ -203,7 +205,7 @@ export interface SerializedNodeList extends SerializedInstance {
 
 export interface PartytownConfig {
   debug?: boolean;
-  init?: PartytownConfigInit;
+  forward?: PartytownForwardConfig;
   logCalls?: boolean;
   logGetters?: boolean;
   logSetters?: boolean;
@@ -212,9 +214,7 @@ export interface PartytownConfig {
   logStackTraces?: boolean;
 }
 
-export interface PartytownConfigInit {
-  [key: string]: any;
-}
+export type PartytownForwardConfig = string[];
 
 export interface MainWindow extends Window {
   frameElement: MainFrameElement | null;
@@ -222,7 +222,7 @@ export interface MainWindow extends Window {
   partyWin?: (win: MainWindow) => void;
   partyWinId?: number;
   parent: MainWindow;
-  _ptq?: any[];
+  _ptf?: any[];
 }
 
 export interface MainFrameElement extends HTMLIFrameElement {

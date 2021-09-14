@@ -1,6 +1,7 @@
 import { MainWindowContext, InitializeScriptData, WorkerMessageType } from '../types';
 import { debug, logMain, PT_INITIALIZED_EVENT, PT_SCRIPT_TYPE } from '../utils';
 import { getAndSetInstanceId } from './main-instances';
+import { mainEventForwarding } from './main-event-forwarding';
 
 export const readNextScript = (winCtx: MainWindowContext) => {
   const $winId$ = winCtx.$winId$;
@@ -37,6 +38,9 @@ export const readNextScript = (winCtx: MainWindowContext) => {
     if (win.frameElement) {
       win.frameElement.partyWinId = $winId$;
     }
+
+    mainEventForwarding(winCtx, win);
+
     doc.dispatchEvent(new CustomEvent(PT_INITIALIZED_EVENT));
 
     if (debug) {
