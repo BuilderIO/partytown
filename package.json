@@ -20,6 +20,8 @@
     "serve.test": "sirv tests --port 5000  --dev --quiet",
     "playwright": "playwright test --browser=chromium",
     "playwright.webkit": "playwright test --browser=webkit",
+    "release": "np --no-2fa",
+    "version": "npm run build",
     "test": "start-server-and-test serve.test http://localhost:5000/ playwright",
     "test.webkit": "start-server-and-test serve.test http://localhost:5000/ playwright.webkit"
   },
@@ -30,6 +32,7 @@
     "@types/fs-extra": "^9.0.12",
     "fs-extra": "^10.0.0",
     "gzip-size": "^6.0.0",
+    "np": "^7.5.0",
     "prettier": "^2.3.2",
     "rollup": "^2.56.3",
     "rollup-plugin-terser": "^7.0.2",
@@ -64,5 +67,8 @@
     "lighthouse",
     "core web vitals",
     "react"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public"
+  }
 }
