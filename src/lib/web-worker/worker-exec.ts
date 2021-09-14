@@ -37,7 +37,7 @@ export const imageRequest = (elm: WorkerImageElement) => {
   const privateValues = elm[PrivateValues];
   privateValues.c = false;
 
-  fetch(elm.src).then((rsp) => {
+  fetch(elm.src, { mode: 'no-cors' }).then((rsp) => {
     privateValues.c = true;
     if (rsp.ok) {
       if (privateValues.$onload$) {
