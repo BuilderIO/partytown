@@ -33,7 +33,11 @@
 
         gtmScript.async = true;
 
-        gtmScript.src = './gtm.js?id=' + i + dataLayer;
+        // ORIGINAL
+        gtmScript.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dataLayer;
+
+        // HACK
+        // gtmScript.src = './gtm.js?id=' + i + dataLayer;
 
         firstScript.parentNode.insertBefore(gtmScript, firstScript);
       })(window, document, 'GTM-W275NLW');
