@@ -4,7 +4,6 @@
   "module": "index.mjs",
   "types": "index.d.ts",
   "devDependencies": {
-    "@types/react": "^17.0.20",
     "react": "^17.0.2"
   }
 }
