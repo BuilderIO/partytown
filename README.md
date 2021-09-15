@@ -6,7 +6,7 @@
 
 ⚠️ Warning! This is experimental! ⚠️
 
-Partytown is a `5kb` library to help relocate resource intensive scripts into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), and off of the [main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread). Its goal is to help speed up sites by dedicating the main thread to your code, and offloading third-party scripts to a web worker.
+Partytown is a lazy-loaded `6kb` library to help relocate resource intensive scripts into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), and off of the [main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread). Its goal is to help speed up sites by dedicating the main thread to your code, and offloading third-party scripts to a web worker.
 
 - [Information](#information)
   - [Negative Impacts From Third-Party Scripts](#negative-impacts-from-Third-Party-Scripts)
@@ -19,8 +19,8 @@ Partytown is a `5kb` library to help relocate resource intensive scripts into a 
   - [How Does It Work?](#how-does-it-work)
   - [Browser Features And Fallback](#browser-features-and-fallback)
 - [Usage](#usage)
-  - [Partytown Library](#partytown-library)
   - [React](#react)
+  - [Integrations](#integrations)
   - [Vanilla](#vanilla)
   - [Config](#config)
   - [Distribution](#distribution)
@@ -162,24 +162,12 @@ If the browser does not support any of the features above, then it'll fallback t
 
 ## Usage
 
-### Partytown Library
-
-Each third-party script that shouldn't run in the main thread, but instead party 🎉 in a web worker, should set the `type` attribute of its opening script tag to `text/partytown`. This does two things:
-
-1. Prevents the script from executing on the main thread.
-2. Provides an attribute selector for the Partytown library.
-
-```html
-<script type="text/partytown">
-  // Third-party analytics scripts
-</script>
-```
-
 ### React
 
 A React `<Partytown/>` component is provided within [@builder.io/partytown/react](https://www.npmjs.com/package/@builder.io/partytown). The component is simply a wrapper to the [vanilla HTML](#vanilla) example below, and similarly should be added within the document's `<head>`. Below is an example of the React `<Partytown/>` component used within a [Next.js Document](https://nextjs.org/docs/advanced-features/custom-document).
 
 ```jsx
+import { Partytown } from '@builder.io/partytown/react';
 import Document, { Html, Head, Main, NextScript } from 'next/document';
 
 export default class MyDocument extends Document {
@@ -199,13 +187,57 @@ export default class MyDocument extends Document {
 }
 ```
 
-The component also has all of the [configuration properties](#config), such as:
+The `<Partytown/>` component also has all of the [configuration properties](#config), such as:
 
 ```jsx
 <Partytown debug={true} />
 ```
 
+### Integrations
+
+Partytown provides some of the most common analytics as React components, just for added simplicity and convenience.
+
+- `<GoogleTagManager/>`
+
+Below is an example of adding Partytown's Google Tag Manager React component to a [Next.js Document](https://nextjs.org/docs/advanced-features/custom-document):
+
+```jsx
+import { Partytown, GoogleTagManager, GoogleTagManagerNoScript } from '@builder.io/partytown/react';
+import Document, { Html, Head, Main, NextScript } from 'next/document';
+
+export default class MyDocument extends Document {
+  render() {
+    return (
+      <Html>
+        <Head>
+          <GoogleTagManager containerId={'GTM-XXXXX'} />
+          <Partytown />
+        </Head>
+        <body>
+          <GoogleTagManagerNoScript containerId={'GTM-XXXXX'} />
+          <Main />
+          <NextScript />
+        </body>
+      </Html>
+    );
+  }
+}
+```
+
 ### Vanilla
+
+The React components are simply wrappers for convience, but Partytown itself can be used from any framework, or no framework at all by just updating HTML.
+
+Each third-party script that shouldn't run in the main thread, but instead party 🎉 in a web worker, should set the `type` attribute of its opening script tag to `text/partytown`. This does two things:
+
+1. Prevents the script from executing on the main thread.
+2. Provides an attribute selector for the Partytown library.
+
+```html
+<script type="text/partytown">
+  // Third-party analytics scripts
+</script>
+```
 
 To load Partytown with just HTML, the library script below should be added within the `<head>` of page. The snippet will patch any global variables needed so other library scripts, such as Google Tag Manager's [Data Layer](https://developers.google.com/tag-manager/devguide), continues to work. However, the actual Partytown library, and any of the third-party scripts, are not downloaded or executed until after the document has loaded.
 
@@ -258,7 +290,7 @@ The `forward` config is an array of strings, with each string representing a var
 ```html
 <script>
   partytown = {
-    forward: ['dataLayer.push', '_hspt.push', 'intercom']
+    forward: ['dataLayer.push', '_hsq.push', 'Intercom']
   };
 </script>
 ```
@@ -266,7 +298,7 @@ The `forward` config is an array of strings, with each string representing a var
 React Forward Config:
 
 ```jsx
-<Partytown forward={['dataLayer.push', '_hspt.push', 'intercom']}>
+<Partytown forward={['dataLayer.push', '_hsq.push', 'Intercom']}>
 ```
 
 ### Distribution
