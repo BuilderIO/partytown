@@ -1,5 +1,6 @@
 import type { MainAccessRequest, MainAccessResponse } from '../types';
 import { debug } from '../utils';
+import { CacheControl, ContentType, response } from './response';
 
 const resolves = new Map<number, MessageResolve>();
 
@@ -57,11 +58,7 @@ export const httpRequestFromWebWorker = (self: ServiceWorkerGlobalScope, req: Re
     const accessReq: MainAccessRequest = await req.clone().json();
     const responseData = await sendMessageToSandboxFromServiceWorker(self, accessReq);
 
-    resolve(
-      new Response(JSON.stringify(responseData), {
-        headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' },
-      })
-    );
+    resolve(response(JSON.stringify(responseData), ContentType.JSON, CacheControl.Immutable));
   });
 
 type MessageResolve = [(data?: any) => void, any];

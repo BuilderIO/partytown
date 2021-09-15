@@ -1,6 +1,5 @@
 import { debug, PT_INITIALIZED_EVENT, PT_SCRIPT_TYPE } from '../utils';
 import type { MainWindow } from '../types';
-import SandboxHash from '@sandbox-hash';
 
 (function (
   doc: Document,
@@ -13,10 +12,10 @@ import SandboxHash from '@sandbox-hash';
   function ready() {
     if (!sandbox) {
       sandbox = doc.createElement('iframe');
+      sandbox.dataset.partytown = 'sandbox';
       sandbox.setAttribute('style', 'display:block;width:0;height:0;border:0;visibility:hidden');
       sandbox.setAttribute('aria-hidden', 'true');
-      sandbox.src =
-        scope + 'partytown-sandbox' + (debug ? '.debug' : '-' + SandboxHash) + '?' + Date.now();
+      sandbox.src = scope + 'partytown-sandbox' + (debug ? '.debug?' : '?') + Date.now();
       doc.body.appendChild(sandbox);
     }
   }

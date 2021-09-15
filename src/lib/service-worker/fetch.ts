@@ -1,7 +1,7 @@
-import { httpRequestFromWebWorker } from './sw-message';
+import { CacheControl, ContentType, response } from './response';
 import { debug, PT_PROXY_URL } from '../utils';
+import { httpRequestFromWebWorker } from './sw-message';
 import Sandbox from '@sandbox';
-import SandboxHash from '@sandbox-hash';
 import SandboxDebug from '@sandbox-debug';
 
 export const onFetchServiceWorkerRequest = (self: ServiceWorkerGlobalScope, ev: FetchEvent) => {
@@ -9,21 +9,13 @@ export const onFetchServiceWorkerRequest = (self: ServiceWorkerGlobalScope, ev: 
   const pathname = new URL(req.url).pathname;
 
   if (debug && pathname.endsWith('partytown-sandbox.debug')) {
-    ev.respondWith(
-      new Response(SandboxDebug, {
-        headers: { 'content-type': 'text/html', 'Cache-Control': 'no-store' },
-      })
-    );
-  } else if (!debug && pathname.endsWith('partytown-sandbox-' + SandboxHash)) {
-    ev.respondWith(
-      new Response(Sandbox, {
-        headers: {
-          'content-type': 'text/html',
-          'Cache-Control': 'max-age=31556952, immutable',
-        },
-      })
-    );
+    // debug version (sandbox and web worker are not inlined)
+    ev.respondWith(response(SandboxDebug, ContentType.HTML, CacheControl.NoStore));
+  } else if (!debug && pathname.endsWith('partytown-sandbox')) {
+    // sandbox and webworker, minified and inlined
+    ev.respondWith(response(Sandbox, ContentType.HTML, CacheControl.NoStore));
   } else if (pathname.endsWith(PT_PROXY_URL)) {
+    // proxy request
     ev.respondWith(httpRequestFromWebWorker(self, req));
   }
 };

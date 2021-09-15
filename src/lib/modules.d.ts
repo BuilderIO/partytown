@@ -3,11 +3,6 @@ declare module '@sandbox' {
   export default str;
 }
 
-declare module '@sandbox-hash' {
-  const str: string;
-  export default str;
-}
-
 declare module '@sandbox-debug' {
   const str: string;
   export default str;

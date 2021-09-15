@@ -1,6 +1,5 @@
 import typescript from '@rollup/plugin-typescript';
 import { basename, join } from 'path';
-import { createHash } from 'crypto';
 import {
   copySync,
   emptyDir,
@@ -28,7 +27,6 @@ export default async function (cmdArgs) {
   const reactBuildDir = join(rootDir, 'react');
   const cacheDir = join(rootDir, '.cache');
   const cache = {};
-  let sandboxHash = '';
 
   const minOpts = {
     compress: {
@@ -184,11 +182,6 @@ export default async function (cmdArgs) {
 
     const sandboxCode = isDev ? '' : await getSandbox(false);
 
-    if (!isDev) {
-      sandboxHash = createHash('sha1').update(sandboxCode).digest('hex');
-      sandboxHash = sandboxHash.substr(0, 6).toLowerCase();
-    }
-
     return {
       input: join(srcLibDir, 'service-worker', 'index.ts'),
       output,
@@ -218,11 +211,6 @@ export default async function (cmdArgs) {
           async load(id) {
             if (id === '@sandbox') {
               return `const Sandbox = ${JSON.stringify(sandboxCode)}; export default Sandbox;`;
-            }
-            if (id === '@sandbox-hash') {
-              return `const SandboxHash = ${JSON.stringify(
-                sandboxHash
-              )}; export default SandboxHash;`;
             }
             if (id === '@sandbox-debug') {
               return `const SandboxDebug = ${JSON.stringify(
@@ -267,16 +255,6 @@ export default async function (cmdArgs) {
           outputToFilesystem: false,
         }),
         {
-          resolveId(id) {
-            if (id.startsWith('@')) return id;
-          },
-          async load(id) {
-            if (id === '@sandbox-hash') {
-              return `const SandboxHash = ${JSON.stringify(
-                sandboxHash
-              )}; export default SandboxHash;`;
-            }
-          },
           writeBundle() {
             copySync(buildDir, testsBuildDir);
           },
@@ -350,7 +328,7 @@ export default async function (cmdArgs) {
     }
 
     return {
-      input: join(srcReactDir, 'index.tsx'),
+      input: join(srcReactDir, 'index.ts'),
       output: [
         {
           file: join(reactBuildDir, 'index.cjs'),
