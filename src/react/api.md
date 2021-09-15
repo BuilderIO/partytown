@@ -4,13 +4,25 @@
 
 ```ts
 
-// @alpha (undocumented)
-export function Partytown(props?: PartytownProps): any;
+// @public
+export const GoogleTagManager: ({ containerId }: GoogleTagManagerProps) => any;
 
-// Warning: (ae-forgotten-export) The symbol "PartytownConfig" needs to be exported by the entry point api.d.ts
+// @public
+export const GoogleTagManagerNoScript: ({ containerId }: GoogleTagManagerProps) => any;
+
+// @public
+export type GoogleTagManagerProps = {
+    containerId: string;
+};
+
+// @public
+export const Partytown: (props?: PartytownProps | undefined) => any;
+
+// Warning: (ae-forgotten-export) The symbol "PartytownConfig" needs to be exported by the entry point index.d.ts
 //
-// @alpha (undocumented)
-export type PartytownProps = PartytownConfig;
+// @public
+export interface PartytownProps extends PartytownConfig {
+}
 
 // (No @packageDocumentation comment for this package)
 

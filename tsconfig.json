@@ -8,6 +8,9 @@
     "importsNotUsedAsValues": "error",
     "esModuleInterop": true,
     "outDir": "tsc",
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "skipLibCheck": true,
     "sourceMap": false,
     "jsx": "react"
   },

@@ -1,10 +1,10 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
-  "bundledPackages": [],
+  "bundledPackages": ["react"],
   "compiler": {
     "tsconfigFilePath": "<projectFolder>/tsconfig.json"
   },
-  "mainEntryPointFilePath": "<projectFolder>/src/react/api.d.ts",
+  "mainEntryPointFilePath": "<projectFolder>/tsc/react/index.d.ts",
   "apiReport": {
     "enabled": true,
     "reportFileName": "api.md",

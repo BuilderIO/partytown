@@ -14,7 +14,7 @@
     "/react/"
   ],
   "scripts": {
-    "build": "rollup -c",
+    "build": "tsc && rollup -c",
     "dev": "rollup -c -w --configDev",
     "serve": "sirv tests --port 4000 --dev",
     "serve.test": "sirv tests --port 5000  --dev --quiet",
@@ -26,21 +26,21 @@
     "test.webkit": "start-server-and-test serve.test http://localhost:5000/ playwright.webkit"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.18.8",
-    "@playwright/test": "^1.14.0",
+    "@microsoft/api-extractor": "^7.18.9",
+    "@playwright/test": "^1.14.1",
     "@rollup/plugin-typescript": "^8.2.5",
     "@types/fs-extra": "^9.0.12",
     "fs-extra": "^10.0.0",
     "gzip-size": "^6.0.0",
     "np": "^7.5.0",
-    "prettier": "^2.3.2",
+    "prettier": "^2.4.0",
     "rollup": "^2.56.3",
     "rollup-plugin-terser": "^7.0.2",
     "sirv-cli": "^1.0.14",
-    "start-server-and-test": "^1.13.1",
+    "start-server-and-test": "^1.14.0",
     "ts-jest": "^27.0.5",
     "tslib": "^2.3.1",
-    "typescript": "^4.3.5"
+    "typescript": "^4.4.3"
   },
   "prettier": {
     "trailingComma": "es5",
