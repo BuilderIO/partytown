@@ -22,6 +22,7 @@ Partytown is a lazy-loaded `6kb` library to help relocate resource intensive scr
   - [React](#react)
   - [Integrations](#integrations)
   - [Vanilla](#vanilla)
+  - [Copy Task](#copy-tasks)
   - [Config](#config)
   - [Distribution](#distribution)
 - [Development](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#local-development)
@@ -250,8 +251,7 @@ To load Partytown with just HTML, the library script below should be added withi
 <!--End Partytown-->
 ```
 
-Note that the loaded script _must_ be hosted from the same origin as the HTML page, rather than a CDN. Additionally, the Partytown library should be
-hosted from its own dedicated root directory `/~partytown/`. This root directory becomes the [scope](https://developers.google.com/web/ilt/pwa/introduction-to-service-worker#registration_and_scope) for the service worker, and all client-side requests within that path are intercepted by Partytown.
+Note that the loaded script _must_ be hosted from the same origin as the HTML page, rather than a CDN. Additionally, the Partytown library should be hosted from its own dedicated root directory `/~partytown/`. This root directory becomes the [scope](https://developers.google.com/web/ilt/pwa/introduction-to-service-worker#registration_and_scope) for the service worker, and all client-side requests within that path are intercepted by Partytown.
 
 With scripts disabled from executing, the Partytown library can lazily begin loading and executing the scripts from inside a worker.
 
@@ -288,7 +288,7 @@ module.exports = {
 
 ### Config
 
-| Config               | Description                                                       |
+| Config Property      | Description                                                       |
 | -------------------- | ----------------------------------------------------------------- |
 | `debug`              | Partytown scripts are not inlined and not minified.               |
 | `forward`            | An array of strings. See [Forwarding Events](#forwarding-events). |
