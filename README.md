@@ -265,7 +265,26 @@ To set the [config](#config), add a `<script>` with a `partytown={};` global bef
 
 ### Copy Tasks
 
-An additional requirement is that the `/~partytown/` directory should serves the static files found within [@builder.io/partytown/lib](https://unpkg.com/browse/@builder.io/partytown/lib/). The quickest way is to just copy the JavaScript files to the public directory of your server. Another option would be to setup a copy task within the project's bundler, such as Webpack.
+An additional requirement is that the `/~partytown/` directory should serve the static files found within [@builder.io/partytown/lib](https://unpkg.com/browse/@builder.io/partytown/lib/). The quickest way is to copy the `lib` directory into a public `/~partytown` directory within your static server. Another option would be to setup a copy task within the project's bundler, or create a build step.
+
+Below is an example of using [Webpack's copy plugin](https://webpack.js.org/plugins/copy-webpack-plugin/) to copy the source `lib` directory found in the [@builder.io/partytown](https://www.npmjs.com/package/@builder.io/partytown) package, to the `public/~partytown/` directory:
+
+```js
+const CopyPlugin = require('copy-webpack-plugin');
+
+module.exports = {
+  plugins: [
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.join(__dirname, 'node_modules', '@builder.io', 'partytown', 'lib'),
+          to: path.join(__dirname, 'public', '~partytown'),
+        },
+      ],
+    }),
+  ],
+};
+```
 
 ### Config
 
