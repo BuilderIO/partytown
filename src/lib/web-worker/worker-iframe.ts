@@ -1,7 +1,7 @@
 import { getter, proxy, setter } from './worker-proxy';
 import { ExtraInstruction, InterfaceType, NodeName, PlatformApiId } from '../types';
 import { InstanceIdKey, InterfaceTypeKey, PrivateValues, WinIdKey } from './worker-constants';
-import { PT_SCRIPT, PT_SCRIPT_TYPE } from '../utils';
+import { nextTick, PT_SCRIPT, PT_SCRIPT_TYPE } from '../utils';
 import { resolveUrl, WorkerSrcElement } from './worker-node';
 import { WorkerDocument } from './worker-document';
 
@@ -31,25 +31,24 @@ export class WorkerIFrameElement extends WorkerSrcElement {
     return this[PrivateValues].$url$ || '';
   }
   set src(url: string) {
-    const privateValues = this[PrivateValues];
+    let privateValues = this[PrivateValues];
+    let xhr = new XMLHttpRequest();
 
     url = resolveUrl(url) + '';
 
     if (privateValues.$url$ !== url) {
-      privateValues.$url$ = url;
+      xhr.open('GET', (privateValues.$url$ = url), false);
+      xhr.send();
 
-      fetch(url).then((rsp) => {
-        if (rsp.ok) {
-          rsp.text().then((content) => {
-            setter(this, ['srcdoc'], updateIframeScripts(content));
-            if (privateValues.$onload$) {
-              privateValues.$onload$.forEach((onload) => onload({ type: 'load' }));
-            }
-          });
-        } else if (privateValues.$onerror$) {
-          privateValues.$onerror$.forEach((onerror) => onerror({ type: 'error' }));
+      if (xhr.status > 199 && xhr.status < 300) {
+        setter(this, ['srcdoc'], updateIframeScripts(xhr.responseText));
+
+        if (privateValues.$onload$) {
+          nextTick(() => privateValues.$onload$!.forEach((onload) => onload({ type: 'load' })));
         }
-      });
+      } else if (privateValues.$onerror$) {
+        nextTick(() => privateValues.$onerror$!.forEach((onerror) => onerror({ type: 'error' })));
+      }
     }
   }
 }

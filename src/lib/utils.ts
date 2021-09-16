@@ -223,4 +223,6 @@ export const PT_PROXY_URL = `proxytown`;
 export const PT_INITIALIZED_EVENT = `ptinit`;
 export const PT_SCRIPT_TYPE = `text/partytown`;
 
-export const PT_SCRIPT = `<script src="/~partytown/partytown.debug.js" async defer></script>`;
+export const PT_SCRIPT = `<script src="/~partytown/partytown${
+  debug ? '.debug' : ''
+}.js" async defer></script>`;
