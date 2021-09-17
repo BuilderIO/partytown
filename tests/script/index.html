@@ -58,14 +58,14 @@
         <script type="text/partytown">
           (function () {
             const script = document.createElement('script');
-            jsonp = function (data) {
+            jsonpA = function (data) {
               const elm = document.getElementById('testJSONP');
               elm.textContent = data.mph;
               script.remove();
               elm.className = 'testJSONP';
             };
             script.dataset.testjsonp = true;
-            script.src = './jsonp.js';
+            script.src = './jsonp-a.js';
             document.head.appendChild(script);
           })();
         </script>
@@ -82,11 +82,11 @@
               script.parentElement.removeChild(script);
               elm.className = 'testOnLoad';
             };
-            jsonp = function (data) {
-              elm.textContent = data.mph + 11;
+            jsonpB = function (data) {
+              elm.textContent = data.mph;
             };
             script.dataset.testonload = true;
-            script.src = './jsonp.js';
+            script.src = './jsonp-b.js';
             document.head.appendChild(script);
           })();
         </script>
@@ -103,10 +103,10 @@
               script.parentElement.removeChild(script);
               elm.className = 'testAddEventListenerLoad';
             });
-            jsonp = function (data) {
-              elm.textContent = data.mph - 11;
+            jsonpC = function (data) {
+              elm.textContent = data.mph;
             };
-            script.src = './jsonp.js';
+            script.src = './jsonp-c.js';
             document.head.appendChild(script);
           })();
         </script>
