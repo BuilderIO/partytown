@@ -5,8 +5,16 @@ test('element', async ({ page }) => {
 
   await page.waitForSelector('.completed');
 
-  const test0 = page.locator('#test0');
-  await expect(test0).toHaveText('H1');
+  const testElementNameType = page.locator('#testElementNameType');
+  await expect(testElementNameType).toHaveText('DIV 1');
+
+  const testGetBoundingClientRectY = page.locator('#testGetBoundingClientRectY');
+  const y = await testGetBoundingClientRectY.textContent();
+  const yInt = parseFloat(y);
+  expect(yInt).toBeGreaterThan(4);
+
+  const testQSH1 = page.locator('#testQSH1');
+  await expect(testQSH1).toHaveText('H1');
 
   const testQSLength = page.locator('#testQSLength');
   await expect(testQSLength).toHaveText('2');
@@ -31,11 +39,6 @@ test('element', async ({ page }) => {
 
   const testSetAttribute = page.locator('#testSetAttribute');
   await expect(testSetAttribute).toHaveText('1985');
-
-  const testGetBoundingClientRectY = page.locator('#testGetBoundingClientRectY');
-  const y = await testGetBoundingClientRectY.textContent();
-  const yInt = parseFloat(y);
-  expect(yInt).toBeGreaterThan(4);
 
   const testAnchor = page.locator('#testAnchor');
   await expect(testAnchor).toHaveText('/element/some/other/path');

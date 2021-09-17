@@ -55,6 +55,17 @@
     <h1>Element</h1>
     <ul>
       <li>
+        <strong>element, nodeName/Type</strong>
+        <code id="testElementNameType"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.createElement('div');
+            document.getElementById('testElementNameType').textContent = elm.nodeName + ' ' + elm.nodeType;
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>getBoundingClientRect()</strong>
         <code id="testGetBoundingClientRectY"></code>
         <code id="testGetBoundingClientRect"></code>
@@ -72,11 +83,11 @@
 
       <li>
         <strong>querySelector('h1')</strong>
-        <code id="test0"></code>
+        <code id="testQSH1"></code>
         <script type="text/partytown">
           (function () {
             const elm = document.querySelector('h1');
-            document.getElementById('test0').innerHTML = elm.tagName;
+            document.getElementById('testQSH1').innerHTML = elm.tagName;
           })();
         </script>
       </li>

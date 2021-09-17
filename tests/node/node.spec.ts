@@ -5,6 +5,9 @@ test('node', async ({ page }) => {
 
   await page.waitForSelector('.completed');
 
+  const testNodeNameType = page.locator('#testNodeNameType');
+  await expect(testNodeNameType).toHaveText('#text 3');
+
   const testCheckbox = page.locator('#testCheckbox');
   await expect(testCheckbox).toBeChecked();
 

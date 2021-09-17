@@ -53,6 +53,17 @@
     <h1 class="title">Node</h1>
     <ul>
       <li>
+        <strong>node, nodeName/Type</strong>
+        <code id="testNodeNameType"></code>
+        <script type="text/partytown">
+          (function () {
+            const text = document.createTextNode('Hello');
+            document.getElementById('testNodeNameType').textContent = text.nodeName + ' ' + text.nodeType;
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>createElement() / appendChild()</strong>
         <code id="testInput"></code>
         <script type="text/partytown">
