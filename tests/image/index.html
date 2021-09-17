@@ -54,121 +54,121 @@
     <ul>
       <li>
         <strong>Image() onload</strong>
-        <code id="test0"></code>
+        <code id="testImageOnLoad"></code>
         <script type="text/partytown">
           (function () {
             const image = new Image();
             image.onload = function (ev) {
-              const elm = document.getElementById('test0');
+              const elm = document.getElementById('testImageOnLoad');
               elm.textContent = ev.type;
-              elm.className = 'test0';
+              elm.className = 'testImageOnLoad';
             };
-            image.src = 'dot.gif?test=0';
+            image.src = 'dot.gif?testImageOnLoad';
           })();
         </script>
       </li>
       <li>
         <strong>Image() onerror</strong>
-        <code id="test1"></code>
+        <code id="testImageOnError"></code>
         <script type="text/partytown">
           (function () {
             const image = new Image();
             image.onerror = function (ev) {
-              const elm = document.getElementById('test1');
+              const elm = document.getElementById('testImageOnError');
               elm.textContent = ev.type;
-              elm.className = 'test1';
+              elm.className = 'testImageOnError';
             };
-            image.src = '404.gif?test=1';
+            image.src = '404.gif?testImageOnError';
           })();
         </script>
       </li>
       <li>
         <strong>Image() addEventListener('load')</strong>
-        <code id="test2"></code>
+        <code id="testImageListenerLoad"></code>
         <script type="text/partytown">
           (function () {
             const image = new Image();
             image.addEventListener('load', function (ev) {
-              const elm = document.getElementById('test2');
+              const elm = document.getElementById('testImageListenerLoad');
               elm.textContent = ev.type;
-              elm.className = 'test2';
+              elm.className = 'testImageListenerLoad';
             });
-            image.src = 'dot.gif?test=2';
+            image.src = 'dot.gif?testImageListenerLoad';
           })();
         </script>
       </li>
       <li>
         <strong>Image() addEventListener('error')</strong>
-        <code id="test3"></code>
+        <code id="testImageListenerError"></code>
         <script type="text/partytown">
           (function () {
             const image = new Image();
             image.addEventListener('error', function (ev) {
-              const elm = document.getElementById('test3');
+              const elm = document.getElementById('testImageListenerError');
               elm.textContent = ev.type;
-              elm.className = 'test3';
+              elm.className = 'testImageListenerError';
             });
-            image.src = '404.gif?test=3';
+            image.src = '404.gif?testImageListenerError';
           })();
         </script>
       </li>
       <li>
         <strong>&lt;img&gt; onload</strong>
-        <code id="test4"></code>
+        <code id="testImgOnLoad"></code>
         <script type="text/partytown">
           (function () {
             const image = document.createElement('img');
             image.onload = function (ev) {
-              const elm = document.getElementById('test4');
+              const elm = document.getElementById('testImgOnLoad');
               elm.textContent = ev.type;
-              elm.className = 'test4';
+              elm.className = 'testImgOnLoad';
             };
-            image.src = 'dot.gif?test=4';
+            image.src = 'dot.gif?testImgOnLoad';
           })();
         </script>
       </li>
       <li>
         <strong>&lt;img&gt; onerror</strong>
-        <code id="test5"></code>
+        <code id="testImgOnError"></code>
         <script type="text/partytown">
           (function () {
             const image = document.createElement('img');
             image.onerror = function (ev) {
-              const elm = document.getElementById('test5');
+              const elm = document.getElementById('testImgOnError');
               elm.textContent = ev.type;
-              elm.className = 'test5';
+              elm.className = 'testImgOnError';
             };
-            image.src = '404.gif?test=5';
+            image.src = '404.gif?testImgOnError';
           })();
         </script>
       </li>
       <li>
         <strong>&lt;img&gt; addEventListener('load')</strong>
-        <code id="test6"></code>
+        <code id="testImgListenerLoad"></code>
         <script type="text/partytown">
           (function () {
             const image = new Image();
             image.addEventListener('load', function (ev) {
-              const elm = document.getElementById('test6');
+              const elm = document.getElementById('testImgListenerLoad');
               elm.textContent = ev.type;
-              elm.className = 'test6';
+              elm.className = 'testImgListenerLoad';
             });
-            image.src = 'dot.gif?test=6';
+            image.src = 'dot.gif?testImgListenerLoad';
           })();
         </script>
       </li>
       <li>
         <strong>&lt;img&gt; addEventListener('error')</strong>
-        <code id="test7"></code>
+        <code id="testImgListenerError"></code>
         <script type="text/partytown">
           (function () {
             const image = new Image();
             image.addEventListener('error', function (ev) {
-              const elm = document.getElementById('test7');
+              const elm = document.getElementById('testImgListenerError');
               elm.textContent = ev.type;
-              elm.className = 'test7';
+              elm.className = 'testImgListenerError';
             });
-            image.src = '404.gif?test=7';
+            image.src = '404.gif?testImgListenerError';
           })();
         </script>
       </li>

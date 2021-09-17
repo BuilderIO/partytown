@@ -3,35 +3,35 @@ import { test, expect } from '@playwright/test';
 test('image', async ({ page }) => {
   await page.goto('/image/');
 
-  await page.waitForSelector('.test0');
-  const test0 = page.locator('#test0');
-  await expect(test0).toHaveText('load');
+  await page.waitForSelector('.testImageOnLoad');
+  const testImageOnLoad = page.locator('#testImageOnLoad');
+  await expect(testImageOnLoad).toHaveText('load');
 
-  await page.waitForSelector('.test1');
-  const test1 = page.locator('#test1');
-  await expect(test1).toHaveText('error');
+  await page.waitForSelector('.testImageOnError');
+  const testImageOnError = page.locator('#testImageOnError');
+  await expect(testImageOnError).toHaveText('error');
 
-  await page.waitForSelector('.test2');
-  const test2 = page.locator('#test2');
-  await expect(test2).toHaveText('load');
+  await page.waitForSelector('.testImageListenerLoad');
+  const testImageListenerLoad = page.locator('#testImageListenerLoad');
+  await expect(testImageListenerLoad).toHaveText('load');
 
-  await page.waitForSelector('.test3');
-  const test3 = page.locator('#test3');
-  await expect(test3).toHaveText('error');
+  await page.waitForSelector('.testImageListenerError');
+  const testImageListenerError = page.locator('#testImageListenerError');
+  await expect(testImageListenerError).toHaveText('error');
 
-  await page.waitForSelector('.test4');
-  const test4 = page.locator('#test4');
-  await expect(test4).toHaveText('load');
+  await page.waitForSelector('.testImgOnLoad');
+  const testImgOnLoad = page.locator('#testImgOnLoad');
+  await expect(testImgOnLoad).toHaveText('load');
 
-  await page.waitForSelector('.test5');
-  const test5 = page.locator('#test5');
-  await expect(test5).toHaveText('error');
+  await page.waitForSelector('.testImgOnError');
+  const testImgOnError = page.locator('#testImgOnError');
+  await expect(testImgOnError).toHaveText('error');
 
-  await page.waitForSelector('.test6');
-  const test6 = page.locator('#test6');
-  await expect(test6).toHaveText('load');
+  await page.waitForSelector('.testImgListenerLoad');
+  const testImgListenerLoad = page.locator('#testImgListenerLoad');
+  await expect(testImgListenerLoad).toHaveText('load');
 
-  await page.waitForSelector('.test7');
-  const test7 = page.locator('#test7');
-  await expect(test7).toHaveText('error');
+  await page.waitForSelector('.testImgListenerError');
+  const testImgListenerError = page.locator('#testImgListenerError');
+  await expect(testImgListenerError).toHaveText('error');
 });
