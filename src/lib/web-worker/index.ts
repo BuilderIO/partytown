@@ -1,4 +1,4 @@
-import { callRefHandler, handleForwardedAccessRequest } from './worker-serialization';
+import { callRefHandler } from './worker-serialization';
 import { debug, logWorker, nextTick } from '../utils';
 import { initNextScriptsInWebWorker } from './worker-exec';
 import { initWebWorker } from './init-worker';
@@ -7,10 +7,13 @@ import {
   InitWebWorkerData,
   MainAccessRequest,
   MessageFromSandboxToWorker,
+  RunStatePropData,
   WorkerMessageType,
 } from '../types';
 import { webWorkerCtx } from './worker-constants';
+import { workerAccessHandler } from './worker-access-handler';
 import { workerEventForwarding } from './worker-event-forwarding';
+import { runStateProp } from './worker-instance';
 
 const queuedEvents: MessageEvent<MessageFromSandboxToWorker>[] = [];
 
@@ -28,9 +31,12 @@ const onMessage = (ev: MessageEvent<MessageFromSandboxToWorker>) => {
       callRefHandler(msgData as number, msg[2] as any, msg[3] as any);
     } else if (msgType === WorkerMessageType.ForwardMainDataRequest) {
       // message forwarded from another window, like the main window accessing data from an iframe
-      handleForwardedAccessRequest(msgData as MainAccessRequest);
+      workerAccessHandler(msgData as MainAccessRequest);
     } else if (msgType === WorkerMessageType.ForwardEvent) {
       workerEventForwarding(msgData as any, msg[2] as any);
+    } else if (msgType === WorkerMessageType.RunStateProp) {
+      const data: RunStatePropData = msgData as any;
+      runStateProp(data.$winId$, data.$instanceId$, data.$stateProp$);
     }
   } else if (msgType === WorkerMessageType.MainDataResponseToWorker) {
     // initialize the web worker with the received the main data
@@ -41,7 +47,7 @@ const onMessage = (ev: MessageEvent<MessageFromSandboxToWorker>) => {
       if (debug && queuedEvents.length) {
         logWorker(`Queued ready messages: ${queuedEvents.length}`);
       }
-      queuedEvents.forEach(onMessage);
+      queuedEvents.slice().forEach(onMessage);
       queuedEvents.length = 0;
     });
   } else {

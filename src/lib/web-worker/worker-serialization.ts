@@ -1,84 +1,61 @@
-import { callMethod, syncRequestToServiceWorker } from './worker-proxy';
-import { debug, len, logWorker } from '../utils';
+import { callMethod } from './worker-proxy';
+import { debug, logWorker } from '../utils';
 import {
-  AccessType,
   InterfaceType,
-  MainAccessRequest,
-  MainAccessResponse,
-  PlatformApiId,
+  NodeName,
+  PlatformInstanceId,
   SerializedInstance,
-  SerializedNodeList,
   SerializedRefTransfer,
   SerializedTransfer,
   SerializedType,
-  WorkerMessageType,
 } from '../types';
-import {
-  InstanceIdKey,
-  InterfaceTypeKey,
-  NodeNameKey,
-  webWorkerCtx,
-  WinIdKey,
-} from './worker-constants';
-import {
-  WorkerAnchorElement,
-  WorkerDocumentElementChild,
-  WorkerElement,
-  WorkerImageElement,
-  WorkerNode,
-  WorkerNodeList,
-  WorkerScriptElement,
-} from './worker-node';
+import { InstanceIdKey, InterfaceTypeKey, NodeNameKey, WinIdKey } from './worker-constants';
+import { WorkerAnchorElement, WorkerDocumentElementChild, WorkerElement } from './worker-element';
+import { WorkerNode, WorkerNodeList } from './worker-node';
+import { WorkerContentWindow, WorkerIFrameElement } from './worker-iframe';
 import { WorkerDocument } from './worker-document';
-import { WorkerIFrameElement } from './worker-iframe';
+import { WorkerInstance } from './worker-instance';
+import { WorkerScriptElement } from './worker-script';
 
-let refIds = 1;
-const refsByRefId = new Map<number, Ref>();
-const refIdsByRef = new WeakMap<Ref, number>();
-
-export const serializeForMain = (value: any): SerializedTransfer => {
-  if (value === undefined) {
-    return [SerializedType.Primitive];
-  }
-
-  const type = typeof value;
-  if (type === 'string' || type === 'boolean' || type === 'number' || value == null) {
-    return [SerializedType.Primitive, value];
-  }
-
-  if (type === 'function') {
-    return serializeRef(value);
-  }
-
-  if (Array.isArray(value)) {
-    return [SerializedType.Array, value.map(serializeForMain)];
-  }
-
-  if (type === 'object') {
-    if (typeof value[InstanceIdKey] === 'number') {
-      const serializeInstance: SerializedInstance = {
-        $winId$: value[WinIdKey],
-        $interfaceType$: value[InterfaceTypeKey],
-        $instanceId$: value[InstanceIdKey],
-        $nodeName$: value[NodeNameKey],
-      };
-      return [SerializedType.Instance, serializeInstance];
+export const serializeForMain = (value: any): SerializedTransfer | undefined => {
+  if (value !== undefined) {
+    const type = typeof value;
+    if (type === 'string' || type === 'boolean' || type === 'number' || value == null) {
+      return [SerializedType.Primitive, value];
     }
 
-    const serializedObj: { [key: string]: SerializedTransfer } = {};
-    for (const k in value) {
-      serializedObj[k] = serializeForMain(value[k]);
+    if (type === 'function') {
+      return serializeRef(value);
     }
-    return [SerializedType.Object, serializedObj];
-  }
 
-  return [];
+    if (Array.isArray(value)) {
+      return [SerializedType.Array, value.map(serializeForMain)];
+    }
+
+    if (type === 'object') {
+      if (typeof value[InstanceIdKey] === 'number') {
+        const serializeInstance: SerializedInstance = {
+          $winId$: value[WinIdKey],
+          $interfaceType$: value[InterfaceTypeKey],
+          $instanceId$: value[InstanceIdKey],
+          $nodeName$: value[NodeNameKey],
+        };
+        return [SerializedType.Instance, serializeInstance];
+      }
+
+      const serializedObj: { [key: string]: SerializedTransfer | undefined } = {};
+      for (const k in value) {
+        serializedObj[k] = serializeForMain(value[k]);
+      }
+      return [SerializedType.Object, serializedObj];
+    }
+  }
 };
 
 export const deserializeFromMain = (
   target: any,
   memberPath: string[],
-  serializedValueTransfer: SerializedTransfer,
+  serializedValueTransfer?: SerializedTransfer,
   serializedType?: SerializedType,
   serializedValue?: any,
   obj?: { [key: string]: any },
@@ -98,7 +75,7 @@ export const deserializeFromMain = (
 
     if (serializedType === SerializedType.Instance) {
       const serializedInstance: SerializedInstance = serializedValue;
-      return constructInstance(serializedInstance);
+      return constructSerializedInstance(serializedInstance);
     }
 
     if (serializedType === SerializedType.Array) {
@@ -116,52 +93,73 @@ export const deserializeFromMain = (
   }
 };
 
-const constructInstance = (serializedInstance: SerializedInstance): any => {
-  const interfaceType = serializedInstance.$interfaceType$;
-  const instanceId = serializedInstance.$instanceId$;
-  const serializedNode = serializedInstance;
-
-  if (instanceId === PlatformApiId.history) {
-    return webWorkerCtx.$history$;
-  }
-  if (instanceId === PlatformApiId.localStorage) {
-    return webWorkerCtx.$localStorage$;
-  }
-  if (instanceId === PlatformApiId.sessionStorage) {
-    return webWorkerCtx.$sessionStorage$;
-  }
-  if (instanceId === PlatformApiId.window) {
+export const constructSerializedInstance = ({
+  $interfaceType$,
+  $instanceId$,
+  $winId$,
+  $nodeName$,
+  $items$,
+}: SerializedInstance): any => {
+  if ($instanceId$ === PlatformInstanceId.history) {
+    return history;
+  } else if ($instanceId$ === PlatformInstanceId.localStorage) {
+    return localStorage;
+  } else if ($instanceId$ === PlatformInstanceId.sessionStorage) {
+    return sessionStorage;
+  } else if ($instanceId$ === PlatformInstanceId.window) {
     return self;
+  } else if ($interfaceType$ === InterfaceType.NodeList) {
+    return new WorkerNodeList($items$!.map(constructSerializedInstance));
+  } else {
+    return constructInstance($interfaceType$, $instanceId$!, $winId$, $nodeName$!);
   }
-  if (interfaceType === InterfaceType.Document) {
-    return new WorkerDocument(serializedNode);
-  }
+};
+
+export const constructInstance = (
+  interfaceType: InterfaceType,
+  instanceId: number,
+  winId?: number,
+  nodeName?: string
+) => {
+  nodeName =
+    interfaceType === InterfaceType.Document
+      ? NodeName.Document
+      : interfaceType === InterfaceType.TextNode
+      ? NodeName.Text
+      : nodeName;
+
+  const Cstr = getConstructor(interfaceType, nodeName);
+  return new Cstr(interfaceType, instanceId, winId, nodeName);
+};
+
+const getConstructor = (interfaceType: InterfaceType, nodeName?: string): typeof WorkerInstance => {
   if (interfaceType === InterfaceType.Element) {
-    const ElementConstructors: { [tagname: string]: any } = {
+    const Cstrs: { [nodeName: string]: any } = {
       A: WorkerAnchorElement,
       BODY: WorkerDocumentElementChild,
       HEAD: WorkerDocumentElementChild,
       IFRAME: WorkerIFrameElement,
-      IMG: WorkerImageElement,
       SCRIPT: WorkerScriptElement,
     };
-    return new (ElementConstructors[serializedNode.$nodeName$!] || WorkerElement)(serializedNode);
+    return Cstrs[nodeName!] || WorkerElement;
+  } else if (interfaceType === InterfaceType.Document) {
+    return WorkerDocument;
+  } else if (interfaceType === InterfaceType.Window) {
+    return WorkerContentWindow;
+  } else if (interfaceType === InterfaceType.TextNode) {
+    return WorkerNode;
+  } else {
+    return WorkerInstance;
   }
-  if (interfaceType === InterfaceType.TextNode) {
-    return new WorkerNode(serializedInstance);
-  }
-  if (interfaceType === InterfaceType.NodeList) {
-    const serializedNodeList: SerializedNodeList = serializedInstance as any;
-    return new WorkerNodeList(serializedNodeList.$data$.map(constructInstance));
-  }
-  return {};
 };
 
-const serializeRef = (ref: any): SerializedRefTransfer => {
-  let refId = refIdsByRef.get(ref);
+const refsByRefId = new Map<number, Ref>();
+const refIdsByRef = new WeakMap<Ref, number>();
+
+const serializeRef = (ref: any, refId?: number): SerializedRefTransfer => {
+  refId = refIdsByRef.get(ref);
   if (!refId) {
-    refId = refIds++;
-    refIdsByRef.set(ref, refId);
+    refIdsByRef.set(ref, (refId = Math.random()));
     refsByRefId.set(refId, ref);
   }
   return [SerializedType.Ref, refId];
@@ -183,79 +181,6 @@ export const callRefHandler = (
     }
   } else if (debug) {
     logWorker(`Unable to find callRefHandler, ref "${refId}", args: ${serializedArgs}`);
-  }
-};
-
-export const handleForwardedAccessRequest = (accessReq: MainAccessRequest) => {
-  let accessRsp: MainAccessResponse = {
-    $winId$: accessReq.$winId$,
-    $msgId$: accessReq.$msgId$,
-    $instanceId$: accessReq.$instanceId$,
-  };
-  let accessType = accessReq.$accessType$;
-  let instanceId = accessReq.$instanceId$;
-  let memberPath = accessReq.$memberPath$;
-  let memberPathLength = len(memberPath);
-  let lastMemberName = memberPath[memberPathLength - 1];
-  let data = deserializeFromMain(self, memberPath, accessReq.$data$);
-  let instance = getPlatformInstance(instanceId, document);
-  let rtnValue: any;
-  let i: number;
-  let target: any;
-
-  try {
-    if (instance) {
-      // platform instance, like window or document
-      for (i = 0; i < memberPathLength - 1; i++) {
-        instance = instance[memberPath[i]];
-      }
-
-      if (accessType === AccessType.Get) {
-        rtnValue = instance[lastMemberName];
-      } else if (accessType === AccessType.Set) {
-        instance[lastMemberName] = data;
-      } else if (accessType === AccessType.CallMethod) {
-        rtnValue = instance[lastMemberName].apply(instance, data);
-      }
-    } else {
-      // forward the request to main
-      target = { [WinIdKey]: accessReq.$winId$, [InstanceIdKey]: accessReq.$instanceId$ };
-      rtnValue = syncRequestToServiceWorker(
-        target,
-        accessReq.$accessType$,
-        accessReq.$memberPath$,
-        deserializeFromMain(target, accessReq.$memberPath$, accessReq.$data$),
-        accessReq.$extraInstructions$
-      );
-    }
-
-    accessRsp.$rtnValue$ = serializeForMain(rtnValue);
-  } catch (e: any) {
-    accessRsp.$error$ = String(e.stack || e);
-  }
-
-  webWorkerCtx.$postMessage$([WorkerMessageType.ForwardMainDataResponse, accessRsp]);
-};
-
-const getPlatformInstance = (instanceId: number, doc: Document): any => {
-  if (instanceId === PlatformApiId.window) {
-    return self;
-  } else if (instanceId === PlatformApiId.document) {
-    return doc;
-  } else if (instanceId === PlatformApiId.documentElement) {
-    return doc.documentElement;
-  } else if (instanceId === PlatformApiId.head) {
-    return doc.head;
-  } else if (instanceId === PlatformApiId.body) {
-    return doc.body;
-  } else if (instanceId === PlatformApiId.history) {
-    return history;
-  } else if (instanceId === PlatformApiId.localStorage) {
-    return localStorage;
-  } else if (instanceId === PlatformApiId.sessionStorage) {
-    return sessionStorage;
-  } else {
-    return null;
   }
 };
 

@@ -288,16 +288,17 @@ module.exports = {
 
 ### Config
 
-| Config Property      | Description                                                       |
-| -------------------- | ----------------------------------------------------------------- |
-| `debug`              | Partytown scripts are not inlined and not minified.               |
-| `forward`            | An array of strings. See [Forwarding Events](#forwarding-events). |
-| `logCalls`           | Log method calls (debug mode required)                            |
-| `logGetters`         | Log getter calls (debug mode required)                            |
-| `logSetters`         | Log setter calls (debug mode required)                            |
-| `logImageRequests`   | Log image requests (debug mode required)                          |
-| `logScriptExecution` | Log script executions (debug mode required)                       |
-| `logStackTraces`     | Log stack traces (debug mode required)                            |
+| Config Property         | Description                                                             |
+| ----------------------- | ----------------------------------------------------------------------- |
+| `debug`                 | When set to `true`, Partytown scripts are not inlined and not minified. |
+| `forward`               | An array of strings. See [Forwarding Events](#forwarding-events).       |
+| `logCalls`              | Log method calls (debug mode required)                                  |
+| `logGetters`            | Log getter calls (debug mode required)                                  |
+| `logSetters`            | Log setter calls (debug mode required)                                  |
+| `logImageRequests`      | Log Image() src requests (debug mode required)                          |
+| `logScriptExecution`    | Log script executions (debug mode required)                             |
+| `logSendBeaconRequests` | Log navigator.sendBeacon() requests (debug mode required)               |
+| `logStackTraces`        | Log stack traces (debug mode required)                                  |
 
 #### Forwarding Events
 
@@ -317,8 +318,10 @@ The `forward` config is an array of strings, with each string representing a var
 React Forward Config:
 
 ```jsx
-<Partytown forward={['dataLayer.push', '_hsq.push', 'Intercom']}>
+<Partytown forward={['dataLayer.push', '_hsq.push', 'Intercom']} />
 ```
+
+> Note that the React integration components will already add the forward configs to the Partytown library.
 
 ### Distribution
 

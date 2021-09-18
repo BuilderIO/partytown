@@ -1,20 +1,22 @@
 import { debug, logWorker, nextTick } from '../utils';
-import { InitializeScriptData, WorkerMessageType } from '../types';
-import { InstanceIdKey, PrivateValues, srcUrls, webWorkerCtx, WinIdKey } from './worker-constants';
-import type { WorkerImageElement, WorkerScriptElement } from './worker-node';
+import { InitializeScriptData, StateProp, WorkerMessageType } from '../types';
+import { getInstanceStateValue, setStateValue } from './worker-instance';
+import { InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import type { WorkerScriptElement } from './worker-script';
 
 export const initNextScriptsInWebWorker = (initScript: InitializeScriptData) => {
-  let instanceId = initScript.$instanceId$;
-  let content = initScript.$content$;
-  let url = initScript.$url$;
+  const winId = initScript.$winId$;
+  const instanceId = initScript.$instanceId$;
+  const content = initScript.$content$;
+  const url = initScript.$url$;
   let errorMsg = '';
 
   try {
     if (url) {
-      importScriptUrl(initScript.$winId$, instanceId, url);
+      importScriptUrl(winId, instanceId, url);
     } else if (content) {
       if (debug && webWorkerCtx.$config$.logScriptExecution) {
-        logWorker(`Execute script content [data-pt-id="${instanceId}"]`);
+        logWorker(`Execute script[data-pt-id="${winId}.${instanceId}"]`);
       }
       setCurrentScript(instanceId, '');
       const runScript = new Function(content);
@@ -29,75 +31,70 @@ export const initNextScriptsInWebWorker = (initScript: InitializeScriptData) => 
   webWorkerCtx.$postMessage$([WorkerMessageType.InitializedWorkerScript, instanceId, errorMsg]);
 };
 
-export const imageRequest = (elm: WorkerImageElement) => {
-  if (debug && webWorkerCtx.$config$.logImageRequests) {
-    logWorker(`Image Request: ${elm.src}`);
-  }
-
-  const privateValues = elm[PrivateValues];
-  privateValues.c = false;
-
-  fetch(elm.src, { mode: 'no-cors' }).then((rsp) => {
-    privateValues.c = true;
-    if (rsp.ok) {
-      if (privateValues.$onload$) {
-        privateValues.$onload$.forEach((onload) => onload({ type: 'load' }));
-      }
-    } else if (privateValues.$onerror$) {
-      privateValues.$onerror$.forEach((onerror) => onerror({ type: 'error' }));
-    }
-  });
-};
-
 export const scriptElementSetSrc = (script: WorkerScriptElement) => {
   nextTick(() => {
-    const scripWinId = script[WinIdKey];
-    const scriptInstanceId = script[InstanceIdKey];
-    const ev = { type: 'load', target: script, currentTarget: script };
+    let $winId$ = script[WinIdKey];
+    let $instanceId$ = script[InstanceIdKey];
+    let $stateProp$ = StateProp.loadHandlers;
+
     try {
-      if (importScriptUrl(scripWinId, scriptInstanceId, script.src)) {
-        if (script[PrivateValues].$onload$) {
-          nextTick(() => script[PrivateValues].$onload$!.forEach((cb) => cb(ev)));
-        }
-        setCurrentScript(-1, '');
-      }
+      importScriptUrl($winId$, $instanceId$, script.src);
     } catch (e) {
+      $stateProp$ = StateProp.errorHandlers;
       console.error(e);
-      if (script[PrivateValues].$onerror$) {
-        nextTick(() =>
-          script[PrivateValues].$onerror$!.forEach((cb) => cb({ ...ev, type: 'error' }))
-        );
-      }
     }
-  });
+
+    webWorkerCtx.$postMessage$([
+      WorkerMessageType.RunStateProp,
+      { $winId$, $instanceId$, $stateProp$ },
+    ]);
+
+    setCurrentScript(-1, '');
+  }, 50);
 };
 
 const importScriptUrl = (winId: number, instanceId: number, scriptUrl: string) => {
-  scriptUrl = new URL(scriptUrl, webWorkerCtx.$location$ + '') + '';
-  srcUrls.set(instanceId, scriptUrl);
+  scriptUrl = resolveUrl(scriptUrl) + '';
+  setStateValue(winId, instanceId, StateProp.url, scriptUrl);
 
   if (debug && winId !== webWorkerCtx.$winId$) {
-    logWorker(
+    console.error(
       `Incorrect window context, winId: ${winId}, instanceId: ${instanceId}, scriptUrl: ${scriptUrl}`
     );
   }
 
-  if (setCurrentScript(instanceId, scriptUrl)) {
-    if (debug && webWorkerCtx.$config$.logScriptExecution) {
-      logWorker(`Execute script [data-pt-id="${instanceId}"] ${scriptUrl}`);
-    }
+  setCurrentScript(instanceId, scriptUrl);
 
-    webWorkerCtx.$importScripts$(scriptUrl);
-    return true;
+  if (debug && webWorkerCtx.$config$.logScriptExecution) {
+    logWorker(`Execute script[data-pt-id="${winId}.${instanceId}"], src: ${scriptUrl}`);
   }
-  return false;
+  webWorkerCtx.$importScripts$(scriptUrl);
 };
 
 const setCurrentScript = (instanceId: number, src: string) => {
   webWorkerCtx.$currentScriptId$ = instanceId;
-  if (src !== webWorkerCtx.$currentScriptUrl$) {
-    webWorkerCtx.$currentScriptUrl$ = src;
-    return true;
+  webWorkerCtx.$currentScriptUrl$ = src;
+};
+
+export const resolveUrl = (url?: string) => new URL(url || '', webWorkerCtx.$location$ + '');
+
+export const sendBeacon = (url: string, data?: any) => {
+  if (debug && webWorkerCtx.$config$.logSendBeaconRequests) {
+    try {
+      logWorker(`sendBeacon: ${resolveUrl(url)}${data ? ', data: ' + JSON.stringify(data) : ''}`);
+    } catch (e) {
+      console.error(e);
+    }
   }
-  return false;
+  try {
+    fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      keepalive: true,
+    });
+    return true;
+  } catch (e) {
+    console.error(e);
+    return false;
+  }
 };

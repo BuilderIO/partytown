@@ -1,12 +1,18 @@
 import { callMethod, getter, setter } from './worker-proxy';
-import { createElement, WorkerElement, WorkerNode, WorkerScriptElement } from './worker-node';
-import { InterfaceType, PlatformApiId } from '../types';
-import { logWorkerGetter, logWorkerSetter, toLower } from '../utils';
+import { constructInstance } from './worker-serialization';
+import { ExtraInstruction, InterfaceType, NodeName, PlatformInstanceId } from '../types';
+import { logWorkerGetter, logWorkerSetter, PT_SCRIPT, toLower } from '../utils';
 import { webWorkerCtx, WinIdKey } from './worker-constants';
+import { WorkerElement } from './worker-element';
 
 export class WorkerDocument extends WorkerElement {
   get body() {
-    return getNodeProp(this, PlatformApiId.body, 'BODY');
+    return constructInstance(
+      InterfaceType.Element,
+      PlatformInstanceId.body,
+      this[WinIdKey],
+      NodeName.Body
+    );
   }
 
   get compatMode() {
@@ -21,8 +27,16 @@ export class WorkerDocument extends WorkerElement {
     setter(this, ['cookie'], (webWorkerCtx.$documentCookie$ = cookie));
   }
 
-  createElement(tagName: string) {
-    return createElement(this, tagName, []);
+  createElement(tagName: string, $extraInstructions$?: ExtraInstruction[]) {
+    tagName = toLower(tagName);
+
+    if (tagName === 'script') {
+      $extraInstructions$ = [ExtraInstruction.SET_INERT_SCRIPT];
+    } else if (tagName === 'iframe') {
+      $extraInstructions$ = [ExtraInstruction.SET_IFRAME_SRCDOC, PT_SCRIPT as any];
+    }
+
+    return callMethod(this, ['createElement'], [tagName], $extraInstructions$);
   }
 
   get createEventObject() {
@@ -32,12 +46,12 @@ export class WorkerDocument extends WorkerElement {
 
   get currentScript() {
     if (webWorkerCtx.$currentScriptId$) {
-      return new WorkerScriptElement({
-        $winId$: this[WinIdKey],
-        $interfaceType$: InterfaceType.Element,
-        $instanceId$: webWorkerCtx.$currentScriptId$,
-        $nodeName$: 'SCRIPT',
-      });
+      return constructInstance(
+        InterfaceType.Element,
+        webWorkerCtx.$currentScriptId$,
+        this[WinIdKey],
+        NodeName.Script
+      );
     }
     return null;
   }
@@ -47,7 +61,12 @@ export class WorkerDocument extends WorkerElement {
   }
 
   get documentElement() {
-    return getNodeProp(this, PlatformApiId.documentElement, 'HTML');
+    return constructInstance(
+      InterfaceType.Element,
+      PlatformInstanceId.documentElement,
+      this[WinIdKey],
+      NodeName.DocumentElement
+    );
   }
 
   getElementsByTagName(tagName: string) {
@@ -60,19 +79,24 @@ export class WorkerDocument extends WorkerElement {
     }
     if (tagName === 'script') {
       return [
-        new WorkerScriptElement({
-          $winId$: this[WinIdKey],
-          $interfaceType$: InterfaceType.Element,
-          $instanceId$: webWorkerCtx.$firstScriptId$,
-          $nodeName$: 'SCRIPT',
-        }),
+        constructInstance(
+          InterfaceType.Element,
+          webWorkerCtx.$firstScriptId$,
+          this[WinIdKey],
+          NodeName.Script
+        ),
       ];
     }
     return callMethod(this, ['getElementsByTagName'], [tagName]);
   }
 
   get head() {
-    return getNodeProp(this, PlatformApiId.head, 'HEAD');
+    return constructInstance(
+      InterfaceType.Element,
+      PlatformInstanceId.head,
+      this[WinIdKey],
+      NodeName.Head
+    );
   }
 
   get implementation() {
@@ -120,11 +144,3 @@ export class WorkerDocument extends WorkerElement {
     setter(this, ['title'], (webWorkerCtx.$documentTitle$ = value));
   }
 }
-
-const getNodeProp = (node: WorkerNode, instanceId: number, tagName: string) =>
-  new WorkerElement({
-    $winId$: node[WinIdKey],
-    $interfaceType$: InterfaceType.Element,
-    $instanceId$: instanceId,
-    $nodeName$: tagName,
-  });

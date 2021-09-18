@@ -4,28 +4,52 @@ import {
   InterfaceType,
   MainAccessRequest,
   MainAccessResponse,
+  SerializedTransfer,
 } from '../types';
+import {
+  debug,
+  len,
+  logWorkerCall,
+  logWorkerGetter,
+  logWorkerSetter,
+  PT_PROXY_URL,
+} from '../utils';
 import { deserializeFromMain, serializeForMain } from './worker-serialization';
-import { InstanceIdKey, ProxyKey, webWorkerCtx, WinIdKey } from './worker-constants';
-import { len, logWorkerCall, logWorkerGetter, logWorkerSetter, PT_PROXY_URL } from '../utils';
+import {
+  InstanceIdKey,
+  InterfaceTypeKey,
+  NodeNameKey,
+  ProxyKey,
+  webWorkerCtx,
+  WinIdKey,
+} from './worker-constants';
 
-export const syncRequestToServiceWorker = (
+const syncRequestToServiceWorker = (
   target: any,
   $accessType$: AccessType,
   memberPath: string[],
   data?: any,
   $extraInstructions$?: ExtraInstruction[]
 ) => {
+  const $winId$ = target[WinIdKey];
+  const $instanceId$ = target[InstanceIdKey];
   const accessReq: MainAccessRequest = {
-    $winId$: target[WinIdKey] || webWorkerCtx.$winId$,
-    $instanceId$: target[InstanceIdKey],
-    $contextWinId$: webWorkerCtx.$winId$,
+    $winId$,
+    $instanceId$,
+    $interfaceType$: target[InterfaceTypeKey],
+    $nodeName$: target[NodeNameKey],
+    $forwardToWin$: webWorkerCtx.$winId$ !== target[WinIdKey],
     $msgId$: Math.random(),
     $accessType$,
     $memberPath$: memberPath,
     $data$: serializeForMain(data),
     $extraInstructions$,
   };
+
+  if (debug && typeof accessReq.$winId$ !== 'number') {
+    console.error(`Target missing winId`, accessReq);
+  }
+
   const xhr = new XMLHttpRequest();
   xhr.open('POST', webWorkerCtx.$scopePath$ + PT_PROXY_URL, false);
   xhr.send(JSON.stringify(accessReq));
@@ -94,7 +118,7 @@ const createComplexMember = (interfaceType: InterfaceType, target: any, memberPa
     const memberInfo = memberTypeInfo[memberPath[len(memberPath) - 1]];
     if (memberInfo === InterfaceType.Method) {
       return (...args: any[]) => callMethod(target, memberPath, args);
-    } else if (memberInfo > 0) {
+    } else if (memberInfo > InterfaceType.Window) {
       return proxy(memberInfo, target, [...memberPath]);
     }
   }

@@ -1,6 +1,6 @@
-import { MainWindowContext, InitializeScriptData, WorkerMessageType } from '../types';
 import { debug, logMain, PT_INITIALIZED_EVENT, PT_SCRIPT_TYPE } from '../utils';
 import { getAndSetInstanceId } from './main-instances';
+import { MainWindowContext, InitializeScriptData, WorkerMessageType } from '../types';
 import { mainEventForwarding } from './main-event-forwarding';
 
 export const readNextScript = (winCtx: MainWindowContext) => {
@@ -13,16 +13,14 @@ export const readNextScript = (winCtx: MainWindowContext) => {
 
   if (scriptElm) {
     // read the next script found
-    const $instanceId$: number = (scriptElm.dataset.ptId = getAndSetInstanceId(
-      winCtx,
-      scriptElm,
-      $winId$
-    ) as any);
+    const $instanceId$ = getAndSetInstanceId(winCtx, scriptElm, $winId$);
 
     const scriptData: InitializeScriptData = {
       $winId$,
       $instanceId$,
     };
+
+    scriptElm.dataset.ptId = createSelectorId(winCtx, $instanceId$);
 
     if (scriptElm.src) {
       scriptData.$url$ = scriptElm.src;
@@ -52,11 +50,13 @@ export const readNextScript = (winCtx: MainWindowContext) => {
 export const initializedWorkerScript = (
   winCtx: MainWindowContext,
   doc: Document,
-  initializedScriptId: number,
+  instanceId: number,
   errorMsg: string,
   script?: HTMLScriptElement | null
 ) => {
-  script = doc.querySelector<HTMLScriptElement>(`[data-pt-id="${initializedScriptId}"]`);
+  script = doc.querySelector<HTMLScriptElement>(
+    `[data-pt-id="${createSelectorId(winCtx, instanceId)}"]`
+  );
   if (script) {
     if (errorMsg) {
       script.dataset.ptError = errorMsg;
@@ -66,3 +66,6 @@ export const initializedWorkerScript = (
   }
   readNextScript(winCtx);
 };
+
+const createSelectorId = (winCtx: MainWindowContext, instanceId: number) =>
+  winCtx.$winId$ + '.' + instanceId;

@@ -53,6 +53,9 @@
         border: none;
       }
     </style>
+    <script>
+      window.name = 'Main';
+    </script>
   </head>
   <body>
     <h1>Iframe</h1>
@@ -84,7 +87,7 @@
             const elm = document.getElementById('testOnload');
             const iframe = document.createElement('iframe');
             iframe.onload = function (ev) {
-              elm.textContent = 'onload';
+              elm.textContent = ev.type;
               elm.className = 'testOnload';
             };
             iframe.src = 'content.html';
@@ -175,17 +178,17 @@
       </li>
 
       <li>
-        <strong>get contentWindow, window.someWindowVar</strong>
+        <strong>script.src set, window.someWindowVar</strong>
         <code id="testSetSomeWindowVar"></code>
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testSetSomeWindowVar');
             const iframe = document.createElement('iframe');
-            iframe.src = 'external-js.html';
             iframe.addEventListener('load', function (ev) {
               elm.textContent = iframe.contentWindow.someWindowVar.year;
               elm.className = 'testSetSomeWindowVar';
             });
+            iframe.src = 'external-js.html';
             elm.parentNode.insertBefore(iframe, null);
           })();
         </script>
@@ -209,19 +212,18 @@
             iframe.contentDocument.head.innerHTML = `
               <style>body { background: peachpuff; font-weight: bold; text-align: center; }</style>
             `;
-            iframe.contentDocument.body.innerHTML = `window.top.someValue`;
+            iframe.contentDocument.body.innerHTML = window.year + window.gw;
+
             const script = iframe.contentDocument.createElement('script');
             script.innerHTML = `
-              const parentWin = window.parent;
-              debugger;
-              const parentWinValue = parentWin.gw;
-
               const topWin = window.top;
               const topWinValue = topWin.year;
 
+              const parentWin = window.parent;
+              const parentWinValue = parentWin.gw;
+
               const value = parentWinValue + topWinValue;
 
-              console.log(value);
               const parentDocument = parentWin.document;
               const elm = parentDocument.getElementById('testTopSomeValue');
               elm.textContent = value;
@@ -233,9 +235,9 @@
       </li>
 
       <li>
-        <strong>script.src, window.parent</strong>
+        <strong>script.src set, window.parent</strong>
         <code id="testScriptWindowParent"></code>
-        <script>
+        <script type="text/partytown">
           testScriptWindowParent = { year: 1885 };
         </script>
         <script type="text/partytown">
@@ -244,15 +246,14 @@
             const iframe = document.createElement('iframe');
             elm.parentNode.insertBefore(iframe, null);
 
+            iframe.contentWindow.document.head.innerHTML = `
+              <style>body { background: maroon; font-weight: bold; color: white; text-align: center; }</style>
+            `;
+
             const script = iframe.contentWindow.document.createElement('script');
             script.addEventListener('load', () => {
               elm.className = 'testScriptWindowParent';
             });
-
-            iframe.contentWindow.document.head.innerHTML = `
-              <style>body { background: maroon; font-weight: bold; color: white; text-align: center; }</style>
-            `;
-            iframe.contentWindow.document.body.innerHTML = `script.src, window.parent`;
 
             script.src = 'parent-window.js';
             iframe.contentWindow.document.body.appendChild(script);
@@ -329,6 +330,12 @@
           `;
           iframe.contentDocument.body.appendChild(script);
 
+          const iframeWin = iframe.contentWindow;
+          const iframeOne = iframeWin.one;
+          const iframeTwo = one.two;
+          const iframeThree = two.three;
+          const iframeFn = three.fn;
+
           const a = iframe.contentWindow.one.two.three.fn(1955);
           const b = iframe.contentWindow.one.two.three.num;
 
@@ -351,6 +358,8 @@
         logCalls: true,
         logGetters: true,
         logSetters: true,
+        logImageRequests: true,
+        logSendBeaconRequests: true,
         logStackTraces: false,
         logScriptExecution: true,
       };

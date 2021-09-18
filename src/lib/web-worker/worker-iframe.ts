@@ -1,94 +1,94 @@
-import { getter, proxy, setter } from './worker-proxy';
-import { ExtraInstruction, InterfaceType, NodeName, PlatformApiId } from '../types';
-import { InstanceIdKey, InterfaceTypeKey, PrivateValues, WinIdKey } from './worker-constants';
+import { constructInstance } from './worker-serialization';
+import { getter, setter } from './worker-proxy';
+import { getInstanceStateValue, setInstanceStateValue, WorkerInstance } from './worker-instance';
+import {
+  EventHandler,
+  ExtraInstruction,
+  InterfaceType,
+  PlatformInstanceId,
+  StateProp,
+} from '../types';
 import { nextTick, PT_SCRIPT, PT_SCRIPT_TYPE } from '../utils';
-import { resolveUrl, WorkerSrcElement } from './worker-node';
-import { WorkerDocument } from './worker-document';
+import { resolveUrl } from './worker-exec';
+import { WorkerSrcElement } from './worker-element';
+import { webWorkerCtx, WinIdKey } from './worker-constants';
 
 export class WorkerIFrameElement extends WorkerSrcElement {
-  [PrivateValues]: {
-    c?: boolean;
-    $url$?: string;
-    $window$?: any;
-    $initLoad$?: number;
-    $onload$?: ((ev: any) => void)[];
-    $onerror$?: ((ev: any) => void)[];
-  };
-
   get contentDocument() {
-    return this.contentWindow.document;
+    return this.contentWindow!.document;
   }
 
-  get contentWindow(): Window {
-    if (!this[PrivateValues].$window$) {
-      const partyWinId = getter(this, ['partyWinId'], [ExtraInstruction.WAIT_FOR_INSTANCE_MEMBER]);
-      this[PrivateValues].$window$ = new WorkerContentWindow(partyWinId);
+  get contentWindow() {
+    let winId = getInstanceStateValue(this, StateProp.partyWinId);
+    if (!winId) {
+      winId = getter(this, ['partyWinId'], [ExtraInstruction.WAIT_FOR_INSTANCE_MEMBER]);
+      setInstanceStateValue(this, StateProp.partyWinId, winId);
     }
-    return this[PrivateValues].$window$;
+    return new WorkerContentWindow(InterfaceType.Window, PlatformInstanceId.window, winId);
   }
 
   get src() {
-    return this[PrivateValues].$url$ || '';
+    return getInstanceStateValue(this, StateProp.url) || '';
   }
   set src(url: string) {
-    let privateValues = this[PrivateValues];
     let xhr = new XMLHttpRequest();
+    let callbacks: EventHandler[];
 
     url = resolveUrl(url) + '';
 
-    if (privateValues.$url$ !== url) {
-      xhr.open('GET', (privateValues.$url$ = url), false);
+    if (this.src !== url) {
+      setInstanceStateValue(this, StateProp.url, url);
+
+      xhr.open('GET', url, false);
       xhr.send();
 
       if (xhr.status > 199 && xhr.status < 300) {
-        setter(this, ['srcdoc'], updateIframeScripts(xhr.responseText));
+        setter(this, ['srcdoc'], updateIframeContent(url, xhr.responseText));
 
-        if (privateValues.$onload$) {
-          nextTick(() => privateValues.$onload$!.forEach((onload) => onload({ type: 'load' })));
+        callbacks = getInstanceStateValue(this, StateProp.loadHandlers);
+        if (callbacks) {
+          nextTick(() => callbacks.forEach((onload) => onload({ type: 'load' })));
         }
-      } else if (privateValues.$onerror$) {
-        nextTick(() => privateValues.$onerror$!.forEach((onerror) => onerror({ type: 'error' })));
+      } else {
+        callbacks = getInstanceStateValue(this, StateProp.errorHandlers);
+        if (callbacks) {
+          nextTick(() => callbacks.forEach((onerror) => onerror({ type: 'error' })));
+        }
       }
     }
   }
 }
 
-export class WorkerContentWindow {
-  [WinIdKey]: number;
-  [InstanceIdKey]: number;
-  [InterfaceTypeKey]: number;
-  document!: WorkerDocument;
-  self!: WorkerContentWindow;
-  window!: WorkerContentWindow;
+export class WorkerContentWindow extends WorkerInstance {
+  get document() {
+    return constructInstance(InterfaceType.Document, PlatformInstanceId.document, this[WinIdKey]);
+  }
 
-  constructor(partyWinId: number) {
-    const _this = this;
-    _this[WinIdKey] = partyWinId;
-    _this[InstanceIdKey] = PlatformApiId.window;
-    _this[InterfaceTypeKey] = InterfaceType.Window;
+  get parent() {
+    return constructInstance(
+      InterfaceType.Window,
+      PlatformInstanceId.window,
+      webWorkerCtx.$parentWinId$
+    );
+  }
 
-    _this.document = new WorkerDocument({
-      $interfaceType$: InterfaceType.Document,
-      $instanceId$: PlatformApiId.document,
-      $winId$: partyWinId,
-      $nodeName$: NodeName.Document,
-    });
-
-    _this.window = _this.self = _this;
-
-    return proxy(InterfaceType.Window, _this, []);
+  get self() {
+    return this;
   }
 
   get top() {
-    return new WorkerContentWindow(0);
+    return top;
+  }
+
+  get window() {
+    return this;
   }
 }
 
-const updateIframeScripts = (html: string) =>
+const updateIframeContent = (url: string, html: string) =>
+  `<base href="${url}">` +
   html
     .replace(/<script>/g, `<script type="${PT_SCRIPT_TYPE}">`)
     .replace(/<script /g, `<script type="${PT_SCRIPT_TYPE}" `)
-    .replace(/text\/javascript/g, PT_SCRIPT_TYPE)
-    .replace(closingBody, PT_SCRIPT + closingBody);
-
-const closingBody = `</body>`;
+    .replace(/text\/javascript/g, PT_SCRIPT_TYPE) +
+  PT_SCRIPT;

@@ -1,5 +1,5 @@
 import { len } from '../utils';
-import { MainWindowContext, NodeName, PlatformApiId } from '../types';
+import { MainWindowContext, NodeName, PlatformInstanceId } from '../types';
 
 export const getInstanceId = (
   winCtx: MainWindowContext,
@@ -8,16 +8,16 @@ export const getInstanceId = (
   if (instance) {
     const nodeName = (instance as any as Node).nodeName;
     if (nodeName === NodeName.Document) {
-      return PlatformApiId.document;
+      return PlatformInstanceId.document;
     }
     if (nodeName === NodeName.DocumentElement) {
-      return PlatformApiId.documentElement;
+      return PlatformInstanceId.documentElement;
     }
     if (nodeName === NodeName.Head) {
-      return PlatformApiId.head;
+      return PlatformInstanceId.head;
     }
     if (nodeName === NodeName.Body) {
-      return PlatformApiId.body;
+      return PlatformInstanceId.body;
     }
     return winCtx.$instanceIdByInstance$.get(instance);
   }
@@ -45,16 +45,16 @@ export const getInstance = <T = InstanceType | null>(
   instanceItem?: any
 ): T => {
   const doc = winCtx.$window$.document;
-  if (instanceId === PlatformApiId.document) {
+  if (instanceId === PlatformInstanceId.document) {
     return doc as any;
   }
-  if (instanceId === PlatformApiId.documentElement) {
+  if (instanceId === PlatformInstanceId.documentElement) {
     return doc.documentElement as any;
   }
-  if (instanceId === PlatformApiId.head) {
+  if (instanceId === PlatformInstanceId.head) {
     return doc.head as any;
   }
-  if (instanceId === PlatformApiId.body) {
+  if (instanceId === PlatformInstanceId.body) {
     return doc.body as any;
   }
   instanceItem = winCtx.$instances$.find((i) => i[0] === instanceId);

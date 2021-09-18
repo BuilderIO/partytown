@@ -1,3 +1,5 @@
+import { debug } from '../utils';
+import { getAndSetInstanceId } from './main-instances';
 import {
   InitWebWorkerData,
   MainAccessRequest,
@@ -7,13 +9,15 @@ import {
   PartytownWebWorker,
   WorkerMessageType,
 } from '../types';
-import { debug } from '../utils';
-import { getAndSetInstanceId } from './main-instances';
 import { initializedWorkerScript, readNextScript } from './read-main-scripts';
 import { readMainInterfaces } from './read-interfaces';
 import WebWorkerBlob from '@web-worker-blob';
 
-const onMessageFromWebWorker = (winCtx: MainWindowContext, msg: MessageFromWorkerToSandbox) => {
+const onMessageFromWebWorker = (
+  winCtxs: Map<number, MainWindowContext>,
+  winCtx: MainWindowContext,
+  msg: MessageFromWorkerToSandbox
+) => {
   const msgType = msg[0];
   const doc = winCtx.$window$.document;
 
@@ -54,6 +58,10 @@ const onMessageFromWebWorker = (winCtx: MainWindowContext, msg: MessageFromWorke
       forwardMsgResolve(accessRsp);
       readNextScript(winCtx);
     }
+  } else if (msgType === WorkerMessageType.RunStateProp) {
+    // run this state prop on all web workers (only one of them actually has it)
+    // this is used for script onload, when the function was created in another window
+    winCtxs.forEach((winCtx) => winCtx.$worker$!.postMessage(msg));
   }
 };
 
@@ -68,7 +76,10 @@ export const forwardToWinAccessHandler = (
     worker.postMessage([WorkerMessageType.ForwardMainDataRequest, accessReq]);
   });
 
-export const createWebWorker = (winCtx: MainWindowContext) => {
+export const createWebWorker = (
+  winCtxs: Map<number, MainWindowContext>,
+  winCtx: MainWindowContext
+) => {
   winCtx.$worker$ = new Worker(
     debug
       ? './partytown-ww.debug.js'
@@ -80,5 +91,5 @@ export const createWebWorker = (winCtx: MainWindowContext) => {
     { name: `Partytown (${winCtx.$winId$}) 🎉` }
   );
 
-  winCtx.$worker$.onmessage = (ev) => onMessageFromWebWorker(winCtx, ev.data);
+  winCtx.$worker$.onmessage = (ev) => onMessageFromWebWorker(winCtxs, winCtx, ev.data);
 };

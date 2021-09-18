@@ -1,7 +1,8 @@
-(function () {
-  const elm = document.getElementById('testCurrentScriptSrc');
-  elm.textContent = document.currentScript.dataset.currentScript;
+const elm = document.getElementById('testCurrentScriptSrc');
+elm.textContent = document.currentScript.dataset.currentScript;
 
-  const loc = document.getElementById('testCurrentScriptSrcLocation');
-  loc.textContent = new URL(document.currentScript.src).pathname;
-})();
+const loc = document.getElementById('testCurrentScriptSrcLocation');
+
+const currentScript = document.currentScript;
+const currentUrl = new URL(currentScript.src);
+loc.textContent = currentUrl.pathname;

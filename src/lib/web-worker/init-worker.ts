@@ -1,17 +1,15 @@
-import { InitWebWorkerData, PlatformApiId } from '../types';
+import type { InitWebWorkerData } from '../types';
 import { initWebWorkerGlobal } from './worker-global';
-import { logWorker } from '../utils';
+import { logWorker, TOP_WIN_ID } from '../utils';
 import { webWorkerCtx } from './worker-constants';
-import { WorkerHistory } from './worker-history';
 import { WorkerLocation } from './worker-location';
-import { WorkerStorage } from './worker-storage';
 
 export const initWebWorker = (self: Worker, initWebWorkerData: InitWebWorkerData) => {
   Object.assign(webWorkerCtx, initWebWorkerData);
 
   logWorker(
     `Loaded web worker, winId: ${webWorkerCtx.$winId$}${
-      webWorkerCtx.$winId$ > 0 ? `, parentId: ` + webWorkerCtx.$parentWinId$ : ``
+      webWorkerCtx.$winId$ > TOP_WIN_ID ? `, parentId: ` + webWorkerCtx.$parentWinId$ : ``
     }`
   );
 
@@ -23,9 +21,6 @@ export const initWebWorker = (self: Worker, initWebWorkerData: InitWebWorkerData
     logWorker(`postMessage(${JSON.stringify(msg)}, "${targetOrigin}"})`);
 
   webWorkerCtx.$location$ = new WorkerLocation(initWebWorkerData.$url$);
-  webWorkerCtx.$history$ = new WorkerHistory();
-  webWorkerCtx.$localStorage$ = new WorkerStorage(PlatformApiId.localStorage);
-  webWorkerCtx.$sessionStorage$ = new WorkerStorage(PlatformApiId.sessionStorage);
 
   initWebWorkerGlobal(self, initWebWorkerData.$interfaces$[0][1]);
 

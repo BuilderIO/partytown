@@ -1,14 +1,14 @@
-import { MainAccessRequest, MainWindow, MainWindowContext, PlatformApiId } from '../types';
-import { debug } from '../utils';
-import { mainAccessHandler } from './main-access-handler';
-import { setInstanceId } from './main-instances';
 import { createWebWorker } from './messenger';
+import { debug, TOP_WIN_ID } from '../utils';
+import { mainAccessHandler } from './main-access-handler';
+import { MainAccessRequest, MainWindow, MainWindowContext, PlatformInstanceId } from '../types';
 import { readNextScript } from './read-main-scripts';
+import { setInstanceId } from './main-instances';
 
 export const initSandbox = async (sandboxWindow: Window) => {
-  let winIds = 0;
-  const windows = new WeakSet<MainWindow>();
+  let winIds = TOP_WIN_ID;
   const winCtxs = new Map<number, MainWindowContext>();
+  const windows = new WeakSet<MainWindow>();
   const mainWindow: MainWindow = sandboxWindow.parent as any;
   const swContainer = sandboxWindow.navigator.serviceWorker;
   const swRegistration = await swContainer.getRegistration();
@@ -37,14 +37,11 @@ export const initSandbox = async (sandboxWindow: Window) => {
         $parentWinId$: parentWin.partyWinId!,
         $config$: mainWindow.partytown,
         $cleanupInc$: 0,
-        $history$: win.history,
         $instanceIdByInstance$: new WeakMap(),
         $instances$: [],
-        $localStorage$: win.localStorage,
-        $nextId$: PlatformApiId.body + 1,
+        $nextId$: PlatformInstanceId.body + 1,
         $scopePath$: swRegistration!.scope,
-        $sessionStorage$: win.sessionStorage,
-        $url$: win.location + '',
+        $url$: win.document.baseURI,
         $window$: win,
       };
 
@@ -54,14 +51,14 @@ export const initSandbox = async (sandboxWindow: Window) => {
         winCtx.$startTime$ = performance.now();
       }
 
-      setInstanceId(winCtx, win, PlatformApiId.window);
-      setInstanceId(winCtx, win.history, PlatformApiId.history);
-      setInstanceId(winCtx, win.localStorage, PlatformApiId.localStorage);
-      setInstanceId(winCtx, win.sessionStorage, PlatformApiId.sessionStorage);
+      setInstanceId(winCtx, win, PlatformInstanceId.window);
+      setInstanceId(winCtx, win.history, PlatformInstanceId.history);
+      setInstanceId(winCtx, win.localStorage, PlatformInstanceId.localStorage);
+      setInstanceId(winCtx, win.sessionStorage, PlatformInstanceId.sessionStorage);
 
       swContainer.addEventListener('message', onMessageFromServiceWorker);
 
-      createWebWorker(winCtx);
+      createWebWorker(winCtxs, winCtx);
 
       win.addEventListener('load', () => readNextScript(winCtx));
     }

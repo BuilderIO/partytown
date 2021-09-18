@@ -5,7 +5,7 @@ import {
   webWorkerCtx,
   WinIdKey,
 } from './web-worker/worker-constants';
-import { InterfaceType, MainWindowContext, PlatformApiId } from './types';
+import { InterfaceType, MainWindowContext, PlatformInstanceId } from './types';
 
 export const debug = (globalThis as any).partytownDebug;
 
@@ -18,7 +18,7 @@ export const toUpper = (str: string) => str.toUpperCase();
 export const logMain = (winCtx: MainWindowContext, msg: string) => {
   if (debug) {
     let prefix: string;
-    if (winCtx.$winId$ === 0) {
+    if (winCtx.$winId$ === TOP_WIN_ID) {
       prefix = `Main (${winCtx.$winId$}) 🌎`;
     } else {
       prefix = `Iframe (${winCtx.$winId$}) 👾`;
@@ -101,19 +101,19 @@ const logTargetProp = (target: any, memberPath: string[]) => {
   let n = '';
   if (target) {
     const instanceId = target[InstanceIdKey];
-    if (instanceId === PlatformApiId.document) {
+    if (instanceId === PlatformInstanceId.document) {
       n = 'document.';
-    } else if (instanceId === PlatformApiId.documentElement) {
+    } else if (instanceId === PlatformInstanceId.documentElement) {
       n = 'document.documentElement.';
-    } else if (instanceId === PlatformApiId.head) {
+    } else if (instanceId === PlatformInstanceId.head) {
       n = 'document.head.';
-    } else if (instanceId === PlatformApiId.body) {
+    } else if (instanceId === PlatformInstanceId.body) {
       n = 'document.body.';
-    } else if (instanceId === PlatformApiId.history) {
+    } else if (instanceId === PlatformInstanceId.history) {
       n = 'history.';
-    } else if (instanceId === PlatformApiId.localStorage) {
+    } else if (instanceId === PlatformInstanceId.localStorage) {
       n = 'localStorage.';
-    } else if (instanceId === PlatformApiId.sessionStorage) {
+    } else if (instanceId === PlatformInstanceId.sessionStorage) {
       n = 'sessionStorage.';
     } else if (target.nodeType === 1) {
       n = toLower(target.nodeName) + '.';
@@ -148,25 +148,25 @@ const logValue = (memberPath: string[], v: any): string => {
   if (type === 'object') {
     const instanceId = v[InstanceIdKey];
     if (typeof instanceId === 'number') {
-      if (instanceId === PlatformApiId.body) {
+      if (instanceId === PlatformInstanceId.body) {
         return `<body>`;
       }
-      if (instanceId === PlatformApiId.document) {
+      if (instanceId === PlatformInstanceId.document) {
         return `#document`;
       }
-      if (instanceId === PlatformApiId.documentElement) {
+      if (instanceId === PlatformInstanceId.documentElement) {
         return `<html>`;
       }
-      if (instanceId === PlatformApiId.head) {
+      if (instanceId === PlatformInstanceId.head) {
         return `<head>`;
       }
-      if (instanceId === PlatformApiId.localStorage) {
+      if (instanceId === PlatformInstanceId.localStorage) {
         return `[localStorage]`;
       }
-      if (instanceId === PlatformApiId.sessionStorage) {
+      if (instanceId === PlatformInstanceId.sessionStorage) {
         return `[sessionStorage]`;
       }
-      if (instanceId === PlatformApiId.window) {
+      if (instanceId === PlatformInstanceId.window) {
         return `[window]`;
       }
       if (v[InterfaceTypeKey] === InterfaceType.TextNode) {
@@ -216,7 +216,7 @@ export const isValidMemberName = (memberName: string) => {
   }
 };
 
-export const nextTick = (cb: Function) => setTimeout(cb, 0);
+export const nextTick = (cb: Function, ms?: number) => setTimeout(cb, ms);
 export const EMPTY_ARRAY = [];
 
 export const PT_PROXY_URL = `proxytown`;
@@ -226,3 +226,5 @@ export const PT_SCRIPT_TYPE = `text/partytown`;
 export const PT_SCRIPT = `<script src="/~partytown/partytown${
   debug ? '.debug' : ''
 }.js" async defer></script>`;
+
+export const TOP_WIN_ID = 1;

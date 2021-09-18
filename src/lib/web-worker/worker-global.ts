@@ -1,38 +1,15 @@
 import { callMethod } from './worker-proxy';
-import { createElement } from './worker-node';
-import { InstanceIdKey, webWorkerCtx } from './worker-constants';
-import { InterfaceType, MemberTypeInfo, NodeName, PlatformApiId } from '../types';
-import { WorkerDocument } from './worker-document';
-import { WorkerContentWindow } from './worker-iframe';
+import { constructInstance } from './worker-serialization';
+import { Image } from './worker-image';
+import { InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import { InterfaceType, MemberTypeInfo, PlatformInstanceId } from '../types';
+import { nextTick, TOP_WIN_ID } from '../utils';
+
+import { sendBeacon } from './worker-exec';
 
 export const initWebWorkerGlobal = (self: any, windowMemberTypeInfo: MemberTypeInfo) => {
-  self[InstanceIdKey] = PlatformApiId.window;
-
-  Object.defineProperty(self, 'location', {
-    get: () => webWorkerCtx.$location$,
-    set: (href) => (webWorkerCtx.$location$!.href = href + ''),
-  });
-
-  self.document = new WorkerDocument({
-    $winId$: webWorkerCtx.$winId$,
-    $interfaceType$: InterfaceType.Document,
-    $instanceId$: PlatformApiId.document,
-    $nodeName$: NodeName.Document,
-  });
-
-  self.history = webWorkerCtx.$history$;
-
-  self.Image = class {
-    constructor() {
-      return createElement(self.document, 'img', []);
-    }
-  };
-
-  self.localStorage = webWorkerCtx.$localStorage$;
-  self.sessionStorage = webWorkerCtx.$sessionStorage$;
-
-  self.requestAnimationFrame = (cb: (t: number) => void) => setTimeout(() => cb(Date.now()), 16);
-  self.cancelAnimationFrame = (id: number) => clearTimeout(id);
+  self[WinIdKey] = webWorkerCtx.$winId$;
+  self[InstanceIdKey] = PlatformInstanceId.window;
 
   Object.keys(windowMemberTypeInfo).forEach((memberName) => {
     if (!self[memberName] && windowMemberTypeInfo[memberName] === InterfaceType.Method) {
@@ -40,7 +17,33 @@ export const initWebWorkerGlobal = (self: any, windowMemberTypeInfo: MemberTypeI
     }
   });
 
+  self.requestAnimationFrame = (cb: (t: number) => void) => nextTick(() => cb(Date.now()), 9);
+  self.cancelAnimationFrame = clearTimeout;
+
+  Object.defineProperty(self, 'location', {
+    get: () => webWorkerCtx.$location$,
+    set: (href) => (webWorkerCtx.$location$.href = href + ''),
+  });
+
+  self.document = constructInstance(InterfaceType.Document, PlatformInstanceId.document);
+  self.history = constructInstance(InterfaceType.History, PlatformInstanceId.history);
+  self.localStorage = constructInstance(InterfaceType.Storage, PlatformInstanceId.localStorage);
+  self.sessionStorage = constructInstance(InterfaceType.Storage, PlatformInstanceId.sessionStorage);
+
+  self.Image = Image;
+  navigator.sendBeacon = sendBeacon;
+
   self.self = self.window = self;
 
-  self.parent = self.top = new WorkerContentWindow(0);
+  if (webWorkerCtx.$winId$ === TOP_WIN_ID) {
+    self.parent = self.top = self;
+  } else {
+    self.parent = constructInstance(
+      InterfaceType.Window,
+      PlatformInstanceId.window,
+      webWorkerCtx.$parentWinId$
+    );
+
+    self.top = constructInstance(InterfaceType.Window, PlatformInstanceId.window, TOP_WIN_ID);
+  }
 };
