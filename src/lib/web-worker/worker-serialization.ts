@@ -17,7 +17,7 @@ import { WorkerDocument } from './worker-document';
 import { WorkerInstance } from './worker-instance';
 import { WorkerScriptElement } from './worker-script';
 
-export const serializeForMain = (value: any): SerializedTransfer | undefined => {
+export const serializeForMain = (value: any, added: Set<any>): SerializedTransfer | undefined => {
   if (value !== undefined) {
     const type = typeof value;
     if (type === 'string' || type === 'boolean' || type === 'number' || value == null) {
@@ -29,7 +29,10 @@ export const serializeForMain = (value: any): SerializedTransfer | undefined => 
     }
 
     if (Array.isArray(value)) {
-      return [SerializedType.Array, value.map(serializeForMain)];
+      if (!added.has(value)) {
+        return [SerializedType.Array, value.map((v) => serializeForMain(v, added))];
+      }
+      return [SerializedType.Array, []];
     }
 
     if (type === 'object') {
@@ -44,9 +47,13 @@ export const serializeForMain = (value: any): SerializedTransfer | undefined => 
       }
 
       const serializedObj: { [key: string]: SerializedTransfer | undefined } = {};
-      for (const k in value) {
-        serializedObj[k] = serializeForMain(value[k]);
+      if (!added.has(value)) {
+        added.add(value);
+        for (const k in value) {
+          serializedObj[k] = serializeForMain(value[k], added);
+        }
       }
+
       return [SerializedType.Object, serializedObj];
     }
   }

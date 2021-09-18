@@ -41,7 +41,7 @@ export const workerAccessHandler = (accessReq: MainAccessRequest) => {
       rtnValue = instance[lastMemberName].apply(instance, data);
     }
 
-    accessRsp.$rtnValue$ = serializeForMain(rtnValue);
+    accessRsp.$rtnValue$ = serializeForMain(rtnValue, new Set());
   } catch (e: any) {
     accessRsp.$error$ = String(e.stack || e);
   }

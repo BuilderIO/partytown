@@ -42,7 +42,7 @@ const syncRequestToServiceWorker = (
     $msgId$: Math.random(),
     $accessType$,
     $memberPath$: memberPath,
-    $data$: serializeForMain(data),
+    $data$: serializeForMain(data, new Set()),
     $extraInstructions$,
   };
 
