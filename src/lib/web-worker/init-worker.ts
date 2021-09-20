@@ -13,6 +13,7 @@ export const initWebWorker = (self: Worker, initWebWorkerData: InitWebWorkerData
     }`
   );
 
+  webWorkerCtx.$tasks$ = {};
   webWorkerCtx.$importScripts$ = importScripts.bind(self);
   (self as any).importScripts = undefined;
 

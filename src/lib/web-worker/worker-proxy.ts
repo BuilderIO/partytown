@@ -24,59 +24,73 @@ import {
   WinIdKey,
 } from './worker-constants';
 
-const syncRequestToServiceWorker = (
+const queueTask = (
   target: any,
   $accessType$: AccessType,
-  memberPath: string[],
+  $memberPath$: string[],
   data?: any,
   $extraInstructions$?: ExtraInstruction[]
 ) => {
-  const $winId$ = target[WinIdKey];
-  const $instanceId$ = target[InstanceIdKey];
+  const winId: number = target[WinIdKey];
+  const winQueue = (webWorkerCtx.$tasks$[winId] = webWorkerCtx.$tasks$[winId] || []);
+
+  const $forwardToWin$ = webWorkerCtx.$winId$ !== winId;
 
   const accessReqTask: MainAccessRequestTask = {
-    $instanceId$,
+    $instanceId$: target[InstanceIdKey],
     $interfaceType$: target[InterfaceTypeKey],
     $nodeName$: target[NodeNameKey],
-
     $accessType$,
-    $memberPath$: memberPath,
+    $memberPath$,
     $data$: serializeForMain(data, new Set()),
     $extraInstructions$,
   };
 
-  const accessReq: MainAccessRequest = {
-    $msgId$: Math.random(),
-    $winId$,
-    $forwardToWin$: webWorkerCtx.$winId$ !== target[WinIdKey],
-    $tasks$: [accessReqTask],
-  };
+  winQueue.push(accessReqTask);
+  return drainQueue(target, $memberPath$, $forwardToWin$, winQueue);
+};
 
-  if (debug && typeof accessReq.$winId$ !== 'number') {
-    console.error(`Target missing winId`, accessReq);
-  }
+const drainQueue = (
+  target: any,
+  $memberPath$: string[],
+  $forwardToWin$: boolean,
+  queue: MainAccessRequestTask[]
+) => {
+  if (len(queue)) {
+    const accessReq: MainAccessRequest = {
+      $msgId$: Math.random(),
+      $winId$: target[WinIdKey],
+      $forwardToWin$,
+      $tasks$: [...queue],
+    };
+    queue.length = 0;
 
-  const xhr = new XMLHttpRequest();
-  xhr.open('POST', webWorkerCtx.$scopePath$ + PT_PROXY_URL, false);
-  xhr.send(JSON.stringify(accessReq));
+    const xhr = new XMLHttpRequest();
+    const accessReqData = JSON.stringify(accessReq);
+    xhr.open('POST', webWorkerCtx.$scopePath$ + PT_PROXY_URL, false);
+    xhr.send(JSON.stringify(accessReq));
 
-  // look ma, i'm synchronous (•‿•)
+    // look ma, i'm synchronous (•‿•)
 
-  const accessRsp: MainAccessResponse = JSON.parse(xhr.responseText);
-  const errors = accessRsp.$errors$.join();
-  const isPromise = accessRsp.$isPromise$;
-  const rtn = deserializeFromMain(target, memberPath, accessRsp.$rtnValue$!);
-  if (errors) {
-    if (isPromise) {
-      return Promise.reject(errors);
+    const accessRsp: MainAccessResponse = JSON.parse(xhr.responseText);
+    const errors = accessRsp.$errors$.join();
+    const isPromise = accessRsp.$isPromise$;
+    const rtn = deserializeFromMain(target, $memberPath$, accessRsp.$rtnValue$!);
+    if (errors) {
+      if (debug) {
+        console.error(self.name, accessReqData);
+      }
+      if (isPromise) {
+        return Promise.reject(errors);
+      }
+      throw new Error(errors);
     }
-    throw new Error(errors);
-  }
 
-  if (isPromise) {
-    return Promise.resolve(rtn);
+    if (isPromise) {
+      return Promise.resolve(rtn);
+    }
+    return rtn;
   }
-  return rtn;
 };
 
 export const getter = (
@@ -84,20 +98,14 @@ export const getter = (
   memberPath: string[],
   extraInstructions?: ExtraInstruction[]
 ) => {
-  const rtn = syncRequestToServiceWorker(
-    target,
-    AccessType.Get,
-    memberPath,
-    undefined,
-    extraInstructions
-  );
+  const rtn = queueTask(target, AccessType.Get, memberPath, undefined, extraInstructions);
   logWorkerGetter(target, memberPath, rtn);
   return rtn;
 };
 
 export const setter = (target: any, memberPath: string[], value: any) => {
   logWorkerSetter(target, memberPath, value);
-  return syncRequestToServiceWorker(target, AccessType.Set, memberPath, value);
+  queueTask(target, AccessType.Set, memberPath, value);
 };
 
 export const callMethod = (
@@ -106,13 +114,7 @@ export const callMethod = (
   args: any[],
   extraInstructions?: ExtraInstruction[]
 ) => {
-  const rtn = syncRequestToServiceWorker(
-    target,
-    AccessType.CallMethod,
-    memberPath,
-    args,
-    extraInstructions
-  );
+  const rtn = queueTask(target, AccessType.CallMethod, memberPath, args, extraInstructions);
   logWorkerCall(target, memberPath, args, rtn);
   return rtn;
 };

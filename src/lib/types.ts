@@ -126,7 +126,9 @@ export const enum PlatformInstanceId {
   body,
 }
 
-export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {}
+export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {
+  $tasks$: { [winId: number]: MainAccessRequestTask[] };
+}
 
 export interface InitializeScriptData {
   $winId$: number;
