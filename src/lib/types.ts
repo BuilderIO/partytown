@@ -144,10 +144,14 @@ export const enum AccessType {
 export interface MainAccessRequest {
   $msgId$: number;
   $winId$: number;
+  $forwardToWin$: boolean;
+  $tasks$: MainAccessRequestTask[];
+}
+
+export interface MainAccessRequestTask {
   $instanceId$: number;
   $interfaceType$: InterfaceType;
   $nodeName$?: string;
-  $forwardToWin$: boolean;
   $accessType$: AccessType;
   $memberPath$: string[];
   $data$?: SerializedTransfer;
@@ -161,12 +165,11 @@ export const enum ExtraInstruction {
 }
 
 export interface MainAccessResponse {
-  $winId$: number;
   $msgId$: number;
-  $instanceId$: number;
+  $winId$: number;
+  $errors$: string[];
   $rtnValue$?: SerializedTransfer;
   $isPromise$?: any;
-  $error$?: string;
 }
 
 export const enum SerializedType {

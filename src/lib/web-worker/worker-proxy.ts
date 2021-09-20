@@ -3,8 +3,8 @@ import {
   ExtraInstruction,
   InterfaceType,
   MainAccessRequest,
+  MainAccessRequestTask,
   MainAccessResponse,
-  SerializedTransfer,
 } from '../types';
 import {
   debug,
@@ -33,17 +33,23 @@ const syncRequestToServiceWorker = (
 ) => {
   const $winId$ = target[WinIdKey];
   const $instanceId$ = target[InstanceIdKey];
-  const accessReq: MainAccessRequest = {
-    $winId$,
+
+  const accessReqTask: MainAccessRequestTask = {
     $instanceId$,
     $interfaceType$: target[InterfaceTypeKey],
     $nodeName$: target[NodeNameKey],
-    $forwardToWin$: webWorkerCtx.$winId$ !== target[WinIdKey],
-    $msgId$: Math.random(),
+
     $accessType$,
     $memberPath$: memberPath,
     $data$: serializeForMain(data, new Set()),
     $extraInstructions$,
+  };
+
+  const accessReq: MainAccessRequest = {
+    $msgId$: Math.random(),
+    $winId$,
+    $forwardToWin$: webWorkerCtx.$winId$ !== target[WinIdKey],
+    $tasks$: [accessReqTask],
   };
 
   if (debug && typeof accessReq.$winId$ !== 'number') {
@@ -57,16 +63,16 @@ const syncRequestToServiceWorker = (
   // look ma, i'm synchronous (•‿•)
 
   const accessRsp: MainAccessResponse = JSON.parse(xhr.responseText);
-  const error = accessRsp.$error$;
+  const errors = accessRsp.$errors$.join();
   const isPromise = accessRsp.$isPromise$;
-  if (error) {
+  const rtn = deserializeFromMain(target, memberPath, accessRsp.$rtnValue$!);
+  if (errors) {
     if (isPromise) {
-      return Promise.reject(error);
+      return Promise.reject(errors);
     }
-    throw new Error(error);
+    throw new Error(errors);
   }
 
-  const rtn = deserializeFromMain(target, memberPath, accessRsp.$rtnValue$!);
   if (isPromise) {
     return Promise.resolve(rtn);
   }

@@ -33,25 +33,22 @@ const sendMessageToSandboxFromServiceWorker = (
         resolve,
         setTimeout(() => {
           resolves.delete(accessReq.$msgId$);
-          resolve({
-            $winId$: accessReq.$winId$,
-            $msgId$: accessReq.$msgId$,
-            $instanceId$: accessReq.$instanceId$,
-            $error$: `Timeout`,
-          });
+          resolve(swMessageError(accessReq, `Timeout`));
         }, timeout),
       ];
       resolves.set(accessReq.$msgId$, msgResolve);
       client.postMessage(accessReq);
     } else {
-      resolve({
-        $winId$: accessReq.$winId$,
-        $msgId$: accessReq.$msgId$,
-        $instanceId$: accessReq.$instanceId$,
-        $error$: `No Partytown: ${accessReq}`,
-      });
+      resolve(swMessageError(accessReq, `No Party`));
     }
   });
+
+const swMessageError = (accessReq: MainAccessRequest, err: string) => ({
+  $winId$: accessReq.$winId$,
+  $msgId$: accessReq.$msgId$,
+  $tasks$: [],
+  $errors$: [err],
+});
 
 export const httpRequestFromWebWorker = (self: ServiceWorkerGlobalScope, req: Request) =>
   new Promise<Response>(async (resolve) => {
