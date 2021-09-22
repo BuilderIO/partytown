@@ -40,7 +40,7 @@ Partytown is a lazy-loaded `6kb` library to help relocate resource intensive scr
 
 ### Negative Impacts From Third-Party Scripts
 
-Even with a fast and higly tuned site and/or app following all of the best practices, it's all too common for your performance wins to be erased the moment third-party scripts are added. By third-party scripts we mean code that is embedded within your site, but not directly under your control. A few examples include: analytics, metrics, ads, A/B testing, trackers, etc. Their inclusion are often a double-edged sword.
+Even with a fast and highly tuned site and/or app following all of the best practices, it's all too common for your performance wins to be erased the moment third-party scripts are added. By third-party scripts we mean code that is embedded within your site, but not directly under your control. A few examples include: analytics, metrics, ads, A/B testing, trackers, etc. Their inclusion are often a double-edged sword.
 
 Below is a summary of potential issues, referenced from [Loading Third-Party JavaScript](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/loading-third-party-javascript):
 
@@ -69,13 +69,13 @@ We set out to solve this situation, so that apps of all sizes will be able to co
 
 ### Web Workers
 
-Partytown's philosophy is that the main thead should be dedicated to your code, and any scripts that are not required to be in the [critical path](https://developers.google.com/web/fundamentals/performance/critical-rendering-path) should be moved to a web worker. Main thread performance is, without question, more important than web worker thread performance. See the [example page](https://partytown.vercel.app/example/) and [test pages](https://partytown.vercel.app/) for some live demos.
+Partytown's philosophy is that the main thread should be dedicated to your code, and any scripts that are not required to be in the [critical path](https://developers.google.com/web/fundamentals/performance/critical-rendering-path) should be moved to a web worker. Main thread performance is, without question, more important than web worker thread performance. See the [example page](https://partytown.vercel.app/example/) and [test pages](https://partytown.vercel.app/) for some live demos.
 
 > If you're looking to run _your_ app within a web worker, we recommend the [WorkerDom](https://github.com/ampproject/worker-dom) project.
 
 ### Browser Window And DOM Access
 
-Traditionallly, communicating between the main thread and worker thread _must_ be [asyncrounous](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Concepts). Meaning that for the two threads to communicated, they cannot use blocking calls.
+Traditionally, communicating between the main thread and worker thread _must_ be [asyncrounous](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Concepts). Meaning that for the two threads to communicate, they cannot use blocking calls.
 
 Party town is different. It allows code executed from the web worker to access DOM _synchronously_. The benefit from this is that third-party scripts can continue to work exactly how they're coded.
 
@@ -86,7 +86,7 @@ const rects = element.getClientRects();
 console.log(rects.x, rects.y);
 ```
 
-First thing you'll notice is that there's no async/await, promise or callback. Instead, the call to `getClientRects()` is blocking, and the returned `rects` value contains the explected x and y properties.
+First thing you'll notice is that there's no async/await, promise or callback. Instead, the call to `getClientRects()` is blocking, and the returned `rects` value contains the expected x and y properties.
 
 Additionally, data passed between the main thread and web worker must be [serializable](https://en.wikipedia.org/wiki/Serialization). Partytown automatically handles the serializing and deserializing of data passed between threads.
 
@@ -135,22 +135,22 @@ Below are just a few examples of third-party scripts that might be a good candid
 
 ### How Does It Work?
 
-Partytown relies on [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API), [JavaScript Proxies](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy), and a communcation layer between them all.
+Partytown relies on [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API), [JavaScript Proxies](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Proxy), and a communication layer between them all.
 
 1. Scripts are disabled from running on the main thread by using the `type="text/partytown"` attribute on the `<script/>` tag.
 1. Service worker creates an `onfetch` handler to intercept specific requests.
 1. Web worker is given the scripts to execute within the worker thread.
 1. Web worker creates JavaScript Proxies to replicate and forward calls to the main thread APIs (such as DOM operations).
 1. Any call to the JS proxy uses [_syncrounous_ XHR](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Synchronous_and_Asynchronous_Requests#example_http_synchronous_request) requests.
-1. Service worker intercepts requests, then is able to asyncrounsly communicate with the main thread.
-1. When the service worker receives the results from the main thead, it responds to the web worker's request.
+1. Service worker intercepts requests, then is able to asynchronously communicate with the main thread.
+1. When the service worker receives the results from the main thread, it responds to the web worker's request.
 1. From the point of view of code executing on the web worker, everything was synchronous, and each call to the document was blocking.
 
 #### What About Atomics?
 
 [Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics) are the latest and greatest way to accomplish the challenge of _synchronously_ sending data between the main thread and the web worker. Honestly, it looks like Atomics may be the preferred and "correct" way to perform these tasks. However, as of right now, more research is needed into how Atomics could be used in production.
 
-Currently, [Safari does not support Atomics](https://caniuse.com/mdn-javascript_builtins_atomics) due to [Spectre Attacks: Exploiting Speculative Execution](https://spectreattack.com/spectre.pdf). When Spectre attacks were first documented, the other browsers removed Atomics too, but they have since added it back. Due to this uncertainy, we're opting for a solution that works everywhere, today. That said, we'd love to do more research here and hopefully migrate to use Atomics in the future, and use the current system as the fallback.
+Currently, [Safari does not support Atomics](https://caniuse.com/mdn-javascript_builtins_atomics) due to [Spectre Attacks: Exploiting Speculative Execution](https://spectreattack.com/spectre.pdf). When Spectre attacks were first documented, the other browsers removed Atomics too, but they have since added it back. Due to this uncertainty, we're opting for a solution that works everywhere, today. That said, we'd love to do more research here and hopefully migrate to use Atomics in the future, and use the current system as the fallback.
 
 ### Browser Features And Fallback
 
@@ -227,7 +227,7 @@ export default class MyDocument extends Document {
 
 ### Vanilla
 
-The React components are simply wrappers for convience, but Partytown itself can be used from any framework, or no framework at all by just updating HTML.
+The React components are simply wrappers for convenience, but Partytown itself can be used from any framework, or no framework at all by just updating HTML.
 
 Each third-party script that shouldn't run in the main thread, but instead party 🎉 in a web worker, should set the `type` attribute of its opening script tag to `text/partytown`. This does two things:
 
@@ -265,7 +265,7 @@ To set the [config](#config), add a `<script>` with a `partytown={};` global bef
 
 ### Copy Tasks
 
-An additional requirement is that the `/~partytown/` directory should serve the static files found within [@builder.io/partytown/lib](https://unpkg.com/browse/@builder.io/partytown/lib/). The quickest way is to copy the `lib` directory into a public `/~partytown` directory within your static server. Another option would be to setup a copy task within the project's bundler, or create a build step.
+An additional requirement is that the `/~partytown/` directory should serve the static files found within [@builder.io/partytown/lib](https://unpkg.com/browse/@builder.io/partytown/lib/). The quickest way is to copy the `lib` directory into a public `/~partytown` directory within your static server. Another option would be to set up a copy task within the project's bundler, or create a build step.
 
 Below is an example of using [Webpack's copy plugin](https://webpack.js.org/plugins/copy-webpack-plugin/) to copy the source `lib` directory found in the [@builder.io/partytown](https://www.npmjs.com/package/@builder.io/partytown) package, to the `public/~partytown/` directory:
 
