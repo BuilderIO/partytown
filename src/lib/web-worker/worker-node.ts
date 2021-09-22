@@ -1,9 +1,16 @@
-import { InterfaceTypeKey, NodeNameKey } from './worker-constants';
-import { len } from '../utils';
+import { applyBeforeSyncSetters, callMethod } from './worker-proxy';
+import { EMPTY_ARRAY, len } from '../utils';
+import { insertIframe } from './worker-exec';
+import { InterfaceTypeKey, NodeNameKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import { NodeName, WorkerMessageType } from '../types';
 import type { WorkerDocument } from './worker-document';
 import { WorkerInstance } from './worker-instance';
 
 export class WorkerNode extends WorkerInstance {
+  appendChild(node: WorkerNode) {
+    return this.insertBefore(node, null);
+  }
+
   get ownerDocument(): WorkerDocument {
     return document as any;
   }
@@ -12,6 +19,20 @@ export class WorkerNode extends WorkerInstance {
     return undefined;
   }
   set href(_: any) {}
+
+  insertBefore(newNode: WorkerNode, referenceNode: WorkerNode | null) {
+    applyBeforeSyncSetters(this[WinIdKey], newNode);
+
+    newNode = callMethod(this, ['insertBefore'], [newNode, referenceNode], EMPTY_ARRAY);
+
+    if (newNode[NodeNameKey] === NodeName.IFrame) {
+      insertIframe(newNode);
+    } else if (newNode[NodeNameKey] === NodeName.Script) {
+      webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextWorkerScript]);
+    }
+
+    return newNode;
+  }
 
   get nodeName() {
     return this[NodeNameKey];

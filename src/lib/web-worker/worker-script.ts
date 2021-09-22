@@ -1,8 +1,9 @@
 import { getInstanceStateValue, setInstanceStateValue } from './worker-instance';
 import { getter, setter } from './worker-proxy';
-import { scriptElementSetSrc } from './worker-exec';
+import { ImmediateSettersKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import { resolveUrl } from './worker-exec';
+import { serializeForMain } from './worker-serialization';
 import { StateProp } from '../types';
-import { webWorkerCtx, WinIdKey } from './worker-constants';
 import { WorkerSrcElement } from './worker-element';
 
 export class WorkerScriptElement extends WorkerSrcElement {
@@ -14,9 +15,10 @@ export class WorkerScriptElement extends WorkerSrcElement {
   }
   set src(url: string) {
     if (this[WinIdKey] === webWorkerCtx.$winId$) {
-      if (getInstanceStateValue(this, StateProp.url) !== url) {
-        setInstanceStateValue(this, StateProp.url, url);
-        scriptElementSetSrc(this);
+      url = resolveUrl(url) + '';
+      setInstanceStateValue(this, StateProp.url, url);
+      if (this[ImmediateSettersKey]) {
+        this[ImmediateSettersKey]!.push([['src'], serializeForMain(url)]);
       }
     } else {
       setter(this, ['src'], url);

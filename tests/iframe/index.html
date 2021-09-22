@@ -309,6 +309,34 @@
         </script>
       </li>
 
+      <li>
+        <strong>different document.createElement</strong>
+        <code id="testDiffDocumentCreateElement"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDiffDocumentCreateElement');
+            const iframe = document.createElement('iframe');
+            elm.parentNode.insertBefore(iframe, null);
+
+            iframe.contentWindow.document.head.innerHTML = `
+              <style>body { background: yellow; font-weight: bold; color: black; text-align: center; }</style>
+            `;
+
+            const section = document.createElement('section');
+            section.textContent = section.localName;
+            iframe.contentDocument.body.appendChild(section);
+
+            const script = document.createElement('script');
+            script.innerHTML = `
+              const elm = self.parent.document.getElementById('testDiffDocumentCreateElement');
+              elm.textContent = 'section';
+              elm.className = 'testDiffDocumentCreateElement';
+            `;
+            iframe.contentWindow.document.body.appendChild(script);
+          })();
+        </script>
+      </li>
+
       <!-- <li>
         <strong>parent call, one.two.three.fn(1955)</strong>
         <code id="testMemberNames"></code>

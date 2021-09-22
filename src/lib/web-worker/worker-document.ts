@@ -1,8 +1,16 @@
 import { callMethod, getter, setter } from './worker-proxy';
-import { constructInstance } from './worker-serialization';
-import { ExtraInstruction, InterfaceType, NodeName, PlatformInstanceId } from '../types';
-import { logWorkerGetter, logWorkerSetter, PT_SCRIPT, toLower } from '../utils';
-import { webWorkerCtx, WinIdKey } from './worker-constants';
+import { constructInstance, getElementConstructor } from './worker-constructors';
+import { ImmediateSettersKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import { InterfaceType, NodeName, PlatformInstanceId } from '../types';
+import {
+  logWorkerGetter,
+  logWorkerSetter,
+  PT_SCRIPT,
+  PT_SCRIPT_TYPE,
+  randomId,
+  toUpper,
+} from '../utils';
+import { serializeForMain } from './worker-serialization';
 import { WorkerElement } from './worker-element';
 
 export class WorkerDocument extends WorkerElement {
@@ -27,16 +35,23 @@ export class WorkerDocument extends WorkerElement {
     setter(this, ['cookie'], (webWorkerCtx.$documentCookie$ = cookie));
   }
 
-  createElement(tagName: string, $extraInstructions$?: ExtraInstruction[]) {
-    tagName = toLower(tagName);
+  createElement(tagName: string) {
+    tagName = toUpper(tagName);
 
-    if (tagName === 'script') {
-      $extraInstructions$ = [ExtraInstruction.SET_INERT_SCRIPT];
-    } else if (tagName === 'iframe') {
-      $extraInstructions$ = [ExtraInstruction.SET_IFRAME_SRCDOC, PT_SCRIPT as any];
+    const winId = this[WinIdKey];
+    const instanceId = randomId();
+    const ElementCstr = getElementConstructor(tagName);
+    const elm = new ElementCstr(InterfaceType.Element, instanceId, winId, tagName);
+
+    if (tagName === NodeName.Script) {
+      elm[ImmediateSettersKey] = [[['type'], serializeForMain(PT_SCRIPT_TYPE)]];
+    } else if (tagName === NodeName.IFrame) {
+      elm[ImmediateSettersKey] = [[['srcdoc'], serializeForMain(PT_SCRIPT)]];
+    } else {
+      elm[ImmediateSettersKey] = [];
     }
 
-    return callMethod(this, ['createElement'], [tagName], $extraInstructions$);
+    return elm;
   }
 
   get createEventObject() {
@@ -70,14 +85,12 @@ export class WorkerDocument extends WorkerElement {
   }
 
   getElementsByTagName(tagName: string) {
-    tagName = toLower(tagName);
-    if (tagName === 'body') {
+    tagName = toUpper(tagName);
+    if (tagName === NodeName.Body) {
       return [this.body];
-    }
-    if (tagName === 'head') {
+    } else if (tagName === NodeName.Head) {
       return [this.head];
-    }
-    if (tagName === 'script') {
+    } else if (tagName === NodeName.Script) {
       return [
         constructInstance(
           InterfaceType.Element,
@@ -86,8 +99,9 @@ export class WorkerDocument extends WorkerElement {
           NodeName.Script
         ),
       ];
+    } else {
+      return callMethod(this, ['getElementsByTagName'], [tagName]);
     }
-    return callMethod(this, ['getElementsByTagName'], [tagName]);
   }
 
   get head() {

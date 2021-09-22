@@ -1,17 +1,12 @@
-import { constructInstance } from './worker-serialization';
+import { constructInstance } from './worker-constructors';
 import { getter, setter } from './worker-proxy';
 import { getInstanceStateValue, setInstanceStateValue, WorkerInstance } from './worker-instance';
-import {
-  EventHandler,
-  ExtraInstruction,
-  InterfaceType,
-  PlatformInstanceId,
-  StateProp,
-} from '../types';
-import { nextTick, PT_SCRIPT, PT_SCRIPT_TYPE } from '../utils';
+import { InterfaceType, PlatformInstanceId, StateProp } from '../types';
+import { PT_SCRIPT, PT_SCRIPT_TYPE } from '../utils';
 import { resolveUrl } from './worker-exec';
+import { ImmediateSettersKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import { serializeForMain } from './worker-serialization';
 import { WorkerSrcElement } from './worker-element';
-import { webWorkerCtx, WinIdKey } from './worker-constants';
 
 export class WorkerIFrameElement extends WorkerSrcElement {
   get contentDocument() {
@@ -21,7 +16,7 @@ export class WorkerIFrameElement extends WorkerSrcElement {
   get contentWindow() {
     let winId = getInstanceStateValue(this, StateProp.partyWinId);
     if (!winId) {
-      winId = getter(this, ['partyWinId'], [ExtraInstruction.WAIT_FOR_INSTANCE_MEMBER]);
+      winId = getter(this, ['partyWinId']);
       setInstanceStateValue(this, StateProp.partyWinId, winId);
     }
     return new WorkerContentWindow(InterfaceType.Window, PlatformInstanceId.window, winId);
@@ -32,27 +27,25 @@ export class WorkerIFrameElement extends WorkerSrcElement {
   }
   set src(url: string) {
     let xhr = new XMLHttpRequest();
-    let callbacks: EventHandler[];
+    let iframeContent: string;
+    let isSuccessfulLoad: boolean;
 
     url = resolveUrl(url) + '';
-
     if (this.src !== url) {
       setInstanceStateValue(this, StateProp.url, url);
 
       xhr.open('GET', url, false);
       xhr.send();
 
-      if (xhr.status > 199 && xhr.status < 300) {
-        setter(this, ['srcdoc'], updateIframeContent(url, xhr.responseText));
+      isSuccessfulLoad = xhr.status > 199 && xhr.status < 300;
+      setInstanceStateValue(this, StateProp.isSuccessfulLoad, isSuccessfulLoad);
 
-        callbacks = getInstanceStateValue(this, StateProp.loadHandlers);
-        if (callbacks) {
-          nextTick(() => callbacks.forEach((onload) => onload({ type: 'load' })));
-        }
-      } else {
-        callbacks = getInstanceStateValue(this, StateProp.errorHandlers);
-        if (callbacks) {
-          nextTick(() => callbacks.forEach((onerror) => onerror({ type: 'error' })));
+      if (isSuccessfulLoad) {
+        iframeContent = updateIframeContent(url, xhr.responseText);
+        if (this[ImmediateSettersKey]) {
+          this[ImmediateSettersKey]!.push([['srcdoc'], serializeForMain(iframeContent)]);
+        } else {
+          setter(this, ['srcdoc'], iframeContent);
         }
       }
     }

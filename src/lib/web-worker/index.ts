@@ -10,10 +10,10 @@ import {
   RunStatePropData,
   WorkerMessageType,
 } from '../types';
+import { runStateHandlers } from './worker-instance';
 import { webWorkerCtx } from './worker-constants';
 import { workerAccessHandler } from './worker-access-handler';
 import { workerEventForwarding } from './worker-event-forwarding';
-import { runStateProp } from './worker-instance';
 
 const queuedEvents: MessageEvent<MessageFromSandboxToWorker>[] = [];
 
@@ -34,9 +34,9 @@ const onMessage = (ev: MessageEvent<MessageFromSandboxToWorker>) => {
       workerAccessHandler(msgData as MainAccessRequest);
     } else if (msgType === WorkerMessageType.ForwardEvent) {
       workerEventForwarding(msgData as any, msg[2] as any);
-    } else if (msgType === WorkerMessageType.RunStateProp) {
+    } else if (msgType === WorkerMessageType.RunStateHandlers) {
       const data: RunStatePropData = msgData as any;
-      runStateProp(data.$winId$, data.$instanceId$, data.$stateProp$);
+      runStateHandlers(data.$winId$, data.$instanceId$, data.$stateProp$);
     }
   } else if (msgType === WorkerMessageType.MainDataResponseToWorker) {
     // initialize the web worker with the received the main data

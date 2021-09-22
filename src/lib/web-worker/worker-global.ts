@@ -1,5 +1,5 @@
 import { callMethod } from './worker-proxy';
-import { constructInstance } from './worker-serialization';
+import { constructInstance } from './worker-constructors';
 import { Image } from './worker-image';
 import { InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { InterfaceType, MemberTypeInfo, PlatformInstanceId } from '../types';

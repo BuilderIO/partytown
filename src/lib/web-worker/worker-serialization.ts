@@ -1,8 +1,8 @@
 import { callMethod } from './worker-proxy';
-import { debug, logWorker } from '../utils';
+import { constructInstance } from './worker-constructors';
+import { debug, logWorker, randomId } from '../utils';
 import {
   InterfaceType,
-  NodeName,
   PlatformInstanceId,
   SerializedInstance,
   SerializedRefTransfer,
@@ -10,15 +10,11 @@ import {
   SerializedType,
 } from '../types';
 import { InstanceIdKey, InterfaceTypeKey, NodeNameKey, WinIdKey } from './worker-constants';
-import { WorkerAnchorElement, WorkerDocumentElementChild, WorkerElement } from './worker-element';
-import { WorkerNode, WorkerNodeList } from './worker-node';
-import { WorkerContentWindow, WorkerIFrameElement } from './worker-iframe';
-import { WorkerDocument } from './worker-document';
-import { WorkerInstance } from './worker-instance';
-import { WorkerScriptElement } from './worker-script';
+import { WorkerNodeList } from './worker-node';
 
-export const serializeForMain = (value: any, added: Set<any>): SerializedTransfer | undefined => {
+export const serializeForMain = (value: any, added?: Set<any>): SerializedTransfer | undefined => {
   if (value !== undefined) {
+    added = added || new Set();
     const type = typeof value;
     if (type === 'string' || type === 'boolean' || type === 'number' || value == null) {
       return [SerializedType.Primitive, value];
@@ -122,51 +118,13 @@ export const constructSerializedInstance = ({
   }
 };
 
-export const constructInstance = (
-  interfaceType: InterfaceType,
-  instanceId: number,
-  winId?: number,
-  nodeName?: string
-) => {
-  nodeName =
-    interfaceType === InterfaceType.Document
-      ? NodeName.Document
-      : interfaceType === InterfaceType.TextNode
-      ? NodeName.Text
-      : nodeName;
-
-  const Cstr = getConstructor(interfaceType, nodeName);
-  return new Cstr(interfaceType, instanceId, winId, nodeName);
-};
-
-const getConstructor = (interfaceType: InterfaceType, nodeName?: string): typeof WorkerInstance => {
-  if (interfaceType === InterfaceType.Element) {
-    const Cstrs: { [nodeName: string]: any } = {
-      A: WorkerAnchorElement,
-      BODY: WorkerDocumentElementChild,
-      HEAD: WorkerDocumentElementChild,
-      IFRAME: WorkerIFrameElement,
-      SCRIPT: WorkerScriptElement,
-    };
-    return Cstrs[nodeName!] || WorkerElement;
-  } else if (interfaceType === InterfaceType.Document) {
-    return WorkerDocument;
-  } else if (interfaceType === InterfaceType.Window) {
-    return WorkerContentWindow;
-  } else if (interfaceType === InterfaceType.TextNode) {
-    return WorkerNode;
-  } else {
-    return WorkerInstance;
-  }
-};
-
 const refsByRefId = new Map<number, Ref>();
 const refIdsByRef = new WeakMap<Ref, number>();
 
 const serializeRef = (ref: any, refId?: number): SerializedRefTransfer => {
   refId = refIdsByRef.get(ref);
   if (!refId) {
-    refIdsByRef.set(ref, (refId = Math.random()));
+    refIdsByRef.set(ref, (refId = randomId()));
     refsByRefId.set(refId, ref);
   }
   return [SerializedType.Ref, refId];

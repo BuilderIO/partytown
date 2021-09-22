@@ -1,6 +1,5 @@
 import { EventHandler, StateProp } from '../types';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-instance';
-import { InstanceIdKey, WinIdKey } from './worker-constants';
 import { resolveUrl } from './worker-exec';
 import { toLower } from '../utils';
 import { WorkerNode } from './worker-node';

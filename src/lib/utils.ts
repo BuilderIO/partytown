@@ -228,3 +228,5 @@ export const PT_SCRIPT = `<script src="/~partytown/partytown${
 }.js" async defer></script>`;
 
 export const TOP_WIN_ID = 1;
+
+export const randomId = () => Math.round(Math.random() * 999999999);

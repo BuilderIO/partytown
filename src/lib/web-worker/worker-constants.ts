@@ -5,4 +5,5 @@ export const InstanceIdKey = Symbol();
 export const InterfaceTypeKey = Symbol();
 export const NodeNameKey = Symbol();
 export const ProxyKey = Symbol();
+export const ImmediateSettersKey = Symbol();
 export const webWorkerCtx: WebWorkerContext = {} as any;

@@ -47,7 +47,7 @@ test('iframe', async ({ page }) => {
   const testScriptOnload = page.locator('#testScriptOnload');
   await expect(testScriptOnload).toHaveText('load');
 
-  // await page.waitForSelector('.testMemberNames');
-  // const testMemberNames = page.locator('#testMemberNames');
-  // await expect(testMemberNames).toHaveText('1985');
+  await page.waitForSelector('.testDiffDocumentCreateElement');
+  const testDiffDocumentCreateElement = page.locator('#testDiffDocumentCreateElement');
+  await expect(testDiffDocumentCreateElement).toHaveText('section');
 });

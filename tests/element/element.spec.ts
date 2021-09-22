@@ -45,4 +45,10 @@ test('element', async ({ page }) => {
 
   const testParentElement = page.locator('#testParentElement');
   await expect(testParentElement).toHaveText('hasParentElement');
+
+  const testSyncSetters = page.locator('#testSyncSetters');
+  await expect(testSyncSetters).toHaveText('101');
+
+  const testSyncSettersCall = page.locator('#testSyncSettersCall');
+  await expect(testSyncSettersCall).toHaveText('some-id');
 });

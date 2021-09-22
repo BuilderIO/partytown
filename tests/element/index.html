@@ -216,6 +216,32 @@
         </script>
       </li>
 
+      <li>
+        <strong>before sync setters, get</strong>
+        <code id="testSyncSetters"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testSyncSetters');
+            const section = document.createElement('section');
+            section.textContent = '101';
+            elm.textContent = section.textContent;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>before sync setters, call</strong>
+        <code id="testSyncSettersCall"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testSyncSettersCall');
+            const div = document.createElement('div');
+            div.id = 'some-id';
+            elm.textContent = div.getAttribute('id');
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

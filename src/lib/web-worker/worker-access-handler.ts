@@ -1,4 +1,11 @@
-import { AccessType, MainAccessRequest, MainAccessResponse, WorkerMessageType } from '../types';
+import {
+  AccessType,
+  MainAccessRequest,
+  MainAccessResponse,
+  PlatformInstanceId,
+  WorkerMessageType,
+} from '../types';
+import { callMethod } from './worker-proxy';
 import {
   constructSerializedInstance,
   deserializeFromMain,
@@ -39,10 +46,23 @@ export const workerAccessHandler = (accessReq: MainAccessRequest) => {
       } else if (accessType === AccessType.Set) {
         instance[lastMemberName] = data;
       } else if (accessType === AccessType.CallMethod) {
-        rtnValue = instance[lastMemberName].apply(instance, data);
+        if (
+          accessReqTask.$instanceId$ === PlatformInstanceId.document &&
+          lastMemberName === 'createElement'
+        ) {
+          rtnValue = callMethod(
+            instance,
+            memberPath,
+            data,
+            accessReqTask.$immediateSetters$,
+            accessReqTask.$newInstanceId$
+          );
+        } else {
+          rtnValue = instance[lastMemberName].apply(instance, data);
+        }
       }
 
-      accessRsp.$rtnValue$ = serializeForMain(rtnValue, new Set());
+      accessRsp.$rtnValue$ = serializeForMain(rtnValue);
     } catch (e: any) {
       accessRsp.$errors$.push(String(e.stack || e));
     }

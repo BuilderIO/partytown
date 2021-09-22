@@ -1,14 +1,8 @@
-import {
-  AccessType,
-  ExtraInstruction,
-  MainAccessRequest,
-  MainAccessResponse,
-  MainWindowContext,
-} from '../types';
+import { AccessType, MainAccessRequest, MainAccessResponse, MainWindowContext } from '../types';
 import { deserializeFromWorker, serializeForWorker } from './main-serialization';
-import { EMPTY_ARRAY, isPromise, len, PT_SCRIPT_TYPE } from '../utils';
+import { EMPTY_ARRAY, isPromise, len } from '../utils';
 import { forwardToWinAccessHandler } from './messenger';
-import { getInstance } from './main-instances';
+import { getInstance, setInstanceId } from './main-instances';
 
 export const mainAccessHandler = async (
   winCtx: MainWindowContext,
@@ -30,13 +24,14 @@ export const mainAccessHandler = async (
     let memberPath = accessReqTask.$memberPath$;
     let memberPathLength = len(memberPath);
     let lastMemberName = memberPath[memberPathLength - 1];
-    let extraInstructions = accessReqTask.$extraInstructions$ || EMPTY_ARRAY;
+    let immediateSetters = accessReqTask.$immediateSetters$ || EMPTY_ARRAY;
     let instance: any;
     let rtnValue: any;
     let data: any;
     let i: number;
     let count: number;
     let tmr: any;
+    let immediateSetterName: string;
 
     try {
       instance = getInstance(winCtx, instanceId);
@@ -49,7 +44,7 @@ export const mainAccessHandler = async (
         data = deserializeFromWorker(winCtx, instanceId, accessReqTask.$data$);
 
         if (accessType === AccessType.Get) {
-          if (extraInstructions.includes(ExtraInstruction.WAIT_FOR_INSTANCE_MEMBER)) {
+          if (lastMemberName === 'partyWinId') {
             await new Promise<void>((resolve) => {
               count = 0;
               tmr = setInterval(() => {
@@ -66,14 +61,19 @@ export const mainAccessHandler = async (
           instance[lastMemberName] = data;
         } else if (accessType === AccessType.CallMethod) {
           rtnValue = instance[lastMemberName].apply(instance, data);
-          extraInstructions.forEach((extra, i) => {
-            if (extra === ExtraInstruction.SET_INERT_SCRIPT) {
-              (rtnValue as HTMLScriptElement).type = PT_SCRIPT_TYPE;
-            }
-            if (extra === ExtraInstruction.SET_IFRAME_SRCDOC) {
-              (rtnValue as HTMLIFrameElement).srcdoc = extraInstructions[i + 1] as any;
-            }
+
+          immediateSetters.map((immediateSetter) => {
+            immediateSetterName = immediateSetter[0][0];
+            rtnValue[immediateSetterName] = deserializeFromWorker(
+              winCtx,
+              instanceId,
+              immediateSetter[1]
+            );
           });
+
+          if (accessReqTask.$newInstanceId$) {
+            setInstanceId(winCtx, rtnValue, accessReqTask.$newInstanceId$);
+          }
         }
 
         if (isPromise(rtnValue)) {

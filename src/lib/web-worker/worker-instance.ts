@@ -1,23 +1,27 @@
+import { EventHandler, ImmediateSetter, InterfaceType, StateProp } from '../types';
 import {
+  ImmediateSettersKey,
   InstanceIdKey,
   InterfaceTypeKey,
   NodeNameKey,
   webWorkerCtx,
   WinIdKey,
 } from './worker-constants';
-import { EventHandler, InterfaceType, StateProp } from '../types';
+import { nextTick } from '../utils';
 import { proxy } from './worker-proxy';
 
 export class WorkerInstance {
   [WinIdKey]: number;
   [InstanceIdKey]: number;
   [InterfaceTypeKey]: number;
-  [NodeNameKey]?: string;
+  [NodeNameKey]: string | undefined;
+  [ImmediateSettersKey]: ImmediateSetter[] | undefined;
 
   constructor(interfaceType: InterfaceType, instanceId: number, winId?: number, nodeName?: string) {
     this[WinIdKey] = winId || webWorkerCtx.$winId$;
     this[InstanceIdKey] = instanceId!;
     this[NodeNameKey] = nodeName;
+    this[ImmediateSettersKey] = undefined;
     return proxy((this[InterfaceTypeKey] = interfaceType), this, []);
   }
 }
@@ -27,7 +31,7 @@ export const instanceState = new Map<string, { [prop: string]: any }>();
 export const getInstanceStateValue = (instance: WorkerInstance, propName: StateProp) =>
   getStateValue(instance[WinIdKey], instance[InstanceIdKey], propName);
 
-const getStateValue = (
+export const getStateValue = (
   winId: number,
   instanceId: number,
   propName: StateProp,
@@ -56,16 +60,19 @@ export const setStateValue = (
 
 const getKey = (winId: number, instanceId: number) => winId + '.' + instanceId;
 
-export const runStateProp = (
+export const runStateHandlers = (
   winId: number,
   instanceId: number,
-  stateProp: StateProp,
-  value?: any
+  handlerType: StateProp,
+  handlers?: EventHandler[]
 ) => {
-  value = getStateValue(winId, instanceId, stateProp);
-  if (value) {
-    (value as EventHandler[]).forEach((cb) =>
-      cb({ type: stateProp === StateProp.errorHandlers ? 'error' : 'load' })
+  handlers = getStateValue(winId, instanceId, handlerType);
+  if (handlers) {
+    nextTick(() =>
+      handlers!.map((cb) =>
+        cb({ type: handlerType === StateProp.errorHandlers ? 'error' : 'load' })
+      )
     );
   }
+  return !!handlers;
 };

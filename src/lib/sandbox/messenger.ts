@@ -58,7 +58,7 @@ const onMessageFromWebWorker = (
       forwardMsgResolve(accessRsp);
       readNextScript(winCtx);
     }
-  } else if (msgType === WorkerMessageType.RunStateProp) {
+  } else if (msgType === WorkerMessageType.RunStateHandlers) {
     // run this state prop on all web workers (only one of them actually has it)
     // this is used for script onload, when the function was created in another window
     winCtxs.forEach((winCtx) => winCtx.$worker$!.postMessage(msg));

@@ -7,7 +7,7 @@ export type MessageFromWorkerToSandbox =
   | [WorkerMessageType.InitializedWorkerScript, number, string]
   | [WorkerMessageType.InitializeNextWorkerScript]
   | [WorkerMessageType.ForwardMainDataResponse, MainAccessResponse]
-  | [WorkerMessageType.RunStateProp, RunStatePropData];
+  | [WorkerMessageType.RunStateHandlers, RunStatePropData];
 
 export type MessageFromSandboxToWorker =
   | [WorkerMessageType.MainDataResponseToWorker, InitWebWorkerData]
@@ -20,7 +20,7 @@ export type MessageFromSandboxToWorker =
     ]
   | [WorkerMessageType.ForwardMainDataRequest, MainAccessRequest]
   | [WorkerMessageType.ForwardEvent, string, any[] | undefined]
-  | [WorkerMessageType.RunStateProp, RunStatePropData];
+  | [WorkerMessageType.RunStateHandlers, RunStatePropData];
 
 export const enum WorkerMessageType {
   MainDataRequestFromWorker,
@@ -31,7 +31,7 @@ export const enum WorkerMessageType {
   ForwardMainDataRequest,
   ForwardMainDataResponse,
   ForwardEvent,
-  RunStateProp,
+  RunStateHandlers,
 }
 
 export type RunStatePropData = {
@@ -43,6 +43,7 @@ export type RunStatePropData = {
 export const enum StateProp {
   errorHandlers,
   loadHandlers,
+  isSuccessfulLoad,
   url,
   partyWinId,
 }
@@ -157,14 +158,11 @@ export interface MainAccessRequestTask {
   $accessType$: AccessType;
   $memberPath$: string[];
   $data$?: SerializedTransfer;
-  $extraInstructions$?: ExtraInstruction[];
+  $immediateSetters$?: ImmediateSetter[];
+  $newInstanceId$?: number;
 }
 
-export const enum ExtraInstruction {
-  SET_INERT_SCRIPT,
-  SET_IFRAME_SRCDOC,
-  WAIT_FOR_INSTANCE_MEMBER,
-}
+export type ImmediateSetter = [string[], SerializedTransfer | undefined];
 
 export interface MainAccessResponse {
   $msgId$: number;
@@ -300,6 +298,7 @@ export const enum NodeName {
   Document = '#document',
   DocumentElement = 'HTML',
   DocumentFragment = '#document-fragment',
+  IFrame = 'IFRAME',
   Head = 'HEAD',
   Script = 'SCRIPT',
   Text = '#text',

@@ -67,6 +67,7 @@
           })();
         </script>
       </li>
+
       <li>
         <strong>Image() onerror</strong>
         <code id="testImageOnError"></code>
@@ -82,6 +83,7 @@
           })();
         </script>
       </li>
+
       <li>
         <strong>Image() addEventListener('load')</strong>
         <code id="testImageListenerLoad"></code>
@@ -97,6 +99,7 @@
           })();
         </script>
       </li>
+
       <li>
         <strong>Image() addEventListener('error')</strong>
         <code id="testImageListenerError"></code>
@@ -112,36 +115,41 @@
           })();
         </script>
       </li>
+
       <li>
         <strong>&lt;img&gt; onload</strong>
         <code id="testImgOnLoad"></code>
         <script type="text/partytown">
           (function () {
-            const image = document.createElement('img');
-            image.onload = function (ev) {
+            const img = document.createElement('img');
+            img.onload = function (ev) {
               const elm = document.getElementById('testImgOnLoad');
               elm.textContent = ev.type;
               elm.className = 'testImgOnLoad';
             };
-            image.src = 'dot.gif?testImgOnLoad';
+            img.src = 'dot.gif?testImgOnLoad';
+            document.body.insertBefore(img, null);
           })();
         </script>
       </li>
+
       <li>
         <strong>&lt;img&gt; onerror</strong>
         <code id="testImgOnError"></code>
         <script type="text/partytown">
           (function () {
-            const image = document.createElement('img');
-            image.onerror = function (ev) {
+            const img = document.createElement('img');
+            img.onerror = function (ev) {
               const elm = document.getElementById('testImgOnError');
               elm.textContent = ev.type;
               elm.className = 'testImgOnError';
             };
-            image.src = '404.gif?testImgOnError';
+            img.src = '404.gif?testImgOnError';
+            document.body.appendChild(img);
           })();
         </script>
       </li>
+
       <li>
         <strong>&lt;img&gt; addEventListener('load')</strong>
         <code id="testImgListenerLoad"></code>
@@ -157,6 +165,7 @@
           })();
         </script>
       </li>
+
       <li>
         <strong>&lt;img&gt; addEventListener('error')</strong>
         <code id="testImgListenerError"></code>
