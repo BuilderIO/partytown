@@ -75,7 +75,7 @@ Partytown's philosophy is that the main thread should be dedicated to your code,
 
 ### Browser Window And DOM Access
 
-Traditionally, communicating between the main thread and worker thread _must_ be [asyncrounous](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Concepts). Meaning that for the two threads to communicate, they cannot use blocking calls.
+Traditionally, communicating between the main thread and worker thread _must_ be [asynchronous](https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Concepts). Meaning that for the two threads to communicate, they cannot use blocking calls.
 
 Party town is different. It allows code executed from the web worker to access DOM _synchronously_. The benefit from this is that third-party scripts can continue to work exactly how they're coded.
 
