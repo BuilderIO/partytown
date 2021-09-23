@@ -1,6 +1,6 @@
 # Partytown 🎉
 
-[![hackmd-github-sync-badge](https://hackmd.io/cfpOAVjyQCi2TcKNCSU5GA/badge)](https://hackmd.io/cfpOAVjyQCi2TcKNCSU5GA)
+[Introducing Partytown: Run Third-Party Scripts From a Web Worker](https://dev.to/adamdbradley/introducing-partytown-run-third-party-scripts-from-a-web-worker-2cnp)
 
 > A fun location for your third-party scripts to hang out
 
