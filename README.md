@@ -141,7 +141,7 @@ Partytown relies on [Web Workers](https://developer.mozilla.org/en-US/docs/Web/A
 1. Service worker creates an `onfetch` handler to intercept specific requests.
 1. Web worker is given the scripts to execute within the worker thread.
 1. Web worker creates JavaScript Proxies to replicate and forward calls to the main thread APIs (such as DOM operations).
-1. Any call to the JS proxy uses [_syncrounous_ XHR](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Synchronous_and_Asynchronous_Requests#example_http_synchronous_request) requests.
+1. Any call to the JS proxy uses [_synchronous_ XHR](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/Synchronous_and_Asynchronous_Requests#example_http_synchronous_request) requests.
 1. Service worker intercepts requests, then is able to asynchronously communicate with the main thread.
 1. When the service worker receives the results from the main thread, it responds to the web worker's request.
 1. From the point of view of code executing on the web worker, everything was synchronous, and each call to the document was blocking.
