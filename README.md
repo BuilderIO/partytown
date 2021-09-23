@@ -253,7 +253,7 @@ To load Partytown with just HTML, the library script below should be added withi
 <!--End Partytown-->
 ```
 
-Note that the loaded script _must_ be hosted from the same origin as the HTML page, rather than a CDN. Additionally, the Partytown library should be hosted from its own dedicated root directory `/~partytown/`. This root directory becomes the [scope](https://developers.google.com/web/ilt/pwa/introduction-to-service-worker#registration_and_scope) for the service worker, and all client-side requests within that path are intercepted by Partytown.
+Note that the service worker script _must_ be hosted from the same origin as the HTML page, rather than a CDN. Additionally, the service worker must be hosted from a directory that ensures all HTML pages are within the [scope](https://developers.google.com/web/ilt/pwa/introduction-to-service-worker#registration_and_scope) for the service worker, so that all client-side requests from those pages are intercepted by Partytown.
 
 With scripts disabled from executing, the Partytown library can lazily begin loading and executing the scripts from inside a worker.
 
