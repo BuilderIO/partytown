@@ -82,11 +82,11 @@ Party town is different. It allows code executed from the web worker to access D
 For example, the code below works as expected within a web worker:
 
 ```javascript
-const rects = element.getClientRects();
-console.log(rects.x, rects.y);
+const rect = element.getBoundingClientRect();
+console.log(rect.x, rect.y);
 ```
 
-First thing you'll notice is that there's no async/await, promise or callback. Instead, the call to `getClientRects()` is blocking, and the returned `rects` value contains the expected x and y properties.
+First thing you'll notice is that there's no async/await, promise or callback. Instead, the call to `getBoundingClientRect()` is blocking, and the returned `rect` value contains the expected `x` and `y` properties.
 
 Additionally, data passed between the main thread and web worker must be [serializable](https://en.wikipedia.org/wiki/Serialization). Partytown automatically handles the serializing and deserializing of data passed between threads.
 
