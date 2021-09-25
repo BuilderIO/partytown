@@ -8,3 +8,4 @@ node_modules/
 /tests/~partytown/
 /tests/videos/
 /tsc/
+.idea/
