@@ -18,8 +18,6 @@ export class PartytownGtmModule {
     const head = this.document.getElementsByTagName('head')[0];
     const forwardConfigScript: HTMLScriptElement = renderer.createElement('script');
 
-    console.log(forwardConfigScript);
-
     forwardConfigScript.innerHTML = appendForwardConfig('dataLayer.push');
 
     renderer.appendChild(head, forwardConfigScript);
