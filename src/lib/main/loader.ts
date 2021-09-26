@@ -54,7 +54,7 @@ export function loader(
         clearTimeout(timeout);
       });
 
-      if (win.crossOriginIsolated) {
+      if ('SharedArrayBuffer' in win) {
         // atomics support
         ready('atomics');
       } else if ('serviceWorker' in nav) {

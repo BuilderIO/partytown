@@ -7,7 +7,6 @@ import type {
   MessengerRequestCallback,
   PartytownWebWorker,
 } from '../types';
-import { onMessageFromWebWorker } from './on-messenge-from-worker';
 import { registerWindow } from './main-register-window';
 import syncCreateMessenger from '@sync-create-messenger';
 import WebWorkerBlob from '@web-worker-blob';
@@ -21,9 +20,9 @@ export const initSandbox = async (sandboxWindow: any) => {
   const receiveMessage: MessengerRequestCallback = (accessReq, responseCallback) =>
     mainAccessHandler(worker, accessReq).then(responseCallback);
 
-  const success = await syncCreateMessenger(sandboxWindow, receiveMessage);
+  const onMessageHandler = await syncCreateMessenger(sandboxWindow, receiveMessage);
 
-  if (success) {
+  if (onMessageHandler) {
     worker = new Worker(
       debug
         ? WebWorkerUrl
@@ -36,7 +35,7 @@ export const initSandbox = async (sandboxWindow: any) => {
     );
 
     worker.onmessage = (ev: MessageEvent<MessageFromWorkerToSandbox>) =>
-      onMessageFromWebWorker(worker, mainWindow, ev.data);
+      onMessageHandler(worker, mainWindow, ev.data);
 
     if (debug) {
       logMain(`Created web worker`);

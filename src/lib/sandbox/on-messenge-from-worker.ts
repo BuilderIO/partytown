@@ -3,6 +3,7 @@ import {
   MainWindow,
   MessageFromWorkerToSandbox,
   PartytownWebWorker,
+  WinId,
   WorkerMessageType,
 } from '../types';
 import { randomId } from '../utils';
@@ -28,7 +29,8 @@ export const onMessageFromWebWorker = (
     // web worker has finished initializing and ready to run scripts
     registerWindow(worker, randomId(), mainWindow, 1);
   } else {
-    const winCtx = winCtxs[msg[1]]!;
+    const winId = msg[1] as WinId;
+    const winCtx = winCtxs[winId]!;
     if (winCtx) {
       if (msgType === WorkerMessageType.InitializeNextScript) {
         // web worker has been initialized with the main data

@@ -1,5 +1,7 @@
 import type { MainAccessRequest, Messenger } from '../types';
 
+import { onMessageFromWebWorker } from '../sandbox/on-messenge-from-worker';
+
 const createMessengerServiceWorker: Messenger = async (sandboxWindow, receiveMessage) => {
   const swContainer = sandboxWindow.navigator.serviceWorker;
   const swRegistration = await swContainer.getRegistration();
@@ -12,7 +14,7 @@ const createMessengerServiceWorker: Messenger = async (sandboxWindow, receiveMes
 
   swContainer.addEventListener('message', receiveMessageFromWorker);
 
-  return !!swRegistration;
+  return !!swRegistration ? onMessageFromWebWorker : null;
 };
 
 export default createMessengerServiceWorker;

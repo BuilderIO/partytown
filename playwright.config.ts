@@ -7,6 +7,9 @@ const config: PlaywrightTestConfig = {
       width: 520,
       height: 600,
     },
+    launchOptions: {
+      args: ['--enable-features=SharedArrayBuffer'],
+    },
     contextOptions: {
       recordVideo: {
         dir: 'tests/videos/',
