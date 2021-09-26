@@ -1,6 +1,8 @@
 .cache/
 .DS_Store
 node_modules/
+/index.cjs
+/index.mjs
 /lib/
 /react/
 /tests/~partytown/

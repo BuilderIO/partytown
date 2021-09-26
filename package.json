@@ -3,15 +3,23 @@
   "version": "0.0.3",
   "description": "Relocate resource intensive 3rd-party scripts off of the main thread and into a web worker.",
   "license": "MIT",
+  "main": "./index.cjs",
+  "module": "./index.mjs",
   "exports": {
     "./react": {
+      "import": "./react/index.mjs",
+      "require": "./react/index.cjs"
+    },
+    ".": {
       "import": "./index.mjs",
       "require": "./index.cjs"
     }
   },
   "files": [
     "/lib/",
-    "/react/"
+    "/react/",
+    "index.cjs",
+    "index.mjs"
   ],
   "scripts": {
     "build": "tsc && rollup -c",

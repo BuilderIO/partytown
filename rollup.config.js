@@ -21,8 +21,8 @@ export default async function (cmdArgs) {
   const srcDir = join(rootDir, 'src');
   const srcLibDir = join(srcDir, 'lib');
   const srcReactDir = join(srcDir, 'react');
-  const buildDir = join(rootDir, 'lib');
   const testsDir = join(rootDir, 'tests');
+  const libBuildDir = join(rootDir, 'lib');
   const testsBuildDir = join(testsDir, '~partytown');
   const reactBuildDir = join(rootDir, 'react');
   const cacheDir = join(rootDir, '.cache');
@@ -64,7 +64,7 @@ export default async function (cmdArgs) {
   };
 
   if (!isDev) {
-    await emptyDir(buildDir);
+    await emptyDir(libBuildDir);
     await emptyDir(reactBuildDir);
     await emptyDir(testsBuildDir);
     await emptyDir(join(testsDir, 'videos'));
@@ -99,7 +99,7 @@ export default async function (cmdArgs) {
 
     const webWorkerCode = generated.output[0].code;
     if (debug) {
-      await writeFile(join(buildDir, `partytown-ww.debug.js`), webWorkerCode);
+      await writeFile(join(libBuildDir, `partytown-ww.debug.js`), webWorkerCode);
     } else {
       await writeFile(join(cacheDir, `partytown-ww.js`), webWorkerCode);
     }
@@ -150,7 +150,7 @@ export default async function (cmdArgs) {
     const sandboxJsCode = generated.output[0].code;
     let sandboxHtml;
     if (debug) {
-      await writeFile(join(buildDir, `partytown-sandbox.debug.js`), sandboxJsCode);
+      await writeFile(join(libBuildDir, `partytown-sandbox.debug.js`), sandboxJsCode);
 
       sandboxHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><script src="./partytown-sandbox.debug.js"></script></head></html>`;
       await writeFile(join(cacheDir, `partytown-sandbox.debug.html`), sandboxHtml);
@@ -164,7 +164,7 @@ export default async function (cmdArgs) {
 
   async function serviceWorker() {
     const swDebug = {
-      file: join(buildDir, 'partytown-sw.debug.js'),
+      file: join(libBuildDir, 'partytown-sw.debug.js'),
       format: 'es',
       exports: 'none',
       plugins: [terser(debugOpts)],
@@ -173,7 +173,7 @@ export default async function (cmdArgs) {
     const output = [swDebug];
     if (!isDev) {
       output.push({
-        file: join(buildDir, 'partytown-sw.js'),
+        file: join(libBuildDir, 'partytown-sw.js'),
         format: 'es',
         exports: 'none',
         plugins: [managlePropsPlugin(), terser(minOpts), fileSize()],
@@ -219,7 +219,7 @@ export default async function (cmdArgs) {
             }
           },
           writeBundle() {
-            copySync(buildDir, testsBuildDir);
+            copySync(libBuildDir, testsBuildDir);
           },
         },
       ],
@@ -228,14 +228,14 @@ export default async function (cmdArgs) {
 
   function main() {
     const partytownDebug = {
-      file: join(buildDir, 'partytown.debug.js'),
+      file: join(libBuildDir, 'partytown.debug.js'),
       format: 'es',
       exports: 'none',
       plugins: [terser(debugOpts)],
     };
 
     const partytownMin = {
-      file: join(buildDir, 'partytown.js'),
+      file: join(libBuildDir, 'partytown.js'),
       format: 'es',
       exports: 'none',
       plugins: [terser(minOpts), fileSize()],
@@ -256,7 +256,7 @@ export default async function (cmdArgs) {
         }),
         {
           writeBundle() {
-            copySync(buildDir, testsBuildDir);
+            copySync(libBuildDir, testsBuildDir);
           },
         },
       ],
@@ -265,14 +265,14 @@ export default async function (cmdArgs) {
 
   function snippet() {
     const partytownDebug = {
-      file: join(buildDir, 'partytown-snippet.debug.js'),
+      file: join(libBuildDir, 'partytown-snippet.debug.js'),
       format: 'iife',
       exports: 'none',
       plugins: [terser(debugOpts)],
     };
 
     const partytownMin = {
-      file: join(buildDir, 'partytown-snippet.js'),
+      file: join(libBuildDir, 'partytown-snippet.js'),
       format: 'es',
       exports: 'none',
       plugins: [
@@ -305,7 +305,46 @@ export default async function (cmdArgs) {
         }),
         {
           writeBundle() {
-            copySync(buildDir, testsBuildDir);
+            copySync(libBuildDir, testsBuildDir);
+          },
+        },
+      ],
+    };
+  }
+
+  function defaultExport() {
+    const output = [
+      {
+        file: join(rootDir, 'index.cjs'),
+        format: 'cjs',
+      },
+      {
+        file: join(rootDir, 'index.mjs'),
+        format: 'es',
+      },
+    ];
+
+    return {
+      input: join(srcDir, 'index.ts'),
+      output,
+      plugins: [
+        typescript({
+          cacheDir: join(cacheDir, 'default'),
+          outputToFilesystem: false,
+        }),
+        {
+          name: 'snippet',
+          resolveId(id) {
+            if (id.startsWith('@')) return id;
+          },
+          async load(id) {
+            if (id === '@snippet') {
+              const codeFile = 'partytown-snippet.js';
+              const code = readFileSync(join(libBuildDir, codeFile), 'utf-8').trim();
+              return `const PartytownSnippet = ${JSON.stringify(
+                code
+              )}; export default PartytownSnippet;`;
+            }
           },
         },
       ],
@@ -341,22 +380,26 @@ export default async function (cmdArgs) {
       ],
       external: ['react'],
       plugins: [
+        {
+          resolveId(id) {
+            if (id === '../index') {
+              return {
+                external: true,
+                id,
+              };
+            }
+          },
+        },
         typescript({
           cacheDir: join(cacheDir, 'react'),
           outputToFilesystem: false,
         }),
         {
-          name: 'reactSnippet',
-          resolveId(id) {
-            if (id.startsWith('@')) return id;
-          },
-          async load(id) {
-            if (id === '@snippet') {
-              const codeFile = isDev ? 'partytown-snippet.debug.js' : 'partytown-snippet.js';
-              const code = readFileSync(join(buildDir, codeFile), 'utf-8').trim();
-              return `const PartytownSnippet = ${JSON.stringify(
-                code
-              )}; export default PartytownSnippet;`;
+          name: 'moduleExtension',
+          generateBundle(opts, bundle) {
+            const ext = opts.format === 'cjs' ? 'cjs' : 'mjs';
+            for (const f in bundle) {
+              bundle[f].code = bundle[f].code.replace(`../index`, `../index.${ext}`);
             }
           },
         },
@@ -371,7 +414,7 @@ export default async function (cmdArgs) {
     };
   }
 
-  return [await serviceWorker(), main(), snippet(), react()];
+  return [await serviceWorker(), main(), snippet(), defaultExport(), react()];
 }
 
 function managlePropsPlugin() {
