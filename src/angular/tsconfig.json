@@ -6,8 +6,6 @@
     "baseUrl": "./",
     "outDir": "./dist/out-tsc",
     "forceConsistentCasingInFileNames": true,
-    "strict": true,
-    "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "sourceMap": true,
     "declaration": false,
@@ -21,7 +19,7 @@
     },
     "target": "es2017",
     "module": "es2020",
-    "lib": ["es2018", "dom"]
+    "lib": ["es2020", "DOM", "WebWorker"]
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,

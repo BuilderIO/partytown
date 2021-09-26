@@ -59,7 +59,9 @@
             "sourceMap": true,
             "namedChunks": true
           },
-          "configurations": {}
+          "configurations": {
+            "development": {}
+          }
         },
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
