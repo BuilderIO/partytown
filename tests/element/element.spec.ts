@@ -40,9 +40,6 @@ test('element', async ({ page }) => {
   const testSetAttribute = page.locator('#testSetAttribute');
   await expect(testSetAttribute).toHaveText('1985');
 
-  const testAnchor = page.locator('#testAnchor');
-  await expect(testAnchor).toHaveText('/element/some/other/path');
-
   const testParentElement = page.locator('#testParentElement');
   await expect(testParentElement).toHaveText('hasParentElement');
 

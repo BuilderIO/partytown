@@ -7,6 +7,7 @@ import {
   MainAccessResponse,
   NodeName,
   PlatformInstanceId,
+  SerializedTransfer,
 } from '../types';
 import { constructInstance } from './worker-constructors';
 import {
@@ -19,47 +20,50 @@ import {
   randomId,
 } from '../utils';
 import { deserializeFromMain, serializeForMain } from './worker-serialization';
+import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import {
   ImmediateSettersKey,
   InstanceIdKey,
   InterfaceTypeKey,
   NodeNameKey,
   ProxyKey,
+  taskQueue,
   webWorkerCtx,
   WinIdKey,
 } from './worker-constants';
 import type { WorkerInstance } from './worker-instance';
 
 const queueTask = (
-  target: WorkerInstance,
+  instance: WorkerInstance,
   $accessType$: AccessType,
   $memberPath$: string[],
-  data?: any,
+  $data$?: SerializedTransfer | undefined,
   $immediateSetters$?: ImmediateSetter[],
   $newInstanceId$?: number
 ) => {
-  const winId: number = target[WinIdKey];
-  const winQueue = (webWorkerCtx.$tasks$[winId] = webWorkerCtx.$tasks$[winId] || []);
+  const winId = instance[WinIdKey];
+  const winQueue = (taskQueue[winId] = taskQueue[winId] || []);
 
   const $forwardToWin$ = webWorkerCtx.$winId$ !== winId;
 
   const accessReqTask: MainAccessRequestTask = {
-    $instanceId$: target[InstanceIdKey],
-    $interfaceType$: target[InterfaceTypeKey],
-    $nodeName$: target[NodeNameKey],
+    $instanceId$: instance[InstanceIdKey],
+    $interfaceType$: instance[InterfaceTypeKey],
+    $nodeName$: instance[NodeNameKey],
     $accessType$,
     $memberPath$,
-    $data$: serializeForMain(data),
+    $data$,
     $immediateSetters$,
     $newInstanceId$,
   };
 
   winQueue.push(accessReqTask);
-  return drainQueue(target, $memberPath$, $forwardToWin$, winQueue);
+  return drainQueue(winId, instance, $memberPath$, $forwardToWin$, winQueue);
 };
 
 const drainQueue = (
-  target: WorkerInstance,
+  $winId$: number,
+  instance: WorkerInstance,
   $memberPath$: string[],
   $forwardToWin$: boolean,
   queue: MainAccessRequestTask[]
@@ -67,26 +71,28 @@ const drainQueue = (
   if (len(queue)) {
     const accessReq: MainAccessRequest = {
       $msgId$: randomId(),
-      $winId$: target[WinIdKey],
+      $winId$,
       $forwardToWin$,
       $tasks$: [...queue],
     };
     queue.length = 0;
 
     const xhr = new XMLHttpRequest();
-    const accessReqData = JSON.stringify(accessReq);
+    const accessReqStr = JSON.stringify(accessReq);
     xhr.open('POST', webWorkerCtx.$scopePath$ + PT_PROXY_URL, false);
     xhr.send(JSON.stringify(accessReq));
 
     // look ma, i'm synchronous (•‿•)
 
     const accessRsp: MainAccessResponse = JSON.parse(xhr.responseText);
+
     const errors = accessRsp.$errors$.join();
     const isPromise = accessRsp.$isPromise$;
-    const rtn = deserializeFromMain(target, $memberPath$, accessRsp.$rtnValue$!);
+    const rtn = deserializeFromMain(instance, $memberPath$, accessRsp.$rtnValue$!);
+
     if (errors) {
       if (debug) {
-        console.error(self.name, accessReqData);
+        console.error(self.name, accessReqStr);
       }
       if (isPromise) {
         return Promise.reject(errors);
@@ -101,48 +107,54 @@ const drainQueue = (
   }
 };
 
-export const getter = (target: WorkerInstance, memberPath: string[]) => {
-  applyBeforeSyncSetters(target[WinIdKey], target);
+export const getter = (instance: WorkerInstance, memberPath: string[]) => {
+  applyBeforeSyncSetters(instance[WinIdKey], instance);
 
-  const rtn = queueTask(target, AccessType.Get, memberPath, undefined);
-  logWorkerGetter(target, memberPath, rtn);
+  const rtn = queueTask(instance, AccessType.Get, memberPath);
+  logWorkerGetter(instance, memberPath, rtn);
   return rtn;
 };
 
-export const setter = (target: WorkerInstance, memberPath: string[], value: any) => {
-  logWorkerSetter(target, memberPath, value);
+export const setter = (instance: WorkerInstance, memberPath: string[], value: any) => {
+  logWorkerSetter(instance, memberPath, value);
 
-  if (target[ImmediateSettersKey]) {
-    target[ImmediateSettersKey]!.push([memberPath, serializeForMain(value)]);
+  if (instance[ImmediateSettersKey]) {
+    instance[ImmediateSettersKey]!.push([memberPath, serializeForMain(value)]);
   } else {
-    queueTask(target, AccessType.Set, memberPath, value);
+    const serializedValue = serializeForMain(value);
+
+    if (typeof value === 'function') {
+      setInstanceStateValue(instance, memberPath.join('.'), value);
+    }
+
+    queueTask(instance, AccessType.Set, memberPath, serializedValue);
   }
 };
 
 export const callMethod = (
-  target: WorkerInstance,
+  instance: WorkerInstance,
   memberPath: string[],
   args: any[],
   immediateSetters?: ImmediateSetter[],
   newInstanceId?: number
 ) => {
-  applyBeforeSyncSetters(target[WinIdKey], target);
+  applyBeforeSyncSetters(instance[WinIdKey], instance);
   const rtn = queueTask(
-    target,
+    instance,
     AccessType.CallMethod,
     memberPath,
-    args,
+    serializeForMain(args),
     immediateSetters,
     newInstanceId
   );
-  logWorkerCall(target, memberPath, args, rtn);
+  logWorkerCall(instance, memberPath, args, rtn);
   return rtn;
 };
 
-export const applyBeforeSyncSetters = (winId: number, target: WorkerInstance) => {
-  const beforeSyncValues = target[ImmediateSettersKey];
+export const applyBeforeSyncSetters = (winId: number, instance: WorkerInstance) => {
+  const beforeSyncValues = instance[ImmediateSettersKey];
   if (beforeSyncValues) {
-    target[ImmediateSettersKey] = undefined;
+    instance[ImmediateSettersKey] = undefined;
 
     const winDoc = constructInstance(
       InterfaceType.Document,
@@ -153,28 +165,38 @@ export const applyBeforeSyncSetters = (winId: number, target: WorkerInstance) =>
     const syncedTarget = callMethod(
       winDoc,
       ['createElement'],
-      [target[NodeNameKey]],
+      [instance[NodeNameKey]],
       beforeSyncValues,
-      target[InstanceIdKey]
+      instance[InstanceIdKey]
     );
 
-    if (debug && target[InstanceIdKey] !== syncedTarget[InstanceIdKey]) {
-      console.error('Main and web worker instance ids do not match', target, syncedTarget);
+    if (debug && instance[InstanceIdKey] !== syncedTarget[InstanceIdKey]) {
+      console.error('Main and web worker instance ids do not match', instance, syncedTarget);
     }
   }
 };
 
-const createComplexMember = (interfaceType: InterfaceType, target: any, memberPath: string[]) => {
+const createComplexMember = (
+  interfaceType: InterfaceType,
+  instance: WorkerInstance,
+  memberPath: string[]
+) => {
   const interfaceInfo = webWorkerCtx.$interfaces$.find((i) => i[0] === interfaceType);
   if (interfaceInfo) {
     const memberTypeInfo = interfaceInfo[1];
     const memberInfo = memberTypeInfo[memberPath[len(memberPath) - 1]];
     if (memberInfo === InterfaceType.Method) {
-      return (...args: any[]) => callMethod(target, memberPath, args);
+      return (...args: any[]) => callMethod(instance, memberPath, args);
     } else if (memberInfo > InterfaceType.Window) {
-      return proxy(memberInfo, target, [...memberPath]);
+      return proxy(memberInfo, instance, [...memberPath]);
     }
   }
+
+  const stateValue = getInstanceStateValue<Function>(instance, memberPath.join('.'));
+  if (typeof stateValue === 'function') {
+    return (...args: any[]) => stateValue.apply(instance, args);
+  }
+
   return null;
 };
 

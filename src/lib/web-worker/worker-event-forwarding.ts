@@ -1,7 +1,7 @@
 import { deserializeFromMain } from './worker-serialization';
 
 export const workerEventForwarding = (forwardConfig: string, forwardArgs: any) => {
-  let args = deserializeFromMain({}, [], forwardArgs);
+  let args = deserializeFromMain({} as any, [], forwardArgs);
   let target = self as any;
   let fn: any;
 

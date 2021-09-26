@@ -1,4 +1,5 @@
 import { debug } from '../utils';
+import { forwardMsgResolves, winCtxs } from './main-constants';
 import { getAndSetInstanceId } from './main-instances';
 import {
   InitWebWorkerData,
@@ -13,11 +14,7 @@ import { initializedWorkerScript, readNextScript } from './read-main-scripts';
 import { readMainInterfaces } from './read-interfaces';
 import WebWorkerBlob from '@web-worker-blob';
 
-const onMessageFromWebWorker = (
-  winCtxs: Map<number, MainWindowContext>,
-  winCtx: MainWindowContext,
-  msg: MessageFromWorkerToSandbox
-) => {
+const onMessageFromWebWorker = (winCtx: MainWindowContext, msg: MessageFromWorkerToSandbox) => {
   const msgType = msg[0];
   const doc = winCtx.$window$.document;
 
@@ -65,8 +62,6 @@ const onMessageFromWebWorker = (
   }
 };
 
-const forwardMsgResolves = new Map<number, (accessRsp: MainAccessResponse) => void>();
-
 export const forwardToWinAccessHandler = (
   worker: PartytownWebWorker,
   accessReq: MainAccessRequest
@@ -76,10 +71,7 @@ export const forwardToWinAccessHandler = (
     worker.postMessage([WorkerMessageType.ForwardMainDataRequest, accessReq]);
   });
 
-export const createWebWorker = (
-  winCtxs: Map<number, MainWindowContext>,
-  winCtx: MainWindowContext
-) => {
+export const createWebWorker = (winCtx: MainWindowContext) => {
   winCtx.$worker$ = new Worker(
     debug
       ? './partytown-ww.debug.js'
@@ -91,5 +83,5 @@ export const createWebWorker = (
     { name: `Partytown (${winCtx.$winId$}) 🎉` }
   );
 
-  winCtx.$worker$.onmessage = (ev) => onMessageFromWebWorker(winCtxs, winCtx, ev.data);
+  winCtx.$worker$.onmessage = (ev) => onMessageFromWebWorker(winCtx, ev.data);
 };

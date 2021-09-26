@@ -229,4 +229,4 @@ export const PT_SCRIPT = `<script src="/~partytown/partytown${
 
 export const TOP_WIN_ID = 1;
 
-export const randomId = () => Math.round(Math.random() * 999999999);
+export const randomId = () => Math.round(Math.random() * 9999999999 + PlatformInstanceId.body);

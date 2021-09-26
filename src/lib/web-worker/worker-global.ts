@@ -4,7 +4,6 @@ import { Image } from './worker-image';
 import { InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { InterfaceType, MemberTypeInfo, PlatformInstanceId } from '../types';
 import { nextTick, TOP_WIN_ID } from '../utils';
-
 import { sendBeacon } from './worker-exec';
 
 export const initWebWorkerGlobal = (self: any, windowMemberTypeInfo: MemberTypeInfo) => {

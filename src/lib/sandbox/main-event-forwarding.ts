@@ -11,7 +11,7 @@ export const mainEventForwarding = (winCtx: MainWindowContext, win: MainWindow) 
       winCtx.$worker$!.postMessage([
         WorkerMessageType.ForwardEvent,
         forwardConfig,
-        serializeForWorker(winCtx, Array.from(forwardArgs), new Set()),
+        serializeForWorker(winCtx, Array.from(forwardArgs)),
       ]);
 
     for (; i < len(forwardedEvents as any[]); i += 2) {

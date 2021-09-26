@@ -1,7 +1,8 @@
 import { InterfaceType, NodeName } from '../types';
-import { WorkerAnchorElement, WorkerDocumentElementChild, WorkerElement } from './worker-element';
+import { WorkerAnchorElement } from './worker-anchor';
+import { WorkerElement } from './worker-element';
 import { WorkerContentWindow, WorkerIFrameElement } from './worker-iframe';
-import { WorkerDocument } from './worker-document';
+import { WorkerDocumentElementChild, WorkerDocument } from './worker-document';
 import { WorkerInstance } from './worker-instance';
 import { WorkerNode } from './worker-node';
 import { WorkerScriptElement } from './worker-script';

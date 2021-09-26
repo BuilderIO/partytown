@@ -158,3 +158,12 @@ export class WorkerDocument extends WorkerElement {
     setter(this, ['title'], (webWorkerCtx.$documentTitle$ = value));
   }
 }
+
+export class WorkerDocumentElementChild extends WorkerElement {
+  get parentElement() {
+    return document.documentElement;
+  }
+  get parentNode() {
+    return document.documentElement;
+  }
+}

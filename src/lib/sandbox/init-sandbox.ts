@@ -1,19 +1,17 @@
 import { createWebWorker } from './messenger';
-import { debug, TOP_WIN_ID } from '../utils';
+import { debug } from '../utils';
 import { mainAccessHandler } from './main-access-handler';
 import { MainAccessRequest, MainWindow, MainWindowContext, PlatformInstanceId } from '../types';
 import { readNextScript } from './read-main-scripts';
 import { setInstanceId } from './main-instances';
+import { winCtxs, windows } from './main-constants';
 
-export const initSandbox = async (sandboxWindow: Window) => {
-  let winIds = TOP_WIN_ID;
-  const winCtxs = new Map<number, MainWindowContext>();
-  const windows = new WeakSet<MainWindow>();
+export const initSandbox = async (sandboxWindow: Window, winIds: number) => {
   const mainWindow: MainWindow = sandboxWindow.parent as any;
   const swContainer = sandboxWindow.navigator.serviceWorker;
   const swRegistration = await swContainer.getRegistration();
 
-  const onMessageFromServiceWorker = (ev: MessageEvent<MainAccessRequest>) => {
+  const onMessageFromServiceWorkerToSandbox = (ev: MessageEvent<MainAccessRequest>) => {
     const accessReq = ev.data;
     const accessWinId = accessReq.$winId$;
     const winCtx = winCtxs.get(accessWinId);
@@ -37,9 +35,6 @@ export const initSandbox = async (sandboxWindow: Window) => {
         $parentWinId$: parentWin.partyWinId!,
         $config$: mainWindow.partytown,
         $cleanupInc$: 0,
-        $instanceIdByInstance$: new WeakMap(),
-        $instances$: [],
-        $nextId$: PlatformInstanceId.body + 1,
         $scopePath$: swRegistration!.scope,
         $url$: win.document.baseURI,
         $window$: win,
@@ -56,9 +51,9 @@ export const initSandbox = async (sandboxWindow: Window) => {
       setInstanceId(winCtx, win.localStorage, PlatformInstanceId.localStorage);
       setInstanceId(winCtx, win.sessionStorage, PlatformInstanceId.sessionStorage);
 
-      swContainer.addEventListener('message', onMessageFromServiceWorker);
+      swContainer.addEventListener('message', onMessageFromServiceWorkerToSandbox);
 
-      createWebWorker(winCtxs, winCtx);
+      createWebWorker(winCtx);
 
       win.addEventListener('load', () => readNextScript(winCtx));
     }

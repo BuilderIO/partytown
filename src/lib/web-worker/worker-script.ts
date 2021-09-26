@@ -1,4 +1,4 @@
-import { getInstanceStateValue, setInstanceStateValue } from './worker-instance';
+import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getter, setter } from './worker-proxy';
 import { ImmediateSettersKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { resolveUrl } from './worker-exec';
@@ -9,7 +9,7 @@ import { WorkerSrcElement } from './worker-element';
 export class WorkerScriptElement extends WorkerSrcElement {
   get src() {
     if (this[WinIdKey] === webWorkerCtx.$winId$) {
-      return getInstanceStateValue(this, StateProp.url) || '';
+      return getInstanceStateValue<string>(this, StateProp.url) || '';
     }
     return getter(this, ['src']);
   }

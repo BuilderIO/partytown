@@ -1,11 +1,11 @@
 import { constructInstance } from './worker-constructors';
+import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getter, setter } from './worker-proxy';
-import { getInstanceStateValue, setInstanceStateValue, WorkerInstance } from './worker-instance';
-import { InterfaceType, PlatformInstanceId, StateProp } from '../types';
-import { PT_SCRIPT, PT_SCRIPT_TYPE } from '../utils';
-import { resolveUrl } from './worker-exec';
 import { ImmediateSettersKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import { InterfaceType, PlatformInstanceId, StateProp } from '../types';
+import { resolveUrl, updateIframeContent } from './worker-exec';
 import { serializeForMain } from './worker-serialization';
+import { WorkerInstance } from './worker-instance';
 import { WorkerSrcElement } from './worker-element';
 
 export class WorkerIFrameElement extends WorkerSrcElement {
@@ -77,11 +77,3 @@ export class WorkerContentWindow extends WorkerInstance {
     return this;
   }
 }
-
-const updateIframeContent = (url: string, html: string) =>
-  `<base href="${url}">` +
-  html
-    .replace(/<script>/g, `<script type="${PT_SCRIPT_TYPE}">`)
-    .replace(/<script /g, `<script type="${PT_SCRIPT_TYPE}" `)
-    .replace(/text\/javascript/g, PT_SCRIPT_TYPE) +
-  PT_SCRIPT;

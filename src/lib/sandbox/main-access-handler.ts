@@ -80,7 +80,7 @@ export const mainAccessHandler = async (
           rtnValue = await rtnValue;
           accessRsp.$isPromise$ = true;
         }
-        accessRsp.$rtnValue$ = serializeForWorker(winCtx, rtnValue, new Set());
+        accessRsp.$rtnValue$ = serializeForWorker(winCtx, rtnValue);
       } else {
         accessRsp.$errors$.push(`Instance ${instanceId} not found`);
       }

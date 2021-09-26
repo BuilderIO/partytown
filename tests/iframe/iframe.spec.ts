@@ -50,4 +50,8 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testDiffDocumentCreateElement');
   const testDiffDocumentCreateElement = page.locator('#testDiffDocumentCreateElement');
   await expect(testDiffDocumentCreateElement).toHaveText('section');
+
+  await page.waitForSelector('.testSetCallWindowParentFn');
+  const testFnOnWindow = page.locator('#testSetCallWindowParentFn');
+  await expect(testFnOnWindow).toHaveText('1985');
 });

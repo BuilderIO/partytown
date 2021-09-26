@@ -4,22 +4,27 @@ import {
   InterfaceType,
   MainWindowContext,
   PlatformInstanceId,
+  RefHandler,
+  RefMap,
   SerializedInstance,
   SerializedTransfer,
   SerializedType,
   WorkerMessageType,
 } from '../types';
+import { mainInstanceRefs } from './main-constants';
 
 export const serializeForWorker = (
   winCtx: MainWindowContext,
   value: any,
-  added: Set<any>,
+  added?: Set<any>,
   type?: string,
   obj?: { [key: string]: SerializedTransfer | undefined },
   key?: string
 ): SerializedTransfer | undefined => {
   if (value !== undefined) {
+    added = added || new Set();
     type = typeof value;
+
     if (type === 'string' || type === 'number' || type === 'boolean' || value == null) {
       return [SerializedType.Primitive, value];
     }
@@ -97,7 +102,7 @@ export const deserializeFromWorker = (
     }
 
     if (serializedType === SerializedType.Ref) {
-      return setRef(winCtx, instanceId, serializedValue);
+      return deserializeRefFromWorker(winCtx, instanceId, serializedValue);
     }
 
     if (serializedType === SerializedType.Array) {
@@ -122,35 +127,33 @@ export const deserializeFromWorker = (
 
 const isNodeList = (cstrName: string) => cstrName === 'HTMLCollection' || cstrName === 'NodeList';
 
-const instanceRefs = new WeakMap<any, RefHandlerMap>();
-
-const setRef = (winCtx: MainWindowContext, instanceId: number, refId: number) => {
+const deserializeRefFromWorker = (winCtx: MainWindowContext, instanceId: number, refId: number) => {
   let instance = getInstance(winCtx, instanceId);
-  let refHandlerMap: RefHandlerMap | undefined;
-  let refHandler: RefHandler | undefined;
+  let mainRefHandlerMap: RefMap | undefined;
+  let mainRefHandler: RefHandler | undefined;
 
   if (instance) {
-    refHandlerMap = instanceRefs.get(instance);
-    if (!refHandlerMap) {
-      refHandlerMap = new Map<number, RefHandler>();
+    mainRefHandlerMap = mainInstanceRefs.get(instance);
+    if (!mainRefHandlerMap) {
+      mainInstanceRefs.set(instance, (mainRefHandlerMap = {}));
     }
 
-    refHandler = refHandlerMap.get(refId);
-    if (!refHandler) {
-      refHandler = createRefHandler(winCtx, refId);
-      refHandlerMap.set(refId, refHandler);
+    mainRefHandler = mainRefHandlerMap[refId];
+    if (!mainRefHandler) {
+      mainRefHandler = createMainRefHandler(winCtx, refId);
+      mainRefHandlerMap[refId] = mainRefHandler;
     }
 
-    return refHandler;
+    return mainRefHandler;
   }
 
   return noop;
 };
 
-const createRefHandler = (winCtx: MainWindowContext, refId: number): RefHandler =>
+const createMainRefHandler = (winCtx: MainWindowContext, refId: number): RefHandler =>
   function (this: any, ...args: any[]) {
-    const serializedTarget = serializeForWorker(winCtx, this, new Set());
-    const serializedArgs = serializeForWorker(winCtx, args, new Set());
+    const serializedTarget = serializeForWorker(winCtx, this);
+    const serializedArgs = serializeForWorker(winCtx, args);
     winCtx.$worker$!.postMessage([
       WorkerMessageType.RefHandlerCallback,
       refId,
@@ -158,7 +161,3 @@ const createRefHandler = (winCtx: MainWindowContext, refId: number): RefHandler 
       serializedArgs,
     ]);
   };
-
-type RefHandler = (...args: any[]) => void;
-
-type RefHandlerMap = Map<number, RefHandler>;

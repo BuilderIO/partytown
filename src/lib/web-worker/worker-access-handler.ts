@@ -39,7 +39,7 @@ export const workerAccessHandler = (accessReq: MainAccessRequest) => {
         instance = instance[memberPath[i]];
       }
 
-      data = deserializeFromMain(self, memberPath, accessReqTask.$data$);
+      data = deserializeFromMain(instance, memberPath, accessReqTask.$data$);
 
       if (accessType === AccessType.Get) {
         rtnValue = instance[lastMemberName];

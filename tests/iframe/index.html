@@ -337,6 +337,26 @@
         </script>
       </li>
 
+      <li>
+        <strong>set/call window.parent.fn()</strong>
+        <code id="testSetCallWindowParentFn"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testSetCallWindowParentFn');
+            const iframe = document.createElement('iframe');
+            elm.parentNode.appendChild(iframe);
+
+            iframe.contentWindow.document.head.innerHTML = `
+              <style>body { background: orange; font-weight: bold; color: black; text-align: center; }</style>
+            `;
+
+            const script = document.createElement('script');
+            script.src = 'fn-on-window.js';
+            iframe.contentWindow.document.body.appendChild(script);
+          })();
+        </script>
+      </li>
+
       <!-- <li>
         <strong>parent call, one.two.three.fn(1955)</strong>
         <code id="testMemberNames"></code>

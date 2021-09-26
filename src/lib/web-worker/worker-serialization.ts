@@ -1,27 +1,36 @@
 import { callMethod } from './worker-proxy';
 import { constructInstance } from './worker-constructors';
-import { debug, logWorker, randomId } from '../utils';
+import {
+  getInstanceStateValue,
+  getWorkerRef,
+  setInstanceStateValue,
+  setWorkerRef,
+} from './worker-state';
 import {
   InterfaceType,
   PlatformInstanceId,
+  RefHandler,
+  RefMap,
   SerializedInstance,
-  SerializedRefTransfer,
   SerializedTransfer,
   SerializedType,
+  StateProp,
 } from '../types';
 import { InstanceIdKey, InterfaceTypeKey, NodeNameKey, WinIdKey } from './worker-constants';
 import { WorkerNodeList } from './worker-node';
+import type { WorkerInstance } from './worker-instance';
 
 export const serializeForMain = (value: any, added?: Set<any>): SerializedTransfer | undefined => {
   if (value !== undefined) {
     added = added || new Set();
     const type = typeof value;
+
     if (type === 'string' || type === 'boolean' || type === 'number' || value == null) {
       return [SerializedType.Primitive, value];
     }
 
     if (type === 'function') {
-      return serializeRef(value);
+      return [SerializedType.Ref, setWorkerRef(value)];
     }
 
     if (Array.isArray(value)) {
@@ -56,7 +65,7 @@ export const serializeForMain = (value: any, added?: Set<any>): SerializedTransf
 };
 
 export const deserializeFromMain = (
-  target: any,
+  instance: WorkerInstance | null | undefined,
   memberPath: string[],
   serializedValueTransfer?: SerializedTransfer,
   serializedType?: SerializedType,
@@ -72,8 +81,12 @@ export const deserializeFromMain = (
       return serializedValue;
     }
 
-    if (serializedType === SerializedType.Method) {
-      return (...args: any[]) => callMethod(target, memberPath, args);
+    if (serializedType === SerializedType.Ref) {
+      return deserializeRefFromMain(instance, memberPath, serializedValue);
+    }
+
+    if (serializedType === SerializedType.Method && instance) {
+      return (...args: any[]) => callMethod(instance, memberPath, args);
     }
 
     if (serializedType === SerializedType.Instance) {
@@ -83,13 +96,13 @@ export const deserializeFromMain = (
 
     if (serializedType === SerializedType.Array) {
       const serializedArray: SerializedTransfer[] = serializedValue;
-      return serializedArray.map((v) => deserializeFromMain(target, memberPath, v));
+      return serializedArray.map((v) => deserializeFromMain(instance, memberPath, v));
     }
 
     if (serializedType === SerializedType.Object) {
       obj = {};
       for (key in serializedValue) {
-        obj[key] = deserializeFromMain(target, [...memberPath, key], serializedValue[key]);
+        obj[key] = deserializeFromMain(instance, [...memberPath, key], serializedValue[key]);
       }
       return obj;
     }
@@ -118,35 +131,40 @@ export const constructSerializedInstance = ({
   }
 };
 
-const refsByRefId = new Map<number, Ref>();
-const refIdsByRef = new WeakMap<Ref, number>();
-
-const serializeRef = (ref: any, refId?: number): SerializedRefTransfer => {
-  refId = refIdsByRef.get(ref);
-  if (!refId) {
-    refIdsByRef.set(ref, (refId = randomId()));
-    refsByRefId.set(refId, ref);
-  }
-  return [SerializedType.Ref, refId];
-};
-
-export const callRefHandler = (
-  refId: number,
+export const callWorkerRefHandler = (
+  workerRefId: number,
   serializedTarget: SerializedTransfer,
-  serializedArgs: SerializedTransfer
+  serializedArgs: SerializedTransfer,
+  workerRef?: RefHandler
 ) => {
-  const ref = refsByRefId.get(refId);
-  if (ref) {
+  workerRef = getWorkerRef(workerRefId);
+  if (workerRef) {
     try {
       const target = deserializeFromMain(null, [], serializedTarget);
       const args = deserializeFromMain(target, [], serializedArgs);
-      ref.apply(target, args);
+      workerRef.apply(target, args);
     } catch (e) {
       console.error(e);
     }
-  } else if (debug) {
-    logWorker(`Unable to find callRefHandler, ref "${refId}", args: ${serializedArgs}`);
   }
 };
 
-type Ref = any;
+const deserializeRefFromMain = (instance: any, memberPath: string[], refId: number) => {
+  let workerRefHandler: RefHandler | undefined;
+
+  let workerRefMap = getInstanceStateValue<RefMap>(instance, StateProp.instanceRefs);
+  if (!workerRefMap) {
+    setInstanceStateValue(instance, StateProp.instanceRefs, (workerRefMap = {}));
+  }
+
+  workerRefHandler = workerRefMap[refId];
+  if (!workerRefHandler) {
+    workerRefMap[refId] = workerRefHandler = createWorkerRefHandler(refId);
+  }
+
+  return workerRefHandler;
+};
+
+const createWorkerRefHandler = (refId: number): RefHandler => {
+  return function (this: any, ...args: any[]) {};
+};

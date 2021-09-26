@@ -1,10 +1,8 @@
-import { len } from '../utils';
+import { len, randomId } from '../utils';
+import { mainInstanceIdByInstance, mainInstances } from './main-constants';
 import { MainWindowContext, NodeName, PlatformInstanceId } from '../types';
 
-export const getInstanceId = (
-  winCtx: MainWindowContext,
-  instance: InstanceType | null | undefined
-) => {
+export const getInstanceId = (instance: InstanceType | null | undefined) => {
   if (instance) {
     const nodeName = (instance as any as Node).nodeName;
     if (nodeName === NodeName.Document) {
@@ -19,8 +17,9 @@ export const getInstanceId = (
     if (nodeName === NodeName.Body) {
       return PlatformInstanceId.body;
     }
-    return winCtx.$instanceIdByInstance$.get(instance);
+    return mainInstanceIdByInstance.get(instance);
   }
+  return -1;
 };
 
 export const getAndSetInstanceId = (
@@ -29,10 +28,9 @@ export const getAndSetInstanceId = (
   instanceId?: number
 ) => {
   if (instance) {
-    instanceId = getInstanceId(winCtx, instance);
+    instanceId = getInstanceId(instance);
     if (typeof instanceId !== 'number') {
-      instanceId = winCtx.$nextId$++;
-      setInstanceId(winCtx, instance, instanceId);
+      setInstanceId(winCtx, instance, (instanceId = randomId()));
     }
     return instanceId;
   }
@@ -57,7 +55,7 @@ export const getInstance = <T = InstanceType | null>(
   if (instanceId === PlatformInstanceId.body) {
     return doc.body as any;
   }
-  instanceItem = winCtx.$instances$.find((i) => i[0] === instanceId);
+  instanceItem = mainInstances.find((i) => i[0] === instanceId);
   return instanceItem ? instanceItem[1] : null;
 };
 
@@ -67,23 +65,22 @@ export const setInstanceId = (
   instanceId: number
 ) => {
   if (instance) {
-    const instances = winCtx.$instances$;
-    instances.push([instanceId, instance]);
-    winCtx.$instanceIdByInstance$.set(instance, instanceId);
+    mainInstances.push([instanceId, instance]);
+    mainInstanceIdByInstance.set(instance, instanceId);
 
     winCtx.$cleanupInc$++;
     if (winCtx.$cleanupInc$ > 99) {
       winCtx.$cleanupInc$ = 0;
       while (true) {
-        let disconnectedNodes = instances.filter(
+        let disconnectedNodes = mainInstances.filter(
           (i) => (i[1] as InstanceNode).nodeType && !(i[1] as InstanceNode).isConnected
         );
         let i: number;
         let l: number;
         if (len(disconnectedNodes) > 99) {
-          for (i = 0, l = len(instances); i < l; i++) {
-            if (!(instances[i][1] as InstanceNode).isConnected) {
-              instances.slice(i, 1);
+          for (i = 0, l = len(mainInstances); i < l; i++) {
+            if (!(mainInstances[i][1] as InstanceNode).isConnected) {
+              mainInstances.slice(i, 1);
               break;
             }
           }

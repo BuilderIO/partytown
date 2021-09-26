@@ -7,7 +7,7 @@ export type MessageFromWorkerToSandbox =
   | [WorkerMessageType.InitializedWorkerScript, number, string]
   | [WorkerMessageType.InitializeNextWorkerScript]
   | [WorkerMessageType.ForwardMainDataResponse, MainAccessResponse]
-  | [WorkerMessageType.RunStateHandlers, RunStatePropData];
+  | [WorkerMessageType.RunStateHandlers, number, StateProp];
 
 export type MessageFromSandboxToWorker =
   | [WorkerMessageType.MainDataResponseToWorker, InitWebWorkerData]
@@ -20,7 +20,7 @@ export type MessageFromSandboxToWorker =
     ]
   | [WorkerMessageType.ForwardMainDataRequest, MainAccessRequest]
   | [WorkerMessageType.ForwardEvent, string, any[] | undefined]
-  | [WorkerMessageType.RunStateHandlers, RunStatePropData];
+  | [WorkerMessageType.RunStateHandlers, number, StateProp];
 
 export const enum WorkerMessageType {
   MainDataRequestFromWorker,
@@ -34,20 +34,6 @@ export const enum WorkerMessageType {
   RunStateHandlers,
 }
 
-export type RunStatePropData = {
-  $winId$: number;
-  $instanceId$: number;
-  $stateProp$: StateProp;
-};
-
-export const enum StateProp {
-  errorHandlers,
-  loadHandlers,
-  isSuccessfulLoad,
-  url,
-  partyWinId,
-}
-
 export type PostMessageToWorker = (msg: MessageFromSandboxToWorker) => void;
 
 export interface MainWindowContext {
@@ -55,11 +41,8 @@ export interface MainWindowContext {
   $parentWinId$: number;
   $cleanupInc$: number;
   $config$: PartytownConfig | undefined;
-  $instanceIdByInstance$: WeakMap<any, number>;
-  $instances$: [number, any][];
   $interfaces$?: InterfaceInfo[];
   $isInitialized$?: boolean;
-  $nextId$: number;
   $scopePath$: string;
   $startTime$?: number;
   $url$: string;
@@ -127,9 +110,7 @@ export const enum PlatformInstanceId {
   body,
 }
 
-export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {
-  $tasks$: { [winId: number]: MainAccessRequestTask[] };
-}
+export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {}
 
 export interface InitializeScriptData {
   $winId$: number;
@@ -304,4 +285,22 @@ export const enum NodeName {
   Text = '#text',
 }
 
+export const enum StateProp {
+  errorHandlers = 'error',
+  loadHandlers = 'load',
+  href = 'href',
+  instanceRefs = 0,
+  isSuccessfulLoad = 1,
+  partyWinId = 2,
+  url = 3,
+}
+
 export type EventHandler = (ev: any) => void;
+
+export type RefHandler = (...args: any[]) => void;
+
+export type RefMap = Record<number, RefHandler>;
+
+export type StateMap = Record<number, StateRecord>;
+
+export type StateRecord = Record<string | number, any>;
