@@ -150,9 +150,9 @@ Partytown relies on [Web Workers](https://developer.mozilla.org/en-US/docs/Web/A
 
 #### What About Atomics?
 
-[Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics) are the latest and greatest way to accomplish the challenge of _synchronously_ sending data between the main thread and the web worker. Honestly, it looks like Atomics may be the preferred and "correct" way to perform these tasks. However, as of right now, more research is needed into how Atomics could be used in production.
+[Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics) are the latest and greatest way to accomplish the challenge of _synchronously_ sending data between the main thread and the web worker. Honestly, it looks like Atomics may be the preferred and "correct" way to perform these tasks. However, as of right now, more research is needed into how Atomics could be used in production, while also using with the service worker fallback when Atomics are not supported.
 
-Currently, [Safari does not support Atomics](https://caniuse.com/mdn-javascript_builtins_atomics) due to [Spectre Attacks: Exploiting Speculative Execution](https://spectreattack.com/spectre.pdf). When Spectre attacks were first documented, the other browsers removed Atomics too, but they have since added it back. Due to this uncertainty, we're opting for a solution that works everywhere, today. That said, we'd love to do more research here and hopefully migrate to use Atomics in the future, and use the current system as the fallback.
+See [Draft PR #10](https://github.com/BuilderIO/partytown/pull/10) for more info.
 
 ### Browser Features And Fallback
 
