@@ -6,6 +6,7 @@ import { InterfaceType, PlatformInstanceId, StateProp } from '../types';
 import { resolveUrl, updateIframeContent } from './worker-exec';
 import { serializeForMain } from './worker-serialization';
 import { WorkerInstance } from './worker-instance';
+import { WorkerLocation } from './worker-location';
 import { WorkerSrcElement } from './worker-element';
 
 export class WorkerIFrameElement extends WorkerSrcElement {
@@ -14,12 +15,15 @@ export class WorkerIFrameElement extends WorkerSrcElement {
   }
 
   get contentWindow() {
+    let win: WorkerContentWindow;
     let winId = getInstanceStateValue(this, StateProp.partyWinId);
     if (!winId) {
       winId = getter(this, ['partyWinId']);
       setInstanceStateValue(this, StateProp.partyWinId, winId);
     }
-    return new WorkerContentWindow(InterfaceType.Window, PlatformInstanceId.window, winId);
+    win = new WorkerContentWindow(InterfaceType.Window, PlatformInstanceId.window, winId);
+    win.location = this.src;
+    return win;
   }
 
   get src() {
@@ -55,6 +59,17 @@ export class WorkerIFrameElement extends WorkerSrcElement {
 export class WorkerContentWindow extends WorkerInstance {
   get document() {
     return constructInstance(InterfaceType.Document, PlatformInstanceId.document, this[WinIdKey]);
+  }
+
+  get location(): WorkerLocation {
+    let location = getInstanceStateValue<WorkerLocation>(this, StateProp.url);
+    if (!location) {
+      setInstanceStateValue(this, StateProp.url, (location = new WorkerLocation('about:blank')));
+    }
+    return location;
+  }
+  set location(url: any) {
+    this.location.href = !url || url === '' ? 'about:blank' : url;
   }
 
   get parent() {

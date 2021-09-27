@@ -54,4 +54,8 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testSetCallWindowParentFn');
   const testFnOnWindow = page.locator('#testSetCallWindowParentFn');
   await expect(testFnOnWindow).toHaveText('1985');
+
+  await page.waitForSelector('.testAboutBlank');
+  const testAboutBlank = page.locator('#testAboutBlank');
+  await expect(testAboutBlank).toHaveText('about:blank');
 });

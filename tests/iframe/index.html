@@ -357,6 +357,30 @@
         </script>
       </li>
 
+      <li>
+        <strong>about:blank location</strong>
+        <code id="testAboutBlank"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testAboutBlank');
+            const iframe = document.createElement('iframe');
+            elm.parentNode.appendChild(iframe);
+            iframe.contentWindow.document.head.innerHTML = `
+              <style>body { background: gray; font-weight: bold; color: black; text-align: center; }</style>
+            `;
+            const iframeWindow = iframe.contentWindow;
+            const iframeLocation = iframeWindow.location;
+
+            const div = document.createElement('div');
+            div.textContent = iframeLocation.href;
+            iframe.contentDocument.body.appendChild(div);
+
+            elm.textContent = iframeLocation.href;
+            elm.className = 'testAboutBlank';
+          })();
+        </script>
+      </li>
+
       <!-- <li>
         <strong>parent call, one.two.three.fn(1955)</strong>
         <code id="testMemberNames"></code>
