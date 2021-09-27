@@ -44,7 +44,7 @@ npm test
 
 The same pages found in `tests` are deployed to:
 
-https://partytown.vercel.app/
+https://partytown.builder.io/
 
 ## Publishing
 
