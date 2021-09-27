@@ -101,7 +101,9 @@ const logTargetProp = (target: any, memberPath: string[]) => {
   let n = '';
   if (target) {
     const instanceId = target[InstanceIdKey];
-    if (instanceId === PlatformInstanceId.document) {
+    if (instanceId === PlatformInstanceId.window) {
+      n = 'window.';
+    } else if (instanceId === PlatformInstanceId.document) {
       n = 'document.';
     } else if (instanceId === PlatformInstanceId.documentElement) {
       n = 'document.documentElement.';
