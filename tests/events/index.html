@@ -75,7 +75,7 @@
         <button id="buttonAdd">add</button>
         <button id="buttonRemove">remove</button>
         <code id="testInc">0</code>
-        <script>
+        <script type="text/partytown">
           (function () {
             let count = 0;
             const buttonAdd = document.getElementById('buttonAdd');
@@ -93,6 +93,24 @@
           })();
         </script>
       </li>
+
+      <!-- <li>
+        <strong>iframe click listener</strong>
+        <button id="iframeButtonInc"></button>
+        <code id="iframeTestInc">0</code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('iframeTestInc');
+            const li = elm.parentNode;
+            const iframe = document.createElement('iframe');
+            iframe.addEventListener('load', () => {
+              elm.className = 'iframeTestInc';
+            });
+            iframe.src = 'iframe.html';
+            li.parentNode.insertBefore(iframe, li.nextSibling);
+          })();
+        </script>
+      </li> -->
 
       <script type="text/partytown">
         (function () {

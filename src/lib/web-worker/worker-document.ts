@@ -44,9 +44,9 @@ export class WorkerDocument extends WorkerElement {
     const elm = new ElementCstr(InterfaceType.Element, instanceId, winId, tagName);
 
     if (tagName === NodeName.Script) {
-      elm[ImmediateSettersKey] = [[['type'], serializeForMain(PT_SCRIPT_TYPE)]];
+      elm[ImmediateSettersKey] = [[['type'], serializeForMain(winId, instanceId, PT_SCRIPT_TYPE)]];
     } else if (tagName === NodeName.IFrame) {
-      elm[ImmediateSettersKey] = [[['srcdoc'], serializeForMain(PT_SCRIPT)]];
+      elm[ImmediateSettersKey] = [[['srcdoc'], serializeForMain(winId, instanceId, PT_SCRIPT)]];
     } else {
       elm[ImmediateSettersKey] = [];
     }

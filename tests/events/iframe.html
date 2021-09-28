@@ -1,0 +1,20 @@
+<html>
+  <body>
+    <button id="iframeButtonInc">iframe inc</button>
+    <script>
+      let inc = 0;
+      const parentTestInc = parent.document.getElementById('iframeTestInc');
+
+      const parentButtonInc = parent.document.getElementById('iframeButtonInc');
+      parentButtonInc.textContent = 'inc';
+      parentButtonInc.addEventListener('click', () => {
+        parentTestInc.textContent = ++inc;
+      });
+
+      const iframeButtonInc = document.getElementById('iframeButtonInc');
+      iframeButtonInc.addEventListener('click', () => {
+        parentTestInc.textContent = --inc;
+      });
+    </script>
+  </body>
+</html>

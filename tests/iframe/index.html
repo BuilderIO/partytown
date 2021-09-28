@@ -336,6 +336,29 @@
           })();
         </script>
       </li>
+      <li>
+        <strong>about:blank location</strong>
+        <code id="testAboutBlank"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testAboutBlank');
+            const iframe = document.createElement('iframe');
+            elm.parentNode.appendChild(iframe);
+            iframe.contentWindow.document.head.innerHTML = `
+              <style>body { background: gray; font-weight: bold; color: black; text-align: center; }</style>
+            `;
+            const iframeWindow = iframe.contentWindow;
+            const iframeLocation = iframeWindow.location;
+
+            const div = document.createElement('div');
+            div.textContent = iframeLocation.href;
+            iframe.contentDocument.body.appendChild(div);
+
+            elm.textContent = iframeLocation.href;
+            elm.className = 'testAboutBlank';
+          })();
+        </script>
+      </li>
 
       <li>
         <strong>set/call window.parent.fn()</strong>
@@ -358,25 +381,25 @@
       </li>
 
       <li>
-        <strong>about:blank location</strong>
-        <code id="testAboutBlank"></code>
+        <strong>call window.parent.fn()</strong>
+        <code id="testCallWindowParentFn"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('testAboutBlank');
+            window.sum1985 = (a) => {
+              return 1985 + a;
+            };
+
+            const elm = document.getElementById('testCallWindowParentFn');
             const iframe = document.createElement('iframe');
             elm.parentNode.appendChild(iframe);
+
             iframe.contentWindow.document.head.innerHTML = `
-              <style>body { background: gray; font-weight: bold; color: black; text-align: center; }</style>
+              <style>body { background: blue; font-weight: bold; color: black; text-align: center; }</style>
             `;
-            const iframeWindow = iframe.contentWindow;
-            const iframeLocation = iframeWindow.location;
 
-            const div = document.createElement('div');
-            div.textContent = iframeLocation.href;
-            iframe.contentDocument.body.appendChild(div);
-
-            elm.textContent = iframeLocation.href;
-            elm.className = 'testAboutBlank';
+            const script = document.createElement('script');
+            script.src = 'call-fn-on-parent.js';
+            iframe.contentWindow.document.body.appendChild(script);
           })();
         </script>
       </li>

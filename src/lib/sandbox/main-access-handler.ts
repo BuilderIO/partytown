@@ -1,17 +1,13 @@
 import { AccessType, MainAccessRequest, MainAccessResponse, MainWindowContext } from '../types';
 import { deserializeFromWorker, serializeForWorker } from './main-serialization';
 import { EMPTY_ARRAY, isPromise, len } from '../utils';
-import { forwardToWinAccessHandler } from './messenger';
+import { forwardToWorkerAccessHandler } from './messenger';
 import { getInstance, setInstanceId } from './main-instances';
 
 export const mainAccessHandler = async (
   winCtx: MainWindowContext,
   accessReq: MainAccessRequest
 ) => {
-  if (accessReq.$forwardToWin$) {
-    return forwardToWinAccessHandler(winCtx.$worker$!, accessReq);
-  }
-
   const accessRsp: MainAccessResponse = {
     $msgId$: accessReq.$msgId$,
     $winId$: accessReq.$winId$,
@@ -34,14 +30,16 @@ export const mainAccessHandler = async (
     let immediateSetterName: string;
 
     try {
-      instance = getInstance(winCtx, instanceId);
+      data = deserializeFromWorker(accessReqTask.$data$);
+      if (accessReq.$forwardToWorkerAccess$) {
+        continue;
+      }
 
+      instance = getInstance(accessRsp.$winId$, instanceId);
       if (instance) {
         for (i = 0; i < memberPathLength - 1; i++) {
           instance = instance[memberPath[i]];
         }
-
-        data = deserializeFromWorker(winCtx, instanceId, accessReqTask.$data$);
 
         if (accessType === AccessType.Get) {
           if (lastMemberName === 'partyWinId') {
@@ -64,11 +62,7 @@ export const mainAccessHandler = async (
 
           immediateSetters.map((immediateSetter) => {
             immediateSetterName = immediateSetter[0][0];
-            rtnValue[immediateSetterName] = deserializeFromWorker(
-              winCtx,
-              instanceId,
-              immediateSetter[1]
-            );
+            rtnValue[immediateSetterName] = deserializeFromWorker(immediateSetter[1]);
           });
 
           if (accessReqTask.$newInstanceId$) {
@@ -88,7 +82,12 @@ export const mainAccessHandler = async (
       accessRsp.$errors$.push(String(e.stack || e));
     }
   }
-  return accessRsp;
+
+  if (accessReq.$forwardToWorkerAccess$) {
+    return forwardToWorkerAccessHandler(winCtx.$worker$!, accessReq);
+  } else {
+    return accessRsp;
+  }
 };
 
 const isMemberInInstance = (instance: any, memberPath: string[]) => memberPath[0] in instance;

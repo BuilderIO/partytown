@@ -1,7 +1,7 @@
 import { debug, logMain, PT_INITIALIZED_EVENT, PT_SCRIPT_TYPE } from '../utils';
 import { getAndSetInstanceId } from './main-instances';
 import { MainWindowContext, InitializeScriptData, WorkerMessageType } from '../types';
-import { mainEventForwarding } from './main-event-forwarding';
+import { mainForwardTrigger } from './main-forward-trigger';
 
 export const readNextScript = (winCtx: MainWindowContext) => {
   const $winId$ = winCtx.$winId$;
@@ -20,7 +20,7 @@ export const readNextScript = (winCtx: MainWindowContext) => {
       $instanceId$,
     };
 
-    scriptElm.dataset.ptId = createSelectorId(winCtx, $instanceId$);
+    scriptElm.dataset.ptId = $winId$ + '.' + $instanceId$;
 
     if (scriptElm.src) {
       scriptData.$url$ = scriptElm.src;
@@ -37,7 +37,7 @@ export const readNextScript = (winCtx: MainWindowContext) => {
       win.frameElement.partyWinId = $winId$;
     }
 
-    mainEventForwarding(winCtx, win);
+    mainForwardTrigger(winCtx, win);
 
     doc.dispatchEvent(new CustomEvent(PT_INITIALIZED_EVENT));
 
@@ -55,7 +55,7 @@ export const initializedWorkerScript = (
   script?: HTMLScriptElement | null
 ) => {
   script = doc.querySelector<HTMLScriptElement>(
-    `[data-pt-id="${createSelectorId(winCtx, instanceId)}"]`
+    '[data-pt-id="' + winCtx.$winId$ + '.' + instanceId + '"]'
   );
   if (script) {
     if (errorMsg) {
@@ -66,6 +66,3 @@ export const initializedWorkerScript = (
   }
   readNextScript(winCtx);
 };
-
-const createSelectorId = (winCtx: MainWindowContext, instanceId: number) =>
-  winCtx.$winId$ + '.' + instanceId;

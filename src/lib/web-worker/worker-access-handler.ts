@@ -15,13 +15,15 @@ import { len } from '../utils';
 import { webWorkerCtx } from './worker-constants';
 
 export const workerAccessHandler = (accessReq: MainAccessRequest) => {
+  const $winId$ = accessReq.$winId$;
   const accessRsp: MainAccessResponse = {
     $msgId$: accessReq.$msgId$,
-    $winId$: accessReq.$winId$,
+    $winId$,
     $errors$: [],
   };
 
   for (const accessReqTask of accessReq.$tasks$) {
+    let instanceId = accessReqTask.$instanceId$;
     let accessType = accessReqTask.$accessType$;
     let memberPath = accessReqTask.$memberPath$;
     let memberPathLength = len(memberPath);
@@ -33,23 +35,20 @@ export const workerAccessHandler = (accessReq: MainAccessRequest) => {
     let i: number;
 
     try {
-      instance = constructSerializedInstance({ ...accessReqTask, $winId$: accessReq.$winId$ });
+      instance = constructSerializedInstance({ ...accessReqTask, $winId$ });
 
       for (i = 0; i < memberPathLength - 1; i++) {
         instance = instance[memberPath[i]];
       }
 
-      data = deserializeFromMain(instance, memberPath, accessReqTask.$data$);
+      data = deserializeFromMain($winId$, instanceId, memberPath, accessReqTask.$data$);
 
       if (accessType === AccessType.Get) {
         rtnValue = instance[lastMemberName];
       } else if (accessType === AccessType.Set) {
         instance[lastMemberName] = data;
       } else if (accessType === AccessType.CallMethod) {
-        if (
-          accessReqTask.$instanceId$ === PlatformInstanceId.document &&
-          lastMemberName === 'createElement'
-        ) {
+        if (instanceId === PlatformInstanceId.document && lastMemberName === 'createElement') {
           rtnValue = callMethod(
             instance,
             memberPath,
@@ -62,11 +61,11 @@ export const workerAccessHandler = (accessReq: MainAccessRequest) => {
         }
       }
 
-      accessRsp.$rtnValue$ = serializeForMain(rtnValue);
+      accessRsp.$rtnValue$ = serializeForMain($winId$, instanceId, rtnValue);
     } catch (e: any) {
       accessRsp.$errors$.push(String(e.stack || e));
     }
   }
 
-  webWorkerCtx.$postMessage$([WorkerMessageType.ForwardMainDataResponse, accessRsp]);
+  webWorkerCtx.$postMessage$([WorkerMessageType.ForwardWorkerAccessResponse, accessRsp]);
 };

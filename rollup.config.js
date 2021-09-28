@@ -420,8 +420,8 @@ export default async function (cmdArgs) {
 function managlePropsPlugin() {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$'.split('');
   const mangleProps = {
-    $forwardToWin$: '',
     $accessType$: '',
+    $args$: '',
     $cleanupInc$: '',
     $config$: '',
     $content$: '',
@@ -435,6 +435,7 @@ function managlePropsPlugin() {
     $documentTitle$: '',
     $errors$: '',
     $firstScriptId$: '',
+    $forwardToWorkerAccess$: '',
     $immediateSetters$: '',
     $importScripts$: '',
     $instanceId$: '',
@@ -451,9 +452,11 @@ function managlePropsPlugin() {
     $nodeName$: '',
     $parentWinId$: '',
     $postMessage$: '',
+    $refId$: '',
     $rtnValue$: '',
     $scopePath$: '',
     $tasks$: '',
+    $thisArg$: '',
     $url$: '',
     $window$: '',
     $winId$: '',

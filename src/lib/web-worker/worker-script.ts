@@ -1,6 +1,6 @@
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getter, setter } from './worker-proxy';
-import { ImmediateSettersKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import { ImmediateSettersKey, InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { resolveUrl } from './worker-exec';
 import { serializeForMain } from './worker-serialization';
 import { StateProp } from '../types';
@@ -18,7 +18,10 @@ export class WorkerScriptElement extends WorkerSrcElement {
       url = resolveUrl(url) + '';
       setInstanceStateValue(this, StateProp.url, url);
       if (this[ImmediateSettersKey]) {
-        this[ImmediateSettersKey]!.push([['src'], serializeForMain(url)]);
+        this[ImmediateSettersKey]!.push([
+          ['src'],
+          serializeForMain(this[WinIdKey], this[InstanceIdKey], url),
+        ]);
       }
     } else {
       setter(this, ['src'], url);

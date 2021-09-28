@@ -6,20 +6,15 @@ export type MessageFromWorkerToSandbox =
   | [WorkerMessageType.MainDataRequestFromWorker]
   | [WorkerMessageType.InitializedWorkerScript, number, string]
   | [WorkerMessageType.InitializeNextWorkerScript]
-  | [WorkerMessageType.ForwardMainDataResponse, MainAccessResponse]
+  | [WorkerMessageType.ForwardWorkerAccessResponse, MainAccessResponse]
   | [WorkerMessageType.RunStateHandlers, number, StateProp];
 
 export type MessageFromSandboxToWorker =
   | [WorkerMessageType.MainDataResponseToWorker, InitWebWorkerData]
   | [WorkerMessageType.InitializeNextWorkerScript, InitializeScriptData]
-  | [
-      WorkerMessageType.RefHandlerCallback,
-      number,
-      SerializedTransfer | undefined,
-      SerializedTransfer | undefined
-    ]
-  | [WorkerMessageType.ForwardMainDataRequest, MainAccessRequest]
-  | [WorkerMessageType.ForwardEvent, string, any[] | undefined]
+  | [WorkerMessageType.RefHandlerCallback, RefHandlerCallbackData]
+  | [WorkerMessageType.ForwardWorkerAccessRequest, MainAccessRequest]
+  | [WorkerMessageType.ForwardMainTrigger, ForwardMainTriggerData]
   | [WorkerMessageType.RunStateHandlers, number, StateProp];
 
 export const enum WorkerMessageType {
@@ -28,10 +23,25 @@ export const enum WorkerMessageType {
   InitializedWorkerScript,
   InitializeNextWorkerScript,
   RefHandlerCallback,
-  ForwardMainDataRequest,
-  ForwardMainDataResponse,
-  ForwardEvent,
+  ForwardWorkerAccessRequest,
+  ForwardWorkerAccessResponse,
+  ForwardMainTrigger,
   RunStateHandlers,
+}
+
+export interface ForwardMainTriggerData {
+  $winId$: number;
+  $instanceId$: number;
+  $config$: string;
+  $args$: SerializedTransfer | undefined;
+}
+
+export interface RefHandlerCallbackData {
+  $winId$: number;
+  $instanceId$: number;
+  $refId$: number;
+  $thisArg$: SerializedTransfer | undefined;
+  $args$: SerializedTransfer | undefined;
 }
 
 export type PostMessageToWorker = (msg: MessageFromSandboxToWorker) => void;
@@ -128,7 +138,7 @@ export const enum AccessType {
 export interface MainAccessRequest {
   $msgId$: number;
   $winId$: number;
-  $forwardToWin$: boolean;
+  $forwardToWorkerAccess$: boolean;
   $tasks$: MainAccessRequestTask[];
 }
 
@@ -177,7 +187,13 @@ export type SerializedPrimitiveTransfer =
   | [SerializedType.Primitive, string | number | boolean | null | undefined]
   | [SerializedType.Primitive];
 
-export type SerializedRefTransfer = [SerializedType.Ref, number];
+export type SerializedRefTransfer = [SerializedType.Ref, SerializedRefTransferData];
+
+export interface SerializedRefTransferData {
+  $winId$: number;
+  $instanceId$: number;
+  $refId$: number;
+}
 
 export type SerializedTransfer =
   | SerializedArrayTransfer
@@ -299,7 +315,7 @@ export type EventHandler = (ev: any) => void;
 
 export type RefHandler = (...args: any[]) => void;
 
-export type RefMap = Record<number, RefHandler>;
+export type RefMap = Record<string, RefHandler>;
 
 export type StateMap = Record<number, StateRecord>;
 

@@ -46,7 +46,7 @@ const onMessageFromWebWorker = (winCtx: MainWindowContext, msg: MessageFromWorke
     // web worker has finished initializing the script, and has another one to do
     // doing this postMessage back-and-forth so we don't have long running tasks
     initializedWorkerScript(winCtx, doc, msg[1] as number, msg[2] as string);
-  } else if (msgType === WorkerMessageType.ForwardMainDataResponse) {
+  } else if (msgType === WorkerMessageType.ForwardWorkerAccessResponse) {
     const accessRsp = msg[1] as MainAccessResponse;
 
     const forwardMsgResolve = forwardMsgResolves.get(accessRsp.$msgId$);
@@ -62,13 +62,13 @@ const onMessageFromWebWorker = (winCtx: MainWindowContext, msg: MessageFromWorke
   }
 };
 
-export const forwardToWinAccessHandler = (
+export const forwardToWorkerAccessHandler = (
   worker: PartytownWebWorker,
   accessReq: MainAccessRequest
 ) =>
   new Promise<MainAccessResponse>((resolve) => {
     forwardMsgResolves.set(accessReq.$msgId$, resolve);
-    worker.postMessage([WorkerMessageType.ForwardMainDataRequest, accessReq]);
+    worker.postMessage([WorkerMessageType.ForwardWorkerAccessRequest, accessReq]);
   });
 
 export const createWebWorker = (winCtx: MainWindowContext) => {

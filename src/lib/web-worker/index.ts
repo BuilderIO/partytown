@@ -3,16 +3,18 @@ import { debug, logWorker, nextTick } from '../utils';
 import { initNextScriptsInWebWorker } from './worker-exec';
 import { initWebWorker } from './init-worker';
 import {
+  ForwardMainTriggerData,
   InitializeScriptData,
   InitWebWorkerData,
   MainAccessRequest,
   MessageFromSandboxToWorker,
+  RefHandlerCallbackData,
   WorkerMessageType,
 } from '../types';
 import { runStateHandlers } from './worker-exec';
 import { webWorkerCtx } from './worker-constants';
 import { workerAccessHandler } from './worker-access-handler';
-import { workerEventForwarding } from './worker-event-forwarding';
+import { workerForwardedTriggerHandle } from './worker-forwarded-trigger';
 
 const queuedEvents: MessageEvent<MessageFromSandboxToWorker>[] = [];
 
@@ -28,12 +30,12 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
       initNextScriptsInWebWorker(msgData1 as InitializeScriptData);
     } else if (msgType === WorkerMessageType.RefHandlerCallback) {
       // main has called a worker ref handler
-      callWorkerRefHandler(msgData1 as number, msgData2 as any, msg[3] as any);
-    } else if (msgType === WorkerMessageType.ForwardMainDataRequest) {
+      callWorkerRefHandler(msgData1 as RefHandlerCallbackData);
+    } else if (msgType === WorkerMessageType.ForwardWorkerAccessRequest) {
       // message forwarded from another window, like the main window accessing data from an iframe
       workerAccessHandler(msgData1 as MainAccessRequest);
-    } else if (msgType === WorkerMessageType.ForwardEvent) {
-      workerEventForwarding(msgData1 as any, msgData2 as any);
+    } else if (msgType === WorkerMessageType.ForwardMainTrigger) {
+      workerForwardedTriggerHandle(msgData1 as ForwardMainTriggerData);
     } else if (msgType === WorkerMessageType.RunStateHandlers) {
       runStateHandlers(msgData1 as number, msgData2 as any);
     }

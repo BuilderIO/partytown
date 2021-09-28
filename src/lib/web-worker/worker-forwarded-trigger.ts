@@ -1,11 +1,17 @@
 import { deserializeFromMain } from './worker-serialization';
+import type { ForwardMainTriggerData } from '../types';
 
-export const workerEventForwarding = (forwardConfig: string, forwardArgs: any) => {
-  let args = deserializeFromMain({} as any, [], forwardArgs);
+export const workerForwardedTriggerHandle = ({
+  $winId$,
+  $instanceId$,
+  $args$,
+  $config$,
+}: ForwardMainTriggerData) => {
+  let args = deserializeFromMain($winId$, $instanceId$, [], $args$);
   let target = self as any;
   let fn: any;
 
-  forwardConfig.split('.').forEach((forwardProp, index, arr) => {
+  $config$.split('.').forEach((forwardProp, index, arr) => {
     if (target) {
       fn = target[forwardProp];
       if (index === arr.length - 1 && typeof fn === 'function') {

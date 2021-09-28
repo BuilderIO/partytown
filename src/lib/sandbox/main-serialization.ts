@@ -1,17 +1,17 @@
-import { getConstructorName, isValidMemberName, noop } from '../utils';
+import { getConstructorName, isValidMemberName } from '../utils';
 import { getInstance, getAndSetInstanceId } from './main-instances';
 import {
   InterfaceType,
   MainWindowContext,
   PlatformInstanceId,
-  RefHandler,
-  RefMap,
+  RefHandlerCallbackData,
   SerializedInstance,
+  SerializedRefTransferData,
   SerializedTransfer,
   SerializedType,
   WorkerMessageType,
 } from '../types';
-import { mainInstanceRefs } from './main-constants';
+import { mainInstanceRefs, winCtxs } from './main-constants';
 
 export const serializeForWorker = (
   winCtx: MainWindowContext,
@@ -85,8 +85,6 @@ export const serializeForWorker = (
 };
 
 export const deserializeFromWorker = (
-  winCtx: MainWindowContext,
-  instanceId: number,
   serializedTransfer: SerializedTransfer | undefined,
   serializedType?: SerializedType,
   serializedValue?: any,
@@ -102,23 +100,22 @@ export const deserializeFromWorker = (
     }
 
     if (serializedType === SerializedType.Ref) {
-      return deserializeRefFromWorker(winCtx, instanceId, serializedValue);
+      return deserializeRefFromWorker(serializedValue);
     }
 
     if (serializedType === SerializedType.Array) {
-      return (serializedValue as SerializedTransfer[]).map((v) =>
-        deserializeFromWorker(winCtx, instanceId, v)
-      );
+      return (serializedValue as SerializedTransfer[]).map((v) => deserializeFromWorker(v));
     }
 
     if (serializedType === SerializedType.Instance) {
-      return getInstance(winCtx, (serializedValue as SerializedInstance).$instanceId$!);
+      const serializedInstance: SerializedInstance = serializedValue;
+      return getInstance(serializedInstance.$winId$, serializedInstance.$instanceId$!);
     }
 
     if (serializedType === SerializedType.Object) {
       obj = {};
       for (key in serializedValue) {
-        obj[key] = deserializeFromWorker(winCtx, instanceId, serializedValue[key]);
+        obj[key] = deserializeFromWorker(serializedValue[key]);
       }
       return obj;
     }
@@ -127,37 +124,26 @@ export const deserializeFromWorker = (
 
 const isNodeList = (cstrName: string) => cstrName === 'HTMLCollection' || cstrName === 'NodeList';
 
-const deserializeRefFromWorker = (winCtx: MainWindowContext, instanceId: number, refId: number) => {
-  let instance = getInstance(winCtx, instanceId);
-  let mainRefHandlerMap: RefMap | undefined;
-  let mainRefHandler: RefHandler | undefined;
+const deserializeRefFromWorker = ({
+  $winId$,
+  $instanceId$,
+  $refId$,
+}: SerializedRefTransferData) => {
+  let mainRefHandlerMap = (mainInstanceRefs[$instanceId$] = mainInstanceRefs[$instanceId$] || {});
 
-  if (instance) {
-    mainRefHandlerMap = mainInstanceRefs.get(instance);
-    if (!mainRefHandlerMap) {
-      mainInstanceRefs.set(instance, (mainRefHandlerMap = {}));
-    }
-
-    mainRefHandler = mainRefHandlerMap[refId];
-    if (!mainRefHandler) {
-      mainRefHandler = createMainRefHandler(winCtx, refId);
-      mainRefHandlerMap[refId] = mainRefHandler;
-    }
-
-    return mainRefHandler;
+  if (!mainRefHandlerMap[$refId$]) {
+    mainRefHandlerMap[$refId$] = function (this: any, ...args: any[]) {
+      const winCtx = winCtxs.get($winId$)!;
+      const refHandlerData: RefHandlerCallbackData = {
+        $winId$,
+        $instanceId$,
+        $refId$,
+        $thisArg$: serializeForWorker(winCtx, this),
+        $args$: serializeForWorker(winCtx, args),
+      };
+      winCtx.$worker$!.postMessage([WorkerMessageType.RefHandlerCallback, refHandlerData]);
+    };
   }
 
-  return noop;
+  return mainRefHandlerMap[$refId$];
 };
-
-const createMainRefHandler = (winCtx: MainWindowContext, refId: number): RefHandler =>
-  function (this: any, ...args: any[]) {
-    const serializedTarget = serializeForWorker(winCtx, this);
-    const serializedArgs = serializeForWorker(winCtx, args);
-    winCtx.$worker$!.postMessage([
-      WorkerMessageType.RefHandlerCallback,
-      refId,
-      serializedTarget,
-      serializedArgs,
-    ]);
-  };

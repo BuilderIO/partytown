@@ -1,7 +1,7 @@
 import { constructInstance } from './worker-constructors';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getter, setter } from './worker-proxy';
-import { ImmediateSettersKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import { ImmediateSettersKey, InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { InterfaceType, PlatformInstanceId, StateProp } from '../types';
 import { resolveUrl, updateIframeContent } from './worker-exec';
 import { serializeForMain } from './worker-serialization';
@@ -47,7 +47,10 @@ export class WorkerIFrameElement extends WorkerSrcElement {
       if (isSuccessfulLoad) {
         iframeContent = updateIframeContent(url, xhr.responseText);
         if (this[ImmediateSettersKey]) {
-          this[ImmediateSettersKey]!.push([['srcdoc'], serializeForMain(iframeContent)]);
+          this[ImmediateSettersKey]!.push([
+            ['srcdoc'],
+            serializeForMain(this[WinIdKey], this[InstanceIdKey], iframeContent),
+          ]);
         } else {
           setter(this, ['srcdoc'], iframeContent);
         }

@@ -1,41 +1,52 @@
 import { callMethod } from './worker-proxy';
 import { constructInstance } from './worker-constructors';
-import {
-  getInstanceStateValue,
-  getWorkerRef,
-  setInstanceStateValue,
-  setWorkerRef,
-} from './worker-state';
+import { getStateValue, getWorkerRef, setStateValue, setWorkerRef } from './worker-state';
 import {
   InterfaceType,
   PlatformInstanceId,
   RefHandler,
+  RefHandlerCallbackData,
   RefMap,
   SerializedInstance,
+  SerializedRefTransferData,
   SerializedTransfer,
   SerializedType,
   StateProp,
 } from '../types';
 import { InstanceIdKey, InterfaceTypeKey, NodeNameKey, WinIdKey } from './worker-constants';
 import { WorkerNodeList } from './worker-node';
-import type { WorkerInstance } from './worker-instance';
 
-export const serializeForMain = (value: any, added?: Set<any>): SerializedTransfer | undefined => {
+export const serializeForMain = (
+  $winId$: number,
+  $instanceId$: number,
+  value: any,
+  added?: Set<any>
+): SerializedTransfer | undefined => {
   if (value !== undefined) {
     added = added || new Set();
-    const type = typeof value;
+    let type = typeof value;
+    let key: string;
+    let obj: { [key: string]: SerializedTransfer | undefined };
 
     if (type === 'string' || type === 'boolean' || type === 'number' || value == null) {
       return [SerializedType.Primitive, value];
     }
 
     if (type === 'function') {
-      return [SerializedType.Ref, setWorkerRef(value)];
+      const refData: SerializedRefTransferData = {
+        $winId$,
+        $instanceId$,
+        $refId$: setWorkerRef(value),
+      };
+      return [SerializedType.Ref, refData];
     }
 
     if (Array.isArray(value)) {
       if (!added.has(value)) {
-        return [SerializedType.Array, value.map((v) => serializeForMain(v, added))];
+        return [
+          SerializedType.Array,
+          value.map((v) => serializeForMain($winId$, $instanceId$, v, added)),
+        ];
       }
       return [SerializedType.Array, []];
     }
@@ -51,21 +62,22 @@ export const serializeForMain = (value: any, added?: Set<any>): SerializedTransf
         return [SerializedType.Instance, serializeInstance];
       }
 
-      const serializedObj: { [key: string]: SerializedTransfer | undefined } = {};
+      obj = {};
       if (!added.has(value)) {
         added.add(value);
-        for (const k in value) {
-          serializedObj[k] = serializeForMain(value[k], added);
+        for (key in value) {
+          obj[key] = serializeForMain($winId$, $instanceId$, value[key], added);
         }
       }
 
-      return [SerializedType.Object, serializedObj];
+      return [SerializedType.Object, obj];
     }
   }
 };
 
 export const deserializeFromMain = (
-  instance: WorkerInstance | null | undefined,
+  winId: number,
+  instanceId: number | undefined | null,
   memberPath: string[],
   serializedValueTransfer?: SerializedTransfer,
   serializedType?: SerializedType,
@@ -82,11 +94,7 @@ export const deserializeFromMain = (
     }
 
     if (serializedType === SerializedType.Ref) {
-      return deserializeRefFromMain(instance, memberPath, serializedValue);
-    }
-
-    if (serializedType === SerializedType.Method && instance) {
-      return (...args: any[]) => callMethod(instance, memberPath, args);
+      return deserializeRefFromMain(instanceId!, memberPath, serializedValue);
     }
 
     if (serializedType === SerializedType.Instance) {
@@ -96,13 +104,18 @@ export const deserializeFromMain = (
 
     if (serializedType === SerializedType.Array) {
       const serializedArray: SerializedTransfer[] = serializedValue;
-      return serializedArray.map((v) => deserializeFromMain(instance, memberPath, v));
+      return serializedArray.map((v) => deserializeFromMain(winId, instanceId, memberPath, v));
     }
 
     if (serializedType === SerializedType.Object) {
       obj = {};
       for (key in serializedValue) {
-        obj[key] = deserializeFromMain(instance, [...memberPath, key], serializedValue[key]);
+        obj[key] = deserializeFromMain(
+          winId,
+          instanceId,
+          [...memberPath, key],
+          serializedValue[key]
+        );
       }
       return obj;
     }
@@ -132,39 +145,40 @@ export const constructSerializedInstance = ({
 };
 
 export const callWorkerRefHandler = (
-  workerRefId: number,
-  serializedTarget: SerializedTransfer,
-  serializedArgs: SerializedTransfer,
+  { $winId$, $instanceId$, $refId$, $thisArg$, $args$ }: RefHandlerCallbackData,
   workerRef?: RefHandler
 ) => {
-  workerRef = getWorkerRef(workerRefId);
+  workerRef = getWorkerRef($refId$);
   if (workerRef) {
     try {
-      const target = deserializeFromMain(null, [], serializedTarget);
-      const args = deserializeFromMain(target, [], serializedArgs);
-      workerRef.apply(target, args);
+      const thisArg = deserializeFromMain($winId$, $instanceId$, [], $thisArg$);
+      const args = deserializeFromMain($winId$, $instanceId$, [], $args$);
+      workerRef.apply(thisArg, args);
     } catch (e) {
       console.error(e);
     }
   }
 };
 
-const deserializeRefFromMain = (instance: any, memberPath: string[], refId: number) => {
+const deserializeRefFromMain = (
+  instanceId: number,
+  memberPath: string[],
+  { $winId$, $refId$ }: SerializedRefTransferData
+) => {
   let workerRefHandler: RefHandler | undefined;
 
-  let workerRefMap = getInstanceStateValue<RefMap>(instance, StateProp.instanceRefs);
+  let workerRefMap = getStateValue<RefMap>(instanceId, StateProp.instanceRefs);
   if (!workerRefMap) {
-    setInstanceStateValue(instance, StateProp.instanceRefs, (workerRefMap = {}));
+    setStateValue(instanceId, StateProp.instanceRefs, (workerRefMap = {}));
   }
 
-  workerRefHandler = workerRefMap[refId];
+  workerRefHandler = workerRefMap[$refId$];
   if (!workerRefHandler) {
-    workerRefMap[refId] = workerRefHandler = createWorkerRefHandler(refId);
+    workerRefMap[$refId$] = workerRefHandler = function (this: any, ...args: any[]) {
+      const instance = constructInstance(InterfaceType.Window, instanceId, $winId$);
+      return callMethod(instance, memberPath, args);
+    };
   }
 
   return workerRefHandler;
-};
-
-const createWorkerRefHandler = (refId: number): RefHandler => {
-  return function (this: any, ...args: any[]) {};
 };
