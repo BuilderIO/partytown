@@ -42,6 +42,9 @@
         // gtmScript.src = './gtm.js?id=' + i + dataLayer;
 
         firstScript.parentNode.insertBefore(gtmScript, firstScript);
+
+        document.body.classList.add('completed');
+
       })(window, document, 'GTM-W275NLW');
     </script>
     <!-- End Google Tag Manager -->
@@ -93,14 +96,21 @@
   <body>
     <h1>Google Tag Manager (GTM) 🎉</h1>
 
-    <button onclick="gtmPush()">Partytown dataLayer.push()</button>
+    <p>
+      <strong>dataLayer.push</strong>
+      <span id="testDataLayer"></span>
+    </p>
     <script>
       function gtmPush() {
         const data = { event: 'button-click', from: 'partytown' };
         console.log(`GTM dataLayer.push(${JSON.stringify(data)})`);
         dataLayer.push({ event: 'button-click', from: 'partytown' });
+
+        const testDataLayer = document.getElementById('testDataLayer');
+        testDataLayer.textContent = 'pushed';
       }
     </script>
+    <button id="buttonDataLayerPush" onclick="gtmPush()">Partytown dataLayer.push()</button>
 
     <p><a href="/integrations/gtm/standard.html">Standard GTM</a></p>
     <p><a href="/integrations/">All Integration Tests</a></p>
