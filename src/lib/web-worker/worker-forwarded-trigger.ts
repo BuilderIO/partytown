@@ -4,21 +4,21 @@ import type { ForwardMainTriggerData } from '../types';
 export const workerForwardedTriggerHandle = ({
   $winId$,
   $instanceId$,
+  $forward$,
   $args$,
-  $config$,
 }: ForwardMainTriggerData) => {
   let args = deserializeFromMain($winId$, $instanceId$, [], $args$);
   let target = self as any;
-  let fn: any;
+  let globalProperty = target[$forward$[0]];
 
-  $config$.split('.').forEach((forwardProp, index, arr) => {
-    if (target) {
-      fn = target[forwardProp];
-      if (index === arr.length - 1 && typeof fn === 'function') {
-        fn.apply(target, args);
-      } else {
-        target = target[forwardProp];
-      }
+  // see src/lib/main/snippet.ts and src/lib/sandbox/main-forward-trigger.ts
+  try {
+    if (Array.isArray(globalProperty)) {
+      globalProperty.push(...args);
+    } else if (typeof globalProperty === 'function') {
+      globalProperty.apply(target, args);
     }
-  });
+  } catch (e) {
+    console.error(e);
+  }
 };

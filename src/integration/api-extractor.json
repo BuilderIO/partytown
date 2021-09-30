@@ -1,0 +1,41 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/api-extractor/v7/api-extractor.schema.json",
+  "bundledPackages": ["partytown"],
+  "compiler": {
+    "tsconfigFilePath": "<projectFolder>/tsconfig.json"
+  },
+  "mainEntryPointFilePath": "<projectFolder>/tsc/src/integration/index.d.ts",
+  "apiReport": {
+    "enabled": true,
+    "reportFileName": "api.md",
+    "reportFolder": "<projectFolder>/src/",
+    "reportTempFolder": "<projectFolder>/.cache/api-extractor/integration/"
+  },
+  "dtsRollup": {
+    "enabled": true,
+    "untrimmedFilePath": "<projectFolder>/integration/index.d.ts"
+  },
+  "docModel": {
+    "enabled": false
+  },
+  "tsdocMetadata": {
+    "enabled": false
+  },
+  "messages": {
+    "compilerMessageReporting": {
+      "default": {
+        "logLevel": "none"
+      }
+    },
+    "extractorMessageReporting": {
+      "default": {
+        "logLevel": "error"
+      }
+    },
+    "tsdocMessageReporting": {
+      "default": {
+        "logLevel": "error"
+      }
+    }
+  }
+}

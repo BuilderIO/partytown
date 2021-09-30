@@ -1,4 +1,4 @@
-import { debug, logMain, PT_INITIALIZED_EVENT, PT_SCRIPT_TYPE } from '../utils';
+import { debug, logMain, PT_INITIALIZED_EVENT, SCRIPT_TYPE } from '../utils';
 import { getAndSetInstanceId } from './main-instances';
 import { MainWindowContext, InitializeScriptData, WorkerMessageType } from '../types';
 import { mainForwardTrigger } from './main-forward-trigger';
@@ -8,7 +8,7 @@ export const readNextScript = (winCtx: MainWindowContext) => {
   const win = winCtx.$window$;
   const doc = win.document;
   const scriptElm = doc.querySelector<HTMLScriptElement>(
-    `script[type="${PT_SCRIPT_TYPE}"]:not([data-pt-id]):not([data-pt-error])`
+    `script[type="${SCRIPT_TYPE}"]:not([data-pt-id]):not([data-pt-error])`
   );
 
   if (scriptElm) {
@@ -34,7 +34,7 @@ export const readNextScript = (winCtx: MainWindowContext) => {
     winCtx.$isInitialized$ = true;
 
     if (win.frameElement) {
-      win.frameElement.partyWinId = $winId$;
+      win.frameElement._ptId = $winId$;
     }
 
     mainForwardTrigger(winCtx, win);

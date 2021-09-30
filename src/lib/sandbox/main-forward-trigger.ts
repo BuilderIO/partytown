@@ -1,26 +1,33 @@
 import { len } from '../utils';
-import { MainWindow, MainWindowContext, PlatformInstanceId, WorkerMessageType } from '../types';
+import {
+  MainWindow,
+  MainWindowContext,
+  PartytownForwardProperty,
+  PlatformInstanceId,
+  WorkerMessageType,
+} from '../types';
 import { serializeForWorker } from './main-serialization';
 
 export const mainForwardTrigger = (winCtx: MainWindowContext, win: MainWindow) => {
-  let forwardedTriggers = win._ptf;
+  let existingTriggers = win._ptf;
+  let forwardTriggers: any = (win._ptf = []);
   let i = 0;
 
-  if (forwardedTriggers) {
-    (win._ptf as any).push = ($config$: string, $args$: any[]) =>
-      winCtx.$worker$!.postMessage([
-        WorkerMessageType.ForwardMainTrigger,
-        {
-          $winId$: winCtx.$winId$,
-          $instanceId$: PlatformInstanceId.window,
-          $config$,
-          $args$: serializeForWorker(winCtx, Array.from($args$)),
-        },
-      ]);
+  // see src/lib/main/snippet.ts and src/lib/web-worker/worker-forwarded-trigger.ts
+  (forwardTriggers as any).push = ($forward$: PartytownForwardProperty, $args$: any[]) =>
+    winCtx.$worker$!.postMessage([
+      WorkerMessageType.ForwardMainTrigger,
+      {
+        $winId$: winCtx.$winId$,
+        $instanceId$: PlatformInstanceId.window,
+        $forward$,
+        $args$: serializeForWorker(winCtx, Array.from($args$)),
+      },
+    ]);
 
-    for (; i < len(forwardedTriggers as any[]); i += 2) {
-      win._ptf!.push(forwardedTriggers[i], forwardedTriggers[i + 1]);
+  if (existingTriggers) {
+    for (; i < len(existingTriggers); i += 2) {
+      forwardTriggers.push(existingTriggers[i], existingTriggers[i + 1]);
     }
-    forwardedTriggers.length = 0;
   }
 };

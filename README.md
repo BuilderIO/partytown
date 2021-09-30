@@ -244,15 +244,6 @@ Each third-party script that shouldn't run in the main thread, but instead party
 
 To load Partytown with just HTML, the library script below should be added within the `<head>` of page. The snippet will patch any global variables needed so other library scripts, such as Google Tag Manager's [Data Layer](https://developers.google.com/tag-manager/devguide), continues to work. However, the actual Partytown library, and any of the third-party scripts, are not downloaded or executed until after the document has loaded.
 
-<!-- prettier-ignore -->
-```html
-<!--Partytown-->
-<script>
-(function(){var t,e=window,p=document,a=e.partytown||{},n=p.createElement("script");e._ptf=[],(a.forward||[]).map((p=>{t=e,p.split(".").map(((a,n,r)=>{t=t[a]=n<r.length-1?t[a]||{}:function(){e._ptf.push(p,arguments)}}))})),n.async=n.defer=!0,n.src="/~partytown/partytown."+(a.debug?"debug.js":"js"),p.head.appendChild(n)})();
-</script>
-<!--End Partytown-->
-```
-
 Note that both the web worker script and the service worker script _must_ be hosted from the same origin as the HTML page, rather than a CDN. Additionally, the service worker must be hosted from a directory that ensures all HTML pages are within the [scope](https://developers.google.com/web/ilt/pwa/introduction-to-service-worker#registration_and_scope) for the service worker, so that all client-side requests from those pages are intercepted by Partytown. All other scripts can be hosted on any origin.
 
 With scripts disabled from executing, the Partytown library can lazily begin loading and executing the scripts from inside a worker.
@@ -302,25 +293,25 @@ module.exports = {
 | `logSendBeaconRequests` | Log navigator.sendBeacon() requests (debug mode required)               |
 | `logStackTraces`        | Log stack traces (debug mode required)                                  |
 
-#### Forwarding Events
+#### Forwarding Events and Triggers
 
 Many third-party scripts provide a global variable which user code calls in order to send data to the service. For example, Google Tag Manager uses a [Data Layer](https://developers.google.com/tag-manager/devguide) array, and by pushing data to the array, the data is then sent on to GTM. Because we're moving third-party scripts to a web worker, the main thread needs to know which variables to patch first, and when Partytown loads, it can then forward the event data on to the service.
 
-The `forward` config is an array of strings, with each string representing a variable that should be patched. Below is a vanilla example of setting up the forwarding for Google Tag Manager, Hubspot and Intercom:
+The `forward` property is an array of arrays, with each array representing a variable that should be patched on the global. Below is a vanilla example of setting up the forwarding for Google Tag Manager, Hubspot and Intercom. Notice `dataLayer` and `_hsq` arrays have a `1` at the end. This is used to signify that `dataLayer` is an array, where as `Intercom` should be set as a function.
 
 <!-- prettier-ignore -->
 ```html
 <script>
   partytown = {
-    forward: ['dataLayer.push', '_hsq.push', 'Intercom']
+    forward: [['dataLayer', 1], ['_hsq', 1], ['Intercom']]
   };
 </script>
 ```
 
-React Forward Config:
+React Forward Property:
 
 ```jsx
-<Partytown forward={['dataLayer.push', '_hsq.push', 'Intercom']} />
+<Partytown forward={(['dataLayer', 1], ['_hsq', 1], ['Intercom'])} />
 ```
 
 > Note that the React integration components will already add the forward configs to the Partytown library.
@@ -338,7 +329,7 @@ The distribution comes with multiple files:
   - Loads:
     - `partytown-sw.js`: Minified service worker with inlined sandbox and web worker.
 
-- `/~partytown/partytown.debug.js`
+- `/~partytown/debug/partytown.js`
 
   - Debug version of `/~partytown/partytown.js`.
   - Additional request for sandbox and web worker.
@@ -347,9 +338,9 @@ The distribution comes with multiple files:
   - Loads other debug library scripts.
   - Not meant for production, but useful to inspect what scripts are up to.
   - Loads:
-    - `partytown-sw.debug.js`: Service worker with separate sandbox request.
-    - `partytown-sandbox.debug.js`: Sandbox with separate web worker request.
-    - `partytown-ww.debug.js`: Web worker as separate file, not inlined.
+    - `debug/partytown-sw.js`: Service worker with separate sandbox request.
+    - `debug/partytown-sandbox.js`: Sandbox with separate web worker request.
+    - `debug/partytown-ww.js`: Web worker as separate file, not inlined.
 
 - `/~partytown/partytown-snippet.js`
 

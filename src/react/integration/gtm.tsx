@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
-import { googleTagManager } from '../../integrations/gtm';
-import { appendForwardConfig, PT_SCRIPT_TYPE } from '../../integrations/utils';
+import { googleTagManager } from '../../integration/services/gtm';
+import { appendForwardConfig, SCRIPT_TYPE } from '@builder.io/partytown/intergration';
 
 /**
  * https://developers.google.com/tag-manager/quickstart
@@ -27,13 +27,17 @@ export type GoogleTagManagerProps = {
  */
 export const GoogleTagManager = ({ containerId }: GoogleTagManagerProps): any => (
   <Fragment>
+    {/* 
+      Purposely does not have type="text/partytown" attribute so that the
+      config is added to the main thread window 
+    */}
     <script
       dangerouslySetInnerHTML={{
-        __html: appendForwardConfig('dataLayer.push'),
+        __html: appendForwardConfig('dataLayer', 1),
       }}
     />
     <script
-      type={PT_SCRIPT_TYPE}
+      type={SCRIPT_TYPE}
       dangerouslySetInnerHTML={{
         __html: googleTagManager(containerId),
       }}

@@ -10,15 +10,7 @@ import {
   SerializedTransfer,
 } from '../types';
 import { constructInstance } from './worker-constructors';
-import {
-  debug,
-  len,
-  logWorkerCall,
-  logWorkerGetter,
-  logWorkerSetter,
-  PT_PROXY_URL,
-  randomId,
-} from '../utils';
+import { debug, len, logWorkerCall, logWorkerGetter, logWorkerSetter, randomId } from '../utils';
 import { deserializeFromMain, serializeForMain } from './worker-serialization';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import {
@@ -31,6 +23,7 @@ import {
   webWorkerCtx,
   WinIdKey,
 } from './worker-constants';
+import syncSendMessage from '@sync-send-message-to-main';
 import type { WorkerInstance } from './worker-instance';
 
 const queueTask = (
@@ -76,31 +69,23 @@ const drainQueue = (
   queue: MainAccessRequestTask[]
 ) => {
   if (len(queue)) {
-    const xhr = new XMLHttpRequest();
     const accessReq: MainAccessRequest = {
       $msgId$: randomId(),
       $winId$,
       $forwardToWorkerAccess$,
       $tasks$: [...queue],
     };
-
-    const accessReqStr = JSON.stringify(accessReq);
-    queue.length = 0;
-
-    xhr.open('POST', webWorkerCtx.$scopePath$ + PT_PROXY_URL, false);
-    xhr.send(JSON.stringify(accessReq));
-
-    // look ma, i'm synchronous (•‿•)
-
-    const accessRsp: MainAccessResponse = JSON.parse(xhr.responseText);
+    const accessRsp: MainAccessResponse = syncSendMessage(webWorkerCtx, accessReq);
 
     const errors = accessRsp.$errors$.join();
     const isPromise = accessRsp.$isPromise$;
     const rtn = deserializeFromMain($winId$, $instanceId$, $memberPath$, accessRsp.$rtnValue$!);
 
+    queue.length = 0;
+
     if (errors) {
       if (debug) {
-        console.error(self.name, accessReqStr);
+        console.error(self.name, JSON.stringify(accessReq));
       }
       if (isPromise) {
         return Promise.reject(errors);

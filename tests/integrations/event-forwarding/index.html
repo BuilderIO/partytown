@@ -4,12 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Partytown Test Page" />
-    <title>Event Forwarding</title>
+    <title>Integration Event Forwarding</title>
 
     <script>
       partytown = {
         debug: true,
-        forward: ['superDuperAnalytics', 'dataLayer.push'],
+        forward: [['superDuperFunction'], ['superArray', 1]],
         logCalls: true,
         logGetters: true,
         logSetters: true,
@@ -17,25 +17,27 @@
         logScriptExecution: true,
       };
     </script>
-    <script src="/~partytown/partytown-snippet.debug.js"></script>
+    <script src="/~partytown/debug/partytown-snippet.js"></script>
+
+    <script>
+      superDuperFunction('fnReady');
+      superArray.push('arrayReady');
+    </script>
 
     <script type="text/partytown">
       (function() {
         let inc = 0;
 
-        const beforeReadyElm = document.getElementById('beforeReady');
-        const testForwardEventElm = document.getElementById('testForwardEvent');
-        const testForwardEventIncElm = document.getElementById('testForwardEventInc');
+        const testFn = document.getElementById('testFn');
 
-        superDuperAnalytics = function() {
+        superDuperFunction = function() {
           switch (arguments[0]) {
-            case 'ready': {
-              beforeReadyElm.textContent = arguments[0];
+            case 'fnReady': {
+              testFn.textContent = arguments[0];
               break;
             }
             case 'testForwardEvent': {
-              testForwardEventElm.textContent = arguments[1];
-              testForwardEventIncElm.textContent = ++inc;
+              testFn.textContent = arguments[1] + (++inc);
               break;
             }
           }
@@ -45,17 +47,22 @@
 
     <script type="text/partytown">
       (function() {
-        const testDataLayerElm = document.getElementById('testDataLayer');
+        const testArray = document.getElementById('testArray');
 
-        dataLayer = [];
-        dataLayer.push = function() {
-          testDataLayerElm.textContent = JSON.stringify(arguments[0]);
+        superArray = [];
+        superArray.push = function() {
+          switch (arguments[0]) {
+            case 'arrayReady': {
+              testArray.textContent = arguments[0];
+              break;
+            }
+            default: {
+              testArray.textContent = JSON.stringify(arguments[0]);
+              break;
+            }
+          }
         }
       })();
-    </script>
-
-    <script>
-      superDuperAnalytics('ready');
     </script>
 
     <link
@@ -103,38 +110,32 @@
     </style>
   </head>
   <body>
-    <h1>Event Forwarding</h1>
+    <h1>Integration Event Forwarding</h1>
     <ul>
       <li>
-        <strong>event before worker ready</strong>
-        <code id="beforeReady"></code>
-      </li>
-
-      <li>
-        <strong>superDuperAnalytics()</strong>
-        <button id="buttonForwardEvent">event</button>
-        <code id="testForwardEventInc"></code>
-        <code id="testForwardEvent"></code>
+        <strong>fn event</strong>
+        <button id="buttonForwardEvent">fn</button>
+        <code id="testFn"></code>
         <script>
           (function () {
             const btn = document.getElementById('buttonForwardEvent');
             btn.addEventListener('click', function (ev) {
-              superDuperAnalytics('testForwardEvent', ev.type);
+              superDuperFunction('testForwardEvent', ev.type);
             });
           })();
         </script>
       </li>
 
       <li>
-        <strong>dataLayer.push()</strong>
-        <button id="buttonDataLayer">push</button>
-        <code id="testDataLayer"></code>
+        <strong>array push event</strong>
+        <button id="buttonArrayPush">push</button>
+        <code id="testArray"></code>
         <script>
           (function () {
             let mph = 88;
-            const btn = document.getElementById('buttonDataLayer');
+            const btn = document.getElementById('buttonArrayPush');
             btn.addEventListener('click', function (ev) {
-              dataLayer.push({ mph: mph++ });
+              superArray.push({ mph: mph++ });
             });
           })();
         </script>

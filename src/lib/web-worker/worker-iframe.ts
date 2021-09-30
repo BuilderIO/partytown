@@ -18,7 +18,7 @@ export class WorkerIFrameElement extends WorkerSrcElement {
     let win: WorkerContentWindow;
     let winId = getInstanceStateValue(this, StateProp.partyWinId);
     if (!winId) {
-      winId = getter(this, ['partyWinId']);
+      winId = getter(this, ['_ptId']);
       setInstanceStateValue(this, StateProp.partyWinId, winId);
     }
     win = new WorkerContentWindow(InterfaceType.Window, PlatformInstanceId.window, winId);

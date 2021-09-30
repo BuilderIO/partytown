@@ -33,7 +33,7 @@ const onMessageFromWebWorker = (winCtx: MainWindowContext, msg: MessageFromWorke
       $documentTitle$: doc.title,
       $firstScriptId$: firstScriptId,
       $interfaces$: mainInterfaces,
-      $scopePath$: winCtx.$scopePath$,
+      $libPath$: new URL(winCtx.$libPath$, winCtx.$url$) + '',
       $url$: winCtx.$url$,
     };
 
@@ -74,7 +74,7 @@ export const forwardToWorkerAccessHandler = (
 export const createWebWorker = (winCtx: MainWindowContext) => {
   winCtx.$worker$ = new Worker(
     debug
-      ? './partytown-ww.debug.js'
+      ? './partytown-ww.js'
       : URL.createObjectURL(
           new Blob([WebWorkerBlob], {
             type: 'text/javascript',

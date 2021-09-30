@@ -1,15 +1,9 @@
 import { callMethod, getter, setter } from './worker-proxy';
 import { constructInstance, getElementConstructor } from './worker-constructors';
+import { getPartytownScript } from './worker-exec';
 import { ImmediateSettersKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { InterfaceType, NodeName, PlatformInstanceId } from '../types';
-import {
-  logWorkerGetter,
-  logWorkerSetter,
-  PT_SCRIPT,
-  PT_SCRIPT_TYPE,
-  randomId,
-  toUpper,
-} from '../utils';
+import { logWorkerGetter, logWorkerSetter, SCRIPT_TYPE, randomId, toUpper } from '../utils';
 import { serializeForMain } from './worker-serialization';
 import { WorkerElement } from './worker-element';
 
@@ -44,9 +38,11 @@ export class WorkerDocument extends WorkerElement {
     const elm = new ElementCstr(InterfaceType.Element, instanceId, winId, tagName);
 
     if (tagName === NodeName.Script) {
-      elm[ImmediateSettersKey] = [[['type'], serializeForMain(winId, instanceId, PT_SCRIPT_TYPE)]];
+      elm[ImmediateSettersKey] = [[['type'], serializeForMain(winId, instanceId, SCRIPT_TYPE)]];
     } else if (tagName === NodeName.IFrame) {
-      elm[ImmediateSettersKey] = [[['srcdoc'], serializeForMain(winId, instanceId, PT_SCRIPT)]];
+      elm[ImmediateSettersKey] = [
+        [['srcdoc'], serializeForMain(winId, instanceId, getPartytownScript())],
+      ];
     } else {
       elm[ImmediateSettersKey] = [];
     }

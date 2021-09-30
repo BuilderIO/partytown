@@ -2,6 +2,18 @@ import type { WorkerLocation } from './web-worker/worker-location';
 
 export type CreateWorker = (workerName: string) => Worker;
 
+export type Messenger = (
+  sandboxWindow: Window,
+  receiveMessage: MessengerRequestCallback
+) => Promise<boolean>;
+
+export type MessengerRequestCallback = (
+  accessReq: MainAccessRequest,
+  responseCallback: MessengerResponseCallback
+) => void;
+
+export type MessengerResponseCallback = (accessRsp: MainAccessResponse) => void;
+
 export type MessageFromWorkerToSandbox =
   | [WorkerMessageType.MainDataRequestFromWorker]
   | [WorkerMessageType.InitializedWorkerScript, number, string]
@@ -32,7 +44,7 @@ export const enum WorkerMessageType {
 export interface ForwardMainTriggerData {
   $winId$: number;
   $instanceId$: number;
-  $config$: string;
+  $forward$: PartytownForwardProperty;
   $args$: SerializedTransfer | undefined;
 }
 
@@ -53,7 +65,7 @@ export interface MainWindowContext {
   $config$: PartytownConfig | undefined;
   $interfaces$?: InterfaceInfo[];
   $isInitialized$?: boolean;
-  $scopePath$: string;
+  $libPath$: string;
   $startTime$?: number;
   $url$: string;
   $window$: MainWindow;
@@ -75,7 +87,7 @@ export interface InitWebWorkerData {
   $documentTitle$: string;
   $firstScriptId$: number;
   $interfaces$: InterfaceInfo[];
-  $scopePath$: string;
+  $libPath$?: string;
   $url$: string;
 }
 
@@ -222,6 +234,9 @@ export interface SerializedInstance {
   $items$?: any[];
 }
 
+/**
+ * @public
+ */
 export interface PartytownConfig {
   /**
    * When set to `true`, Partytown scripts are not inlined and not minified.
@@ -239,10 +254,16 @@ export interface PartytownConfig {
    * Below is an example of Google Tag Manager, Hubspot and Intercom forward configs:
    *
    * ```js
-   * ['dataLayer.push', '_hspt.push', 'intercom']
+   * [['dataLayer', 1], ['_hsq', 1], ['Intercom']]
    * ```
    */
-  forward?: PartytownForwardConfig;
+  forward?: PartytownForwardProperty[];
+  /**
+   * Root directory the Partytown library files can be found.
+   * The library path must end with a `/`.
+   * By default the files will load from the server's `/~partytown/` directory.
+   */
+  lib?: string;
   /**
    * Log method calls (debug mode required)
    */
@@ -273,20 +294,61 @@ export interface PartytownConfig {
   logStackTraces?: boolean;
 }
 
-export type PartytownForwardConfig = string[];
+/**
+ * The property to patch on `window`, such as `dataLayer` for Google Tag Manager.
+ *
+ * @public
+ */
+export type PartytownForwardPropertyName = string;
+
+/**
+ * The type of property which is patched on `window`. For example, Google Tag Manager's
+ * `dataLayer` is an array, so it's type should be `1`. The default, which is `undefined`,
+ * treats the property as a function.
+ *
+ * @public
+ */
+export type PartytownForwardPropertyType = PartytownForwardPropertyArrayType | undefined;
+
+/**
+ * Default foward property type, which sets the property as a function.
+ *
+ * @public
+ */
+export type PartytownForwardPropertyFunctionType = undefined;
+
+/**
+ * Sets the forward property as an array.
+ *
+ * @public
+ */
+export type PartytownForwardPropertyArrayType = 1;
+
+/**
+ * A foward property to patch on the global. The foward config property is an array,
+ * with the value at index 0 being the property name to patch. Optionally, the value
+ * at index 1 can set what type of property it is. By default it is patched as a
+ * function, and when set to `1`, it is patched as an array.
+ *
+ * @public
+ */
+export type PartytownForwardProperty = [
+  PartytownForwardPropertyName,
+  PartytownForwardPropertyFunctionType?
+];
 
 export interface MainWindow extends Window {
   frameElement: MainFrameElement | null;
   partytown?: PartytownConfig;
-  partyWin?: (win: MainWindow) => void;
-  partyWinId?: number;
   parent: MainWindow;
   top: MainWindow;
   _ptf?: any[];
+  _ptWin?: (win: MainWindow) => void;
+  _ptId?: number;
 }
 
 export interface MainFrameElement extends HTMLIFrameElement {
-  partyWinId?: number;
+  _ptId?: number;
 }
 
 export const enum NodeName {

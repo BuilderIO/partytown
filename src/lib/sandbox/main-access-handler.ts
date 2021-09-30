@@ -42,7 +42,7 @@ export const mainAccessHandler = async (
         }
 
         if (accessType === AccessType.Get) {
-          if (lastMemberName === 'partyWinId') {
+          if (lastMemberName === '_ptId') {
             await new Promise<void>((resolve) => {
               count = 0;
               tmr = setInterval(() => {

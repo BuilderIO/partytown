@@ -221,14 +221,18 @@ export const isValidMemberName = (memberName: string) => {
 export const nextTick = (cb: Function, ms?: number) => setTimeout(cb, ms);
 export const EMPTY_ARRAY = [];
 
-export const PT_PROXY_URL = `proxytown`;
 export const PT_INITIALIZED_EVENT = `ptinit`;
-export const PT_SCRIPT_TYPE = `text/partytown`;
-
-export const PT_SCRIPT = `<script src="/~partytown/partytown${
-  debug ? '.debug' : ''
-}.js" async defer></script>`;
 
 export const TOP_WIN_ID = 1;
 
 export const randomId = () => Math.round(Math.random() * 9999999999 + PlatformInstanceId.body);
+
+/**
+ * The `type` attribute for Partytown scripts, which does two things:
+ *
+ * 1. Prevents the `<script>` from executing on the main thread.
+ * 2. Is used as a selector so the Partytown library can find all scripts to execute in a web worker.
+ *
+ * @public
+ */
+export const SCRIPT_TYPE = `text/partytown`;

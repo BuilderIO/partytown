@@ -4,7 +4,7 @@
   "compiler": {
     "tsconfigFilePath": "<projectFolder>/tsconfig.json"
   },
-  "mainEntryPointFilePath": "<projectFolder>/tsc/react/index.d.ts",
+  "mainEntryPointFilePath": "<projectFolder>/tsc/src/react/index.d.ts",
   "apiReport": {
     "enabled": true,
     "reportFileName": "api.md",

@@ -9,11 +9,15 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
     "outDir": "tsc",
-    "emitDeclarationOnly": true,
     "declaration": true,
     "skipLibCheck": true,
     "sourceMap": false,
-    "jsx": "react"
+    "jsx": "react",
+    "baseUrl": ".",
+    "paths": {
+      "@builder.io/partytown/intergration": ["src/integration/index.ts"],
+      "react": ["node_modules/react"]
+    }
   },
-  "include": ["src/**/*"]
+  "include": ["src", "scripts"]
 }

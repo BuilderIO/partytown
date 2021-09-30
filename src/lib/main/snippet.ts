@@ -1,25 +1,31 @@
-import type { MainWindow, PartytownConfig } from '../types';
+import type { MainWindow, PartytownForwardProperty } from '../types';
 
-var win: MainWindow = window as any;
-var doc = document;
-var config: PartytownConfig = win.partytown || {};
-var script = doc.createElement('script');
-var target: any;
+export function snippet(win: MainWindow, doc: Document) {
+  var config = win.partytown || {};
+  var forward = config.forward || [];
+  var script = doc.createElement('script');
 
-win._ptf = [];
+  function createForwardFn(forwardProp: PartytownForwardProperty) {
+    return function () {
+      // see src/lib/sandbox/main-forward-trigger.ts and src/lib/web-worker/worker-forwarded-trigger.ts
+      (win._ptf = win._ptf || []).push(forwardProp, arguments);
+    };
+  }
 
-(config.forward || []).map((forwardConfig) => {
-  target = win;
-  forwardConfig.split('.').map((forwardProp, index, arr) => {
-    target = target[forwardProp] =
-      index < arr.length - 1
-        ? target[forwardProp] || {}
-        : function () {
-            win._ptf!.push(forwardConfig, arguments);
-          };
+  function createArrayPushFn(forwardProp: PartytownForwardProperty, arr?: any) {
+    arr = [];
+    arr.push = createForwardFn(forwardProp);
+    return arr;
+  }
+
+  forward.map((forwardProp) => {
+    (win as any)[forwardProp[0]] =
+      forwardProp[1] === 1 ? createArrayPushFn(forwardProp) : createForwardFn(forwardProp);
   });
-});
 
-script.async = script.defer = true;
-script.src = '/~partytown/partytown.' + (config.debug ? 'debug.js' : 'js');
-doc.head.appendChild(script);
+  script.async = script.defer = true;
+
+  script.src = (config.lib || '/~partytown/') + (config.debug ? 'debug/' : '') + 'partytown.js';
+
+  doc.head.appendChild(script);
+}

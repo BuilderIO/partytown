@@ -4,4 +4,4 @@ export {
   GoogleTagManager,
   GoogleTagManagerNoScript,
   GoogleTagManagerProps,
-} from './integrations/gtm';
+} from './integration/gtm';

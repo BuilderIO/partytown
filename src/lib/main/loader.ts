@@ -1,10 +1,11 @@
-import { debug, PT_INITIALIZED_EVENT, PT_SCRIPT_TYPE } from '../utils';
+import { debug, PT_INITIALIZED_EVENT, SCRIPT_TYPE } from '../utils';
 import type { MainWindow } from '../types';
 
-(function (
+export function loader(
+  win: MainWindow,
   doc: Document,
   nav: Navigator,
-  scope: string,
+  libPath?: string,
   sandbox?: HTMLIFrameElement,
   scripts?: NodeListOf<HTMLScriptElement>,
   timeout?: any
@@ -15,7 +16,7 @@ import type { MainWindow } from '../types';
       sandbox.dataset.partytown = 'sandbox';
       sandbox.setAttribute('style', 'display:block;width:0;height:0;border:0;visibility:hidden');
       sandbox.setAttribute('aria-hidden', 'true');
-      sandbox.src = scope + 'partytown-sandbox' + (debug ? '.debug?' : '?') + Date.now();
+      sandbox.src = libPath + 'partytown-sandbox-sw?' + Date.now();
       doc.body.appendChild(sandbox);
     }
   }
@@ -33,15 +34,21 @@ import type { MainWindow } from '../types';
     }
   }
 
-  scripts = doc.querySelectorAll(`script[type="${PT_SCRIPT_TYPE}"]`);
+  libPath = (win.partytown || {}).lib || '/~partytown/';
+  if (debug) {
+    libPath += 'debug/';
+  }
+
+  scripts = doc.querySelectorAll(`script[type="${SCRIPT_TYPE}"]`);
+
   if (location !== parent.location) {
-    (parent as MainWindow).partyWin!(window as MainWindow);
+    (parent as MainWindow)._ptWin!(win);
   } else {
     if (scripts!.length) {
       if ('serviceWorker' in nav) {
         nav.serviceWorker
-          .register(scope + (debug ? 'partytown-sw.debug.js' : 'partytown-sw.js'), {
-            scope: scope,
+          .register(libPath + 'partytown-sw.js', {
+            scope: libPath,
           })
           .then(
             function (swRegistration) {
@@ -71,4 +78,4 @@ import type { MainWindow } from '../types';
       }
     }
   }
-})(document, navigator, '/~partytown/');
+}

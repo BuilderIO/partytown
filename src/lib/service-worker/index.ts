@@ -1,11 +1,8 @@
-import { onFetchServiceWorkerRequest } from './fetch';
-import { receiveMessageFromSandboxToServiceWorker } from './sw-message';
+import { onFetchServiceWorkerRequest, receiveMessageFromSandboxToServiceWorker } from './fetch';
 
-const initServiceWorker = (self: ServiceWorkerGlobalScope) => {
-  self.oninstall = () => self.skipWaiting();
-  self.onactivate = () => self.clients.claim();
-  self.onmessage = receiveMessageFromSandboxToServiceWorker;
-  self.onfetch = (ev) => onFetchServiceWorkerRequest(self, ev);
-};
+const swSelf: ServiceWorkerGlobalScope = self as any;
 
-initServiceWorker(self as any);
+swSelf.oninstall = () => swSelf.skipWaiting();
+swSelf.onactivate = () => swSelf.clients.claim();
+swSelf.onmessage = receiveMessageFromSandboxToServiceWorker;
+swSelf.onfetch = (ev) => onFetchServiceWorkerRequest(swSelf, ev);

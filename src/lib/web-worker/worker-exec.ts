@@ -1,4 +1,4 @@
-import { debug, logWorker, nextTick, PT_SCRIPT, PT_SCRIPT_TYPE } from '../utils';
+import { debug, logWorker, nextTick, SCRIPT_TYPE } from '../utils';
 import { EventHandler, InitializeScriptData, StateProp, WorkerMessageType } from '../types';
 import { getInstanceStateValue, getStateValue, setStateValue } from './worker-state';
 import { webWorkerCtx } from './worker-constants';
@@ -97,10 +97,13 @@ export const getUrl = (elm: WorkerElement) =>
 export const updateIframeContent = (url: string, html: string) =>
   `<base href="${url}">` +
   html
-    .replace(/<script>/g, `<script type="${PT_SCRIPT_TYPE}">`)
-    .replace(/<script /g, `<script type="${PT_SCRIPT_TYPE}" `)
-    .replace(/text\/javascript/g, PT_SCRIPT_TYPE) +
-  PT_SCRIPT;
+    .replace(/<script>/g, `<script type="${SCRIPT_TYPE}">`)
+    .replace(/<script /g, `<script type="${SCRIPT_TYPE}" `)
+    .replace(/text\/javascript/g, SCRIPT_TYPE) +
+  getPartytownScript();
+
+export const getPartytownScript = () =>
+  `<script src=${JSON.stringify(webWorkerCtx.$libPath$ + 'partytown.js')} async defer></script>`;
 
 export const sendBeacon = (url: string, data?: any) => {
   if (debug && webWorkerCtx.$config$.logSendBeaconRequests) {
