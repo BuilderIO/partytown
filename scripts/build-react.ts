@@ -1,7 +1,6 @@
 import { BuildOptions, submodulePackageJson, submodulePath } from './utils';
 import { join } from 'path';
 import type { RollupOptions } from 'rollup';
-import { readJson, writeJson } from 'fs-extra';
 
 export function buildReact(opts: BuildOptions): RollupOptions {
   return {

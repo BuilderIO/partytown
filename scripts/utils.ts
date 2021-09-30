@@ -2,7 +2,6 @@ import gzipSize from 'gzip-size';
 import { basename, join } from 'path';
 import {
   copy,
-  emptyDir,
   ensureDir,
   readdirSync,
   readFileSync,
@@ -59,7 +58,7 @@ export function submodulePath(moduleId: string, submodulePath: string): Plugin {
       if (id === moduleId) {
         return {
           external: true,
-          id: submodulePath + '.MODULE_EXT',
+          id: submodulePath + '._MODULE_EXT_',
         };
       }
       return null;
@@ -69,7 +68,7 @@ export function submodulePath(moduleId: string, submodulePath: string): Plugin {
       for (const f in bundle) {
         const b = bundle[f];
         if (b.type === 'chunk') {
-          b.code = b.code.replace(`MODULE_EXT`, ext);
+          b.code = b.code.replace(/_MODULE_EXT_/g, ext);
         }
       }
     },
