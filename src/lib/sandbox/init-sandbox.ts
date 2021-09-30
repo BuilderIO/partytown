@@ -1,4 +1,4 @@
-import { createWebWorker } from './messenger';
+import { createWebWorker } from './create-web-worker';
 import { debug } from '../utils';
 import { mainAccessHandler } from './main-access-handler';
 import {

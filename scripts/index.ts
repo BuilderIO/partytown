@@ -1,12 +1,13 @@
 import type { BuildOptions } from './utils';
-import { emptyDir } from 'fs-extra';
-import { join } from 'path';
 import { buildApi } from './build-api';
+import { buildAtomics } from './build-atomics';
 import { buildMainLoader } from './build-main-loader';
 import { buildMainSnippet } from './build-main-snippet';
-import { buildServiceWorker } from './build-service-worker';
 import { buildIntegration } from './build-integration';
 import { buildReact } from './build-react';
+import { buildServiceWorker } from './build-service-worker';
+import { emptyDir } from 'fs-extra';
+import { join } from 'path';
 
 export async function runBuild(rootDir: string, isDev: boolean, generateApi: boolean) {
   const opts = createBuildOptions(rootDir, isDev, generateApi);
@@ -30,6 +31,7 @@ export async function runBuild(rootDir: string, isDev: boolean, generateApi: boo
     buildMainLoader(opts),
     buildMainSnippet(opts),
     buildServiceWorker(opts),
+    ...buildAtomics(opts),
     buildIntegration(opts),
     buildReact(opts),
   ];

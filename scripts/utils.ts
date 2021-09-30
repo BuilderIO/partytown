@@ -1,6 +1,15 @@
 import gzipSize from 'gzip-size';
 import { basename, join } from 'path';
-import { copy, emptyDir, readdirSync, readFileSync, readJson, statSync, writeJson } from 'fs-extra';
+import {
+  copy,
+  emptyDir,
+  ensureDir,
+  readdirSync,
+  readFileSync,
+  readJson,
+  statSync,
+  writeJson,
+} from 'fs-extra';
 import type { Plugin, RollupWarning } from 'rollup';
 
 export function syncCommunicationModulesPlugin(opts: BuildOptions, msgType: MessageType): Plugin {
@@ -11,10 +20,16 @@ export function syncCommunicationModulesPlugin(opts: BuildOptions, msgType: Mess
         if (msgType === 'sw') {
           return join(opts.tscLibDir, 'service-worker', `sync-send-message-to-main-sw.js`);
         }
+        if (msgType === 'atomics') {
+          return join(opts.tscLibDir, 'atomics', `sync-send-message-to-main-atomics.js`);
+        }
       }
       if (id === '@sync-create-messenger') {
         if (msgType === 'sw') {
           return join(opts.tscLibDir, 'service-worker', `sync-create-messenger-sw.js`);
+        }
+        if (msgType === 'atomics') {
+          return join(opts.tscLibDir, 'atomics', `sync-create-messenger-atomics.js`);
         }
       }
       return null;
@@ -27,10 +42,12 @@ export function fileSize(): Plugin {
     name: 'fileSize',
     writeBundle(options) {
       const filePath = options.file!;
-      const s = statSync(filePath);
-      const gzip = gzipSize.sync(readFileSync(filePath, 'utf-8'));
-      console.log(`👽 ${basename(filePath)}: ${s.size} b`);
-      console.log(`👾 ${basename(filePath)}: ${gzip} b (gzip)`);
+      if (!filePath.includes('debug')) {
+        const s = statSync(filePath);
+        const gzip = gzipSize.sync(readFileSync(filePath, 'utf-8'));
+        console.log(`👽 ${basename(filePath)}: ${s.size} b`);
+        console.log(`👾 ${basename(filePath)}: ${gzip} b (gzip)`);
+      }
     },
   };
 }
@@ -84,7 +101,7 @@ export function copyBuildToTestSite(opts: BuildOptions): Plugin {
   return {
     name: 'copyBuildToTestSite',
     async writeBundle() {
-      await emptyDir(opts.buildTestsDir);
+      await ensureDir(opts.buildTestsDir);
       await copy(opts.buildLibDir, opts.buildTestsDir);
     },
   };

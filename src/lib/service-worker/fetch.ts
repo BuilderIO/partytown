@@ -7,10 +7,10 @@ export const onFetchServiceWorkerRequest = (self: ServiceWorkerGlobalScope, ev: 
   const req = ev.request;
   const pathname = new URL(req.url).pathname;
 
-  if (debug && pathname.endsWith('debug/partytown-sandbox-sw')) {
+  if (debug && pathname.endsWith('debug/partytown-sandbox-sw.html')) {
     // debug version (sandbox and web worker are not inlined)
     ev.respondWith(response(SandboxDebug));
-  } else if (!debug && pathname.endsWith('partytown-sandbox-sw')) {
+  } else if (!debug && pathname.endsWith('partytown-sandbox-sw.html')) {
     // sandbox and webworker, minified and inlined
     ev.respondWith(response(Sandbox));
   } else if (pathname.endsWith('proxytown')) {

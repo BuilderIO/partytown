@@ -8,7 +8,7 @@ export function buildMainSnippet(opts: BuildOptions): RollupOptions {
     file: join(opts.buildLibDir, 'debug', 'partytown-snippet.js'),
     format: 'es',
     exports: 'none',
-    plugins: [minifyPlugin(true)],
+    plugins: [...minifyPlugin(true)],
   };
 
   const partytownMin: OutputOptions = {
@@ -16,7 +16,7 @@ export function buildMainSnippet(opts: BuildOptions): RollupOptions {
     format: 'es',
     exports: 'none',
     plugins: [
-      minifyPlugin(false),
+      ...minifyPlugin(false),
       {
         name: 'snippetClosure',
         generateBundle(opts, bundle) {

@@ -10,22 +10,25 @@ export function loader(
   scripts?: NodeListOf<HTMLScriptElement>,
   timeout?: any
 ) {
-  function ready() {
+  function ready(msgType: 'sw' | 'atomics') {
     if (!sandbox) {
       sandbox = doc.createElement('iframe');
       sandbox.dataset.partytown = 'sandbox';
       sandbox.setAttribute('style', 'display:block;width:0;height:0;border:0;visibility:hidden');
       sandbox.setAttribute('aria-hidden', 'true');
-      sandbox.src = libPath + 'partytown-sandbox-sw?' + Date.now();
+      sandbox.src = libPath + 'partytown-sandbox-' + msgType + '.html?' + Date.now();
       doc.body.appendChild(sandbox);
     }
   }
 
   function fallback(i?: number, script?: HTMLScriptElement) {
+    // no support or timeout reached
+    // basically "undo" all of the text/partytown scripts
+    // so they act as normal scripts
     if (debug) {
       console.warn(`Partytown script fallback`);
     }
-
+    clearTimeout(timeout);
     sandbox = 1 as any;
     for (i = 0; i < scripts!.length; i++) {
       script = doc.createElement('script');
@@ -45,7 +48,16 @@ export function loader(
     (parent as MainWindow)._ptWin!(win);
   } else {
     if (scripts!.length) {
-      if ('serviceWorker' in nav) {
+      timeout = setTimeout(fallback, debug ? 60000 : 10000);
+      doc.addEventListener(PT_INITIALIZED_EVENT, function () {
+        clearTimeout(timeout);
+      });
+
+      if (win.crossOriginIsolated) {
+        // atomics support
+        ready('atomics');
+      } else if ('serviceWorker' in nav) {
+        // service worker support
         nav.serviceWorker
           .register(libPath + 'partytown-sw.js', {
             scope: libPath,
@@ -53,11 +65,11 @@ export function loader(
           .then(
             function (swRegistration) {
               if (swRegistration.active) {
-                ready();
+                ready('sw');
               } else if (swRegistration.installing) {
                 swRegistration.installing.addEventListener('statechange', function (ev) {
                   if ((ev.target as any as ServiceWorker).state === 'activated') {
-                    ready();
+                    ready('sw');
                   }
                 });
               } else {
@@ -68,12 +80,8 @@ export function loader(
               console.error(e);
             }
           );
-
-        timeout = setTimeout(fallback, debug ? 60000 : 10000);
-        doc.addEventListener(PT_INITIALIZED_EVENT, function () {
-          clearTimeout(timeout);
-        });
       } else {
+        // no support for atomics or service worker
         fallback();
       }
     }

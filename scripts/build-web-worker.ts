@@ -1,8 +1,8 @@
-import { OutputOptions, rollup } from 'rollup';
+import { OutputOptions, Plugin, rollup } from 'rollup';
 import { BuildOptions, MessageType, onwarn, syncCommunicationModulesPlugin } from './utils';
 import { join } from 'path';
-import { writeFile } from 'fs-extra';
-import { managlePropsPlugin, minifyPlugin } from './minify';
+import { ensureDir, writeFile } from 'fs-extra';
+import { minifyPlugin } from './minify';
 
 export async function buildWebWorker(opts: BuildOptions, msgType: MessageType, debug: boolean) {
   const build = await rollup({
@@ -16,18 +16,49 @@ export async function buildWebWorker(opts: BuildOptions, msgType: MessageType, d
     exports: 'none',
     intro: `((self)=>{`,
     outro: `})(self);`,
-    plugins: [minifyPlugin(debug)],
+    plugins: [...minifyPlugin(debug)],
   };
-  if (!debug) {
-    output.plugins!.unshift(managlePropsPlugin());
-  }
 
   const generated = await build.generate(output);
 
   const webWorkerCode = generated.output[0].code;
   if (debug) {
-    await writeFile(join(opts.buildLibDir, 'debug', 'partytown-ww.js'), webWorkerCode);
+    const debugDir = join(opts.buildLibDir, 'debug');
+    await ensureDir(debugDir);
+    await writeFile(join(debugDir, `partytown-ww-${msgType}.js`), webWorkerCode);
   }
 
   return webWorkerCode;
+}
+
+export function webWorkerBlobUrlPlugin(
+  opts: BuildOptions,
+  msgType: MessageType,
+  debug: boolean
+): Plugin {
+  return {
+    name: 'webWorkerBlobUrlPlugin',
+    resolveId(id) {
+      if (id === '@web-worker-blob') {
+        return id;
+      }
+      if (id === '@web-worker-url') {
+        return id;
+      }
+      return null;
+    },
+    async load(id) {
+      if (id === '@web-worker-blob') {
+        let code = `""`;
+        if (!opts.isDev) {
+          code = JSON.stringify(await buildWebWorker(opts, msgType, debug));
+        }
+        return `const WebWorkerBlob = ${code}; export default WebWorkerBlob;`;
+      }
+      if (id === '@web-worker-url') {
+        return `const WebWorkerUrl = "./partytown-ww-${msgType}.js"; export default WebWorkerUrl;`;
+      }
+      return null;
+    },
+  };
 }

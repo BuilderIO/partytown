@@ -8,14 +8,14 @@ export function buildMainLoader(opts: BuildOptions): RollupOptions {
     file: join(opts.buildLibDir, 'debug', 'partytown.js'),
     format: 'es',
     exports: 'none',
-    plugins: [minifyPlugin(true)],
+    plugins: [...minifyPlugin(true)],
   };
 
   const partytownMin: OutputOptions = {
     file: join(opts.buildLibDir, 'partytown.js'),
     format: 'es',
     exports: 'none',
-    plugins: [minifyPlugin(false), fileSize()],
+    plugins: [...minifyPlugin(false), fileSize()],
   };
 
   const output = [partytownDebug];

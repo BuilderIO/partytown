@@ -1,4 +1,3 @@
-import { debug } from '../utils';
 import { forwardMsgResolves, winCtxs } from './main-constants';
 import { getAndSetInstanceId } from './main-instances';
 import {
@@ -12,9 +11,11 @@ import {
 } from '../types';
 import { initializedWorkerScript, readNextScript } from './read-main-scripts';
 import { readMainInterfaces } from './read-interfaces';
-import WebWorkerBlob from '@web-worker-blob';
 
-const onMessageFromWebWorker = (winCtx: MainWindowContext, msg: MessageFromWorkerToSandbox) => {
+export const onMessageFromWebWorker = (
+  winCtx: MainWindowContext,
+  msg: MessageFromWorkerToSandbox
+) => {
   const msgType = msg[0];
   const doc = winCtx.$window$.document;
 
@@ -70,18 +71,3 @@ export const forwardToWorkerAccessHandler = (
     forwardMsgResolves.set(accessReq.$msgId$, resolve);
     worker.postMessage([WorkerMessageType.ForwardWorkerAccessRequest, accessReq]);
   });
-
-export const createWebWorker = (winCtx: MainWindowContext) => {
-  winCtx.$worker$ = new Worker(
-    debug
-      ? './partytown-ww.js'
-      : URL.createObjectURL(
-          new Blob([WebWorkerBlob], {
-            type: 'text/javascript',
-          })
-        ),
-    { name: `Partytown (${winCtx.$winId$}) 🎉` }
-  );
-
-  winCtx.$worker$.onmessage = (ev) => onMessageFromWebWorker(winCtx, ev.data);
-};

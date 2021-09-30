@@ -25,3 +25,8 @@ declare module '@web-worker-blob' {
   const str: string;
   export default str;
 }
+
+declare module '@web-worker-url' {
+  const str: string;
+  export default str;
+}

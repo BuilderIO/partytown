@@ -3,10 +3,13 @@ import { terser } from 'rollup-plugin-terser';
 import type { MinifyOptions } from 'terser';
 
 export function minifyPlugin(debug: boolean) {
-  return terser(minifyOptions(debug));
+  if (debug) {
+    return [terser(minifyOptions(true))];
+  }
+  return [managlePropsPlugin(), terser(minifyOptions(false))];
 }
 
-export function minifyOptions(debug: boolean): MinifyOptions {
+function minifyOptions(debug: boolean): MinifyOptions {
   if (debug) {
     return {
       compress: {
@@ -45,7 +48,7 @@ export function minifyOptions(debug: boolean): MinifyOptions {
   };
 }
 
-export function managlePropsPlugin(): Plugin {
+function managlePropsPlugin(): Plugin {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$'.split('');
   const mangleProps: { [key: string]: string } = {
     $accessType$: '',
