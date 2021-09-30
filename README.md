@@ -279,19 +279,22 @@ module.exports = {
 };
 ```
 
+Additionally, the Partytown `lib` config can be used to change where the library files can be found on the server.
+
 ### Config
 
-| Config Property         | Description                                                             |
-| ----------------------- | ----------------------------------------------------------------------- |
-| `debug`                 | When set to `true`, Partytown scripts are not inlined and not minified. |
-| `forward`               | An array of strings. See [Forwarding Events](#forwarding-events).       |
-| `logCalls`              | Log method calls (debug mode required)                                  |
-| `logGetters`            | Log getter calls (debug mode required)                                  |
-| `logSetters`            | Log setter calls (debug mode required)                                  |
-| `logImageRequests`      | Log Image() src requests (debug mode required)                          |
-| `logScriptExecution`    | Log script executions (debug mode required)                             |
-| `logSendBeaconRequests` | Log navigator.sendBeacon() requests (debug mode required)               |
-| `logStackTraces`        | Log stack traces (debug mode required)                                  |
+| Config Property         | Description                                                                            |
+| ----------------------- | -------------------------------------------------------------------------------------- |
+| `debug`                 | When set to `true`, Partytown scripts are not inlined and not minified.                |
+| `forward`               | An array of strings. See [Forwarding Events](#forwarding-events).                      |
+| `lib`                   | Path where the Partytown library can be found on the server. Default is `/~partytown/` |
+| `logCalls`              | Log method calls (debug mode required)                                                 |
+| `logGetters`            | Log getter calls (debug mode required)                                                 |
+| `logSetters`            | Log setter calls (debug mode required)                                                 |
+| `logImageRequests`      | Log Image() src requests (debug mode required)                                         |
+| `logScriptExecution`    | Log script executions (debug mode required)                                            |
+| `logSendBeaconRequests` | Log navigator.sendBeacon() requests (debug mode required)                              |
+| `logStackTraces`        | Log stack traces (debug mode required)                                                 |
 
 #### Forwarding Events and Triggers
 
