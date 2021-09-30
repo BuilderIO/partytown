@@ -1,6 +1,7 @@
 import React, { Fragment } from 'react';
 import { googleTagManager } from '../../integration/services/gtm';
-import { appendForwardConfig, SCRIPT_TYPE } from '@builder.io/partytown/intergration';
+import { appendForwardProperty, SCRIPT_TYPE } from '@builder.io/partytown/intergration';
+import { PartytownScript } from '../script';
 
 /**
  * https://developers.google.com/tag-manager/quickstart
@@ -25,25 +26,14 @@ export type GoogleTagManagerProps = {
  *
  * @public
  */
-export const GoogleTagManager = ({ containerId }: GoogleTagManagerProps): any => (
-  <Fragment>
-    {/* 
-      Purposely does not have type="text/partytown" attribute so that the
-      config is added to the main thread window 
-    */}
-    <script
-      dangerouslySetInnerHTML={{
-        __html: appendForwardConfig('dataLayer', 1),
-      }}
-    />
-    <script
-      type={SCRIPT_TYPE}
-      dangerouslySetInnerHTML={{
-        __html: googleTagManager(containerId),
-      }}
-    />
-  </Fragment>
-);
+export const GoogleTagManager = ({ containerId }: GoogleTagManagerProps): any => {
+  return (
+    <Fragment>
+      <PartytownScript id="gtm" innerHTML={appendForwardProperty('dataLayer', 1)} />
+      <PartytownScript id="gtm-pt" innerHTML={googleTagManager(containerId)} type={SCRIPT_TYPE} />
+    </Fragment>
+  );
+};
 
 /**
  * The GTM No Script component should be added immediately after the opening `<body>` tag.

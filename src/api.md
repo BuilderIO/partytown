@@ -5,7 +5,7 @@
 ```ts
 
 // @public
-export const appendForwardConfig: (propertyName: PartytownForwardPropertyName, propertyType?: PartytownForwardPropertyType) => string;
+export const appendForwardProperty: (propertyName: PartytownForwardPropertyName, propertyType?: PartytownForwardPropertyType) => string;
 
 // @public (undocumented)
 export interface PartytownConfig {

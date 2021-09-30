@@ -1,4 +1,4 @@
-export { Partytown, PartytownProps } from './partytown';
+export { Partytown, PartytownProps } from './library';
 
 export {
   GoogleTagManager,

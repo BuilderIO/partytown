@@ -1,6 +1,7 @@
 import React from 'react';
 import type { PartytownConfig } from '../lib/types';
 import { partytownSnippet } from '@builder.io/partytown/intergration';
+import { PartytownScript } from './script';
 
 /**
  * Props for `<Partytown/>`, which extends the Partytown Config.
@@ -18,10 +19,5 @@ export interface PartytownProps extends PartytownConfig {}
  * @public
  */
 export const Partytown = (props?: PartytownProps): any => (
-  <script
-    data-partytown="lib"
-    dangerouslySetInnerHTML={{
-      __html: partytownSnippet({ ...props }),
-    }}
-  />
+  <PartytownScript id="lib" innerHTML={partytownSnippet({ ...props })} />
 );

@@ -31,7 +31,7 @@ export const partytownSnippet = (config: PartytownConfig) => {
  *
  * @public
  */
-export const appendForwardConfig = (
+export const appendForwardProperty = (
   propertyName: PartytownForwardPropertyName,
   propertyType?: PartytownForwardPropertyType
 ) =>
