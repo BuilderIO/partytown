@@ -258,6 +258,17 @@
         </script>
       </li>
 
+      <li>
+        <strong>paragraph constructor.name</strong>
+        <div><p style="margin: 0; padding: 0" id="testParagraphConstructor"></p></div>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testParagraphConstructor');
+            elm.textContent = elm.constructor.name + ' ' + HTMLParagraphElement.name;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

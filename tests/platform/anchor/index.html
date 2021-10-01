@@ -69,6 +69,18 @@
       </li>
 
       <li>
+        <strong>constructor.name</strong>
+        <div><a id="testAnchorConstructor"></a></div>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testAnchorConstructor');
+            elm.className = 'testAnchorConstructor';
+            elm.textContent = elm.constructor.name + ' ' + HTMLAnchorElement.name;
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>createElement('a'), no appendChild</strong>
         <div id="testCreateAnchorNoAppend"></a>
         <script type="text/partytown">

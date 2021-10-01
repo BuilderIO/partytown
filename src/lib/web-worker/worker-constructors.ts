@@ -1,10 +1,9 @@
 import { InterfaceType, NodeName } from '../types';
-import { HTMLAnchorElement } from './worker-anchor';
+import { HTMLDocument } from './worker-document';
 import { HTMLElement } from './worker-element';
-import { HTMLScriptElement } from './worker-script';
 import { Node } from './worker-node';
-import { Window, HTMLIFrameElement } from './worker-iframe';
-import { WorkerDocumentElementChild, HTMLDocument } from './worker-document';
+import { toUpper } from '../utils';
+import { Window } from './worker-iframe';
 import { WorkerProxy } from './worker-instance';
 
 export const constructInstance = (
@@ -45,10 +44,21 @@ const getConstructor = (interfaceType: InterfaceType, nodeName?: string): typeof
 };
 
 export const getElementConstructor = (nodeName: string): typeof HTMLElement =>
-  ({
-    A: HTMLAnchorElement,
-    BODY: WorkerDocumentElementChild,
-    HEAD: WorkerDocumentElementChild,
-    IFRAME: HTMLIFrameElement,
-    SCRIPT: HTMLScriptElement,
-  }[nodeName] || HTMLElement);
+  elementConstructors[nodeName] || HTMLElement;
+
+export const elementConstructors: { [tagName: string]: typeof HTMLElement } = {};
+
+export const getTagNameFromConstructor = (t: string) => {
+  t = toUpper(t.substr(4).replace('Element', ''));
+  if (t === 'IMAGE') {
+    return 'IMG';
+  } else if (t === 'PARAGRAPH') {
+    return 'P';
+  } else if (t === 'TABLEROW') {
+    return 'TR';
+  } else if (t === 'TableCell') {
+    return 'TD';
+  } else {
+    return t;
+  }
+};

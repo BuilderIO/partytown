@@ -10,19 +10,18 @@ import {
   WorkerMessageType,
 } from '../types';
 import { initializedWorkerScript, readNextScript } from './read-main-scripts';
-import { readMainInterfaces } from './read-interfaces';
+import { readMainInterfaces } from './read-main-interfaces';
 
 export const onMessageFromWebWorker = (
   winCtx: MainWindowContext,
   msg: MessageFromWorkerToSandbox
 ) => {
   const msgType = msg[0];
-  const doc = winCtx.$window$.document;
+  const win = winCtx.$window$;
+  const doc = win.document;
 
   if (msgType === WorkerMessageType.MainDataRequestFromWorker) {
     // web worker has requested data from the main thread
-    const firstScriptId = getAndSetInstanceId(winCtx, doc.querySelector('script'));
-    const mainInterfaces = readMainInterfaces(winCtx.$window$, doc);
     const initWebWorkerData: InitWebWorkerData = {
       $winId$: winCtx.$winId$,
       $parentWinId$: winCtx.$parentWinId$,
@@ -32,8 +31,9 @@ export const onMessageFromWebWorker = (
       $documentReadyState$: doc.readyState,
       $documentReferrer$: doc.referrer,
       $documentTitle$: doc.title,
-      $firstScriptId$: firstScriptId,
-      $interfaces$: mainInterfaces,
+      $firstScriptId$: getAndSetInstanceId(winCtx, doc.querySelector('script')),
+      $htmlConstructors$: Object.getOwnPropertyNames(win).filter((c) => c.startsWith('HTML')),
+      $interfaces$: readMainInterfaces(win, doc),
       $libPath$: new URL(winCtx.$libPath$, winCtx.$url$) + '',
       $url$: winCtx.$url$,
     };

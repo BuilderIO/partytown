@@ -1,12 +1,26 @@
 import { callMethod } from './worker-proxy';
-import { constructInstance } from './worker-constructors';
+import {
+  constructInstance,
+  elementConstructors,
+  getTagNameFromConstructor,
+} from './worker-constructors';
+import { HTMLAnchorElement } from './worker-anchor';
+import { HTMLDocument, WorkerDocumentElementChild } from './worker-document';
+import { HTMLElement } from './worker-element';
+import { HTMLIFrameElement, Window } from './worker-iframe';
 import { HTMLImageElement } from './worker-image';
+import { HTMLScriptElement } from './worker-script';
 import { InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { InterfaceType, MemberTypeInfo, PlatformInstanceId } from '../types';
 import { nextTick, TOP_WIN_ID } from '../utils';
+import { Node } from './worker-node';
 import { sendBeacon } from './worker-exec';
 
-export const initWebWorkerGlobal = (self: any, windowMemberTypeInfo: MemberTypeInfo) => {
+export const initWebWorkerGlobal = (
+  self: any,
+  windowMemberTypeInfo: MemberTypeInfo,
+  htmlCstrNames: string[]
+) => {
   self[WinIdKey] = webWorkerCtx.$winId$;
   self[InstanceIdKey] = PlatformInstanceId.window;
 
@@ -29,7 +43,6 @@ export const initWebWorkerGlobal = (self: any, windowMemberTypeInfo: MemberTypeI
   self.localStorage = constructInstance(InterfaceType.Storage, PlatformInstanceId.localStorage);
   self.sessionStorage = constructInstance(InterfaceType.Storage, PlatformInstanceId.sessionStorage);
 
-  self.Image = HTMLImageElement;
   navigator.sendBeacon = sendBeacon;
 
   self.self = self.window = self;
@@ -45,4 +58,24 @@ export const initWebWorkerGlobal = (self: any, windowMemberTypeInfo: MemberTypeI
 
     self.top = constructInstance(InterfaceType.Window, PlatformInstanceId.window, TOP_WIN_ID);
   }
+
+  self.HTMLDocument = self.Document = HTMLDocument;
+  self.HTMLElement = self.Element = HTMLElement;
+  self.Image = HTMLImageElement;
+  self.Node = Node;
+  self.Window = Window;
+
+  htmlCstrNames.map((htmlCstrName) => {
+    if (!self[htmlCstrName]) {
+      elementConstructors[getTagNameFromConstructor(htmlCstrName)] = self[htmlCstrName] =
+        Object.defineProperty(class extends HTMLElement {}, 'name', {
+          value: htmlCstrName,
+        });
+    }
+  });
+
+  elementConstructors.A = self.HTMLAnchorElement = HTMLAnchorElement;
+  elementConstructors.BODY = elementConstructors.HEAD = WorkerDocumentElementChild;
+  elementConstructors.IFRAME = self.HTMLIFrameElement = HTMLIFrameElement;
+  elementConstructors.SCRIPT = self.HTMLScriptElement = HTMLScriptElement;
 };

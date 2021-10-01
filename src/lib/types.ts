@@ -86,6 +86,7 @@ export interface InitWebWorkerData {
   $documentReferrer$: string;
   $documentTitle$: string;
   $firstScriptId$: number;
+  $htmlConstructors$: string[];
   $interfaces$: InterfaceInfo[];
   $libPath$?: string;
   $url$: string;

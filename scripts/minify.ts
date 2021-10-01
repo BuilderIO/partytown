@@ -78,6 +78,7 @@ function managlePropsPlugin(): Plugin {
     $firstScriptId$: '',
     $forward$: '',
     $forwardToWorkerAccess$: '',
+    $htmlConstructors$: '',
     $immediateSetters$: '',
     $importScripts$: '',
     $instanceId$: '',

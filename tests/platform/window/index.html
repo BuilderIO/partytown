@@ -110,6 +110,43 @@
         </script>
       </li>
 
+      <li>
+        <strong>Window.name</strong>
+        <code id="testWindowName"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testWindowName');
+            elm.textContent = Window.name;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>Worker HTML Constructors</strong>
+        <code id="wwHTMLConstructors"></code>
+        <script type="text/partytown">
+          (function () {
+            const htmlCstrs = Object.getOwnPropertyNames(window).filter((c) => c.startsWith('HTML')).sort();
+            const elm = document.getElementById('wwHTMLConstructors');
+            elm.textContent = htmlCstrs.join(' ');
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>Main HTML Constructors</strong>
+        <code id="mainHTMLConstructors"></code>
+        <script>
+          (function () {
+            const htmlCstrs = Object.getOwnPropertyNames(window)
+              .filter((c) => c.startsWith('HTML'))
+              .sort();
+            const elm = document.getElementById('mainHTMLConstructors');
+            elm.textContent = htmlCstrs.join(' ');
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

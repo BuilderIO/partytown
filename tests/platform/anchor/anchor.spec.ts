@@ -7,6 +7,10 @@ test('anchor', async ({ page }) => {
   const testAnchor = page.locator('#testAnchor');
   await expect(testAnchor).toHaveText('/platform/anchor/some/other/path');
 
+  await page.waitForSelector('.testAnchorConstructor');
+  const testAnchorConstructor = page.locator('#testAnchorConstructor');
+  await expect(testAnchorConstructor).toHaveText('HTMLAnchorElement HTMLAnchorElement');
+
   await page.waitForSelector('.testCreateAnchorNoAppend');
   const testCreateAnchorNoAppend = page.locator('#testCreateAnchorNoAppend');
   await expect(testCreateAnchorNoAppend).toHaveText('/platform/anchor/no-append-child');

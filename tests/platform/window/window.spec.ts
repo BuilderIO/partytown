@@ -20,4 +20,10 @@ test('window', async ({ page }) => {
   await promptButton.click();
   const testPrompt = page.locator('#testPrompt');
   await expect(testPrompt).toHaveText('88');
+
+  const wwHTMLConstructors = page.locator('#wwHTMLConstructors');
+  const ww = await wwHTMLConstructors.innerText();
+  const mainHTMLConstructors = page.locator('#mainHTMLConstructors');
+  const main = await mainHTMLConstructors.innerText();
+  expect(ww).toBe(main);
 });
