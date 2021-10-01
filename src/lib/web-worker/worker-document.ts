@@ -1,13 +1,13 @@
 import { callMethod, getter, setter } from './worker-proxy';
 import { constructInstance, getElementConstructor } from './worker-constructors';
 import { getPartytownScript } from './worker-exec';
+import { HTMLElement } from './worker-element';
 import { ImmediateSettersKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { InterfaceType, NodeName, PlatformInstanceId } from '../types';
 import { logWorkerGetter, logWorkerSetter, SCRIPT_TYPE, randomId, toUpper } from '../utils';
 import { serializeForMain } from './worker-serialization';
-import { WorkerElement } from './worker-element';
 
-export class WorkerDocument extends WorkerElement {
+export class HTMLDocument extends HTMLElement {
   get body() {
     return constructInstance(
       InterfaceType.Element,
@@ -155,7 +155,7 @@ export class WorkerDocument extends WorkerElement {
   }
 }
 
-export class WorkerDocumentElementChild extends WorkerElement {
+export class WorkerDocumentElementChild extends HTMLElement {
   get parentElement() {
     return document.documentElement;
   }

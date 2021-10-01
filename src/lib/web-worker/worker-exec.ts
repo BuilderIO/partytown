@@ -1,9 +1,9 @@
 import { debug, logWorker, nextTick, SCRIPT_TYPE } from '../utils';
 import { EventHandler, InitializeScriptData, StateProp, WorkerMessageType } from '../types';
 import { getInstanceStateValue, getStateValue, setStateValue } from './worker-state';
+import type { HTMLElement } from './worker-element';
+import type { Node } from './worker-node';
 import { webWorkerCtx } from './worker-constants';
-import type { WorkerNode } from './worker-node';
-import type { WorkerElement } from './worker-element';
 
 export const initNextScriptsInWebWorker = (initScript: InitializeScriptData) => {
   let winId = initScript.$winId$;
@@ -79,7 +79,7 @@ const setCurrentScript = (instanceId: number, src: string) => {
   webWorkerCtx.$currentScriptUrl$ = src;
 };
 
-export const insertIframe = (iframe: WorkerNode) => {
+export const insertIframe = (iframe: Node) => {
   let handlersType = getInstanceStateValue<StateProp>(iframe, StateProp.isSuccessfulLoad)
     ? StateProp.loadHandlers
     : StateProp.errorHandlers;
@@ -91,8 +91,7 @@ export const insertIframe = (iframe: WorkerNode) => {
 
 export const resolveUrl = (url?: string) => new URL(url || '', webWorkerCtx.$location$ + '');
 
-export const getUrl = (elm: WorkerElement) =>
-  resolveUrl(getInstanceStateValue(elm, StateProp.href));
+export const getUrl = (elm: HTMLElement) => resolveUrl(getInstanceStateValue(elm, StateProp.href));
 
 export const updateIframeContent = (url: string, html: string) =>
   `<base href="${url}">` +

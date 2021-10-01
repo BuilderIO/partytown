@@ -3,7 +3,7 @@ import { resolveUrl } from './worker-exec';
 import { webWorkerCtx } from './worker-constants';
 import type { EventHandler } from '../types';
 
-export class Image {
+export class HTMLImageElement {
   s: string;
   l: EventHandler[];
   e: EventHandler[];

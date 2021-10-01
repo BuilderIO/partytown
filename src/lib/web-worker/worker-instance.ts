@@ -9,7 +9,7 @@ import {
 } from './worker-constants';
 import { proxy } from './worker-proxy';
 
-export class WorkerInstance {
+export class WorkerProxy {
   [WinIdKey]: number;
   [InstanceIdKey]: number;
   [InterfaceTypeKey]: number;

@@ -6,12 +6,10 @@ import {
 } from './worker-constants';
 import { randomId } from '../utils';
 import type { RefHandler, StateRecord } from '../types';
-import type { WorkerInstance } from './worker-instance';
+import type { WorkerProxy } from './worker-instance';
 
-export const getInstanceStateValue = <T = any>(
-  instance: WorkerInstance,
-  stateKey: string | number
-) => getStateValue<T>(instance[InstanceIdKey], stateKey);
+export const getInstanceStateValue = <T = any>(instance: WorkerProxy, stateKey: string | number) =>
+  getStateValue<T>(instance[InstanceIdKey], stateKey);
 
 export const getStateValue = <T = any>(
   instanceId: number,
@@ -23,7 +21,7 @@ export const getStateValue = <T = any>(
 };
 
 export const setInstanceStateValue = (
-  instance: WorkerInstance,
+  instance: WorkerProxy,
   stateKey: string | number,
   stateValue: any
 ) => setStateValue(instance[InstanceIdKey], stateKey, stateValue);

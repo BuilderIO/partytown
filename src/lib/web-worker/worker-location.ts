@@ -1,4 +1,4 @@
-export class WorkerLocation extends URL {
+export class Location extends URL {
   assign() {}
   reload() {}
   replace() {}

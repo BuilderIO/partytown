@@ -1,6 +1,6 @@
 import { callMethod } from './worker-proxy';
 import { constructInstance } from './worker-constructors';
-import { Image } from './worker-image';
+import { HTMLImageElement } from './worker-image';
 import { InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { InterfaceType, MemberTypeInfo, PlatformInstanceId } from '../types';
 import { nextTick, TOP_WIN_ID } from '../utils';
@@ -29,7 +29,7 @@ export const initWebWorkerGlobal = (self: any, windowMemberTypeInfo: MemberTypeI
   self.localStorage = constructInstance(InterfaceType.Storage, PlatformInstanceId.localStorage);
   self.sessionStorage = constructInstance(InterfaceType.Storage, PlatformInstanceId.sessionStorage);
 
-  self.Image = Image;
+  self.Image = HTMLImageElement;
   navigator.sendBeacon = sendBeacon;
 
   self.self = self.window = self;

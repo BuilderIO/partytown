@@ -1,11 +1,11 @@
 import { InterfaceType, NodeName } from '../types';
-import { WorkerAnchorElement } from './worker-anchor';
-import { WorkerElement } from './worker-element';
-import { WorkerContentWindow, WorkerIFrameElement } from './worker-iframe';
-import { WorkerDocumentElementChild, WorkerDocument } from './worker-document';
-import { WorkerInstance } from './worker-instance';
-import { WorkerNode } from './worker-node';
-import { WorkerScriptElement } from './worker-script';
+import { HTMLAnchorElement } from './worker-anchor';
+import { HTMLElement } from './worker-element';
+import { HTMLScriptElement } from './worker-script';
+import { Node } from './worker-node';
+import { Window, HTMLIFrameElement } from './worker-iframe';
+import { WorkerDocumentElementChild, HTMLDocument } from './worker-document';
+import { WorkerProxy } from './worker-instance';
 
 export const constructInstance = (
   interfaceType: InterfaceType,
@@ -30,25 +30,25 @@ export const constructInstance = (
   return new Cstr(interfaceType, instanceId, winId, nodeName);
 };
 
-const getConstructor = (interfaceType: InterfaceType, nodeName?: string): typeof WorkerInstance => {
+const getConstructor = (interfaceType: InterfaceType, nodeName?: string): typeof WorkerProxy => {
   if (interfaceType === InterfaceType.Element) {
     return getElementConstructor(nodeName!);
   } else if (interfaceType === InterfaceType.Document) {
-    return WorkerDocument;
+    return HTMLDocument;
   } else if (interfaceType === InterfaceType.Window) {
-    return WorkerContentWindow;
+    return Window;
   } else if (interfaceType <= InterfaceType.DocumentFragmentNode) {
-    return WorkerNode;
+    return Node;
   } else {
-    return WorkerInstance;
+    return WorkerProxy;
   }
 };
 
-export const getElementConstructor = (nodeName: string): typeof WorkerElement =>
+export const getElementConstructor = (nodeName: string): typeof HTMLElement =>
   ({
-    A: WorkerAnchorElement,
+    A: HTMLAnchorElement,
     BODY: WorkerDocumentElementChild,
     HEAD: WorkerDocumentElementChild,
-    IFRAME: WorkerIFrameElement,
-    SCRIPT: WorkerScriptElement,
-  }[nodeName] || WorkerElement);
+    IFRAME: HTMLIFrameElement,
+    SCRIPT: HTMLScriptElement,
+  }[nodeName] || HTMLElement);

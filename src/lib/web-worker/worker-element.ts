@@ -1,9 +1,9 @@
 import { EventHandler, StateProp } from '../types';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
+import { Node } from './worker-node';
 import { toLower } from '../utils';
-import { WorkerNode } from './worker-node';
 
-export class WorkerElement extends WorkerNode {
+export class HTMLElement extends Node {
   get localName() {
     return toLower(this.nodeName!);
   }
@@ -12,7 +12,7 @@ export class WorkerElement extends WorkerNode {
   }
 }
 
-export class WorkerSrcElement extends WorkerElement {
+export class HTMLSrcElement extends HTMLElement {
   addEventListener(...args: any[]) {
     let eventName = args[0];
     let callbacks = getInstanceStateValue<EventHandler[]>(this, eventName) || [];

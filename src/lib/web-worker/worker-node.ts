@@ -1,17 +1,17 @@
 import { applyBeforeSyncSetters, callMethod } from './worker-proxy';
-import { EMPTY_ARRAY, len } from '../utils';
+import { EMPTY_ARRAY } from '../utils';
+import type { HTMLDocument } from './worker-document';
 import { insertIframe } from './worker-exec';
 import { InterfaceTypeKey, NodeNameKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { NodeName, WorkerMessageType } from '../types';
-import type { WorkerDocument } from './worker-document';
-import { WorkerInstance } from './worker-instance';
+import { WorkerProxy } from './worker-instance';
 
-export class WorkerNode extends WorkerInstance {
-  appendChild(node: WorkerNode) {
+export class Node extends WorkerProxy {
+  appendChild(node: Node) {
     return this.insertBefore(node, null);
   }
 
-  get ownerDocument(): WorkerDocument {
+  get ownerDocument(): HTMLDocument {
     return document as any;
   }
 
@@ -20,7 +20,7 @@ export class WorkerNode extends WorkerInstance {
   }
   set href(_: any) {}
 
-  insertBefore(newNode: WorkerNode, referenceNode: WorkerNode | null) {
+  insertBefore(newNode: Node, referenceNode: Node | null) {
     applyBeforeSyncSetters(this[WinIdKey], newNode);
 
     newNode = callMethod(this, ['insertBefore'], [newNode, referenceNode], EMPTY_ARRAY);
@@ -40,34 +40,5 @@ export class WorkerNode extends WorkerInstance {
 
   get nodeType() {
     return this[InterfaceTypeKey];
-  }
-}
-
-export class WorkerNodeList {
-  private _: WorkerNode[];
-
-  constructor(workerNodes: WorkerNode[]) {
-    (this._ = workerNodes).forEach((node, index) => ((this as any)[index] = node));
-  }
-  entries() {
-    return this._.entries();
-  }
-  forEach(cb: (value: WorkerNode, index: number) => void, thisArg?: any) {
-    this._.forEach(cb, thisArg);
-  }
-  item(index: number) {
-    return (this as any)[index];
-  }
-  keys() {
-    return this._.keys();
-  }
-  get length() {
-    return len(this._);
-  }
-  values() {
-    return this._.values();
-  }
-  [Symbol.iterator]() {
-    return this._[Symbol.iterator]();
   }
 }

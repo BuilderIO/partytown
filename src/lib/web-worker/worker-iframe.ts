@@ -1,27 +1,27 @@
 import { constructInstance } from './worker-constructors';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getter, setter } from './worker-proxy';
+import { HTMLSrcElement } from './worker-element';
 import { ImmediateSettersKey, InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { InterfaceType, PlatformInstanceId, StateProp } from '../types';
+import { Location } from './worker-location';
 import { resolveUrl, updateIframeContent } from './worker-exec';
 import { serializeForMain } from './worker-serialization';
-import { WorkerInstance } from './worker-instance';
-import { WorkerLocation } from './worker-location';
-import { WorkerSrcElement } from './worker-element';
+import { WorkerProxy } from './worker-instance';
 
-export class WorkerIFrameElement extends WorkerSrcElement {
+export class HTMLIFrameElement extends HTMLSrcElement {
   get contentDocument() {
     return this.contentWindow!.document;
   }
 
   get contentWindow() {
-    let win: WorkerContentWindow;
+    let win: Window;
     let winId = getInstanceStateValue(this, StateProp.partyWinId);
     if (!winId) {
       winId = getter(this, ['_ptId']);
       setInstanceStateValue(this, StateProp.partyWinId, winId);
     }
-    win = new WorkerContentWindow(InterfaceType.Window, PlatformInstanceId.window, winId);
+    win = new Window(InterfaceType.Window, PlatformInstanceId.window, winId);
     win.location = this.src;
     return win;
   }
@@ -59,15 +59,15 @@ export class WorkerIFrameElement extends WorkerSrcElement {
   }
 }
 
-export class WorkerContentWindow extends WorkerInstance {
+export class Window extends WorkerProxy {
   get document() {
     return constructInstance(InterfaceType.Document, PlatformInstanceId.document, this[WinIdKey]);
   }
 
-  get location(): WorkerLocation {
-    let location = getInstanceStateValue<WorkerLocation>(this, StateProp.url);
+  get location(): Location {
+    let location = getInstanceStateValue<Location>(this, StateProp.url);
     if (!location) {
-      setInstanceStateValue(this, StateProp.url, (location = new WorkerLocation('about:blank')));
+      setInstanceStateValue(this, StateProp.url, (location = new Location('about:blank')));
     }
     return location;
   }

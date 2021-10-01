@@ -1,4 +1,4 @@
-import type { WorkerLocation } from './web-worker/worker-location';
+import type { Location } from './web-worker/worker-location';
 
 export type CreateWorker = (workerName: string) => Worker;
 
@@ -96,7 +96,7 @@ export interface InitWebWorkerContext {
   $currentScriptUrl$: string;
   $importScripts$: (...urls: string[]) => void;
   $isInitialized$?: boolean;
-  $location$: WorkerLocation;
+  $location$: Location;
   $postMessage$: (msg: MessageFromWorkerToSandbox) => void;
 }
 

@@ -1,10 +1,10 @@
 import { getUrl } from './worker-exec';
+import { HTMLElement } from './worker-element';
 import { setInstanceStateValue } from './worker-state';
 import { setter } from './worker-proxy';
 import { StateProp } from '../types';
-import { WorkerElement } from './worker-element';
 
-export class WorkerAnchorElement extends WorkerElement {
+export class HTMLAnchorElement extends HTMLElement {
   get hash() {
     return getUrl(this).hash;
   }

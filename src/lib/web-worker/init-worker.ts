@@ -1,8 +1,8 @@
 import { InitWebWorkerData, InterfaceType } from '../types';
 import { initWebWorkerGlobal } from './worker-global';
+import { Location } from './worker-location';
 import { logWorker, TOP_WIN_ID } from '../utils';
 import { webWorkerCtx } from './worker-constants';
-import { WorkerLocation } from './worker-location';
 
 export const initWebWorker = (self: Worker, initWebWorkerData: InitWebWorkerData) => {
   Object.assign(webWorkerCtx, initWebWorkerData);
@@ -20,7 +20,7 @@ export const initWebWorker = (self: Worker, initWebWorkerData: InitWebWorkerData
   (self as any).postMessage = (msg: any, targetOrigin: string) =>
     logWorker(`postMessage(${JSON.stringify(msg)}, "${targetOrigin}"})`);
 
-  webWorkerCtx.$location$ = new WorkerLocation(initWebWorkerData.$url$);
+  webWorkerCtx.$location$ = new Location(initWebWorkerData.$url$);
 
   initWebWorkerGlobal(self, initWebWorkerData.$interfaces$[InterfaceType.Window][1]);
 

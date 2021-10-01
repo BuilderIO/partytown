@@ -14,7 +14,7 @@ import {
   StateProp,
 } from '../types';
 import { InstanceIdKey, InterfaceTypeKey, NodeNameKey, WinIdKey } from './worker-constants';
-import { WorkerNodeList } from './worker-node';
+import { NodeList } from './worker-node-list';
 
 export const serializeForMain = (
   $winId$: number,
@@ -138,7 +138,7 @@ export const constructSerializedInstance = ({
   } else if ($instanceId$ === PlatformInstanceId.window) {
     return self;
   } else if ($interfaceType$ === InterfaceType.NodeList) {
-    return new WorkerNodeList($items$!.map(constructSerializedInstance));
+    return new NodeList($items$!.map(constructSerializedInstance));
   } else {
     return constructInstance($interfaceType$, $instanceId$!, $winId$, $nodeName$!);
   }

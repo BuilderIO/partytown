@@ -24,10 +24,10 @@ import {
   WinIdKey,
 } from './worker-constants';
 import syncSendMessage from '@sync-send-message-to-main';
-import type { WorkerInstance } from './worker-instance';
+import type { WorkerProxy } from './worker-instance';
 
 const queueTask = (
-  instance: WorkerInstance,
+  instance: WorkerProxy,
   $accessType$: AccessType,
   $memberPath$: string[],
   $data$?: SerializedTransfer | undefined,
@@ -100,7 +100,7 @@ const drainQueue = (
   }
 };
 
-export const getter = (instance: WorkerInstance, memberPath: string[]) => {
+export const getter = (instance: WorkerProxy, memberPath: string[]) => {
   applyBeforeSyncSetters(instance[WinIdKey], instance);
 
   const rtn = queueTask(instance, AccessType.Get, memberPath);
@@ -108,7 +108,7 @@ export const getter = (instance: WorkerInstance, memberPath: string[]) => {
   return rtn;
 };
 
-export const setter = (instance: WorkerInstance, memberPath: string[], value: any) => {
+export const setter = (instance: WorkerProxy, memberPath: string[], value: any) => {
   logWorkerSetter(instance, memberPath, value);
 
   if (instance[ImmediateSettersKey]) {
@@ -128,7 +128,7 @@ export const setter = (instance: WorkerInstance, memberPath: string[], value: an
 };
 
 export const callMethod = (
-  instance: WorkerInstance,
+  instance: WorkerProxy,
   memberPath: string[],
   args: any[],
   immediateSetters?: ImmediateSetter[],
@@ -148,7 +148,7 @@ export const callMethod = (
   return rtn;
 };
 
-export const applyBeforeSyncSetters = (winId: number, instance: WorkerInstance) => {
+export const applyBeforeSyncSetters = (winId: number, instance: WorkerProxy) => {
   const beforeSyncValues = instance[ImmediateSettersKey];
   if (beforeSyncValues) {
     instance[ImmediateSettersKey] = undefined;
@@ -175,7 +175,7 @@ export const applyBeforeSyncSetters = (winId: number, instance: WorkerInstance) 
 
 const createComplexMember = (
   interfaceType: InterfaceType,
-  instance: WorkerInstance,
+  instance: WorkerProxy,
   memberPath: string[]
 ) => {
   if (
