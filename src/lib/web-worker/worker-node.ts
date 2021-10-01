@@ -71,3 +71,15 @@ export class WorkerNodeList {
     return this._[Symbol.iterator]();
   }
 }
+
+export class WorkerDocumentTypeNode extends WorkerNode {
+  get name() {
+    return NodeName.DocumentTypeNode;
+  }
+  get publicId() {
+    return '';
+  }
+  get systemId() {
+    return '';
+  }
+}

@@ -123,9 +123,11 @@ const logTargetProp = (target: any, memberPath: string[]) => {
       n = 'node.';
     } else if (target[InterfaceTypeKey] === InterfaceType.Element && target[NodeNameKey]) {
       n = `<${toLower(target[NodeNameKey])}>`;
+    } else if (target[InterfaceTypeKey] === InterfaceType.DocumentTypeNode) {
+      n = 'documentTypeNode.';
     } else {
-      n = '¯\\_(ツ)_/¯';
-      console.warn('¯\\_(ツ)_/¯', target);
+      n = '¯\\_(ツ)_/¯ TARGET.';
+      console.warn('¯\\_(ツ)_/¯ TARGET', target);
     }
   }
   return (n += memberPath.join('.'));
@@ -178,7 +180,10 @@ const logValue = (memberPath: string[], v: any): string => {
       if (v[InterfaceTypeKey] === InterfaceType.Element && v[NodeNameKey]) {
         return `<${toLower(v[NodeNameKey])}>`;
       }
-      return 'unknown instance obj';
+      if (v[InterfaceTypeKey] === InterfaceType.DocumentTypeNode) {
+        return `<!DOCTYPE ${v[NodeNameKey]}>`;
+      }
+      return '¯\\_(ツ)_/¯ instance obj';
     }
     if (v[Symbol.iterator]) {
       return `[${Array.from(v)

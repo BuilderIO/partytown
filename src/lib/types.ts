@@ -108,17 +108,18 @@ export interface MemberTypeInfo {
 
 export const enum InterfaceType {
   Window = 0,
-  Element = 1, // same as NodeType
+  Element = 1, // same as NodeType (ELEMENT_NODE)
   Method = 2,
-  TextNode = 3, // same as NodeType
+  TextNode = 3, // same as NodeType (TEXT_NODE)
   NamedNodeMap = 4,
   DOMStringMap = 5,
   DOMTokenList = 6,
   NodeList = 7,
   History = 8,
-  Document = 9, // same as NodeType
-  Storage = 10,
-  CSSStyleDeclaration = 11,
+  Document = 9, // same as NodeType (DOCUMENT_NODE)
+  DocumentTypeNode = 10, // same as NodeType (DOCUMENT_TYPE_NODE)
+  Storage = 11,
+  CSSStyleDeclaration = 12,
 }
 
 export const enum PlatformInstanceId {
@@ -355,7 +356,14 @@ export const enum NodeName {
   Body = 'BODY',
   Comment = '#comment',
   Document = '#document',
+  /**
+   * <html>
+   */
   DocumentElement = 'HTML',
+  /**
+   * <!DOCTYPE html>
+   */
+  DocumentTypeNode = 'html',
   DocumentFragment = '#document-fragment',
   IFrame = 'IFRAME',
   Head = 'HEAD',

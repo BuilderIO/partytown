@@ -292,6 +292,20 @@
         </script>
       </li>
 
+      <li>
+        <strong>document.childNodes</strong>
+        <code id="testDocumentChildNodes"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDocumentChildNodes');
+            const childNodes = document.childNodes;
+            const node0 = childNodes[0];
+            const node1 = childNodes[1];
+            elm.textContent = `${childNodes.length} [${node0.nodeName}(${node0.nodeType}), ${node1.nodeName}(${node1.nodeType})]`;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

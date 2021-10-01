@@ -3,8 +3,8 @@ import { WorkerAnchorElement } from './worker-anchor';
 import { WorkerElement } from './worker-element';
 import { WorkerContentWindow, WorkerIFrameElement } from './worker-iframe';
 import { WorkerDocumentElementChild, WorkerDocument } from './worker-document';
+import { WorkerDocumentTypeNode, WorkerNode } from './worker-node';
 import { WorkerInstance } from './worker-instance';
-import { WorkerNode } from './worker-node';
 import { WorkerScriptElement } from './worker-script';
 
 export const constructInstance = (
@@ -18,6 +18,8 @@ export const constructInstance = (
       ? NodeName.Document
       : interfaceType === InterfaceType.TextNode
       ? NodeName.Text
+      : interfaceType === InterfaceType.DocumentTypeNode
+      ? NodeName.DocumentTypeNode
       : nodeName;
 
   const Cstr = getConstructor(interfaceType, nodeName);
@@ -33,6 +35,8 @@ const getConstructor = (interfaceType: InterfaceType, nodeName?: string): typeof
     return WorkerContentWindow;
   } else if (interfaceType === InterfaceType.TextNode) {
     return WorkerNode;
+  } else if (interfaceType === InterfaceType.DocumentTypeNode) {
+    return WorkerDocumentTypeNode;
   } else {
     return WorkerInstance;
   }
