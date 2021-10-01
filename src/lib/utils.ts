@@ -124,7 +124,7 @@ const logTargetProp = (target: any, memberPath: string[]) => {
     } else if (target[InterfaceTypeKey] === InterfaceType.CommentNode) {
       n = 'comment.';
     } else if (target[InterfaceTypeKey] === InterfaceType.AttributeNode) {
-      n = 'attribute.';
+      n = 'attributes.';
     } else if (target[InterfaceTypeKey] === InterfaceType.DocumentFragmentNode) {
       n = 'fragment.';
     } else if (target[InterfaceTypeKey] === InterfaceType.DocumentTypeNode) {

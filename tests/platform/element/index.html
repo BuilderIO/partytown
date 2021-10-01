@@ -230,6 +230,22 @@
         </script>
       </li>
 
+      <li>
+        <strong>attributes.style.value</strong>
+        <code style="color: red" id="testAttrsStyleValue"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testAttrsStyleValue');
+
+            const attributes = elm.attributes;
+            const style = attributes.style;
+            const value = style.value;
+
+            elm.textContent = value;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

@@ -48,4 +48,8 @@ test('element', async ({ page }) => {
 
   const testSyncSettersCall = page.locator('#testSyncSettersCall');
   await expect(testSyncSettersCall).toHaveText('some-id');
+
+  const testAttrsStyleValue = page.locator('#testAttrsStyleValue');
+  await expect(testAttrsStyleValue).toHaveText('color: red');
+  await expect(testAttrsStyleValue).toHaveCSS('color', 'rgb(255, 0, 0)');
 });
