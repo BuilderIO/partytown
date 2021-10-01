@@ -1,9 +1,7 @@
 .cache/
 .DS_Store
 node_modules/
-/integration/
-/lib/
-/react/
+/dist/
 /tests/~partytown/
 /tests/videos/
 /tsc/

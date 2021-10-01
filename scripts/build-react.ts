@@ -7,11 +7,11 @@ export function buildReact(opts: BuildOptions): RollupOptions {
     input: join(opts.tscReactDir, 'index.js'),
     output: [
       {
-        file: join(opts.buildReactDir, 'index.cjs'),
+        file: join(opts.distReactDir, 'index.cjs'),
         format: 'cjs',
       },
       {
-        file: join(opts.buildReactDir, 'index.mjs'),
+        file: join(opts.distReactDir, 'index.mjs'),
         format: 'es',
       },
     ],
@@ -21,7 +21,7 @@ export function buildReact(opts: BuildOptions): RollupOptions {
       submodulePackageJson(
         '@builder.io/partytown/react',
         opts.srcReactDir,
-        opts.buildReactDir,
+        opts.distReactDir,
         opts
       ),
     ],

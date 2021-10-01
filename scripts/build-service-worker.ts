@@ -10,12 +10,12 @@ import {
 } from './utils';
 import { join } from 'path';
 import { minifyPlugin } from './minify';
-import { ensureDir, writeFile } from 'fs-extra';
+import { writeFile } from 'fs-extra';
 import { webWorkerBlobUrlPlugin } from './build-web-worker';
 
 export function buildServiceWorker(opts: BuildOptions): RollupOptions {
   const swDebug: OutputOptions = {
-    file: join(opts.buildLibDir, 'debug', 'partytown-sw.js'),
+    file: join(opts.distLibDebugDir, 'partytown-sw.js'),
     format: 'es',
     exports: 'none',
     plugins: [...minifyPlugin(true)],
@@ -24,7 +24,7 @@ export function buildServiceWorker(opts: BuildOptions): RollupOptions {
   const output: OutputOptions[] = [swDebug];
   if (!opts.isDev) {
     output.push({
-      file: join(opts.buildLibDir, 'partytown-sw.js'),
+      file: join(opts.distLibDir, 'partytown-sw.js'),
       format: 'es',
       exports: 'none',
       plugins: [...minifyPlugin(false), fileSize()],
@@ -65,9 +65,7 @@ async function buildSandboxServiceWorker(opts: BuildOptions, msgType: MessageTyp
 
   let sandboxHtml: string;
   if (debug) {
-    const buildLibDebugDir = join(opts.buildLibDir, 'debug');
-    await ensureDir(buildLibDebugDir);
-    await writeFile(join(buildLibDebugDir, `partytown-sandbox-${msgType}.js`), sandboxJsCode);
+    await writeFile(join(opts.distLibDebugDir, `partytown-sandbox-${msgType}.js`), sandboxJsCode);
     sandboxHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><script src="./partytown-sandbox-${msgType}.js"></script></head></html>`;
   } else {
     sandboxHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><script type="module">${sandboxJsCode}</script></head></html>`;

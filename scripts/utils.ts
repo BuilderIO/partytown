@@ -1,14 +1,6 @@
 import gzipSize from 'gzip-size';
 import { basename, join } from 'path';
-import {
-  copy,
-  ensureDir,
-  readdirSync,
-  readFileSync,
-  readJson,
-  statSync,
-  writeJson,
-} from 'fs-extra';
+import { copy, readdirSync, readFileSync, readJson, statSync, writeJson } from 'fs-extra';
 import type { Plugin, RollupWarning } from 'rollup';
 
 export function syncCommunicationModulesPlugin(opts: BuildOptions, msgType: MessageType): Plugin {
@@ -84,14 +76,11 @@ export function submodulePackageJson(
   return {
     name: 'submodulePackageJson',
     async writeBundle() {
-      if (opts.generateApi) {
-        const rootPkg = await readJson(join(opts.rootDir, 'package.json'));
-        const pkg = await readJson(join(submoduleSrcDir, 'package.json'));
-        pkg.name = submoduleName;
-        pkg.version = rootPkg.version;
-        pkg.private = true;
-        await writeJson(join(submoduleBuildDir, 'package.json'), pkg, { spaces: 2 });
-      }
+      const pkg = await readJson(join(submoduleSrcDir, 'package.json'));
+      pkg.name = submoduleName;
+      pkg.version = opts.packageJson.version;
+      pkg.private = true;
+      await writeJson(join(submoduleBuildDir, 'package.json'), pkg, { spaces: 2 });
     },
   };
 }
@@ -100,8 +89,7 @@ export function copyBuildToTestSite(opts: BuildOptions): Plugin {
   return {
     name: 'copyBuildToTestSite',
     async writeBundle() {
-      await ensureDir(opts.buildTestsDir);
-      await copy(opts.buildLibDir, opts.buildTestsDir);
+      await copy(opts.distLibDir, opts.distTestsDir);
     },
   };
 }
@@ -134,20 +122,23 @@ export interface BuildOptions {
   isDev: boolean;
   generateApi: boolean;
   rootDir: string;
-  tscDir: string;
-  tscIntegrationDir: string;
-  tscLibDir: string;
-  tscReactDir: string;
+  distDir: string;
+  distIntegrationDir: string;
+  distLibDir: string;
+  distLibDebugDir: string;
+  distReactDir: string;
+  distTestsDir: string;
   srcDir: string;
   srcIntegrationDir: string;
   srcLibDir: string;
   srcReactDir: string;
-  buildIntegrationDir: string;
-  buildLibDir: string;
-  buildReactDir: string;
-  buildTestsDir: string;
   testsDir: string;
   testsVideosDir: string;
+  tscDir: string;
+  tscIntegrationDir: string;
+  tscLibDir: string;
+  tscReactDir: string;
+  packageJson: any;
 }
 
 export type MessageType = 'sw' | 'atomics';

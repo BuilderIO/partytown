@@ -6,11 +6,11 @@ import { readFile } from 'fs-extra';
 export function buildIntegration(opts: BuildOptions): RollupOptions {
   const output: OutputOptions[] = [
     {
-      file: join(opts.buildIntegrationDir, 'index.cjs'),
+      file: join(opts.distIntegrationDir, 'index.cjs'),
       format: 'cjs',
     },
     {
-      file: join(opts.buildIntegrationDir, 'index.mjs'),
+      file: join(opts.distIntegrationDir, 'index.mjs'),
       format: 'es',
     },
   ];
@@ -29,7 +29,14 @@ export function buildIntegration(opts: BuildOptions): RollupOptions {
         async load(id) {
           if (id === '@snippet') {
             const codeFileName = 'partytown-snippet.js';
-            const codeFilePath = join(opts.buildLibDir, codeFileName);
+
+            let codeFilePath: string;
+            if (opts.isDev) {
+              codeFilePath = join(opts.distLibDebugDir, codeFileName);
+            } else {
+              codeFilePath = join(opts.distLibDir, codeFileName);
+            }
+
             const code = JSON.stringify((await readFile(codeFilePath, 'utf-8')).trim());
             return `const PartytownSnippet = ${code}; export default PartytownSnippet;`;
           }
@@ -38,7 +45,7 @@ export function buildIntegration(opts: BuildOptions): RollupOptions {
       submodulePackageJson(
         '@builder.io/partytown/integration',
         opts.srcIntegrationDir,
-        opts.buildIntegrationDir,
+        opts.distIntegrationDir,
         opts
       ),
     ],

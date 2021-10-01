@@ -8,7 +8,7 @@ import {
 } from './utils';
 import { join } from 'path';
 import { minifyPlugin } from './minify';
-import { ensureDir, writeFile } from 'fs-extra';
+import { writeFile } from 'fs-extra';
 import { webWorkerBlobUrlPlugin } from './build-web-worker';
 
 export function buildAtomics(opts: BuildOptions): RollupOptions[] {
@@ -25,7 +25,7 @@ function buildAtomicsDebug(opts: BuildOptions): RollupOptions {
   return {
     input: join(opts.tscLibDir, 'sandbox', 'index.js'),
     output: {
-      file: join(opts.buildLibDir, 'debug', 'partytown-sandbox-atomics.html'),
+      file: join(opts.distLibDebugDir, 'partytown-sandbox-atomics.html'),
       format: 'es',
       exports: 'none',
       plugins: [
@@ -36,9 +36,7 @@ function buildAtomicsDebug(opts: BuildOptions): RollupOptions {
               const b = bundle[f];
               if (b.type === 'chunk') {
                 const jsCode = b.code;
-                const libDebugPath = join(opts.buildLibDir, 'debug');
-                const debugJsPath = join(libDebugPath, 'partytown-sandbox-atomics.js');
-                await ensureDir(libDebugPath);
+                const debugJsPath = join(opts.distLibDebugDir, 'partytown-sandbox-atomics.js');
                 await writeFile(debugJsPath, jsCode);
                 b.code = debugHtml;
               }
@@ -71,7 +69,7 @@ function buildAtomicsMin(opts: BuildOptions): RollupOptions {
   return {
     input: join(opts.tscLibDir, 'sandbox', 'index.js'),
     output: {
-      file: join(opts.buildLibDir, 'partytown-sandbox-atomics.html'),
+      file: join(opts.distLibDir, 'partytown-sandbox-atomics.html'),
       format: 'es',
       exports: 'none',
       plugins: [

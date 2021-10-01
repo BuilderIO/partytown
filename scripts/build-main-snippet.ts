@@ -5,14 +5,14 @@ import type { OutputOptions, RollupOptions } from 'rollup';
 
 export function buildMainSnippet(opts: BuildOptions): RollupOptions {
   const partytownDebug: OutputOptions = {
-    file: join(opts.buildLibDir, 'debug', 'partytown-snippet.js'),
+    file: join(opts.distLibDebugDir, 'partytown-snippet.js'),
     format: 'es',
     exports: 'none',
     plugins: [...minifyPlugin(true)],
   };
 
   const partytownMin: OutputOptions = {
-    file: join(opts.buildLibDir, 'partytown-snippet.js'),
+    file: join(opts.distLibDir, 'partytown-snippet.js'),
     format: 'es',
     exports: 'none',
     plugins: [

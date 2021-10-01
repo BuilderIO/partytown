@@ -13,7 +13,7 @@
   },
   "dtsRollup": {
     "enabled": true,
-    "untrimmedFilePath": "<projectFolder>/integration/index.d.ts"
+    "untrimmedFilePath": "<projectFolder>/dist/integration/index.d.ts"
   },
   "docModel": {
     "enabled": false

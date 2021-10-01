@@ -1,7 +1,7 @@
 import { OutputOptions, Plugin, rollup } from 'rollup';
 import { BuildOptions, MessageType, onwarn, syncCommunicationModulesPlugin } from './utils';
 import { join } from 'path';
-import { ensureDir, writeFile } from 'fs-extra';
+import { writeFile } from 'fs-extra';
 import { minifyPlugin } from './minify';
 
 export async function buildWebWorker(opts: BuildOptions, msgType: MessageType, debug: boolean) {
@@ -23,9 +23,7 @@ export async function buildWebWorker(opts: BuildOptions, msgType: MessageType, d
 
   const webWorkerCode = generated.output[0].code;
   if (debug) {
-    const debugDir = join(opts.buildLibDir, 'debug');
-    await ensureDir(debugDir);
-    await writeFile(join(debugDir, `partytown-ww-${msgType}.js`), webWorkerCode);
+    await writeFile(join(opts.distLibDebugDir, `partytown-ww-${msgType}.js`), webWorkerCode);
   }
 
   return webWorkerCode;
