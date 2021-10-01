@@ -107,6 +107,8 @@ export interface MemberTypeInfo {
 }
 
 export const enum InterfaceType {
+  Window = 0, // (node type 0 not used, so using for Window interface)
+
   // https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
 
   Element = 1, // ELEMENT_NODE
@@ -114,7 +116,7 @@ export const enum InterfaceType {
   TextNode = 3, // TEXT_NODE
   CDataSectionNode = 4, // CDATA_SECTION_NODE
 
-  Window = 5, // (node type 5 not used in the standard)
+  DOMTokenList = 5, // (node type 5 not used in the standard)
   NodeList = 6, // (node type 6 not used in the standard)
 
   ProcessingInstructionNode = 7, // PROCESSING_INSTRUCTION_NODE
@@ -125,11 +127,10 @@ export const enum InterfaceType {
 
   CSSStyleDeclaration = 12,
   DOMStringMap = 13,
-  DOMTokenList = 14,
-  History = 15,
-  Method = 16,
-  NamedNodeMap = 17,
-  Storage = 18,
+  History = 14,
+  Method = 15,
+  NamedNodeMap = 16,
+  Storage = 17,
 }
 
 export const enum PlatformInstanceId {

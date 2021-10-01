@@ -7,13 +7,14 @@ export const readMainInterfaces = (win: Window, doc: Document) => {
 
   const implementations: [InterfaceType, any][] = [
     [InterfaceType.Window, win],
+    [InterfaceType.Element, docElement],
+    [InterfaceType.TextNode, docImpl.createTextNode('')],
+    [InterfaceType.DocumentFragmentNode, docImpl.createDocumentFragment()],
     [InterfaceType.Document, docImpl],
     [InterfaceType.DOMTokenList, docElement.classList],
-    [InterfaceType.Element, docElement],
     [InterfaceType.History, win.history],
     [InterfaceType.NodeList, docElement.childNodes],
     [InterfaceType.Storage, win.sessionStorage],
-    [InterfaceType.TextNode, docImpl.createTextNode('')],
   ];
 
   return implementations.map(([interfaceType, impl]) => {

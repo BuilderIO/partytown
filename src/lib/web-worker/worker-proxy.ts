@@ -178,6 +178,14 @@ const createComplexMember = (
   instance: WorkerInstance,
   memberPath: string[]
 ) => {
+  if (
+    interfaceType === InterfaceType.CommentNode ||
+    interfaceType === InterfaceType.DocumentTypeNode
+  ) {
+    // have these nodes interfaces just use the same as a text node
+    interfaceType = InterfaceType.TextNode;
+  }
+
   const interfaceInfo = webWorkerCtx.$interfaces$.find((i) => i[0] === interfaceType);
   if (interfaceInfo) {
     const memberTypeInfo = interfaceInfo[1];

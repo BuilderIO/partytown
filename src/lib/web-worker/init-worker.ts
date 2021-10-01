@@ -1,4 +1,4 @@
-import type { InitWebWorkerData } from '../types';
+import { InitWebWorkerData, InterfaceType } from '../types';
 import { initWebWorkerGlobal } from './worker-global';
 import { logWorker, TOP_WIN_ID } from '../utils';
 import { webWorkerCtx } from './worker-constants';
@@ -22,7 +22,7 @@ export const initWebWorker = (self: Worker, initWebWorkerData: InitWebWorkerData
 
   webWorkerCtx.$location$ = new WorkerLocation(initWebWorkerData.$url$);
 
-  initWebWorkerGlobal(self, initWebWorkerData.$interfaces$[0][1]);
+  initWebWorkerGlobal(self, initWebWorkerData.$interfaces$[InterfaceType.Window][1]);
 
   webWorkerCtx.$isInitialized$ = true;
 };
