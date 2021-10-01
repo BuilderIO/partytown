@@ -35,9 +35,8 @@ function buildAtomicsDebug(opts: BuildOptions): RollupOptions {
             for (const f in bundle) {
               const b = bundle[f];
               if (b.type === 'chunk') {
-                const jsCode = b.code;
                 const debugJsPath = join(opts.distLibDebugDir, 'partytown-sandbox-atomics.js');
-                await writeFile(debugJsPath, jsCode);
+                await writeFile(debugJsPath, b.code);
                 b.code = debugHtml;
               }
             }

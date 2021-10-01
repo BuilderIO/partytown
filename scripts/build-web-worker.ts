@@ -58,5 +58,12 @@ export function webWorkerBlobUrlPlugin(
       }
       return null;
     },
+    async generateBundle() {
+      if (opts.isDev) {
+        const wwCode = await buildWebWorker(opts, msgType, debug);
+        const wwDebugFilePath = join(opts.distLibDebugDir, `partytown-ww-${msgType}.js`);
+        await writeFile(wwDebugFilePath, wwCode);
+      }
+    },
   };
 }
