@@ -131,19 +131,45 @@
           (function () {
             const elm = document.getElementById('testComment');
             const c = document.createComment('1.21');
-            elm.textContent = c.nodeType + ' ' + c.nodeName + ' ' + c.data;
+            const hasChildNodes = c.hasChildNodes();
+            elm.textContent = c.nodeType + ' ' + c.nodeName + ' ' + c.data + ' ' + hasChildNodes;
           })();
         </script>
       </li>
 
       <li>
-        <strong>fragment</strong>
-        <code id="testFragment"></code>
+        <strong>fragment nodeType/Name</strong>
+        <code id="testFragmentNodeType"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('testFragment');
+            const elm = document.getElementById('testFragmentNodeType');
             const f = document.createDocumentFragment();
             elm.textContent = f.nodeType + ' ' + f.nodeName;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>fragment childNodes</strong>
+        <code id="testFragmentChildNodes"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testFragmentChildNodes');
+            const f = document.createDocumentFragment();
+            const div = document.createElement('div');
+            div.innerHTML = '<span>fragment</span>';
+            f.appendChild(div);
+            const fragDiv = f.children[0];
+            const fragSpan = div.children[0];
+            const qSpan = f.querySelector('span');
+            elm.textContent =
+              f.childElementCount +
+              ' ' +
+              fragDiv.nodeName +
+              ' ' +
+              fragSpan.nodeName +
+              ' ' +
+              qSpan.textContent;
           })();
         </script>
       </li>

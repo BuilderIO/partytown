@@ -231,6 +231,18 @@
       </li>
 
       <li>
+        <strong>attributes nodeType/Name</strong>
+        <code id="testAttrsNodeType"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testAttrsNodeType');
+
+            elm.textContent = elm.attributes.id.nodeType + ' ' + elm.attributes.id.nodeName;
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>attributes.style.value</strong>
         <code style="color: red" id="testAttrsStyleValue"></code>
         <script type="text/partytown">

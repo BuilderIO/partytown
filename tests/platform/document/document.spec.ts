@@ -66,4 +66,7 @@ test('document', async ({ page }) => {
 
   const testDocumentChildNodes = page.locator('#testDocumentChildNodes');
   await expect(testDocumentChildNodes).toHaveText('2 [html(10), HTML(1)]');
+
+  const testDocType = page.locator('#testDocType');
+  await expect(testDocType).toHaveText('10 html html false');
 });

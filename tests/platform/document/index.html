@@ -306,6 +306,19 @@
         </script>
       </li>
 
+      <li>
+        <strong>DocumentType node</strong>
+        <code id="testDocType"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDocType');
+            const doctype = document.doctype;
+            const hasChildNodes = doctype.hasChildNodes();
+            elm.textContent = doctype.nodeType + ' ' + doctype.nodeName + ' ' + doctype.name + ' ' + hasChildNodes;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

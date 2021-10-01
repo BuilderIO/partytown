@@ -24,8 +24,11 @@ test('node', async ({ page }) => {
   await expect(testParentNode).toHaveText('hasParentNode');
 
   const testComment = page.locator('#testComment');
-  await expect(testComment).toHaveText('8 #comment 1.21');
+  await expect(testComment).toHaveText('8 #comment 1.21 false');
 
-  const testFragment = page.locator('#testFragment');
-  await expect(testFragment).toHaveText('11 #document-fragment');
+  const testFragmentNodeType = page.locator('#testFragmentNodeType');
+  await expect(testFragmentNodeType).toHaveText('11 #document-fragment');
+
+  const testFragmentChildNodes = page.locator('#testFragmentChildNodes');
+  await expect(testFragmentChildNodes).toHaveText('1 DIV SPAN fragment');
 });
