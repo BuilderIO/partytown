@@ -29,8 +29,13 @@ export async function runBuild(rootDir: string, isDev: boolean, generateApi: boo
 }
 
 async function createRootPackage(opts: BuildOptions) {
-  await emptyDir(opts.distDir);
-  await emptyDir(opts.distTestsDir);
+  if (opts.isDev) {
+    await emptyDir(opts.distDir);
+    await emptyDir(opts.distTestsDir);
+  } else {
+    await ensureDir(opts.distDir);
+    await ensureDir(opts.distTestsDir);
+  }
 
   await ensureDir(opts.distIntegrationDir);
   await ensureDir(opts.distLibDir);

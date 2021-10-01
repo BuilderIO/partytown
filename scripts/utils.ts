@@ -36,8 +36,8 @@ export function fileSize(): Plugin {
       if (!filePath.includes('debug')) {
         const s = statSync(filePath);
         const gzip = gzipSize.sync(readFileSync(filePath, 'utf-8'));
-        console.log(`👽 ${basename(filePath)}: ${s.size} b`);
-        console.log(`👾 ${basename(filePath)}: ${gzip} b (gzip)`);
+        console.log(`🕺 ${basename(filePath)}: ${s.size} b`);
+        console.log(`🎉 ${basename(filePath)}: ${gzip} b (gzip)`);
       }
     },
   };
