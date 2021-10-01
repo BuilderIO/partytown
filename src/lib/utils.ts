@@ -125,6 +125,7 @@ const logTargetProp = (target: any, memberPath: string[]) => {
       n = `<${toLower(target[NodeNameKey])}>`;
     } else {
       n = '¯\\_(ツ)_/¯';
+      console.warn('¯\\_(ツ)_/¯', target);
     }
   }
   return (n += memberPath.join('.'));

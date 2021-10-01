@@ -15,7 +15,7 @@ import { winCtxs, windows } from './main-constants';
 export const initSandbox = async (sandboxWindow: Window, winIds: number) => {
   const mainWindow: MainWindow = sandboxWindow.parent as any;
   const $config$ = mainWindow.partytown || {};
-  const $libPath$ = $config$.lib || '/~partytown/';
+  const $libPath$ = ($config$.lib || '/~partytown/') + (debug ? 'debug/' : '');
 
   const registerWindow = (win: MainWindow) => {
     if (!windows.has(win)) {
