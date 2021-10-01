@@ -53,4 +53,7 @@ test('document-prod', async ({ page }) => {
   await expect(testCurrentScriptSrcLocation).toHaveText(
     '/platform/document-prod/current-script-src.js'
   );
+
+  const testDocCstrName = page.locator('#testDocCstrName');
+  await expect(testDocCstrName).toHaveText('HTMLDocument');
 });

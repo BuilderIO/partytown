@@ -319,6 +319,17 @@
         </script>
       </li>
 
+      <li>
+        <strong>document.constructor.name</strong>
+        <code id="testDocCstrName"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDocCstrName');
+            elm.textContent = document.constructor.name;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

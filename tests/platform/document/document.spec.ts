@@ -69,4 +69,7 @@ test('document', async ({ page }) => {
 
   const testDocType = page.locator('#testDocType');
   await expect(testDocType).toHaveText('10 html html false');
+
+  const testDocCstrName = page.locator('#testDocCstrName');
+  await expect(testDocCstrName).toHaveText('HTMLDocument');
 });

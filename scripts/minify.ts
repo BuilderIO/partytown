@@ -16,6 +16,7 @@ function minifyOptions(debug: boolean): MinifyOptions {
         global_defs: {
           'globalThis.partytownDebug': true,
         },
+        keep_classnames: true,
         inline: false,
         join_vars: false,
         loops: false,
@@ -37,6 +38,7 @@ function minifyOptions(debug: boolean): MinifyOptions {
       global_defs: {
         'globalThis.partytownDebug': false,
       },
+      keep_classnames: keepConstructorNames(),
       ecma: 2018,
       passes: 2,
       unsafe_symbols: true,
@@ -45,7 +47,15 @@ function minifyOptions(debug: boolean): MinifyOptions {
       comments: false,
       ecma: 2018,
     },
+    keep_classnames: keepConstructorNames(),
+    mangle: {
+      keep_classnames: keepConstructorNames(),
+    },
   };
+}
+
+function keepConstructorNames() {
+  return /HTMLAnchorElement|HTMLIFrameElement|HTMLScriptElement|HTMLDocument|HTMLElement|Node|Window/;
 }
 
 function managlePropsPlugin(): Plugin {
