@@ -18,6 +18,10 @@ export const constructInstance = (
       ? NodeName.Document
       : interfaceType === InterfaceType.TextNode
       ? NodeName.Text
+      : interfaceType === InterfaceType.CommentNode
+      ? NodeName.Comment
+      : interfaceType === InterfaceType.DocumentFragmentNode
+      ? NodeName.DocumentFragment
       : interfaceType === InterfaceType.DocumentTypeNode
       ? NodeName.DocumentTypeNode
       : nodeName;
@@ -33,10 +37,10 @@ const getConstructor = (interfaceType: InterfaceType, nodeName?: string): typeof
     return WorkerDocument;
   } else if (interfaceType === InterfaceType.Window) {
     return WorkerContentWindow;
-  } else if (interfaceType === InterfaceType.TextNode) {
-    return WorkerNode;
   } else if (interfaceType === InterfaceType.DocumentTypeNode) {
     return WorkerDocumentTypeNode;
+  } else if (interfaceType <= InterfaceType.DocumentFragmentNode) {
+    return WorkerNode;
   } else {
     return WorkerInstance;
   }

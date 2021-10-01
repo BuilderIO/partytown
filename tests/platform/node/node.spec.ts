@@ -22,4 +22,10 @@ test('node', async ({ page }) => {
 
   const testParentNode = page.locator('#testParentNode');
   await expect(testParentNode).toHaveText('hasParentNode');
+
+  const testComment = page.locator('#testComment');
+  await expect(testComment).toHaveText('8 #comment 1.21');
+
+  const testFragment = page.locator('#testFragment');
+  await expect(testFragment).toHaveText('11 #document-fragment');
 });

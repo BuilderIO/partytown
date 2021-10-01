@@ -5,7 +5,7 @@ import {
   webWorkerCtx,
   WinIdKey,
 } from './web-worker/worker-constants';
-import { InterfaceType, MainWindowContext, PlatformInstanceId } from './types';
+import { InterfaceType, MainWindowContext, NodeName, PlatformInstanceId } from './types';
 
 export const debug = (globalThis as any).partytownDebug;
 
@@ -119,12 +119,18 @@ const logTargetProp = (target: any, memberPath: string[]) => {
       n = 'sessionStorage.';
     } else if (target.nodeType === 1) {
       n = toLower(target.nodeName) + '.';
-    } else if (target[InterfaceTypeKey] === InterfaceType.TextNode) {
-      n = 'node.';
     } else if (target[InterfaceTypeKey] === InterfaceType.Element && target[NodeNameKey]) {
       n = `<${toLower(target[NodeNameKey])}>`;
+    } else if (target[InterfaceTypeKey] === InterfaceType.CommentNode) {
+      n = 'comment.';
+    } else if (target[InterfaceTypeKey] === InterfaceType.AttributeNode) {
+      n = 'attribute.';
+    } else if (target[InterfaceTypeKey] === InterfaceType.DocumentFragmentNode) {
+      n = 'fragment.';
     } else if (target[InterfaceTypeKey] === InterfaceType.DocumentTypeNode) {
       n = 'documentTypeNode.';
+    } else if (target[InterfaceTypeKey] <= InterfaceType.DocumentFragmentNode) {
+      n = 'node.';
     } else {
       n = '¯\\_(ツ)_/¯ TARGET.';
       console.warn('¯\\_(ツ)_/¯ TARGET', target);
@@ -157,7 +163,7 @@ const logValue = (memberPath: string[], v: any): string => {
         return `<body>`;
       }
       if (instanceId === PlatformInstanceId.document) {
-        return `#document`;
+        return NodeName.Document;
       }
       if (instanceId === PlatformInstanceId.documentElement) {
         return `<html>`;
@@ -174,14 +180,14 @@ const logValue = (memberPath: string[], v: any): string => {
       if (instanceId === PlatformInstanceId.window) {
         return `[window]`;
       }
-      if (v[InterfaceTypeKey] === InterfaceType.TextNode) {
-        return `#text`;
-      }
       if (v[InterfaceTypeKey] === InterfaceType.Element && v[NodeNameKey]) {
         return `<${toLower(v[NodeNameKey])}>`;
       }
       if (v[InterfaceTypeKey] === InterfaceType.DocumentTypeNode) {
         return `<!DOCTYPE ${v[NodeNameKey]}>`;
+      }
+      if (v[InterfaceTypeKey] <= InterfaceType.DocumentFragmentNode) {
+        return v[NodeNameKey];
       }
       return '¯\\_(ツ)_/¯ instance obj';
     }

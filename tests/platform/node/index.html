@@ -124,6 +124,30 @@
         </script>
       </li>
 
+      <li>
+        <strong>comment</strong>
+        <code id="testComment"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testComment');
+            const c = document.createComment('1.21');
+            elm.textContent = c.nodeType + ' ' + c.nodeName + ' ' + c.data;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>fragment</strong>
+        <code id="testFragment"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testFragment');
+            const f = document.createDocumentFragment();
+            elm.textContent = f.nodeType + ' ' + f.nodeName;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

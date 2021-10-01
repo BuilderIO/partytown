@@ -107,19 +107,29 @@ export interface MemberTypeInfo {
 }
 
 export const enum InterfaceType {
-  Window = 0,
-  Element = 1, // same as NodeType (ELEMENT_NODE)
-  Method = 2,
-  TextNode = 3, // same as NodeType (TEXT_NODE)
-  NamedNodeMap = 4,
-  DOMStringMap = 5,
-  DOMTokenList = 6,
-  NodeList = 7,
-  History = 8,
-  Document = 9, // same as NodeType (DOCUMENT_NODE)
-  DocumentTypeNode = 10, // same as NodeType (DOCUMENT_TYPE_NODE)
-  Storage = 11,
+  // https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
+
+  Element = 1, // ELEMENT_NODE
+  AttributeNode = 2, // ATTRIBUTE_NODE
+  TextNode = 3, // TEXT_NODE
+  CDataSectionNode = 4, // CDATA_SECTION_NODE
+
+  Window = 5, // (node type 5 not used in the standard)
+  NodeList = 6, // (node type 6 not used in the standard)
+
+  ProcessingInstructionNode = 7, // PROCESSING_INSTRUCTION_NODE
+  CommentNode = 8, // COMMENT_NODE
+  Document = 9, // DOCUMENT_NODE
+  DocumentTypeNode = 10, // DOCUMENT_TYPE_NODE
+  DocumentFragmentNode = 11, // DOCUMENT_FRAGMENT_NODE
+
   CSSStyleDeclaration = 12,
+  DOMStringMap = 13,
+  DOMTokenList = 14,
+  History = 15,
+  Method = 16,
+  NamedNodeMap = 17,
+  Storage = 18,
 }
 
 export const enum PlatformInstanceId {
