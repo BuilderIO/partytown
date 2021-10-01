@@ -51,7 +51,7 @@
       }
     </style>
   </head>
-  <body >
+  <body>
     <h1>Anchor</h1>
 
     <ul>
@@ -99,6 +99,24 @@
         </script>
       </li>
 
+      <li>
+        <strong>innerHTML firstChild</strong>
+        <div id="testInnerHtmlFirstChild"></div>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testInnerHtmlFirstChild');
+
+            const div = document.createElement('div');
+            div.innerHTML = "<a href='#'></a>";
+
+            const firstChild = div.firstChild;
+            const href = firstChild.getAttribute('href');
+
+            elm.textContent = href;
+            elm.className = 'testInnerHtmlFirstChild';
+          })();
+        </script>
+      </li>
     </ul>
 
     <hr />

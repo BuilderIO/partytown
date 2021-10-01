@@ -14,4 +14,8 @@ test('anchor', async ({ page }) => {
   await page.waitForSelector('.testCreateAnchorAppend');
   const testCreateAnchorAppend = page.locator('#testCreateAnchorAppend');
   await expect(testCreateAnchorAppend).toHaveText('/platform/anchor/append-child');
+
+  await page.waitForSelector('.testInnerHtmlFirstChild');
+  const testInnerHtmlFirstChild = page.locator('#testInnerHtmlFirstChild');
+  await expect(testInnerHtmlFirstChild).toHaveText('#');
 });
