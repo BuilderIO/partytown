@@ -54,11 +54,11 @@
     <ul>
       <li>
         <strong>className set/get</strong>
-        <code id="test0"></code>
+        <code id="testClassname"></code>
         <script type="text/partytown">
           (function() {
-            const elm = document.getElementById('test0');
-            elm.className = 'test0';
+            const elm = document.getElementById('testClassname');
+            elm.className = 'testClassname';
             elm.textContent = elm.className;
           })();
         </script>
@@ -66,11 +66,11 @@
 
       <li>
         <strong>classList.add()</strong>
-        <code id="test1"></code>
+        <code id="testClassList"></code>
         <script type="text/partytown">
           (function() {
-            const elm = document.getElementById('test1');
-            elm.classList.add('test1');
+            const elm = document.getElementById('testClassList');
+            elm.classList.add('testClassList');
             elm.textContent = elm.className;
           })();
         </script>
@@ -78,10 +78,10 @@
 
       <li>
         <strong>classList.remove()</strong>
-        <code id="test2" class="remove-me test2"></code>
+        <code id="testClassListRemove" class="remove-me testClassListRemove"></code>
         <script type="text/partytown">
           (function() {
-            const elm = document.getElementById('test2');
+            const elm = document.getElementById('testClassListRemove');
             elm.classList.remove('remove-me');
             elm.textContent = elm.className;
           })();
@@ -90,11 +90,11 @@
 
       <li>
         <strong>classList.toggle() on</strong>
-        <code id="test3"></code>
+        <code id="testToggleOn"></code>
         <script type="text/partytown">
           (function() {
-            const elm = document.getElementById('test3');
-            elm.classList.toggle('test3');
+            const elm = document.getElementById('testToggleOn');
+            elm.classList.toggle('testToggleOn');
             elm.textContent = elm.className;
           })();
         </script>
@@ -102,10 +102,10 @@
 
       <li>
         <strong>classList.toggle() off</strong>
-        <code id="test4" class="remove-me test4"></code>
+        <code id="testToggleOff" class="remove-me testToggleOff"></code>
         <script type="text/partytown">
           (function() {
-            const elm = document.getElementById('test4');
+            const elm = document.getElementById('testToggleOff');
             elm.classList.toggle('remove-me');
             elm.textContent = elm.className;
           })();
@@ -114,10 +114,10 @@
 
       <li>
         <strong>classList.value</strong>
-        <code id="test5" class="test5"></code>
+        <code id="testClassListValue" class="testClassListValue"></code>
         <script type="text/partytown">
           (function() {
-            const elm = document.getElementById('test5');
+            const elm = document.getElementById('testClassListValue');
             elm.textContent = elm.classList.value;
           })();
         </script>
@@ -125,11 +125,27 @@
 
       <li>
         <strong>classList.length</strong>
-        <code id="test6" class="a b c"></code>
+        <code id="testClassListLength" class="a b c"></code>
         <script type="text/partytown">
           (function() {
-            const elm = document.getElementById('test6');
+            const elm = document.getElementById('testClassListLength');
             elm.textContent = elm.classList.length;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>immediate classList.add()</strong>
+        <code id="testImmediateLabel"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testImmediateLabel');
+            const span = document.createElement('span');
+            span.innerText = 'add';
+            span.classList.add('testImmediate1');
+            span.classList.add('testImmediate2');
+            span.id = 'testImmediate';
+            elm.appendChild(span);
           })();
         </script>
       </li>

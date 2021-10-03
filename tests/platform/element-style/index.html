@@ -53,15 +53,29 @@
     <h1>Element Style</h1>
     <ul>
       <li>
-        <strong id="test0-label">style.color set/get</strong>
-        <code id="test0"></code>
+        <strong>style.color set/get</strong>
+        <code id="testColor"></code>
         <script type="text/partytown">
           (function () {
-            const label = document.getElementById('test0-label');
-            label.style.color = 'red';
+            const elm = document.getElementById('testColor');
+            elm.style.color = 'red';
+            elm.textContent = elm.style.color;
+          })();
+        </script>
+      </li>
 
-            const elm = document.getElementById('test0');
-            elm.textContent = label.style.color;
+      <li>
+        <strong>set style before appendChild</strong>
+        <code id="testBeforeAppendLabel"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testBeforeAppendLabel');
+            const span = document.createElement('span');
+            span.id = 'testBeforeAppend';
+            span.style.color = 'blue';
+            span.style.fontWeight = '700';
+            span.textContent = span.style.color;
+            elm.appendChild(span);
           })();
         </script>
       </li>

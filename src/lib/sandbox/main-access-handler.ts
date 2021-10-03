@@ -27,7 +27,9 @@ export const mainAccessHandler = async (
     let i: number;
     let count: number;
     let tmr: any;
-    let immediateSetterName: string;
+    let immediateSetterTarget: any;
+    let immediateSetterMemberPath;
+    let immediateSetterMemberNameLen;
 
     try {
       data = deserializeFromWorker(accessReqTask.$data$);
@@ -61,8 +63,16 @@ export const mainAccessHandler = async (
           rtnValue = instance[lastMemberName].apply(instance, data);
 
           immediateSetters.map((immediateSetter) => {
-            immediateSetterName = immediateSetter[0][0];
-            rtnValue[immediateSetterName] = deserializeFromWorker(immediateSetter[1]);
+            immediateSetterTarget = rtnValue;
+            immediateSetterMemberPath = immediateSetter[0];
+            immediateSetterMemberNameLen = len(immediateSetterMemberPath);
+
+            for (i = 0; i < immediateSetterMemberNameLen - 1; i++) {
+              immediateSetterTarget = immediateSetterTarget[immediateSetterMemberPath[i]];
+            }
+
+            immediateSetterTarget[immediateSetterMemberPath[immediateSetterMemberNameLen - 1]] =
+              deserializeFromWorker(immediateSetter[1]);
           });
 
           if (accessReqTask.$newInstanceId$) {

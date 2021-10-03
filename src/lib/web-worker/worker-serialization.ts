@@ -23,7 +23,6 @@ export const serializeForMain = (
   added?: Set<any>
 ): SerializedTransfer | undefined => {
   if (value !== undefined) {
-    added = added || new Set();
     let type = typeof value;
     let key: string;
     let obj: { [key: string]: SerializedTransfer | undefined };
@@ -41,6 +40,7 @@ export const serializeForMain = (
       return [SerializedType.Ref, refData];
     }
 
+    added = added || new Set();
     if (Array.isArray(value)) {
       if (!added.has(value)) {
         return [
