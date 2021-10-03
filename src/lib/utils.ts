@@ -1,11 +1,17 @@
 import {
+  AccessType,
+  InterfaceType,
+  MainWindowContext,
+  NodeName,
+  PlatformInstanceId,
+} from './types';
+import {
   InstanceIdKey,
   InterfaceTypeKey,
   NodeNameKey,
   webWorkerCtx,
   WinIdKey,
 } from './web-worker/worker-constants';
-import { InterfaceType, MainWindowContext, NodeName, PlatformInstanceId } from './types';
 
 export const debug = (globalThis as any).partytownDebug;
 
@@ -63,9 +69,10 @@ export const logWorkerGetter = (
         return;
       }
       logWorker(
-        `Get ${logTargetProp(target, memberPath)}, returned: ${logValue(memberPath, rtn)}${
-          isCached ? ' (cached)' : ''
-        }`
+        `Get ${logTargetProp(target, AccessType.Get, memberPath)}, returned: ${logValue(
+          memberPath,
+          rtn
+        )}${isCached ? ' (cached)' : ''}`
       );
     } catch (e) {}
   }
@@ -77,7 +84,12 @@ export const logWorkerSetter = (target: any, memberPath: string[], value: any) =
       if (target && target[WinIdKey] !== webWorkerCtx.$winId$) {
         return;
       }
-      logWorker(`Set ${logTargetProp(target, memberPath)}, value: ${logValue(memberPath, value)}`);
+      logWorker(
+        `Set ${logTargetProp(target, AccessType.Set, memberPath)}, value: ${logValue(
+          memberPath,
+          value
+        )}`
+      );
     } catch (e) {}
   }
 };
@@ -89,7 +101,7 @@ export const logWorkerCall = (target: any, memberPath: string[], args: any[], rt
         return;
       }
       logWorker(
-        `Call ${logTargetProp(target, memberPath)}(${args
+        `Call ${logTargetProp(target, AccessType.CallMethod, memberPath)}(${args
           .map((v) => logValue(memberPath, v))
           .join(', ')}), returned: ${logValue(memberPath, rtn)}`
       );
@@ -97,7 +109,7 @@ export const logWorkerCall = (target: any, memberPath: string[], args: any[], rt
   }
 };
 
-const logTargetProp = (target: any, memberPath: string[]) => {
+const logTargetProp = (target: any, accessType: AccessType, memberPath: string[]) => {
   let n = '';
   if (target) {
     const instanceId = target[InstanceIdKey];
@@ -134,6 +146,13 @@ const logTargetProp = (target: any, memberPath: string[]) => {
     } else {
       n = '¯\\_(ツ)_/¯ TARGET.';
       console.warn('¯\\_(ツ)_/¯ TARGET', target);
+    }
+  }
+  if (AccessType.Get === accessType && memberPath.length > 1) {
+    const first = memberPath.slice(0, memberPath.length - 1);
+    const last = memberPath[memberPath.length - 1];
+    if (!isNaN(last as any)) {
+      return (n += `${first.join('.')}[${last}]`);
     }
   }
   return (n += memberPath.join('.'));
