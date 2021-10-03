@@ -33,5 +33,6 @@ test('node', async ({ page }) => {
   await expect(testFragmentChildNodes).toHaveText('1 DIV SPAN fragment');
 
   const testCompareDocumentPosition = page.locator('#testCompareDocumentPosition');
-  await expect(testCompareDocumentPosition).toHaveText('37');
+  const docPosition = parseInt(await testCompareDocumentPosition.textContent(), 10);
+  expect(docPosition).toBeGreaterThanOrEqual(35);
 });
