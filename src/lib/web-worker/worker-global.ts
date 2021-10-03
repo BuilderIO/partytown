@@ -1,4 +1,4 @@
-import { callMethod } from './worker-proxy';
+import { callMethod, proxy } from './worker-proxy';
 import {
   constructInstance,
   elementConstructors,
@@ -39,9 +39,9 @@ export const initWebWorkerGlobal = (
   });
 
   self.document = constructInstance(InterfaceType.Document, PlatformInstanceId.document);
-  self.history = constructInstance(InterfaceType.History, PlatformInstanceId.history);
-  self.localStorage = constructInstance(InterfaceType.Storage, PlatformInstanceId.localStorage);
-  self.sessionStorage = constructInstance(InterfaceType.Storage, PlatformInstanceId.sessionStorage);
+  self.history = proxy(InterfaceType.History, self, ['history']);
+  self.localStorage = proxy(InterfaceType.Storage, self, ['localStorage']);
+  self.sessionStorage = proxy(InterfaceType.Storage, self, ['sessionStorage']);
 
   navigator.sendBeacon = sendBeacon;
 

@@ -123,12 +123,6 @@ const logTargetProp = (target: any, accessType: AccessType, memberPath: string[]
       n = 'document.head.';
     } else if (instanceId === PlatformInstanceId.body) {
       n = 'document.body.';
-    } else if (instanceId === PlatformInstanceId.history) {
-      n = 'history.';
-    } else if (instanceId === PlatformInstanceId.localStorage) {
-      n = 'localStorage.';
-    } else if (instanceId === PlatformInstanceId.sessionStorage) {
-      n = 'sessionStorage.';
     } else if (target.nodeType === 1) {
       n = toLower(target.nodeName) + '.';
     } else if (target[InterfaceTypeKey] === InterfaceType.Element && target[NodeNameKey]) {
@@ -190,14 +184,8 @@ const logValue = (memberPath: string[], v: any): string => {
       if (instanceId === PlatformInstanceId.head) {
         return `<head>`;
       }
-      if (instanceId === PlatformInstanceId.localStorage) {
-        return `[localStorage]`;
-      }
-      if (instanceId === PlatformInstanceId.sessionStorage) {
-        return `[sessionStorage]`;
-      }
       if (instanceId === PlatformInstanceId.window) {
-        return `[window]`;
+        return `window`;
       }
       if (v[InterfaceTypeKey] === InterfaceType.Element && v[NodeNameKey]) {
         return `<${toLower(v[NodeNameKey])}>`;

@@ -132,13 +132,11 @@ export const enum InterfaceType {
   Method = 15,
   NamedNodeMap = 16,
   Storage = 17,
+  Object = 18,
 }
 
 export const enum PlatformInstanceId {
   window,
-  history,
-  localStorage,
-  sessionStorage,
   document,
   documentElement,
   head,

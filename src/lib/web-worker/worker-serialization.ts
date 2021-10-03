@@ -129,13 +129,7 @@ export const constructSerializedInstance = ({
   $nodeName$,
   $items$,
 }: SerializedInstance): any => {
-  if ($instanceId$ === PlatformInstanceId.history) {
-    return history;
-  } else if ($instanceId$ === PlatformInstanceId.localStorage) {
-    return localStorage;
-  } else if ($instanceId$ === PlatformInstanceId.sessionStorage) {
-    return sessionStorage;
-  } else if ($instanceId$ === PlatformInstanceId.window) {
+  if ($instanceId$ === PlatformInstanceId.window) {
     return self;
   } else if ($interfaceType$ === InterfaceType.NodeList) {
     return new NodeList($items$!.map(constructSerializedInstance));

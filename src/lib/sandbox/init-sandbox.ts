@@ -39,9 +39,6 @@ export const initSandbox = async (sandboxWindow: Window, winIds: number) => {
       }
 
       setInstanceId(winCtx, win, PlatformInstanceId.window);
-      setInstanceId(winCtx, win.history, PlatformInstanceId.history);
-      setInstanceId(winCtx, win.localStorage, PlatformInstanceId.localStorage);
-      setInstanceId(winCtx, win.sessionStorage, PlatformInstanceId.sessionStorage);
 
       createWebWorker(winCtx);
 
