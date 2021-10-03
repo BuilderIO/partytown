@@ -41,6 +41,7 @@ export const initWebWorkerGlobal = (
   self.document = constructInstance(InterfaceType.Document, PlatformInstanceId.document);
   self.history = proxy(InterfaceType.History, self, ['history']);
   self.localStorage = proxy(InterfaceType.Storage, self, ['localStorage']);
+  self.screen = proxy(InterfaceType.Object, self, ['screen']);
   self.sessionStorage = proxy(InterfaceType.Storage, self, ['sessionStorage']);
 
   navigator.sendBeacon = sendBeacon;

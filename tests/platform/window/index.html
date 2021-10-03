@@ -147,6 +147,27 @@
         </script>
       </li>
 
+      <li>
+        <strong>screen</strong>
+        <code>
+          <span id="testScreen"></span>
+          <span id="testScreenHasWidth"></span>
+          <span id="testScreenOrientation"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testScreen');
+            elm.textContent = `${screen.width}x${screen.height}`;
+            const elm2 = document.getElementById('testScreenHasWidth');
+            elm2.textContent = screen.width > 10;
+
+            const elm3 = document.getElementById('testScreenOrientation');
+            const orientation = screen.orientation;
+            elm3.textContent = (screen.orientation || {}).type;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

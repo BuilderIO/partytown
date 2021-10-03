@@ -26,4 +26,7 @@ test('window', async ({ page }) => {
   const mainHTMLConstructors = page.locator('#mainHTMLConstructors');
   const main = await mainHTMLConstructors.innerText();
   expect(ww).toBe(main);
+
+  const testScreenHasWidth = page.locator('#testScreenHasWidth');
+  await expect(testScreenHasWidth).toHaveText('true');
 });
