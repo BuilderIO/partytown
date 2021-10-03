@@ -10,6 +10,6 @@ test('element style', async ({ page }) => {
 
   const testBeforeAppend = page.locator('#testBeforeAppend');
   await expect(testBeforeAppend).toHaveCSS('color', 'rgb(0, 0, 255)');
-  await expect(testBeforeAppend).toHaveCSS('fontWeight', '700');
+  await expect(testBeforeAppend).toHaveCSS('fontWeight', '800');
   await expect(testBeforeAppend).toHaveText('blue');
 });
