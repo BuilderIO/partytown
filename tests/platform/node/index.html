@@ -174,6 +174,19 @@
         </script>
       </li>
 
+      <li>
+        <strong>compareDocumentPosition()</strong>
+        <code id="testCompareDocumentPosition"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testCompareDocumentPosition');
+            const div = document.createElement('div');
+            const p = elm.compareDocumentPosition(div);
+            elm.textContent = p;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

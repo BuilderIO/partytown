@@ -134,13 +134,20 @@ export const callMethod = (
   immediateSetters?: ImmediateSetter[],
   newInstanceId?: number
 ) => {
-  applyBeforeSyncSetters(instance[WinIdKey], instance);
+  const winId = instance[WinIdKey];
+  applyBeforeSyncSetters(winId, instance);
+
+  args.forEach((arg) => {
+    if (arg) {
+      applyBeforeSyncSetters(winId, arg);
+    }
+  });
 
   const rtn = queueTask(
     instance,
     AccessType.CallMethod,
     memberPath,
-    serializeForMain(instance[WinIdKey], instance[InstanceIdKey], args),
+    serializeForMain(winId, instance[InstanceIdKey], args),
     immediateSetters,
     newInstanceId
   );
