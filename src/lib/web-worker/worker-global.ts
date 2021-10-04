@@ -11,14 +11,19 @@ import { HTMLIFrameElement, Window } from './worker-iframe';
 import { HTMLImageElement } from './worker-image';
 import { HTMLScriptElement } from './worker-script';
 import { InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
-import { InterfaceInfo, InterfaceType, MemberTypeInfo, PlatformInstanceId } from '../types';
+import {
+  InterfaceInfo,
+  InterfaceType,
+  MembersInterfaceTypeInfo,
+  PlatformInstanceId,
+} from '../types';
 import { nextTick, TOP_WIN_ID } from '../utils';
 import { Node } from './worker-node';
 import { sendBeacon } from './worker-exec';
 
 export const initWebWorkerGlobal = (
   self: any,
-  windowMemberTypeInfo: MemberTypeInfo,
+  windowMemberTypeInfo: MembersInterfaceTypeInfo,
   interfaces: InterfaceInfo[],
   htmlCstrNames: string[]
 ) => {
@@ -31,7 +36,7 @@ export const initWebWorkerGlobal = (
     }
   });
 
-  interfaces.map((i) => createGlobalConstructorProxy(self, i[0], i[2]));
+  interfaces.map((i) => createGlobalConstructorProxy(self, i[0], i[1]));
 
   self.requestAnimationFrame = (cb: (t: number) => void) => nextTick(() => cb(Date.now()), 9);
   self.cancelAnimationFrame = clearTimeout;

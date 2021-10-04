@@ -101,9 +101,9 @@ export interface InitWebWorkerContext {
   $postMessage$: (msg: MessageFromWorkerToSandbox) => void;
 }
 
-export type InterfaceInfo = [InterfaceType, MemberTypeInfo, string];
+export type InterfaceInfo = [InterfaceType, string, MembersInterfaceTypeInfo];
 
-export interface MemberTypeInfo {
+export interface MembersInterfaceTypeInfo {
   [memberName: string]: InterfaceType;
 }
 

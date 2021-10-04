@@ -1,29 +1,33 @@
 import { getConstructorName, isValidMemberName, noop } from '../utils';
-import { InterfaceInfo, InterfaceType } from '../types';
+import { InterfaceInfo, InterfaceType, MembersInterfaceTypeInfo } from '../types';
 
 export const readMainInterfaces = (win: Window, doc: Document) => {
   const docImpl = doc.implementation.createHTMLDocument();
   const docHead = docImpl.head;
 
-  const implementations: [InterfaceType, any][] = [
+  const implementations: MainImplementation[] = [
     [InterfaceType.Window, win],
-    [InterfaceType.Element, docHead],
-    [InterfaceType.TextNode, docImpl.createTextNode('')],
-    [InterfaceType.DocumentFragmentNode, docImpl.createDocumentFragment()],
+    [InterfaceType.CSSStyleDeclaration, docHead.style],
     [InterfaceType.Document, docImpl],
+    [InterfaceType.DocumentFragmentNode, docImpl.createDocumentFragment()],
+    [InterfaceType.DOMStringMap, docHead.dataset],
     [InterfaceType.DOMTokenList, docHead.classList],
+    [InterfaceType.Element, docHead],
     [InterfaceType.History, win.history],
-    [InterfaceType.NodeList, docHead.childNodes],
-    [InterfaceType.Storage, win.sessionStorage],
     [InterfaceType.MutationObserver, new MutationObserver(noop)],
-  ];
+    [InterfaceType.NamedNodeMap, docHead.attributes],
+    [InterfaceType.NodeList, docHead.childNodes],
+    [InterfaceType.Storage, win.localStorage],
+    [InterfaceType.TextNode, docImpl.createTextNode('')],
+  ].map((i) => [...i, getConstructorName(i[1] as any)]) as any;
 
-  return implementations.map(([interfaceType, impl]) => {
-    let members: any = {};
+  return implementations.map(([interfaceType, impl, cstrName]) => {
+    let members: MembersInterfaceTypeInfo = {};
     let memberName: string;
     let value: any;
     let type: string;
-    let objInterfaceType: any;
+    let objCstrName: string;
+    let objImpl: MainImplementation | undefined;
 
     for (memberName in impl) {
       if (isValidMemberName(memberName)) {
@@ -32,23 +36,19 @@ export const readMainInterfaces = (win: Window, doc: Document) => {
         if (type === 'function') {
           members[memberName] = InterfaceType.Function;
         } else if (type === 'object') {
-          objInterfaceType = InterfaceWhitelist[getConstructorName(value)];
-          if (objInterfaceType) {
-            members[memberName] = objInterfaceType;
+          objCstrName = getConstructorName(value);
+          objImpl = implementations.find((i) => i[2] === objCstrName);
+          if (objImpl) {
+            // this object's constructor is one of the interfaces we care about
+            members[memberName] = objImpl[0];
           }
         }
       }
     }
 
-    const interfaceInfo: InterfaceInfo = [interfaceType, members, getConstructorName(impl)];
+    const interfaceInfo: InterfaceInfo = [interfaceType, cstrName, members];
     return interfaceInfo;
   });
 };
 
-const InterfaceWhitelist: { [key: string]: InterfaceType } = {
-  CSSStyleDeclaration: InterfaceType.CSSStyleDeclaration,
-  DOMStringMap: InterfaceType.DOMStringMap,
-  DOMTokenList: InterfaceType.DOMTokenList,
-  NamedNodeMap: InterfaceType.NamedNodeMap,
-  NodeList: InterfaceType.NodeList,
-};
+type MainImplementation = [InterfaceType, any, string];

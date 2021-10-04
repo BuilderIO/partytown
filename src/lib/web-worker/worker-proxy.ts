@@ -238,7 +238,7 @@ const createComplexMember = (
 
   const interfaceInfo = webWorkerCtx.$interfaces$.find((i) => i[0] === interfaceType);
   if (interfaceInfo) {
-    const memberTypeInfo = interfaceInfo[1];
+    const memberTypeInfo = interfaceInfo[2];
     const memberInfo = memberTypeInfo[memberPath[len(memberPath) - 1]];
     if (memberInfo === InterfaceType.Function) {
       return (...args: any[]) => callMethod(instance, memberPath, args);
