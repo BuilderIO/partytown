@@ -132,8 +132,8 @@ export const enum InterfaceType {
   History = 15,
   MutationObserver = 16,
   NamedNodeMap = 17,
-  Storage = 18,
-  Object = 19,
+  Screen = 18,
+  Storage = 19,
 }
 
 export const enum PlatformInstanceId {

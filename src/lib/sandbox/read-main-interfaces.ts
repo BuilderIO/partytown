@@ -17,6 +17,7 @@ export const readMainInterfaces = (win: Window, doc: Document) => {
     [InterfaceType.MutationObserver, new MutationObserver(noop)],
     [InterfaceType.NamedNodeMap, docHead.attributes],
     [InterfaceType.NodeList, docHead.childNodes],
+    [InterfaceType.Screen, win.screen],
     [InterfaceType.Storage, win.localStorage],
     [InterfaceType.TextNode, docImpl.createTextNode('')],
   ].map((i) => [...i, getConstructorName(i[1] as any)]) as any;

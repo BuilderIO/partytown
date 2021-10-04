@@ -31,15 +31,22 @@ export const initWebWorkerGlobal = (
   self[InstanceIdKey] = PlatformInstanceId.window;
 
   Object.keys(windowMemberTypeInfo).map((memberName) => {
-    if (!self[memberName] && windowMemberTypeInfo[memberName] === InterfaceType.Function) {
-      self[memberName] = (...args: any[]) => callMethod(self, [memberName], args);
+    const interfaceType = windowMemberTypeInfo[memberName];
+
+    if (!self[memberName] && interfaceType > InterfaceType.Window) {
+      // this globa doesn't already exist in the worker
+      // and the interface type isn't a Window object
+      if (interfaceType === InterfaceType.Function) {
+        // this is a global function, like alert()
+        self[memberName] = (...args: any[]) => callMethod(self, [memberName], args);
+      } else if (interfaceType > InterfaceType.DocumentFragmentNode) {
+        // this is a global implementation, like localStorage
+        self[memberName] = proxy(interfaceType, self, [memberName]);
+      }
     }
   });
 
   interfaces.map((i) => createGlobalConstructorProxy(self, i[0], i[1]));
-
-  self.requestAnimationFrame = (cb: (t: number) => void) => nextTick(() => cb(Date.now()), 9);
-  self.cancelAnimationFrame = clearTimeout;
 
   Object.defineProperty(self, 'location', {
     get: () => webWorkerCtx.$location$,
@@ -47,10 +54,6 @@ export const initWebWorkerGlobal = (
   });
 
   self.document = constructInstance(InterfaceType.Document, PlatformInstanceId.document);
-  self.history = proxy(InterfaceType.History, self, ['history']);
-  self.localStorage = proxy(InterfaceType.Storage, self, ['localStorage']);
-  self.screen = proxy(InterfaceType.Object, self, ['screen']);
-  self.sessionStorage = proxy(InterfaceType.Storage, self, ['sessionStorage']);
 
   navigator.sendBeacon = sendBeacon;
 
@@ -68,11 +71,10 @@ export const initWebWorkerGlobal = (
     self.top = constructInstance(InterfaceType.Window, PlatformInstanceId.window, TOP_WIN_ID);
   }
 
-  self.HTMLDocument = self.Document = HTMLDocument;
+  self.Document = HTMLDocument;
   self.HTMLElement = self.Element = HTMLElement;
   self.Image = HTMLImageElement;
   self.Node = Node;
-  self.Window = Window;
 
   htmlCstrNames.map((htmlCstrName) => {
     if (!self[htmlCstrName]) {
