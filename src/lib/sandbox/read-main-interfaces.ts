@@ -1,51 +1,48 @@
-import { getConstructorName, isValidMemberName } from '../utils';
-import { InterfaceInfo, InterfaceType, MemberTypeInfo } from '../types';
+import { getConstructorName, isValidMemberName, noop } from '../utils';
+import { InterfaceInfo, InterfaceType } from '../types';
 
 export const readMainInterfaces = (win: Window, doc: Document) => {
   const docImpl = doc.implementation.createHTMLDocument();
-  const docElement = docImpl.documentElement;
+  const docHead = docImpl.head;
 
   const implementations: [InterfaceType, any][] = [
     [InterfaceType.Window, win],
-    [InterfaceType.Element, docElement],
+    [InterfaceType.Element, docHead],
     [InterfaceType.TextNode, docImpl.createTextNode('')],
     [InterfaceType.DocumentFragmentNode, docImpl.createDocumentFragment()],
     [InterfaceType.Document, docImpl],
-    [InterfaceType.DOMTokenList, docElement.classList],
+    [InterfaceType.DOMTokenList, docHead.classList],
     [InterfaceType.History, win.history],
-    [InterfaceType.NodeList, docElement.childNodes],
+    [InterfaceType.NodeList, docHead.childNodes],
     [InterfaceType.Storage, win.sessionStorage],
+    [InterfaceType.MutationObserver, new MutationObserver(noop)],
   ];
 
   return implementations.map(([interfaceType, impl]) => {
-    const memberTypeInfo = readImplementationMembers(impl, {});
-    const interfaceInfo: InterfaceInfo = [interfaceType, memberTypeInfo];
-    return interfaceInfo;
-  });
-};
+    let members: any = {};
+    let memberName: string;
+    let value: any;
+    let type: string;
+    let objInterfaceType: any;
 
-const readImplementationMembers = (impl: any, members: MemberTypeInfo) => {
-  let memberName: string;
-  let interfaceType: InterfaceType;
-  let value: any;
-  let type: string;
-
-  for (memberName in impl) {
-    if (isValidMemberName(memberName)) {
-      value = impl[memberName];
-      type = typeof value;
-      if (type === 'function') {
-        members[memberName] = InterfaceType.Method;
-      } else if (type === 'object') {
-        interfaceType = InterfaceWhitelist[getConstructorName(value)];
-        if (interfaceType) {
-          members[memberName] = interfaceType;
+    for (memberName in impl) {
+      if (isValidMemberName(memberName)) {
+        value = impl[memberName];
+        type = typeof value;
+        if (type === 'function') {
+          members[memberName] = InterfaceType.Function;
+        } else if (type === 'object') {
+          objInterfaceType = InterfaceWhitelist[getConstructorName(value)];
+          if (objInterfaceType) {
+            members[memberName] = objInterfaceType;
+          }
         }
       }
     }
-  }
 
-  return members;
+    const interfaceInfo: InterfaceInfo = [interfaceType, members, getConstructorName(impl)];
+    return interfaceInfo;
+  });
 };
 
 const InterfaceWhitelist: { [key: string]: InterfaceType } = {

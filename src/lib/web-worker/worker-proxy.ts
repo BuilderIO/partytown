@@ -10,7 +10,15 @@ import {
   SerializedTransfer,
 } from '../types';
 import { constructInstance } from './worker-constructors';
-import { debug, len, logWorkerCall, logWorkerGetter, logWorkerSetter, randomId } from '../utils';
+import {
+  debug,
+  len,
+  logWorkerCall,
+  logWorkerGlobalConstructor,
+  logWorkerGetter,
+  logWorkerSetter,
+  randomId,
+} from '../utils';
 import { deserializeFromMain, serializeForMain } from './worker-serialization';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import {
@@ -24,7 +32,7 @@ import {
   WinIdKey,
 } from './worker-constants';
 import syncSendMessage from '@sync-send-message-to-main';
-import type { WorkerProxy } from './worker-instance';
+import { WorkerProxy } from './worker-proxy-constructor';
 
 const queueTask = (
   instance: WorkerProxy,
@@ -127,6 +135,41 @@ export const setter = (instance: WorkerProxy, memberPath: string[], value: any) 
   }
 };
 
+export const createGlobalConstructorProxy = (
+  self: any,
+  interfaceType: InterfaceType,
+  cstrName: string
+) => {
+  const GlobalCstr = class {
+    constructor(...args: any[]) {
+      const winId = webWorkerCtx.$winId$;
+      const instanceId = randomId();
+      const workerProxy = new WorkerProxy(interfaceType, instanceId, winId);
+
+      args.forEach((arg) => {
+        if (arg) {
+          applyBeforeSyncSetters(winId, arg);
+        }
+      });
+
+      queueTask(
+        workerProxy,
+        AccessType.GlobalConstructor,
+        [cstrName],
+        serializeForMain(winId, instanceId, args)
+      );
+
+      logWorkerGlobalConstructor(workerProxy, cstrName, args);
+
+      return workerProxy;
+    }
+  };
+
+  self[cstrName] = Object.defineProperty(GlobalCstr, 'name', {
+    value: cstrName,
+  });
+};
+
 export const callMethod = (
   instance: WorkerProxy,
   memberPath: string[],
@@ -197,7 +240,7 @@ const createComplexMember = (
   if (interfaceInfo) {
     const memberTypeInfo = interfaceInfo[1];
     const memberInfo = memberTypeInfo[memberPath[len(memberPath) - 1]];
-    if (memberInfo === InterfaceType.Method) {
+    if (memberInfo === InterfaceType.Function) {
       return (...args: any[]) => callMethod(instance, memberPath, args);
     } else if (memberInfo > InterfaceType.Window) {
       return proxy(memberInfo, instance, [...memberPath]);

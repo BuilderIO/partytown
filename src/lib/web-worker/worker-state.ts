@@ -6,7 +6,7 @@ import {
 } from './worker-constants';
 import { randomId } from '../utils';
 import type { RefHandler, StateRecord } from '../types';
-import type { WorkerProxy } from './worker-instance';
+import type { WorkerProxy } from './worker-proxy-constructor';
 
 export const getInstanceStateValue = <T = any>(instance: WorkerProxy, stateKey: string | number) =>
   getStateValue<T>(instance[InstanceIdKey], stateKey);

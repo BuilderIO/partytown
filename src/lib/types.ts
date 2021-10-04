@@ -101,7 +101,7 @@ export interface InitWebWorkerContext {
   $postMessage$: (msg: MessageFromWorkerToSandbox) => void;
 }
 
-export type InterfaceInfo = [InterfaceType, MemberTypeInfo];
+export type InterfaceInfo = [InterfaceType, MemberTypeInfo, string];
 
 export interface MemberTypeInfo {
   [memberName: string]: InterfaceType;
@@ -117,7 +117,7 @@ export const enum InterfaceType {
   TextNode = 3, // TEXT_NODE
   CDataSectionNode = 4, // CDATA_SECTION_NODE
 
-  DOMTokenList = 5, // (node type 5 not used in the standard)
+  Function = 5, // (node type 5 not used in the standard)
   NodeList = 6, // (node type 6 not used in the standard)
 
   ProcessingInstructionNode = 7, // PROCESSING_INSTRUCTION_NODE
@@ -128,11 +128,12 @@ export const enum InterfaceType {
 
   CSSStyleDeclaration = 12,
   DOMStringMap = 13,
-  History = 14,
-  Method = 15,
-  NamedNodeMap = 16,
-  Storage = 17,
-  Object = 18,
+  DOMTokenList = 14,
+  History = 15,
+  MutationObserver = 16,
+  NamedNodeMap = 17,
+  Storage = 18,
+  Object = 19,
 }
 
 export const enum PlatformInstanceId {
@@ -156,6 +157,7 @@ export const enum AccessType {
   Get,
   Set,
   CallMethod,
+  GlobalConstructor,
 }
 
 export interface MainAccessRequest {
@@ -189,7 +191,7 @@ export interface MainAccessResponse {
 export const enum SerializedType {
   Array,
   Instance,
-  Method,
+  Function,
   Object,
   Primitive,
   Ref,
@@ -199,7 +201,7 @@ export type SerializedArrayTransfer = [SerializedType.Array, (SerializedTransfer
 
 export type SerializedInstanceTransfer = [SerializedType.Instance, SerializedInstance];
 
-export type SerializedMethodTransfer = [SerializedType.Method];
+export type SerializedFunctionTransfer = [SerializedType.Function];
 
 export type SerializedObjectTransfer = [
   SerializedType.Object,
@@ -221,7 +223,7 @@ export interface SerializedRefTransferData {
 export type SerializedTransfer =
   | SerializedArrayTransfer
   | SerializedInstanceTransfer
-  | SerializedMethodTransfer
+  | SerializedFunctionTransfer
   | SerializedObjectTransfer
   | SerializedPrimitiveTransfer
   | SerializedPrimitiveTransfer

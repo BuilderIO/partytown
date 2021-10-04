@@ -4,7 +4,7 @@ import { HTMLElement } from './worker-element';
 import { Node } from './worker-node';
 import { toUpper } from '../utils';
 import { Window } from './worker-iframe';
-import { WorkerProxy } from './worker-instance';
+import { WorkerProxy } from './worker-proxy-constructor';
 
 export const constructInstance = (
   interfaceType: InterfaceType,

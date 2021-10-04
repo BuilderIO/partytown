@@ -22,7 +22,6 @@ export const serializeForWorker = (
   key?: string
 ): SerializedTransfer | undefined => {
   if (value !== undefined) {
-    added = added || new Set();
     type = typeof value;
 
     if (type === 'string' || type === 'number' || type === 'boolean' || value == null) {
@@ -30,9 +29,10 @@ export const serializeForWorker = (
     }
 
     if (type === 'function') {
-      return [SerializedType.Method];
+      return [SerializedType.Function];
     }
 
+    added = added || new Set();
     if (Array.isArray(value)) {
       if (!added.has(value)) {
         added.add(value);

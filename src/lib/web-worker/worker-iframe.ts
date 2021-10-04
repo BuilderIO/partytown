@@ -7,7 +7,7 @@ import { InterfaceType, PlatformInstanceId, StateProp } from '../types';
 import { Location } from './worker-location';
 import { resolveUrl, updateIframeContent } from './worker-exec';
 import { serializeForMain } from './worker-serialization';
-import { WorkerProxy } from './worker-instance';
+import { WorkerProxy } from './worker-proxy-constructor';
 
 export class HTMLIFrameElement extends HTMLSrcElement {
   get contentDocument() {

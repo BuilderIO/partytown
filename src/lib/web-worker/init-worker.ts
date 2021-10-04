@@ -25,6 +25,7 @@ export const initWebWorker = (self: Worker, initWebWorkerData: InitWebWorkerData
   initWebWorkerGlobal(
     self,
     initWebWorkerData.$interfaces$[0][1],
+    initWebWorkerData.$interfaces$,
     initWebWorkerData.$htmlConstructors$
   );
 

@@ -4,7 +4,7 @@ import type { HTMLDocument } from './worker-document';
 import { insertIframe } from './worker-exec';
 import { InterfaceTypeKey, NodeNameKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { NodeName, WorkerMessageType } from '../types';
-import { WorkerProxy } from './worker-instance';
+import { WorkerProxy } from './worker-proxy-constructor';
 
 export class Node extends WorkerProxy {
   appendChild(node: Node) {

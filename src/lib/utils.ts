@@ -109,6 +109,17 @@ export const logWorkerCall = (target: any, memberPath: string[], args: any[], rt
   }
 };
 
+export const logWorkerGlobalConstructor = (target: any, cstrName: string, args: any[]) => {
+  if (debug && webWorkerCtx.$config$.logCalls) {
+    try {
+      if (target && target[WinIdKey] !== webWorkerCtx.$winId$) {
+        return;
+      }
+      logWorker(`Construct new ${cstrName}(${args.map((v) => logValue([], v)).join(', ')})`);
+    } catch (e) {}
+  }
+};
+
 const logTargetProp = (target: any, accessType: AccessType, memberPath: string[]) => {
   let n = '';
   if (target) {
@@ -135,6 +146,8 @@ const logTargetProp = (target: any, accessType: AccessType, memberPath: string[]
       n = 'fragment.';
     } else if (target[InterfaceTypeKey] === InterfaceType.DocumentTypeNode) {
       n = 'documentTypeNode.';
+    } else if (target[InterfaceTypeKey] === InterfaceType.MutationObserver) {
+      n = 'mutationObserver.';
     } else if (target[InterfaceTypeKey] <= InterfaceType.DocumentFragmentNode) {
       n = 'node.';
     } else {
@@ -238,7 +251,11 @@ export const isValidMemberName = (memberName: string) => {
 };
 
 export const nextTick = (cb: Function, ms?: number) => setTimeout(cb, ms);
+
 export const EMPTY_ARRAY = [];
+if (debug) {
+  Object.freeze(EMPTY_ARRAY);
+}
 
 export const PT_INITIALIZED_EVENT = `ptinit`;
 
