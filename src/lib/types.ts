@@ -108,32 +108,31 @@ export interface MembersInterfaceTypeInfo {
 }
 
 export const enum InterfaceType {
-  Window = 0, // (node type 0 not used, so using for Window interface)
+  // NodeType 0 not used, so using for Window interface
+  Window = 0,
 
   // https://developer.mozilla.org/en-US/docs/Web/API/Node/nodeType
+  Element = 1,
+  AttributeNode = 2,
+  TextNode = 3,
+  CDataSectionNode = 4,
+  ProcessingInstructionNode = 7,
+  CommentNode = 8,
+  Document = 9,
+  DocumentTypeNode = 10,
+  DocumentFragmentNode = 11,
 
-  Element = 1, // ELEMENT_NODE
-  AttributeNode = 2, // ATTRIBUTE_NODE
-  TextNode = 3, // TEXT_NODE
-  CDataSectionNode = 4, // CDATA_SECTION_NODE
-
-  Function = 5, // (node type 5 not used in the standard)
-  NodeList = 6, // (node type 6 not used in the standard)
-
-  ProcessingInstructionNode = 7, // PROCESSING_INSTRUCTION_NODE
-  CommentNode = 8, // COMMENT_NODE
-  Document = 9, // DOCUMENT_NODE
-  DocumentTypeNode = 10, // DOCUMENT_TYPE_NODE
-  DocumentFragmentNode = 11, // DOCUMENT_FRAGMENT_NODE
-
-  CSSStyleDeclaration = 12,
-  DOMStringMap = 13,
-  DOMTokenList = 14,
-  History = 15,
-  MutationObserver = 16,
-  NamedNodeMap = 17,
-  Screen = 18,
-  Storage = 19,
+  // Global Constructors and window function implementations
+  Function = 12,
+  CSSStyleDeclaration = 13,
+  DOMStringMap = 14,
+  DOMTokenList = 15,
+  History = 16,
+  MutationObserver = 17,
+  NodeList = 18,
+  NamedNodeMap = 19,
+  Screen = 20,
+  Storage = 21,
 }
 
 export const enum PlatformInstanceId {

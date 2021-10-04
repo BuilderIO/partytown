@@ -33,13 +33,13 @@ export const initWebWorkerGlobal = (
   Object.keys(windowMemberTypeInfo).map((memberName) => {
     const interfaceType = windowMemberTypeInfo[memberName];
 
-    if (!self[memberName] && interfaceType > InterfaceType.Window) {
-      // this globa doesn't already exist in the worker
-      // and the interface type isn't a Window object
+    if (!self[memberName] && interfaceType > InterfaceType.DocumentFragmentNode) {
+      // this global doesn't already exist in the worker
+      // and the interface type isn't a DOM Node or Window object
       if (interfaceType === InterfaceType.Function) {
         // this is a global function, like alert()
         self[memberName] = (...args: any[]) => callMethod(self, [memberName], args);
-      } else if (interfaceType > InterfaceType.DocumentFragmentNode) {
+      } else {
         // this is a global implementation, like localStorage
         self[memberName] = proxy(interfaceType, self, [memberName]);
       }
