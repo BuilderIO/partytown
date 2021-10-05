@@ -1,7 +1,10 @@
 .cache/
 .DS_Store
 node_modules/
-/dist/
+/integration/
+/lib/
+/react/
 /tests/~partytown/
 /tests/videos/
 /tsc/
+/index.js

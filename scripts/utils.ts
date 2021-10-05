@@ -122,7 +122,6 @@ export interface BuildOptions {
   isDev: boolean;
   generateApi: boolean;
   rootDir: string;
-  distDir: string;
   distIntegrationDir: string;
   distLibDir: string;
   distLibDebugDir: string;
