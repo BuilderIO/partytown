@@ -437,45 +437,46 @@
         </script>
       </li>
 
-      <!-- <li>
-        <strong>parent call, one.two.three.fn(1955)</strong>
+      <li>
+        <strong>parent calls iframe's one.two.sum()</strong>
         <code id="testMemberNames"></code>
         <script type="text/partytown">
           const elm = document.getElementById('testMemberNames');
           const iframe = document.createElement('iframe');
           elm.parentNode.insertBefore(iframe, null);
           iframe.contentWindow.document.head.innerHTML = `
-            <style>body { background: orange; color: white; }</style>
+            <style>body { background: orange; }</style>
           `;
           const script = iframe.contentDocument.createElement('script');
           script.innerHTML = `
-            one = { two: { three: {
-              fn(year) {
-                return year;
+            one = {
+              two: {
+                sum(years) {
+                  return 1955 + years;
+                },
+                num: 30,
               },
-              num: 30
-            }}};
+            };
           `;
           iframe.contentDocument.body.appendChild(script);
 
           const iframeWin = iframe.contentWindow;
           const iframeOne = iframeWin.one;
-          const iframeTwo = one.two;
-          const iframeThree = two.three;
-          const iframeFn = three.fn;
+          const iframeTwo = iframeOne.two;
+          const iframeSum = iframeTwo.sum;
+          const iframeNum = iframeTwo.num;
 
-          const a = iframe.contentWindow.one.two.three.fn(1955);
-          const b = iframe.contentWindow.one.two.three.num;
+          const result = iframeSum(iframeNum);
 
           const div = iframe.contentDocument.createElement('div');
           div.id = 'output';
-          div.textContent = a + b;
+          div.textContent = result;
           iframe.contentWindow.document.body.appendChild(div);
 
           elm.textContent = iframe.contentDocument.getElementById('output').textContent;
           elm.className = 'testMemberNames';
         </script>
-      </li> -->
+      </li>
     </ul>
 
     <hr />

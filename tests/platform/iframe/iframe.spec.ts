@@ -66,4 +66,8 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testOnLoadNoSrc');
   const testOnLoadNoSrc = page.locator('#testOnLoadNoSrc');
   await expect(testOnLoadNoSrc).toHaveText('onload');
+
+  await page.waitForSelector('.testMemberNames');
+  const testMemberNames = page.locator('#testMemberNames');
+  await expect(testMemberNames).toHaveText('1985');
 });
