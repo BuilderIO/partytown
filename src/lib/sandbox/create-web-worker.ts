@@ -1,5 +1,5 @@
+import { debug, logMain } from '../utils';
 import type { MainWindowContext } from '../types';
-import { debug } from '../utils';
 import { onMessageFromWebWorker } from './messenger';
 import WebWorkerBlob from '@web-worker-blob';
 import WebWorkerUrl from '@web-worker-url';
@@ -17,4 +17,9 @@ export const createWebWorker = (winCtx: MainWindowContext) => {
   );
 
   winCtx.$worker$.onmessage = (ev) => onMessageFromWebWorker(winCtx, ev.data);
+
+  if (debug) {
+    logMain(winCtx, `Created Web Worker (${winCtx.$winId$})`);
+    winCtx.$worker$.onerror = (ev) => console.error(`Web Worker (${winCtx.$winId$}) Error`, ev);
+  }
 };
