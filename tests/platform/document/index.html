@@ -249,6 +249,18 @@
       </li>
 
       <li>
+        <strong>currentScript, null async</strong>
+        <code id="testCurrentScriptNullAsync"></code>
+        <script type="text/partytown">
+          setTimeout(() => {
+            const elm = document.getElementById('testCurrentScriptNullAsync');
+            elm.textContent = String(document.currentScript);
+            elm.className = 'testCurrentScriptNullAsync';
+          });
+        </script>
+      </li>
+
+      <li>
         <strong>head.parentNode/Element</strong>
         <code id="testHeadParentNode"></code>
         <script type="text/partytown">

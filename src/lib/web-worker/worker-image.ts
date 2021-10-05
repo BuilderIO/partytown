@@ -19,7 +19,7 @@ export class HTMLImageElement {
   }
   set src(src: string) {
     if (debug && webWorkerCtx.$config$.logImageRequests) {
-      logWorker(`Image() src request: ${resolveUrl(src)}`);
+      logWorker(`Image() request: ${resolveUrl(src)}`);
     }
     fetch(resolveUrl(src) + '', {
       mode: 'no-cors',

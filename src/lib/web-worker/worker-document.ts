@@ -48,7 +48,7 @@ export class HTMLDocument extends HTMLElement {
   }
 
   get currentScript() {
-    if (webWorkerCtx.$currentScriptId$) {
+    if (webWorkerCtx.$currentScriptId$ > 0) {
       return constructInstance(
         InterfaceType.Element,
         webWorkerCtx.$currentScriptId$,
