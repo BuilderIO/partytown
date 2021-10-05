@@ -80,12 +80,12 @@ const setCurrentScript = (instanceId: number, src: string) => {
 };
 
 export const insertIframe = (iframe: Node) => {
-  let handlersType = getInstanceStateValue<StateProp>(iframe, StateProp.isSuccessfulLoad)
-    ? StateProp.loadHandlers
-    : StateProp.errorHandlers;
+  let loadError = getInstanceStateValue<StateProp>(iframe, StateProp.loadError);
+  let handlersType = loadError ? StateProp.errorHandlers : StateProp.loadHandlers;
+
   let handlers = getInstanceStateValue<EventHandler[]>(iframe, handlersType);
   if (handlers) {
-    handlers.forEach((handler) => handler({ type: StateProp.loadHandlers }));
+    handlers.map((handler) => handler({ type: StateProp.loadHandlers }));
   }
 };
 

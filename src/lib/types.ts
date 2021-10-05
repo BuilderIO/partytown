@@ -385,7 +385,7 @@ export const enum StateProp {
   loadHandlers = 'load',
   href = 'href',
   instanceRefs = 0,
-  isSuccessfulLoad = 1,
+  loadError = 1,
   partyWinId = 2,
   url = 3,
 }

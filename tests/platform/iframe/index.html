@@ -106,7 +106,7 @@
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentWindow.document.head.innerHTML = `
-              <style>body { background: cornflowerblue; color: white; font-weight: bold; text-align: center;}</style>
+              <style>body { background: cornflowerblue; color: white; text-align: center;}</style>
             `;
 
             iframe.contentWindow.document.body.innerHTML = `contentWindow`;
@@ -126,7 +126,7 @@
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentDocument.head.innerHTML = `
-              <style>body { background: aquamarine; font-weight: bold; text-align: center; }</style>
+              <style>body { background: aquamarine; }</style>
             `;
             iframe.contentDocument.body.innerHTML = `contentDocument`;
             elm.textContent = iframe.contentWindow.document.body.textContent;
@@ -210,7 +210,7 @@
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentDocument.head.innerHTML = `
-              <style>body { background: peachpuff; font-weight: bold; text-align: center; }</style>
+              <style>body { background: peachpuff; }</style>
             `;
             iframe.contentDocument.body.innerHTML = window.year + window.gw;
 
@@ -247,7 +247,7 @@
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentWindow.document.head.innerHTML = `
-              <style>body { background: maroon; font-weight: bold; color: white; text-align: center; }</style>
+              <style>body { background: maroon; color: white; }</style>
             `;
 
             const script = iframe.contentWindow.document.createElement('script');
@@ -271,7 +271,7 @@
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentWindow.document.head.innerHTML = `
-              <style>body { background: purple; font-weight: bold; color: white; text-align: center; }</style>
+              <style>body { background: purple; color: white; }</style>
             `;
 
             const script = iframe.contentWindow.document.createElement('script');
@@ -291,7 +291,7 @@
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentWindow.document.head.innerHTML = `
-              <style>body { background: green; font-weight: bold; color: white; text-align: center; }</style>
+              <style>body { background: green; color: white; }</style>
             `;
 
             const script = iframe.contentWindow.document.createElement('script');
@@ -319,7 +319,7 @@
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentWindow.document.head.innerHTML = `
-              <style>body { background: yellow; font-weight: bold; color: black; text-align: center; }</style>
+              <style>body { background: yellow; }</style>
             `;
 
             const section = document.createElement('section');
@@ -345,7 +345,7 @@
             const iframe = document.createElement('iframe');
             elm.parentNode.appendChild(iframe);
             iframe.contentWindow.document.head.innerHTML = `
-              <style>body { background: gray; font-weight: bold; color: black; text-align: center; }</style>
+              <style>body { background: gray; }</style>
             `;
             const iframeWindow = iframe.contentWindow;
             const iframeLocation = iframeWindow.location;
@@ -370,7 +370,7 @@
             elm.parentNode.appendChild(iframe);
 
             iframe.contentWindow.document.head.innerHTML = `
-              <style>body { background: orange; font-weight: bold; color: black; text-align: center; }</style>
+              <style>body { background: orange; }</style>
             `;
 
             const script = document.createElement('script');
@@ -394,12 +394,45 @@
             elm.parentNode.appendChild(iframe);
 
             iframe.contentWindow.document.head.innerHTML = `
-              <style>body { background: blue; font-weight: bold; color: black; text-align: center; }</style>
+              <style>body { background: blue; }</style>
             `;
 
             const script = document.createElement('script');
             script.src = 'call-fn-on-parent.js';
             iframe.contentWindow.document.body.appendChild(script);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>onload w/out src</strong>
+        <code id="testOnLoadNoSrc"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testOnLoadNoSrc');
+            const iframe = document.createElement('iframe');
+
+            iframe.onload = function () {
+              const iframeDoc = iframe.contentDocument;
+              iframeDoc.head.innerHTML = `
+                <style>body { background: lime; }</style>
+              `;
+              elm.textContent = `onload`;
+              iframeDoc.body.innerHTML = `onload`;
+              elm.className = 'testOnLoadNoSrc';
+            };
+
+            iframe.onerror = function (ev) {
+              const iframeDoc = iframe.contentDocument;
+              iframeDoc.head.innerHTML = `
+                <style>body { background: pink; }</style>
+              `;
+              elm.textContent = `onerror`;
+              iframeDoc.body.innerHTML = `onerror`;
+              elm.className = 'testOnLoadNoSrc';
+            };
+
+            elm.parentNode.appendChild(iframe);
           })();
         </script>
       </li>
@@ -412,7 +445,7 @@
           const iframe = document.createElement('iframe');
           elm.parentNode.insertBefore(iframe, null);
           iframe.contentWindow.document.head.innerHTML = `
-            <style>body { background: orange; font-weight: bold; color: white; text-align: center; }</style>
+            <style>body { background: orange; color: white; }</style>
           `;
           const script = iframe.contentDocument.createElement('script');
           script.innerHTML = `

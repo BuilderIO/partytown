@@ -62,4 +62,8 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testCallWindowParentFn');
   const testCallWindowParentFn = page.locator('#testCallWindowParentFn');
   await expect(testCallWindowParentFn).toHaveText('2015');
+
+  await page.waitForSelector('.testOnLoadNoSrc');
+  const testOnLoadNoSrc = page.locator('#testOnLoadNoSrc');
+  await expect(testOnLoadNoSrc).toHaveText('onload');
 });

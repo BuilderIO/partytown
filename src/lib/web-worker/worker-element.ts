@@ -35,7 +35,7 @@ export class HTMLSrcElement extends HTMLElement {
     return (callbacks && callbacks[0]) || null;
   }
   set onload(cb: EventHandler | null) {
-    setInstanceStateValue(this, 'load', cb ? [cb] : null);
+    setInstanceStateValue(this, StateProp.loadHandlers, cb ? [cb] : null);
   }
 
   get onerror() {
@@ -43,6 +43,6 @@ export class HTMLSrcElement extends HTMLElement {
     return (callbacks && callbacks[0]) || null;
   }
   set onerror(cb: EventHandler | null) {
-    setInstanceStateValue(this, 'error', cb ? [cb] : null);
+    setInstanceStateValue(this, StateProp.errorHandlers, cb ? [cb] : null);
   }
 }

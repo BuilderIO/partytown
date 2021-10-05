@@ -165,6 +165,9 @@ const logTargetProp = (target: any, accessType: AccessType, memberPath: string[]
  */
 const logValue = (memberPath: string[], v: any): string => {
   const type = typeof v;
+  if (v === undefined) {
+    return 'undefined';
+  }
   if (type === 'boolean' || type === 'number' || v == null) {
     return JSON.stringify(v);
   }
