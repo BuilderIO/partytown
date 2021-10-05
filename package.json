@@ -10,7 +10,7 @@
     "dev": "tsc && concurrently \"npm:build.watch\" \"npm:tsc.watch\" -n build,tsc -c magenta,yellow",
     "playwright": "playwright test --browser=chromium",
     "playwright.webkit": "playwright test --browser=webkit",
-    "release": "npm run build && cd dist && np --no-2fa",
+    "release": "npm run build && npm test && cd dist && np --no-2fa --no-tests ",
     "serve": "sirv tests --port 4000 --dev",
     "serve.test": "sirv tests --port 5000  --dev --quiet",
     "test": "start-server-and-test serve.test http://localhost:5000/ playwright",
