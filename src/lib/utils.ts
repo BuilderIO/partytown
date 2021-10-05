@@ -57,12 +57,7 @@ export const logWorker = (msg: string) => {
   }
 };
 
-export const logWorkerGetter = (
-  target: any,
-  memberPath: string[],
-  rtn: any,
-  isCached?: boolean
-) => {
+export const logWorkerGetter = (target: any, memberPath: string[], rtn: any) => {
   if (debug && webWorkerCtx.$config$.logGetters) {
     try {
       if (target && target[WinIdKey] !== webWorkerCtx.$winId$) {
@@ -72,7 +67,7 @@ export const logWorkerGetter = (
         `Get ${logTargetProp(target, AccessType.Get, memberPath)}, returned: ${logValue(
           memberPath,
           rtn
-        )}${isCached ? ' (cached)' : ''}`
+        )} `
       );
     } catch (e) {}
   }

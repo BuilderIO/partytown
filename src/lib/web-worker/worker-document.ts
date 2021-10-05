@@ -21,14 +21,6 @@ export class HTMLDocument extends HTMLElement {
     return webWorkerCtx.$documentCompatMode$;
   }
 
-  get cookie() {
-    logWorkerGetter(this, ['cookie'], webWorkerCtx.$documentCookie$, true);
-    return webWorkerCtx.$documentCookie$;
-  }
-  set cookie(cookie: string) {
-    setter(this, ['cookie'], (webWorkerCtx.$documentCookie$ = cookie));
-  }
-
   createElement(tagName: string) {
     tagName = toUpper(tagName);
 
@@ -116,7 +108,7 @@ export class HTMLDocument extends HTMLElement {
   }
 
   get location() {
-    logWorkerGetter(this, ['location'], webWorkerCtx.$location$, true);
+    logWorkerGetter(this, ['location'], webWorkerCtx.$location$);
     return webWorkerCtx.$location$;
   }
   set location(url: any) {
@@ -136,22 +128,14 @@ export class HTMLDocument extends HTMLElement {
     if (webWorkerCtx.$documentReadyState$ !== 'complete') {
       webWorkerCtx.$documentReadyState$ = getter(this, ['readyState']);
     } else {
-      logWorkerGetter(this, ['readyState'], webWorkerCtx.$documentReadyState$, true);
+      logWorkerGetter(this, ['readyState'], webWorkerCtx.$documentReadyState$);
     }
     return webWorkerCtx.$documentReadyState$;
   }
 
   get referrer() {
-    logWorkerGetter(this, ['referrer'], webWorkerCtx.$documentReferrer$, true);
+    logWorkerGetter(this, ['referrer'], webWorkerCtx.$documentReferrer$);
     return webWorkerCtx.$documentReferrer$;
-  }
-
-  get title() {
-    logWorkerGetter(this, ['title'], webWorkerCtx.$documentTitle$, true);
-    return webWorkerCtx.$documentTitle$;
-  }
-  set title(value: string) {
-    setter(this, ['title'], (webWorkerCtx.$documentTitle$ = value));
   }
 }
 

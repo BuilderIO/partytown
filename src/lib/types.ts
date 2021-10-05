@@ -81,10 +81,8 @@ export interface InitWebWorkerData {
   $parentWinId$: number;
   $config$: PartytownConfig;
   $documentCompatMode$: string;
-  $documentCookie$: string;
   $documentReadyState$: string;
   $documentReferrer$: string;
-  $documentTitle$: string;
   $firstScriptId$: number;
   $htmlConstructors$: string[];
   $interfaces$: InterfaceInfo[];
