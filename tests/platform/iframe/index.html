@@ -78,6 +78,22 @@
           })();
         </script>
       </li>
+      <li>
+        <strong>createElement('iframe'), set cross origin src</strong>
+        <code id="testCorsSrc"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testCorsSrc');
+            const iframe = document.createElement('iframe');
+            iframe.addEventListener('load', function (ev) {
+              elm.textContent = iframe.currentSrc;
+              elm.className = 'testCorsSrc';
+            });
+            iframe.src = 'https://en.wikipedia.org/wiki/Main_Page';
+            elm.parentNode.insertBefore(iframe, null);
+          })();
+        </script>
+      </li>
 
       <li>
         <strong>iframe.onload</strong>

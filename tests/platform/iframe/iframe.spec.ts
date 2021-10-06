@@ -7,6 +7,10 @@ test('iframe', async ({ page }) => {
   const testSrc = page.locator('#testSrc');
   await expect(testSrc).toHaveText('/platform/iframe/content.html');
 
+  await page.waitForSelector('.testCorsSrc');
+  const testCorsSrc = page.locator('#testCorsSrc');
+  await expect(testCorsSrc).toHaveText('https://en.wikipedia.org/wiki/Main_Page');
+
   await page.waitForSelector('.testOnload');
   const testOnload = page.locator('#testOnload');
   await expect(testOnload).toHaveText('load');
