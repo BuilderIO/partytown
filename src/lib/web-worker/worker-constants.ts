@@ -1,6 +1,4 @@
-import type { MainAccessRequestTask, RefHandler, StateMap, WebWorkerContext } from '../types';
-
-export const taskQueue: { [winId: number]: MainAccessRequestTask[] | undefined } = {};
+import type { RefHandler, StateMap, WebWorkerContext } from '../types';
 
 export const WinIdKey = Symbol();
 export const InstanceIdKey = Symbol();

@@ -57,7 +57,7 @@ test('iframe', async ({ page }) => {
 
   await page.waitForSelector('.testSetCallWindowParentFn');
   const testSetCallWindowParentFn = page.locator('#testSetCallWindowParentFn');
-  await expect(testSetCallWindowParentFn).toHaveText('1985');
+  await expect(testSetCallWindowParentFn).toHaveText('1985 1985');
 
   await page.waitForSelector('.testCallWindowParentFn');
   const testCallWindowParentFn = page.locator('#testCallWindowParentFn');

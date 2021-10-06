@@ -1,20 +1,26 @@
 import { callMethod } from './worker-proxy';
 import { constructInstance } from './worker-constructors';
-import { getStateValue, getWorkerRef, setStateValue, setWorkerRef } from './worker-state';
 import {
   InterfaceType,
   PlatformInstanceId,
   RefHandler,
   RefHandlerCallbackData,
-  RefMap,
   SerializedInstance,
   SerializedRefTransferData,
   SerializedTransfer,
   SerializedType,
-  StateProp,
 } from '../types';
-import { InstanceIdKey, InterfaceTypeKey, NodeNameKey, WinIdKey } from './worker-constants';
+import {
+  InstanceIdKey,
+  InterfaceTypeKey,
+  NodeNameKey,
+  webWorkerCtx,
+  webWorkerRefIdsByRef,
+  webWorkerRefsByRefId,
+  WinIdKey,
+} from './worker-constants';
 import { NodeList } from './worker-node-list';
+import { setWorkerRef } from './worker-state';
 
 export const serializeForMain = (
   $winId$: number,
@@ -34,6 +40,7 @@ export const serializeForMain = (
     if (type === 'function') {
       const refData: SerializedRefTransferData = {
         $winId$,
+        $contextWinId$: webWorkerCtx.$winId$,
         $instanceId$,
         $refId$: setWorkerRef(value),
       };
@@ -142,7 +149,7 @@ export const callWorkerRefHandler = (
   { $winId$, $instanceId$, $refId$, $thisArg$, $args$ }: RefHandlerCallbackData,
   workerRef?: RefHandler
 ) => {
-  workerRef = getWorkerRef($refId$);
+  workerRef = webWorkerRefsByRefId[$refId$];
   if (workerRef) {
     try {
       const thisArg = deserializeFromMain($winId$, $instanceId$, [], $thisArg$);
@@ -157,21 +164,17 @@ export const callWorkerRefHandler = (
 const deserializeRefFromMain = (
   instanceId: number,
   memberPath: string[],
-  { $winId$, $refId$ }: SerializedRefTransferData
+  { $winId$, $contextWinId$, $refId$ }: SerializedRefTransferData
 ) => {
-  let workerRefHandler: RefHandler | undefined;
+  let workerRefHandler = webWorkerRefsByRefId[$refId$];
 
-  let workerRefMap = getStateValue<RefMap>(instanceId, StateProp.instanceRefs);
-  if (!workerRefMap) {
-    setStateValue(instanceId, StateProp.instanceRefs, (workerRefMap = {}));
-  }
-
-  workerRefHandler = workerRefMap[$refId$];
   if (!workerRefHandler) {
-    workerRefMap[$refId$] = workerRefHandler = function (this: any, ...args: any[]) {
+    webWorkerRefsByRefId[$refId$] = workerRefHandler = function (this: any, ...args: any[]) {
       const instance = constructInstance(InterfaceType.Window, instanceId, $winId$);
-      return callMethod(instance, memberPath, args);
+      return callMethod(instance, memberPath, args, undefined, undefined, $contextWinId$);
     };
+
+    webWorkerRefIdsByRef.set(workerRefHandler, $refId$);
   }
 
   return workerRefHandler;

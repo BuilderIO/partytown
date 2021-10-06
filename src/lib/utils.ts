@@ -57,26 +57,36 @@ export const logWorker = (msg: string) => {
   }
 };
 
-export const logWorkerGetter = (target: any, memberPath: string[], rtn: any) => {
+export const logWorkerGetter = (
+  target: any,
+  memberPath: string[],
+  rtnValue: any,
+  skipOtherWindow = true
+) => {
   if (debug && webWorkerCtx.$config$.logGetters) {
     try {
-      if (target && target[WinIdKey] !== webWorkerCtx.$winId$) {
+      if (target && target[WinIdKey] !== webWorkerCtx.$winId$ && skipOtherWindow) {
         return;
       }
       logWorker(
         `Get ${logTargetProp(target, AccessType.Get, memberPath)}, returned: ${logValue(
           memberPath,
-          rtn
+          rtnValue
         )} `
       );
     } catch (e) {}
   }
 };
 
-export const logWorkerSetter = (target: any, memberPath: string[], value: any) => {
+export const logWorkerSetter = (
+  target: any,
+  memberPath: string[],
+  value: any,
+  skipOtherWindow = true
+) => {
   if (debug && webWorkerCtx.$config$.logSetters) {
     try {
-      if (target && target[WinIdKey] !== webWorkerCtx.$winId$) {
+      if (target && target[WinIdKey] !== webWorkerCtx.$winId$ && skipOtherWindow) {
         return;
       }
       logWorker(
@@ -89,16 +99,22 @@ export const logWorkerSetter = (target: any, memberPath: string[], value: any) =
   }
 };
 
-export const logWorkerCall = (target: any, memberPath: string[], args: any[], rtn: any) => {
+export const logWorkerCall = (
+  target: any,
+  memberPath: string[],
+  args: any[],
+  rtnValue: any,
+  skipOtherWindow = true
+) => {
   if (debug && webWorkerCtx.$config$.logCalls) {
     try {
-      if (target && target[WinIdKey] !== webWorkerCtx.$winId$) {
+      if (target && target[WinIdKey] !== webWorkerCtx.$winId$ && skipOtherWindow) {
         return;
       }
       logWorker(
         `Call ${logTargetProp(target, AccessType.CallMethod, memberPath)}(${args
           .map((v) => logValue(memberPath, v))
-          .join(', ')}), returned: ${logValue(memberPath, rtn)}`
+          .join(', ')}), returned: ${logValue(memberPath, rtnValue)}`
       );
     } catch (e) {}
   }

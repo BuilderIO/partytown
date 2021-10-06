@@ -160,11 +160,8 @@ export const enum AccessType {
 export interface MainAccessRequest {
   $msgId$: number;
   $winId$: number;
+  $contextWinId$?: number;
   $forwardToWorkerAccess$: boolean;
-  $tasks$: MainAccessRequestTask[];
-}
-
-export interface MainAccessRequestTask {
   $instanceId$: number;
   $interfaceType$: InterfaceType;
   $nodeName$?: string;
@@ -180,7 +177,8 @@ export type ImmediateSetter = [string[], SerializedTransfer | undefined];
 export interface MainAccessResponse {
   $msgId$: number;
   $winId$: number;
-  $errors$: string[];
+  $error$?: string;
+  $contextWinId$?: number;
   $rtnValue$?: SerializedTransfer;
   $isPromise$?: any;
 }
@@ -212,7 +210,14 @@ export type SerializedPrimitiveTransfer =
 export type SerializedRefTransfer = [SerializedType.Ref, SerializedRefTransferData];
 
 export interface SerializedRefTransferData {
+  /**
+   * The window the reference "meant" to be on
+   */
   $winId$: number;
+  /**
+   * The window the reference is "actually" persisted in
+   */
+  $contextWinId$: number;
   $instanceId$: number;
   $refId$: number;
 }
@@ -384,7 +389,6 @@ export const enum StateProp {
   errorHandlers = 'error',
   loadHandlers = 'load',
   href = 'href',
-  instanceRefs = 0,
   loadError = 1,
   partyWinId = 2,
   url = 3,
@@ -393,8 +397,6 @@ export const enum StateProp {
 export type EventHandler = (ev: any) => void;
 
 export type RefHandler = (...args: any[]) => void;
-
-export type RefMap = Record<string, RefHandler>;
 
 export type StateMap = Record<number, StateRecord>;
 

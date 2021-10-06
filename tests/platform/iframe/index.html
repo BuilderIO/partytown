@@ -369,13 +369,18 @@
             const iframe = document.createElement('iframe');
             elm.parentNode.appendChild(iframe);
 
-            iframe.contentWindow.document.head.innerHTML = `
-              <style>body { background: orange; }</style>
-            `;
+            iframe.contentWindow.document.head.innerHTML = `<style>body { background: orange; }</style>`;
 
             const script = document.createElement('script');
             script.src = 'fn-on-window.js';
             iframe.contentWindow.document.body.appendChild(script);
+
+            script.onload = () => {
+              const rtn = sum1955(30);
+              elm.textContent += ' ' + rtn;
+              elm.className = 'testSetCallWindowParentFn';
+              iframe.contentDocument.getElementById('output').textContent = elm.textContent;
+            };
           })();
         </script>
       </li>
@@ -475,6 +480,66 @@
 
           elm.textContent = iframe.contentDocument.getElementById('output').textContent;
           elm.className = 'testMemberNames';
+        </script>
+      </li>
+
+      <li>
+        <strong>iframe calls parent's one.two.sum()</strong>
+        <code id="testParentMemberNames"></code>
+        <script type="text/partytown">
+          const elm = document.getElementById('testParentMemberNames');
+          const iframe = document.createElement('iframe');
+
+          iframe.onload = () => {
+            iframe.contentWindow.document.head.innerHTML = `<style>body { background: #f57ee6; }</style>`;
+
+            const script = iframe.contentDocument.createElement('script');
+            script.innerHTML = `
+              const win = window;
+              const parentWin = win.parent;
+              parentWin.objA = {
+                objB: {
+                  sum(years) {
+                    return 1955 + years;
+                  },
+                  num: 30,
+                },
+              };
+              parentWin.subtract = (years) => {
+                return 1985 - years;
+              };
+              parentWin.num = 100;
+            `;
+
+            iframe.contentDocument.body.appendChild(script);
+
+            setTimeout(() => {
+              // TODO!!! Remove the timeout!!!
+              const win = window;
+
+              const objA = win.objA;
+              const objB = objA.objB;
+              const objBSum = objB.sum;
+              const objBNum = objB.num;
+
+              const winSubtract = win.subtract;
+              const winNum = win.num;
+
+              const subtractResult = subtract(winNum);
+              const objBSumResult = objBSum(objBNum);
+              const result = objBSumResult + ' ' + subtractResult;
+
+              const div = iframe.contentDocument.createElement('div');
+              div.id = 'output';
+              div.textContent = result;
+              iframe.contentWindow.document.body.appendChild(div);
+
+              elm.textContent = iframe.contentDocument.getElementById('output').textContent;
+              elm.className = 'testParentMemberNames';
+            }, 200);
+          };
+
+          elm.parentNode.insertBefore(iframe, null);
         </script>
       </li>
     </ul>

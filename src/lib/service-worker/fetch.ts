@@ -60,11 +60,11 @@ const sendMessageToSandboxFromServiceWorker = (
     }
   });
 
-const swMessageError = (accessReq: MainAccessRequest, err: string) => ({
+const swMessageError = (accessReq: MainAccessRequest, $error$: string): MainAccessResponse => ({
   $winId$: accessReq.$winId$,
   $msgId$: accessReq.$msgId$,
-  $tasks$: [],
-  $errors$: [err],
+  $contextWinId$: accessReq.$contextWinId$,
+  $error$,
 });
 
 type MessageResolve = [(data?: any) => void, any];

@@ -3,7 +3,6 @@ import {
   ImmediateSetter,
   InterfaceType,
   MainAccessRequest,
-  MainAccessRequestTask,
   MainAccessResponse,
   NodeName,
   PlatformInstanceId,
@@ -20,34 +19,37 @@ import {
   randomId,
 } from '../utils';
 import { deserializeFromMain, serializeForMain } from './worker-serialization';
-import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
+import { getInstanceStateValue, setStateValue } from './worker-state';
 import {
   ImmediateSettersKey,
   InstanceIdKey,
   InterfaceTypeKey,
   NodeNameKey,
   ProxyKey,
-  taskQueue,
   webWorkerCtx,
   WinIdKey,
 } from './worker-constants';
 import syncSendMessage from '@sync-send-message-to-main';
 import { WorkerProxy } from './worker-proxy-constructor';
 
-const queueTask = (
+const syncMessage = (
   instance: WorkerProxy,
   $accessType$: AccessType,
   $memberPath$: string[],
   $data$?: SerializedTransfer | undefined,
   $immediateSetters$?: ImmediateSetter[],
-  $newInstanceId$?: number
+  $newInstanceId$?: number,
+  $contextWinId$?: number
 ) => {
-  const winId = instance[WinIdKey];
-  const winQueue = (taskQueue[winId] = taskQueue[winId] || []);
+  const $winId$ = instance[WinIdKey];
+  const $instanceId$ = instance[InstanceIdKey];
 
-  const $forwardToWorkerAccess$ = webWorkerCtx.$winId$ !== winId;
+  const $forwardToWorkerAccess$ = webWorkerCtx.$winId$ !== $winId$ || !!$contextWinId$;
 
-  const accessReqTask: MainAccessRequestTask = {
+  const accessReq: MainAccessRequest = {
+    $msgId$: randomId(),
+    $winId$,
+    $forwardToWorkerAccess$,
     $instanceId$: instance[InstanceIdKey],
     $interfaceType$: instance[InterfaceTypeKey],
     $nodeName$: instance[NodeNameKey],
@@ -56,83 +58,91 @@ const queueTask = (
     $data$,
     $immediateSetters$,
     $newInstanceId$,
+    $contextWinId$,
   };
 
-  winQueue.push(accessReqTask);
+  const accessRsp: MainAccessResponse = syncSendMessage(webWorkerCtx, accessReq);
 
-  return drainQueue(
-    winId,
-    accessReqTask.$instanceId$,
-    $memberPath$,
-    $forwardToWorkerAccess$,
-    winQueue
-  );
-};
+  const isPromise = accessRsp.$isPromise$;
+  const rtnValue = deserializeFromMain($winId$, $instanceId$, $memberPath$, accessRsp.$rtnValue$!);
 
-const drainQueue = (
-  $winId$: number,
-  $instanceId$: number,
-  $memberPath$: string[],
-  $forwardToWorkerAccess$: boolean,
-  queue: MainAccessRequestTask[]
-) => {
-  if (len(queue)) {
-    const accessReq: MainAccessRequest = {
-      $msgId$: randomId(),
-      $winId$,
-      $forwardToWorkerAccess$,
-      $tasks$: [...queue],
-    };
-    const accessRsp: MainAccessResponse = syncSendMessage(webWorkerCtx, accessReq);
-
-    const errors = accessRsp.$errors$.join();
-    const isPromise = accessRsp.$isPromise$;
-    const rtn = deserializeFromMain($winId$, $instanceId$, $memberPath$, accessRsp.$rtnValue$!);
-
-    queue.length = 0;
-
-    if (errors) {
-      if (debug) {
-        console.error(self.name, JSON.stringify(accessReq));
-      }
-      if (isPromise) {
-        return Promise.reject(errors);
-      }
-      throw new Error(errors);
+  if (accessRsp.$error$) {
+    if (debug) {
+      console.error(self.name, JSON.stringify(accessReq));
     }
-
     if (isPromise) {
-      return Promise.resolve(rtn);
+      return Promise.reject(accessRsp.$error$);
     }
-    return rtn;
+    throw new Error(accessRsp.$error$);
   }
+
+  if (isPromise) {
+    return Promise.resolve(rtnValue);
+  }
+  return rtnValue;
 };
 
 export const getter = (instance: WorkerProxy, memberPath: string[]) => {
   applyBeforeSyncSetters(instance[WinIdKey], instance);
 
-  const rtn = queueTask(instance, AccessType.Get, memberPath);
-  logWorkerGetter(instance, memberPath, rtn);
-  return rtn;
+  const rtnValue = syncMessage(instance, AccessType.Get, memberPath);
+  logWorkerGetter(instance, memberPath, rtnValue);
+  return rtnValue;
 };
 
 export const setter = (instance: WorkerProxy, memberPath: string[], value: any) => {
+  const winId = instance[WinIdKey];
+  const instanceId = instance[InstanceIdKey];
+  const immediateSetters = instance[ImmediateSettersKey];
+  const serializedValue = serializeForMain(winId, instanceId, value);
+
   logWorkerSetter(instance, memberPath, value);
 
-  if (instance[ImmediateSettersKey]) {
-    instance[ImmediateSettersKey]!.push([
-      memberPath,
-      serializeForMain(instance[WinIdKey], instance[InstanceIdKey], value),
-    ]);
-  } else {
-    const serializedValue = serializeForMain(instance[WinIdKey], instance[InstanceIdKey], value);
-
-    if (typeof value === 'function') {
-      setInstanceStateValue(instance, memberPath.join('.'), value);
-    }
-
-    queueTask(instance, AccessType.Set, memberPath, serializedValue);
+  if (immediateSetters) {
+    // queue up setters to be applied immediately after the
+    // node is added to the dom
+    immediateSetters.push([memberPath, serializedValue]);
+    return;
   }
+
+  if (instanceId === PlatformInstanceId.window) {
+    if (typeof value === 'function' || (typeof value === 'object' && value)) {
+      setStateValue(instanceId, memberPath[0], serializedValue);
+    }
+  }
+
+  syncMessage(instance, AccessType.Set, memberPath, serializedValue);
+};
+
+export const callMethod = (
+  instance: WorkerProxy,
+  memberPath: string[],
+  args: any[],
+  immediateSetters?: ImmediateSetter[],
+  newInstanceId?: number,
+  contextWinId?: number
+) => {
+  const winId = instance[WinIdKey];
+
+  applyBeforeSyncSetters(winId, instance);
+
+  args.forEach((arg) => {
+    if (arg) {
+      applyBeforeSyncSetters(winId, arg);
+    }
+  });
+
+  const rtnValue = syncMessage(
+    instance,
+    AccessType.CallMethod,
+    memberPath,
+    serializeForMain(winId, instance[InstanceIdKey], args),
+    immediateSetters,
+    newInstanceId,
+    contextWinId
+  );
+  logWorkerCall(instance, memberPath, args, rtnValue);
+  return rtnValue;
 };
 
 export const createGlobalConstructorProxy = (
@@ -152,7 +162,7 @@ export const createGlobalConstructorProxy = (
         }
       });
 
-      queueTask(
+      syncMessage(
         workerProxy,
         AccessType.GlobalConstructor,
         [cstrName],
@@ -168,34 +178,6 @@ export const createGlobalConstructorProxy = (
   self[cstrName] = Object.defineProperty(GlobalCstr, 'name', {
     value: cstrName,
   });
-};
-
-export const callMethod = (
-  instance: WorkerProxy,
-  memberPath: string[],
-  args: any[],
-  immediateSetters?: ImmediateSetter[],
-  newInstanceId?: number
-) => {
-  const winId = instance[WinIdKey];
-  applyBeforeSyncSetters(winId, instance);
-
-  args.forEach((arg) => {
-    if (arg) {
-      applyBeforeSyncSetters(winId, arg);
-    }
-  });
-
-  const rtn = queueTask(
-    instance,
-    AccessType.CallMethod,
-    memberPath,
-    serializeForMain(winId, instance[InstanceIdKey], args),
-    immediateSetters,
-    newInstanceId
-  );
-  logWorkerCall(instance, memberPath, args, rtn);
-  return rtn;
 };
 
 export const applyBeforeSyncSetters = (winId: number, instance: WorkerProxy) => {
@@ -247,9 +229,13 @@ const createComplexMember = (
     }
   }
 
-  const stateValue = getInstanceStateValue<Function>(instance, memberPath.join('.'));
+  const stateValue = getInstanceStateValue<Function>(instance, memberPath[0]);
   if (typeof stateValue === 'function') {
-    return (...args: any[]) => stateValue.apply(instance, args);
+    return (...args: any[]) => {
+      const rtnValue = stateValue.apply(instance, args);
+      logWorkerCall(instance, memberPath, args, rtnValue, false);
+      return rtnValue;
+    };
   }
 };
 

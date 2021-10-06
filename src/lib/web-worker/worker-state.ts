@@ -37,8 +37,6 @@ export const setStateValue = (
   webWorkerState[instanceId] = stateRecord;
 };
 
-export const getWorkerRef = (refId: number) => webWorkerRefsByRefId[refId];
-
 export const setWorkerRef = (ref: RefHandler, refId?: number) => {
   refId = webWorkerRefIdsByRef.get(ref);
   if (!refId) {
