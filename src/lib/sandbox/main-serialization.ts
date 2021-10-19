@@ -2,24 +2,24 @@ import { getConstructorName, isValidMemberName } from '../utils';
 import { getInstance, getAndSetInstanceId } from './main-instances';
 import {
   InterfaceType,
-  MainWindowContext,
+  PartytownWebWorker,
   PlatformInstanceId,
   RefHandlerCallbackData,
   SerializedInstance,
+  SerializedObject,
   SerializedRefTransferData,
   SerializedTransfer,
   SerializedType,
   WorkerMessageType,
 } from '../types';
-import { mainInstanceRefs, winCtxs } from './main-constants';
+import { mainRefs, winCtxs } from './main-constants';
 
 export const serializeForWorker = (
-  winCtx: MainWindowContext,
+  $winId$: number,
   value: any,
   added?: Set<any>,
   type?: string,
-  obj?: { [key: string]: SerializedTransfer | undefined },
-  key?: string
+  cstrName?: string
 ): SerializedTransfer | undefined => {
   if (value !== undefined) {
     type = typeof value;
@@ -36,60 +36,80 @@ export const serializeForWorker = (
     if (Array.isArray(value)) {
       if (!added.has(value)) {
         added.add(value);
-        return [SerializedType.Array, value.map((v) => serializeForWorker(winCtx, v, added))];
+        return [SerializedType.Array, value.map((v) => serializeForWorker($winId$, v, added))];
       }
       return [SerializedType.Array, []];
     }
 
     if (type === 'object') {
       if (value.nodeType) {
-        const nodeInstance: SerializedInstance = {
-          $winId$: winCtx.$winId$,
-          $interfaceType$: value.nodeType,
-          $instanceId$: getAndSetInstanceId(winCtx, value),
-          $nodeName$: value.nodeName,
-        };
-        return [SerializedType.Instance, nodeInstance];
+        return [
+          SerializedType.Instance,
+          {
+            $winId$,
+            $interfaceType$: value.nodeType,
+            $instanceId$: getAndSetInstanceId(winCtxs[$winId$]!, value),
+            $nodeName$: value.nodeName,
+          },
+        ];
       }
 
-      if (value === value.window) {
-        const winInstance: SerializedInstance = {
-          $winId$: winCtx.$winId$,
-          $interfaceType$: InterfaceType.Window,
-          $instanceId$: PlatformInstanceId.window,
-        };
-        return [SerializedType.Instance, winInstance];
+      cstrName = getConstructorName(value);
+      if (cstrName === 'Window') {
+        return [
+          SerializedType.Instance,
+          {
+            $winId$,
+            $interfaceType$: InterfaceType.Window,
+            $instanceId$: PlatformInstanceId.window,
+          },
+        ];
       }
 
-      if (isNodeList(getConstructorName(value))) {
-        const nodeList: SerializedInstance = {
-          $winId$: winCtx.$winId$,
-          $interfaceType$: InterfaceType.NodeList,
-          $items$: Array.from(value).map((v) => serializeForWorker(winCtx, v, added)![1]) as any,
-        };
-        return [SerializedType.Instance, nodeList];
+      if (cstrName === 'HTMLCollection' || cstrName === 'NodeList') {
+        return [
+          SerializedType.Instance,
+          {
+            $winId$,
+            $interfaceType$: InterfaceType.NodeList,
+            $data$: Array.from(value).map((v) => serializeForWorker($winId$, v, added)![1]) as any,
+          },
+        ];
       }
 
-      obj = {};
-      if (!added.has(value)) {
-        added.add(value);
-        for (key in value) {
-          if (isValidMemberName(key)) {
-            obj[key] = serializeForWorker(winCtx, value[key], added);
-          }
-        }
+      if (cstrName === 'Event') {
+        return [SerializedType.Event, serializeObjectForWorker($winId$, value, false, added)];
       }
-      return [SerializedType.Object, obj];
+
+      return [SerializedType.Object, serializeObjectForWorker($winId$, value, true, added)];
     }
   }
 };
 
+const serializeObjectForWorker = (
+  winId: number,
+  obj: any,
+  includeFunctions: boolean,
+  added: Set<any>,
+  serializedObj?: SerializedObject,
+  propName?: string,
+  propValue?: any
+) => {
+  serializedObj = {};
+  for (propName in obj) {
+    propValue = obj[propName];
+    if (isValidMemberName(propName) && (includeFunctions || typeof propValue !== 'function')) {
+      serializedObj[propName] = serializeForWorker(winId, propValue, added);
+    }
+  }
+  return serializedObj;
+};
+
 export const deserializeFromWorker = (
+  worker: PartytownWebWorker,
   serializedTransfer: SerializedTransfer | undefined,
   serializedType?: SerializedType,
-  serializedValue?: any,
-  obj?: { [key: string]: any },
-  key?: string
+  serializedValue?: any
 ): any => {
   if (serializedTransfer) {
     serializedType = serializedTransfer[0];
@@ -100,50 +120,65 @@ export const deserializeFromWorker = (
     }
 
     if (serializedType === SerializedType.Ref) {
-      return deserializeRefFromWorker(serializedValue);
+      return deserializeRefFromWorker(worker, serializedValue);
     }
 
     if (serializedType === SerializedType.Array) {
-      return (serializedValue as SerializedTransfer[]).map((v) => deserializeFromWorker(v));
+      return (serializedValue as SerializedTransfer[]).map((v) => deserializeFromWorker(worker, v));
     }
 
     if (serializedType === SerializedType.Instance) {
-      const serializedInstance: SerializedInstance = serializedValue;
-      return getInstance(serializedInstance.$winId$, serializedInstance.$instanceId$!);
+      return getInstance(
+        (serializedValue as SerializedInstance).$winId$,
+        (serializedValue as SerializedInstance).$instanceId$!
+      );
+    }
+
+    if (serializedType === SerializedType.Event) {
+      return constructEvent(deserializeObjectFromWorker(worker, serializedValue));
     }
 
     if (serializedType === SerializedType.Object) {
-      obj = {};
-      for (key in serializedValue) {
-        obj[key] = deserializeFromWorker(serializedValue[key]);
-      }
-      return obj;
+      return deserializeObjectFromWorker(worker, serializedValue);
     }
   }
 };
 
-const isNodeList = (cstrName: string) => cstrName === 'HTMLCollection' || cstrName === 'NodeList';
+const deserializeRefFromWorker = (
+  worker: PartytownWebWorker,
+  { $winId$, $instanceId$, $refId$ }: SerializedRefTransferData
+) => {
+  let ref = mainRefs.get($refId$);
 
-const deserializeRefFromWorker = ({
-  $winId$,
-  $instanceId$,
-  $refId$,
-}: SerializedRefTransferData) => {
-  let mainRefHandlerMap = (mainInstanceRefs[$instanceId$] = mainInstanceRefs[$instanceId$] || {});
-
-  if (!mainRefHandlerMap[$refId$]) {
-    mainRefHandlerMap[$refId$] = function (this: any, ...args: any[]) {
-      const winCtx = winCtxs.get($winId$)!;
+  if (!ref) {
+    ref = function (this: any, ...args: any[]) {
       const refHandlerData: RefHandlerCallbackData = {
         $winId$,
         $instanceId$,
         $refId$,
-        $thisArg$: serializeForWorker(winCtx, this),
-        $args$: serializeForWorker(winCtx, args),
+        $thisArg$: serializeForWorker($winId$, this),
+        $args$: serializeForWorker($winId$, args),
       };
-      winCtx.$worker$!.postMessage([WorkerMessageType.RefHandlerCallback, refHandlerData]);
+      worker.postMessage([WorkerMessageType.RefHandlerCallback, refHandlerData]);
     };
+    mainRefs.set($refId$, ref);
   }
 
-  return mainRefHandlerMap[$refId$];
+  return ref;
+};
+
+const constructEvent = (eventProps: any) =>
+  new ('detail' in eventProps ? CustomEvent : Event)(eventProps.type, eventProps);
+
+const deserializeObjectFromWorker = (
+  worker: PartytownWebWorker,
+  serializedValue: any,
+  obj?: any,
+  key?: string
+) => {
+  obj = {};
+  for (key in serializedValue) {
+    obj[key] = deserializeFromWorker(worker, serializedValue[key]);
+  }
+  return obj;
 };

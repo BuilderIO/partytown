@@ -1,62 +1,55 @@
-import { createWebWorker } from './create-web-worker';
-import { debug } from '../utils';
+import { debug, logMain, PT_IFRAME_APPENDED } from '../utils';
+import { getAndSetInstanceId } from './main-instances';
 import { mainAccessHandler } from './main-access-handler';
-import {
+import type {
   MainWindow,
-  MainWindowContext,
+  MessageFromWorkerToSandbox,
   MessengerRequestCallback,
-  PlatformInstanceId,
+  PartytownWebWorker,
 } from '../types';
-import { readNextScript } from './read-main-scripts';
-import { setInstanceId } from './main-instances';
+import { onMessageFromWebWorker } from './on-messenge-from-worker';
+import { registerWindow } from './main-register-window';
 import syncCreateMessenger from '@sync-create-messenger';
-import { winCtxs, windows } from './main-constants';
+import WebWorkerBlob from '@web-worker-blob';
+import WebWorkerUrl from '@web-worker-url';
+import { winCtxs, windowIds } from './main-constants';
 
-export const initSandbox = async (sandboxWindow: Window, winIds: number) => {
-  const mainWindow: MainWindow = sandboxWindow.parent as any;
-  const $config$ = mainWindow.partytown || {};
-  const $libPath$ = ($config$.lib || '/~partytown/') + (debug ? 'debug/' : '');
+export const initSandbox = async (sandboxWindow: any) => {
+  let worker: PartytownWebWorker;
 
-  const registerWindow = (win: MainWindow) => {
-    if (!windows.has(win)) {
-      windows.add(win);
+  const mainWindow: MainWindow = sandboxWindow.parent;
 
-      const parentWin = win.parent;
-      const winCtx: MainWindowContext = {
-        $winId$: (win._ptId = winIds++),
-        $parentWinId$: parentWin._ptId!,
-        $cleanupInc$: 0,
-        $config$,
-        $libPath$,
-        $url$: win.document.baseURI,
-        $window$: win,
-      };
-
-      winCtxs.set(winCtx.$winId$, winCtx);
-
-      if (debug) {
-        winCtx.$startTime$ = performance.now();
-      }
-
-      setInstanceId(winCtx, win, PlatformInstanceId.window);
-
-      createWebWorker(winCtx);
-
-      win.addEventListener('load', () => readNextScript(winCtx));
-    }
-  };
-
-  mainWindow._ptWin = registerWindow;
-
-  const receiveMessage: MessengerRequestCallback = (accessReq, responseCallback) => {
-    const accessWinId = accessReq.$winId$;
-    const winCtx = winCtxs.get(accessWinId)!;
-    mainAccessHandler(winCtx, accessReq).then(responseCallback);
-  };
+  const receiveMessage: MessengerRequestCallback = (accessReq, responseCallback) =>
+    mainAccessHandler(worker, accessReq).then(responseCallback);
 
   const success = await syncCreateMessenger(sandboxWindow, receiveMessage);
 
   if (success) {
-    registerWindow(mainWindow);
+    worker = new Worker(
+      debug
+        ? WebWorkerUrl
+        : URL.createObjectURL(
+            new Blob([WebWorkerBlob], {
+              type: 'text/javascript',
+            })
+          ),
+      { name: `Partytown 🎉` }
+    );
+
+    worker.onmessage = (ev: MessageEvent<MessageFromWorkerToSandbox>) =>
+      onMessageFromWebWorker(worker, mainWindow, ev.data);
+
+    if (debug) {
+      logMain(`Created web worker`);
+      worker.onerror = (ev) => console.error(`Web Worker Error`, ev);
+    }
+
+    mainWindow.addEventListener<any>(PT_IFRAME_APPENDED, (ev: CustomEvent) => {
+      const win: MainWindow = ev.detail;
+      const parentWinId = windowIds.get(win.parent);
+      const parentWinCtx = winCtxs[parentWinId!]!;
+      const winId = getAndSetInstanceId(parentWinCtx, win.frameElement);
+      registerWindow(worker, winId, win);
+    });
   }
 };

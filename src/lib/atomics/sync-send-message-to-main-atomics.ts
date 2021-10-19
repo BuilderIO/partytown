@@ -6,7 +6,7 @@ const syncSendMessageToMainAtomics = (
 ): MainAccessResponse => {
   const accessRsp: MainAccessResponse = {
     $msgId$: accessReq.$msgId$,
-    $winId$: webWorkerCtx.$winId$,
+    $winId$: accessReq.$winId$,
     $error$: `Atomics not implemented (yet)`,
   };
   return accessRsp;

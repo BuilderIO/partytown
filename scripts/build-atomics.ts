@@ -12,9 +12,10 @@ import { writeFile } from 'fs-extra';
 import { webWorkerBlobUrlPlugin } from './build-web-worker';
 
 export function buildAtomics(opts: BuildOptions): RollupOptions[] {
-  const rollups: RollupOptions[] = [buildAtomicsDebug(opts)];
+  const rollups: RollupOptions[] = [];
 
   if (!opts.isDev) {
+    rollups.push(buildAtomicsDebug(opts));
     rollups.push(buildAtomicsMin(opts));
   }
 

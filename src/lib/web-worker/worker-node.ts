@@ -1,8 +1,14 @@
 import { applyBeforeSyncSetters, callMethod } from './worker-proxy';
-import { EMPTY_ARRAY } from '../utils';
+import { getEnv } from './worker-environment';
 import type { HTMLDocument } from './worker-document';
-import { insertIframe } from './worker-exec';
-import { InterfaceTypeKey, NodeNameKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import { insertIframe, insertScriptContent } from './worker-exec';
+import {
+  InstanceIdKey,
+  InterfaceTypeKey,
+  NodeNameKey,
+  webWorkerCtx,
+  WinIdKey,
+} from './worker-constants';
 import { NodeName, WorkerMessageType } from '../types';
 import { WorkerProxy } from './worker-proxy-constructor';
 
@@ -12,23 +18,36 @@ export class Node extends WorkerProxy {
   }
 
   get ownerDocument(): HTMLDocument {
-    return document as any;
+    return getEnv(this).$document$;
   }
 
   get href() {
-    return undefined;
+    return;
   }
   set href(_: any) {}
 
   insertBefore(newNode: Node, referenceNode: Node | null) {
-    applyBeforeSyncSetters(this[WinIdKey], newNode);
+    // ensure the node being added to the window's document
+    // is given the same winId as the window it's being added to
+    const winId = (newNode[WinIdKey] = this[WinIdKey]);
+    const instanceId = newNode[InstanceIdKey];
+    const nodeName = newNode[NodeNameKey];
+    const isScript = nodeName === NodeName.Script;
+    const isIFrame = nodeName === NodeName.IFrame;
 
-    newNode = callMethod(this, ['insertBefore'], [newNode, referenceNode], EMPTY_ARRAY);
+    if (isScript) {
+      insertScriptContent(newNode);
+    }
 
-    if (newNode[NodeNameKey] === NodeName.IFrame) {
+    applyBeforeSyncSetters(newNode);
+
+    newNode = callMethod(this, ['insertBefore'], [newNode, referenceNode], undefined, instanceId);
+
+    if (isIFrame) {
       insertIframe(newNode);
-    } else if (newNode[NodeNameKey] === NodeName.Script) {
-      webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextWorkerScript]);
+    }
+    if (isScript) {
+      webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextScript, winId]);
     }
 
     return newNode;

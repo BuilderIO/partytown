@@ -1,26 +1,46 @@
-import { debug, logMain, PT_INITIALIZED_EVENT, SCRIPT_TYPE } from '../utils';
+import {
+  debug,
+  logMain,
+  normalizedWinId,
+  PT_INITIALIZED_EVENT,
+  SCRIPT_TYPE,
+  SCRIPT_TYPE_EXEC,
+} from '../utils';
 import { getAndSetInstanceId } from './main-instances';
-import { MainWindowContext, InitializeScriptData, WorkerMessageType } from '../types';
+import {
+  InitializeScriptData,
+  MainWindowContext,
+  PartytownWebWorker,
+  WorkerMessageType,
+} from '../types';
 import { mainForwardTrigger } from './main-forward-trigger';
 
-export const readNextScript = (winCtx: MainWindowContext) => {
-  const $winId$ = winCtx.$winId$;
-  const win = winCtx.$window$;
-  const doc = win.document;
-  const scriptElm = doc.querySelector<HTMLScriptElement>(
-    `script[type="${SCRIPT_TYPE}"]:not([data-pt-id]):not([data-pt-error])`
-  );
+export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowContext) => {
+  let $winId$ = winCtx.$winId$;
+  let win = winCtx.$window$;
+  let doc = win.document;
+  let scriptSelector = `script[type="${SCRIPT_TYPE}"]:not([data-ptid]):not([data-pterror])`;
+  let blockingScriptSelector = scriptSelector + `:not([async]):not([defer])`;
+  let scriptElm = doc.querySelector<HTMLScriptElement>(blockingScriptSelector);
+  let $instanceId$: number;
+  let scriptData: InitializeScriptData;
+
+  if (!scriptElm) {
+    // first query for partytown scripts are blocking scripts that
+    // do not include async or defer attribute that should run first
+    // if no blocking scripts are found
+    // query again for all scripts which includes async / defer
+    scriptElm = doc.querySelector<HTMLScriptElement>(scriptSelector);
+  }
 
   if (scriptElm) {
     // read the next script found
-    const $instanceId$ = getAndSetInstanceId(winCtx, scriptElm, $winId$);
+    scriptElm.dataset.ptid = $instanceId$ = getAndSetInstanceId(winCtx, scriptElm, $winId$) as any;
 
-    const scriptData: InitializeScriptData = {
+    scriptData = {
       $winId$,
       $instanceId$,
     };
-
-    scriptElm.dataset.ptId = $winId$ + '.' + $instanceId$;
 
     if (scriptElm.src) {
       scriptData.$url$ = scriptElm.src;
@@ -28,41 +48,44 @@ export const readNextScript = (winCtx: MainWindowContext) => {
       scriptData.$content$ = scriptElm.innerHTML;
     }
 
-    winCtx.$worker$!.postMessage([WorkerMessageType.InitializeNextWorkerScript, scriptData]);
+    worker.postMessage([WorkerMessageType.InitializeNextScript, scriptData]);
   } else if (!winCtx.$isInitialized$) {
-    // finished startup
-    winCtx.$isInitialized$ = true;
+    // finished environment initialization
+    winCtx.$isInitialized$ = 1;
 
-    if (win.frameElement) {
-      win.frameElement._ptId = $winId$;
-    }
-
-    mainForwardTrigger(winCtx, win);
+    mainForwardTrigger(worker, $winId$, win);
 
     doc.dispatchEvent(new CustomEvent(PT_INITIALIZED_EVENT));
 
     if (debug) {
-      logMain(winCtx, `Startup ${(performance.now() - winCtx.$startTime$!).toFixed(1)}ms`);
+      const winType = win === win.top ? 'top' : 'iframe';
+      logMain(
+        `Executed ${winType} window ${normalizedWinId($winId$)} environment scripts in ${(
+          performance.now() - winCtx.$startTime$!
+        ).toFixed(1)}ms`
+      );
     }
+
+    worker.postMessage([WorkerMessageType.InitializedEnvironment, $winId$]);
   }
 };
 
 export const initializedWorkerScript = (
+  worker: PartytownWebWorker,
   winCtx: MainWindowContext,
-  doc: Document,
   instanceId: number,
   errorMsg: string,
   script?: HTMLScriptElement | null
 ) => {
-  script = doc.querySelector<HTMLScriptElement>(
-    '[data-pt-id="' + winCtx.$winId$ + '.' + instanceId + '"]'
-  );
+  script = winCtx.$window$.document.querySelector<HTMLScriptElement>(`[data-ptid="${instanceId}"]`);
+
   if (script) {
     if (errorMsg) {
-      script.dataset.ptError = errorMsg;
+      script.dataset.pterror = errorMsg;
     } else {
-      script.type += '-init';
+      script.type += SCRIPT_TYPE_EXEC;
     }
   }
-  readNextScript(winCtx);
+
+  readNextScript(worker, winCtx);
 };

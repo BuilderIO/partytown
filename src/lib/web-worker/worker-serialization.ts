@@ -1,24 +1,24 @@
 import { callMethod } from './worker-proxy';
-import { constructInstance } from './worker-constructors';
+import { constructEvent, constructInstance } from './worker-constructors';
 import {
-  InterfaceType,
-  PlatformInstanceId,
-  RefHandler,
-  RefHandlerCallbackData,
-  SerializedInstance,
-  SerializedRefTransferData,
-  SerializedTransfer,
-  SerializedType,
-} from '../types';
-import {
+  environments,
   InstanceIdKey,
   InterfaceTypeKey,
   NodeNameKey,
-  webWorkerCtx,
   webWorkerRefIdsByRef,
   webWorkerRefsByRefId,
   WinIdKey,
 } from './worker-constants';
+import {
+  InterfaceType,
+  PlatformInstanceId,
+  RefHandlerCallbackData,
+  SerializedInstance,
+  SerializedObject,
+  SerializedRefTransferData,
+  SerializedTransfer,
+  SerializedType,
+} from '../types';
 import { NodeList } from './worker-node-list';
 import { setWorkerRef } from './worker-state';
 
@@ -30,21 +30,20 @@ export const serializeForMain = (
 ): SerializedTransfer | undefined => {
   if (value !== undefined) {
     let type = typeof value;
-    let key: string;
-    let obj: { [key: string]: SerializedTransfer | undefined };
 
     if (type === 'string' || type === 'boolean' || type === 'number' || value == null) {
       return [SerializedType.Primitive, value];
     }
 
     if (type === 'function') {
-      const refData: SerializedRefTransferData = {
-        $winId$,
-        $contextWinId$: webWorkerCtx.$winId$,
-        $instanceId$,
-        $refId$: setWorkerRef(value),
-      };
-      return [SerializedType.Ref, refData];
+      return [
+        SerializedType.Ref,
+        {
+          $winId$,
+          $instanceId$,
+          $refId$: setWorkerRef(value),
+        },
+      ];
     }
 
     added = added || new Set();
@@ -60,27 +59,59 @@ export const serializeForMain = (
 
     if (type === 'object') {
       if (typeof value[InstanceIdKey] === 'number') {
-        const serializeInstance: SerializedInstance = {
-          $winId$: value[WinIdKey],
-          $interfaceType$: value[InterfaceTypeKey],
-          $instanceId$: value[InstanceIdKey],
-          $nodeName$: value[NodeNameKey],
-        };
-        return [SerializedType.Instance, serializeInstance];
+        return [
+          SerializedType.Instance,
+          {
+            $winId$: value[WinIdKey],
+            $interfaceType$: value[InterfaceTypeKey],
+            $instanceId$: value[InstanceIdKey],
+            $nodeName$: value[NodeNameKey],
+          },
+        ];
       }
 
-      obj = {};
-      if (!added.has(value)) {
-        added.add(value);
-        for (key in value) {
-          obj[key] = serializeForMain($winId$, $instanceId$, value[key], added);
-        }
+      if (value instanceof Event) {
+        return [
+          SerializedType.Event,
+          serializeObjectForMain($winId$, $instanceId$, value, false, added),
+        ];
       }
 
-      return [SerializedType.Object, obj];
+      return [
+        SerializedType.Object,
+        serializeObjectForMain($winId$, $instanceId$, value, true, added),
+      ];
     }
   }
 };
+
+const serializeObjectForMain = (
+  winId: number,
+  instanceId: number,
+  obj: any,
+  includeFunctions: boolean,
+  added: Set<any>,
+  serializedObj?: SerializedObject,
+  propName?: string,
+  propValue?: any
+) => {
+  serializedObj = {};
+  for (propName in obj) {
+    propValue = obj[propName];
+    if (includeFunctions || typeof propValue !== 'function') {
+      serializedObj[propName] = serializeForMain(winId, instanceId, propValue, added);
+    }
+  }
+  return serializedObj;
+};
+
+export const serializeInstanceForMain = (
+  instance: any,
+  value: any
+): SerializedTransfer | undefined =>
+  instance
+    ? serializeForMain(instance[WinIdKey], instance[InstanceIdKey], value)
+    : [SerializedType.Primitive, value];
 
 export const deserializeFromMain = (
   winId: number,
@@ -88,9 +119,7 @@ export const deserializeFromMain = (
   memberPath: string[],
   serializedValueTransfer?: SerializedTransfer,
   serializedType?: SerializedType,
-  serializedValue?: any,
-  obj?: { [key: string]: any },
-  key?: string
+  serializedValue?: any
 ): any => {
   if (serializedValueTransfer) {
     serializedType = serializedValueTransfer[0];
@@ -105,28 +134,40 @@ export const deserializeFromMain = (
     }
 
     if (serializedType === SerializedType.Instance) {
-      const serializedInstance: SerializedInstance = serializedValue;
-      return constructSerializedInstance(serializedInstance);
+      return constructSerializedInstance(serializedValue);
     }
 
     if (serializedType === SerializedType.Array) {
-      const serializedArray: SerializedTransfer[] = serializedValue;
-      return serializedArray.map((v) => deserializeFromMain(winId, instanceId, memberPath, v));
+      return (serializedValue as SerializedTransfer[]).map((v) =>
+        deserializeFromMain(winId, instanceId, memberPath, v)
+      );
+    }
+
+    if (serializedType === SerializedType.Event) {
+      return constructEvent(
+        deserializeObjectFromMain(winId, instanceId!, memberPath, serializedValue)
+      );
     }
 
     if (serializedType === SerializedType.Object) {
-      obj = {};
-      for (key in serializedValue) {
-        obj[key] = deserializeFromMain(
-          winId,
-          instanceId,
-          [...memberPath, key],
-          serializedValue[key]
-        );
-      }
-      return obj;
+      return deserializeObjectFromMain(winId, instanceId!, memberPath, serializedValue);
     }
   }
+};
+
+const deserializeObjectFromMain = (
+  winId: number,
+  instanceId: number,
+  memberPath: string[],
+  serializedValue: any,
+  obj?: any,
+  key?: string
+) => {
+  obj = {};
+  for (key in serializedValue) {
+    obj[key] = deserializeFromMain(winId, instanceId, [...memberPath, key], serializedValue[key]);
+  }
+  return obj;
 };
 
 export const constructSerializedInstance = ({
@@ -134,27 +175,38 @@ export const constructSerializedInstance = ({
   $instanceId$,
   $winId$,
   $nodeName$,
-  $items$,
+  $data$,
 }: SerializedInstance): any => {
+  const env = environments[$winId$];
   if ($instanceId$ === PlatformInstanceId.window) {
-    return self;
+    return env.$window$;
+  } else if ($instanceId$ === PlatformInstanceId.document) {
+    return env.$document$;
+  } else if ($instanceId$ === PlatformInstanceId.documentElement) {
+    return env.$documentElement$;
+  } else if ($instanceId$ === PlatformInstanceId.head) {
+    return env.$head$;
+  } else if ($instanceId$ === PlatformInstanceId.body) {
+    return env.$body$;
   } else if ($interfaceType$ === InterfaceType.NodeList) {
-    return new NodeList($items$!.map(constructSerializedInstance));
+    return new NodeList($data$!.map(constructSerializedInstance));
   } else {
-    return constructInstance($interfaceType$, $instanceId$!, $winId$, $nodeName$!);
+    return constructInstance($interfaceType$, $instanceId$!, $winId$, $nodeName$);
   }
 };
 
-export const callWorkerRefHandler = (
-  { $winId$, $instanceId$, $refId$, $thisArg$, $args$ }: RefHandlerCallbackData,
-  workerRef?: RefHandler
-) => {
-  workerRef = webWorkerRefsByRefId[$refId$];
-  if (workerRef) {
+export const callWorkerRefHandler = ({
+  $winId$,
+  $instanceId$,
+  $refId$,
+  $thisArg$,
+  $args$,
+}: RefHandlerCallbackData) => {
+  if (webWorkerRefsByRefId[$refId$]) {
     try {
       const thisArg = deserializeFromMain($winId$, $instanceId$, [], $thisArg$);
       const args = deserializeFromMain($winId$, $instanceId$, [], $args$);
-      workerRef.apply(thisArg, args);
+      webWorkerRefsByRefId[$refId$].apply(thisArg, args);
     } catch (e) {
       console.error(e);
     }
@@ -164,18 +216,17 @@ export const callWorkerRefHandler = (
 const deserializeRefFromMain = (
   instanceId: number,
   memberPath: string[],
-  { $winId$, $contextWinId$, $refId$ }: SerializedRefTransferData
+  { $winId$, $refId$ }: SerializedRefTransferData
 ) => {
-  let workerRefHandler = webWorkerRefsByRefId[$refId$];
-
-  if (!workerRefHandler) {
-    webWorkerRefsByRefId[$refId$] = workerRefHandler = function (this: any, ...args: any[]) {
-      const instance = constructInstance(InterfaceType.Window, instanceId, $winId$);
-      return callMethod(instance, memberPath, args, undefined, undefined, $contextWinId$);
-    };
-
-    webWorkerRefIdsByRef.set(workerRefHandler, $refId$);
+  if (!webWorkerRefsByRefId[$refId$]) {
+    webWorkerRefIdsByRef.set(
+      (webWorkerRefsByRefId[$refId$] = function (this: any, ...args: any[]) {
+        const instance = constructInstance(InterfaceType.Window, instanceId, $winId$);
+        return callMethod(instance, memberPath, args);
+      }),
+      $refId$
+    );
   }
 
-  return workerRefHandler;
+  return webWorkerRefsByRefId[$refId$];
 };

@@ -1,21 +1,17 @@
+import type { HTMLElement } from './worker-element';
 import { InterfaceType, NodeName } from '../types';
-import { HTMLDocument } from './worker-document';
-import { HTMLElement } from './worker-element';
 import { Node } from './worker-node';
 import { toUpper } from '../utils';
-import { Window } from './worker-iframe';
 import { WorkerProxy } from './worker-proxy-constructor';
 
 export const constructInstance = (
   interfaceType: InterfaceType,
   instanceId: number,
-  winId?: number,
+  winId: number,
   nodeName?: string
 ) => {
   nodeName =
-    interfaceType === InterfaceType.Document
-      ? NodeName.Document
-      : interfaceType === InterfaceType.TextNode
+    interfaceType === InterfaceType.TextNode
       ? NodeName.Text
       : interfaceType === InterfaceType.CommentNode
       ? NodeName.Comment
@@ -32,10 +28,6 @@ export const constructInstance = (
 const getConstructor = (interfaceType: InterfaceType, nodeName?: string): typeof WorkerProxy => {
   if (interfaceType === InterfaceType.Element) {
     return getElementConstructor(nodeName!);
-  } else if (interfaceType === InterfaceType.Document) {
-    return HTMLDocument;
-  } else if (interfaceType === InterfaceType.Window) {
-    return Window;
   } else if (interfaceType <= InterfaceType.DocumentFragmentNode) {
     return Node;
   } else {
@@ -44,21 +36,26 @@ const getConstructor = (interfaceType: InterfaceType, nodeName?: string): typeof
 };
 
 export const getElementConstructor = (nodeName: string): typeof HTMLElement =>
-  elementConstructors[nodeName] || HTMLElement;
+  elementConstructors[nodeName] || elementConstructors.UNKNOWN;
 
 export const elementConstructors: { [tagName: string]: typeof HTMLElement } = {};
 
 export const getTagNameFromConstructor = (t: string) => {
   t = toUpper(t.substr(4).replace('Element', ''));
-  if (t === 'IMAGE') {
-    return 'IMG';
-  } else if (t === 'PARAGRAPH') {
-    return 'P';
-  } else if (t === 'TABLEROW') {
-    return 'TR';
-  } else if (t === 'TableCell') {
-    return 'TD';
-  } else {
-    return t;
-  }
+  return (
+    {
+      IMAGE: 'IMG',
+      OLIST: 'OL',
+      PARAGRAPH: 'P',
+      TABLECELL: 'TD',
+      TABLEROW: 'TR',
+      ULIST: 'UL',
+    }[t] || t
+  );
 };
+
+export const constructEvent = (eventProps: any) =>
+  new Proxy(new Event(eventProps.type, eventProps), {
+    get: (target: any, propName) =>
+      propName in eventProps ? eventProps[propName] : target[String(propName)],
+  });

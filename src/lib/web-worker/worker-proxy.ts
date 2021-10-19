@@ -4,13 +4,10 @@ import {
   InterfaceType,
   MainAccessRequest,
   MainAccessResponse,
-  NodeName,
-  PlatformInstanceId,
   SerializedTransfer,
 } from '../types';
-import { constructInstance } from './worker-constructors';
 import {
-  debug,
+  defineConstructorName,
   len,
   logWorkerCall,
   logWorkerGlobalConstructor,
@@ -18,8 +15,13 @@ import {
   logWorkerSetter,
   randomId,
 } from '../utils';
-import { deserializeFromMain, serializeForMain } from './worker-serialization';
-import { getInstanceStateValue, setStateValue } from './worker-state';
+import {
+  deserializeFromMain,
+  serializeForMain,
+  serializeInstanceForMain,
+} from './worker-serialization';
+import { getEnv } from './worker-environment';
+import { getInstanceStateValue } from './worker-state';
 import {
   ImmediateSettersKey,
   InstanceIdKey,
@@ -38,18 +40,14 @@ const syncMessage = (
   $memberPath$: string[],
   $data$?: SerializedTransfer | undefined,
   $immediateSetters$?: ImmediateSetter[],
-  $newInstanceId$?: number,
-  $contextWinId$?: number
+  $assignInstanceId$?: number
 ) => {
   const $winId$ = instance[WinIdKey];
   const $instanceId$ = instance[InstanceIdKey];
 
-  const $forwardToWorkerAccess$ = webWorkerCtx.$winId$ !== $winId$ || !!$contextWinId$;
-
   const accessReq: MainAccessRequest = {
     $msgId$: randomId(),
     $winId$,
-    $forwardToWorkerAccess$,
     $instanceId$: instance[InstanceIdKey],
     $interfaceType$: instance[InterfaceTypeKey],
     $nodeName$: instance[NodeNameKey],
@@ -57,8 +55,7 @@ const syncMessage = (
     $memberPath$,
     $data$,
     $immediateSetters$,
-    $newInstanceId$,
-    $contextWinId$,
+    $assignInstanceId$,
   };
 
   const accessRsp: MainAccessResponse = syncSendMessage(webWorkerCtx, accessReq);
@@ -67,9 +64,6 @@ const syncMessage = (
   const rtnValue = deserializeFromMain($winId$, $instanceId$, $memberPath$, accessRsp.$rtnValue$!);
 
   if (accessRsp.$error$) {
-    if (debug) {
-      console.error(self.name, JSON.stringify(accessReq));
-    }
     if (isPromise) {
       return Promise.reject(accessRsp.$error$);
     }
@@ -83,7 +77,7 @@ const syncMessage = (
 };
 
 export const getter = (instance: WorkerProxy, memberPath: string[]) => {
-  applyBeforeSyncSetters(instance[WinIdKey], instance);
+  applyBeforeSyncSetters(instance);
 
   const rtnValue = syncMessage(instance, AccessType.Get, memberPath);
   logWorkerGetter(instance, memberPath, rtnValue);
@@ -91,10 +85,8 @@ export const getter = (instance: WorkerProxy, memberPath: string[]) => {
 };
 
 export const setter = (instance: WorkerProxy, memberPath: string[], value: any) => {
-  const winId = instance[WinIdKey];
-  const instanceId = instance[InstanceIdKey];
   const immediateSetters = instance[ImmediateSettersKey];
-  const serializedValue = serializeForMain(winId, instanceId, value);
+  const serializedValue = serializeInstanceForMain(instance, value);
 
   logWorkerSetter(instance, memberPath, value);
 
@@ -102,16 +94,9 @@ export const setter = (instance: WorkerProxy, memberPath: string[], value: any) 
     // queue up setters to be applied immediately after the
     // node is added to the dom
     immediateSetters.push([memberPath, serializedValue]);
-    return;
+  } else {
+    syncMessage(instance, AccessType.Set, memberPath, serializedValue);
   }
-
-  if (instanceId === PlatformInstanceId.window) {
-    if (typeof value === 'function' || (typeof value === 'object' && value)) {
-      setStateValue(instanceId, memberPath[0], serializedValue);
-    }
-  }
-
-  syncMessage(instance, AccessType.Set, memberPath, serializedValue);
 };
 
 export const callMethod = (
@@ -119,48 +104,34 @@ export const callMethod = (
   memberPath: string[],
   args: any[],
   immediateSetters?: ImmediateSetter[],
-  newInstanceId?: number,
-  contextWinId?: number
+  assignInstanceId?: number
 ) => {
-  const winId = instance[WinIdKey];
-
-  applyBeforeSyncSetters(winId, instance);
-
-  args.forEach((arg) => {
-    if (arg) {
-      applyBeforeSyncSetters(winId, arg);
-    }
-  });
+  applyBeforeSyncSetters(instance);
+  args.map(applyBeforeSyncSetters);
 
   const rtnValue = syncMessage(
     instance,
     AccessType.CallMethod,
     memberPath,
-    serializeForMain(winId, instance[InstanceIdKey], args),
+    serializeInstanceForMain(instance, args),
     immediateSetters,
-    newInstanceId,
-    contextWinId
+    assignInstanceId
   );
   logWorkerCall(instance, memberPath, args, rtnValue);
   return rtnValue;
 };
 
 export const createGlobalConstructorProxy = (
-  self: any,
+  winId: number,
   interfaceType: InterfaceType,
   cstrName: string
 ) => {
   const GlobalCstr = class {
     constructor(...args: any[]) {
-      const winId = webWorkerCtx.$winId$;
       const instanceId = randomId();
       const workerProxy = new WorkerProxy(interfaceType, instanceId, winId);
 
-      args.forEach((arg) => {
-        if (arg) {
-          applyBeforeSyncSetters(winId, arg);
-        }
-      });
+      args.map(applyBeforeSyncSetters);
 
       syncMessage(
         workerProxy,
@@ -169,38 +140,28 @@ export const createGlobalConstructorProxy = (
         serializeForMain(winId, instanceId, args)
       );
 
-      logWorkerGlobalConstructor(workerProxy, cstrName, args);
+      logWorkerGlobalConstructor(winId, cstrName, args);
 
       return workerProxy;
     }
   };
 
-  self[cstrName] = Object.defineProperty(GlobalCstr, 'name', {
-    value: cstrName,
-  });
+  return defineConstructorName(GlobalCstr, cstrName);
 };
 
-export const applyBeforeSyncSetters = (winId: number, instance: WorkerProxy) => {
-  const beforeSyncValues = instance[ImmediateSettersKey];
-  if (beforeSyncValues) {
-    instance[ImmediateSettersKey] = undefined;
+export const applyBeforeSyncSetters = (instance: WorkerProxy) => {
+  if (instance) {
+    const beforeSyncValues = instance[ImmediateSettersKey];
+    if (beforeSyncValues) {
+      instance[ImmediateSettersKey] = undefined;
 
-    const winDoc = constructInstance(
-      InterfaceType.Document,
-      PlatformInstanceId.document,
-      winId,
-      NodeName.Document
-    );
-    const syncedTarget = callMethod(
-      winDoc,
-      ['createElement'],
-      [instance[NodeNameKey]],
-      beforeSyncValues,
-      instance[InstanceIdKey]
-    );
-
-    if (debug && instance[InstanceIdKey] !== syncedTarget[InstanceIdKey]) {
-      console.error('Main and web worker instance ids do not match', instance, syncedTarget);
+      callMethod(
+        getEnv(instance).$document$,
+        ['createElement'],
+        [instance[NodeNameKey]],
+        beforeSyncValues,
+        instance[InstanceIdKey]
+      );
     }
   }
 };
@@ -233,7 +194,7 @@ const createComplexMember = (
   if (typeof stateValue === 'function') {
     return (...args: any[]) => {
       const rtnValue = stateValue.apply(instance, args);
-      logWorkerCall(instance, memberPath, args, rtnValue, false);
+      logWorkerCall(instance, memberPath, args, rtnValue);
       return rtnValue;
     };
   }
@@ -254,13 +215,23 @@ export const proxy = <T = any>(
   }
 
   return new Proxy<any>(target, {
-    get(target, propKey) {
-      if (propKey === ProxyKey) {
-        return true;
+    get(target, propKey, receiver) {
+      if (typeof propKey === 'symbol' || Reflect.has(target, propKey)) {
+        return Reflect.get(target, propKey, receiver);
       }
 
-      if (Reflect.has(target, propKey)) {
-        return Reflect.get(target, propKey);
+      if (shouldRestrictToWorker(interfaceType, propKey)) {
+        // this getter is for the Window instance, but it's not one of the known window members
+        // the value should only be read from the window environment and
+        // should not get the value from the main thread's window
+        // if the member is in the environment window instance, get the value
+        if (Reflect.has(self, propKey)) {
+          return Reflect.get(self, propKey, receiver);
+        }
+
+        const globalRtnValue = target[propKey];
+        logWorkerGetter(target, [propKey], globalRtnValue, true);
+        return globalRtnValue;
       }
 
       const memberPath = [...initMemberPath, String(propKey)];
@@ -273,12 +244,30 @@ export const proxy = <T = any>(
     },
 
     set(target, propKey, value, receiver) {
-      if (Reflect.has(target, propKey)) {
+      if (typeof propKey === 'symbol' || Reflect.has(target, propKey)) {
         Reflect.set(target, propKey, value, receiver);
+      } else if (shouldRestrictToWorker(interfaceType, propKey)) {
+        // this value should only be set within the web worker world
+        // it does not get passed and set to the main thread's window
+        // set the value to just the window environment
+        target[propKey] = value;
+        logWorkerSetter(target, [propKey], value, true);
       } else {
-        setter(target, [...initMemberPath, String(propKey)], value);
+        setter(target, [...initMemberPath, propKey], value);
       }
       return true;
     },
+
+    has(target, propKey) {
+      if (interfaceType === InterfaceType.Window) {
+        return true;
+      }
+      return Reflect.has(target, propKey);
+    },
   });
 };
+
+const shouldRestrictToWorker = (interfaceType: InterfaceType, propKey: string) =>
+  interfaceType === InterfaceType.Window &&
+  (!webWorkerCtx.$windowMemberNames$.includes(propKey) ||
+    webWorkerCtx.$forwardedTriggers$.includes(propKey));

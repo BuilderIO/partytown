@@ -1,10 +1,4 @@
-import {
-  AccessType,
-  InterfaceType,
-  MainWindowContext,
-  NodeName,
-  PlatformInstanceId,
-} from './types';
+import { AccessType, InterfaceType, NodeName, PlatformInstanceId } from './types';
 import {
   InstanceIdKey,
   InterfaceTypeKey,
@@ -21,23 +15,17 @@ export const toLower = (str: string) => str.toLowerCase();
 
 export const toUpper = (str: string) => str.toUpperCase();
 
-export const logMain = (winCtx: MainWindowContext, msg: string) => {
+export const logMain = (msg: string) => {
   if (debug) {
-    let prefix: string;
-    if (winCtx.$winId$ === TOP_WIN_ID) {
-      prefix = `Main (${winCtx.$winId$}) 🌎`;
-    } else {
-      prefix = `Iframe (${winCtx.$winId$}) 👾`;
-    }
     console.debug.apply(console, [
-      `%c${prefix}`,
+      `%cMain 🌎`,
       `background: #717171; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
       msg,
     ]);
   }
 };
 
-export const logWorker = (msg: string) => {
+export const logWorker = (msg: string, winId = -1) => {
   if (debug) {
     try {
       const config = webWorkerCtx.$config$;
@@ -48,32 +36,54 @@ export const logWorker = (msg: string) => {
         msg += '\n' + frames.slice(i + 1).join('\n');
       }
 
+      let prefix: string;
+      let color: string;
+      if (winId > -1) {
+        prefix = `Worker (${normalizedWinId(winId)}) 🎉`;
+        color = winColor(winId);
+      } else {
+        prefix = self.name;
+        color = `#9844bf`;
+      }
+
       console.debug.apply(console, [
-        `%c${self.name}`,
-        `background: #3498db; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
+        `%c${prefix}`,
+        `background: ${color}; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
         msg,
       ]);
     } catch (e) {}
   }
 };
 
+const winIds: number[] = [];
+export const normalizedWinId = (winId: number) => {
+  if (!winIds.includes(winId)) {
+    winIds.push(winId);
+  }
+  return winIds.indexOf(winId) + 1;
+};
+
+const winColor = (winId: number) => {
+  const colors = ['#00309e', '#ea3655', '#eea727'];
+  const index = normalizedWinId(winId) - 1;
+  return colors[index] || colors[colors.length - 1];
+};
+
 export const logWorkerGetter = (
   target: any,
   memberPath: string[],
   rtnValue: any,
-  skipOtherWindow = true
+  restrictedToWorker = false
 ) => {
   if (debug && webWorkerCtx.$config$.logGetters) {
     try {
-      if (target && target[WinIdKey] !== webWorkerCtx.$winId$ && skipOtherWindow) {
-        return;
+      const msg = `Get ${logTargetProp(target, AccessType.Get, memberPath)}, returned: ${logValue(
+        memberPath,
+        rtnValue
+      )}${restrictedToWorker ? ' (restricted to worker)' : ''}`;
+      if (!msg.includes('Symbol(')) {
+        logWorker(msg, target[WinIdKey]);
       }
-      logWorker(
-        `Get ${logTargetProp(target, AccessType.Get, memberPath)}, returned: ${logValue(
-          memberPath,
-          rtnValue
-        )} `
-      );
     } catch (e) {}
   }
 };
@@ -82,51 +92,38 @@ export const logWorkerSetter = (
   target: any,
   memberPath: string[],
   value: any,
-  skipOtherWindow = true
+  restrictedToWorker = false
 ) => {
   if (debug && webWorkerCtx.$config$.logSetters) {
     try {
-      if (target && target[WinIdKey] !== webWorkerCtx.$winId$ && skipOtherWindow) {
-        return;
-      }
       logWorker(
         `Set ${logTargetProp(target, AccessType.Set, memberPath)}, value: ${logValue(
           memberPath,
           value
-        )}`
+        )}${restrictedToWorker ? ' (restricted to worker)' : ''}`,
+        target[WinIdKey]
       );
     } catch (e) {}
   }
 };
 
-export const logWorkerCall = (
-  target: any,
-  memberPath: string[],
-  args: any[],
-  rtnValue: any,
-  skipOtherWindow = true
-) => {
+export const logWorkerCall = (target: any, memberPath: string[], args: any[], rtnValue: any) => {
   if (debug && webWorkerCtx.$config$.logCalls) {
     try {
-      if (target && target[WinIdKey] !== webWorkerCtx.$winId$ && skipOtherWindow) {
-        return;
-      }
       logWorker(
         `Call ${logTargetProp(target, AccessType.CallMethod, memberPath)}(${args
           .map((v) => logValue(memberPath, v))
-          .join(', ')}), returned: ${logValue(memberPath, rtnValue)}`
+          .join(', ')}), returned: ${logValue(memberPath, rtnValue)}`,
+        target[WinIdKey]
       );
     } catch (e) {}
   }
 };
 
-export const logWorkerGlobalConstructor = (target: any, cstrName: string, args: any[]) => {
+export const logWorkerGlobalConstructor = (winId: number, cstrName: string, args: any[]) => {
   if (debug && webWorkerCtx.$config$.logCalls) {
     try {
-      if (target && target[WinIdKey] !== webWorkerCtx.$winId$) {
-        return;
-      }
-      logWorker(`Construct new ${cstrName}(${args.map((v) => logValue([], v)).join(', ')})`);
+      logWorker(`Construct new ${cstrName}(${args.map((v) => logValue([], v)).join(', ')})`, winId);
     } catch (e) {}
   }
 };
@@ -136,7 +133,7 @@ const logTargetProp = (target: any, accessType: AccessType, memberPath: string[]
   if (target) {
     const instanceId = target[InstanceIdKey];
     if (instanceId === PlatformInstanceId.window) {
-      n = 'window.';
+      n = '';
     } else if (instanceId === PlatformInstanceId.document) {
       n = 'document.';
     } else if (instanceId === PlatformInstanceId.documentElement) {
@@ -264,6 +261,11 @@ export const isValidMemberName = (memberName: string) => {
   }
 };
 
+export const defineConstructorName = (Cstr: any, value: string) =>
+  Object.defineProperty(Cstr, 'name', {
+    value,
+  });
+
 export const nextTick = (cb: Function, ms?: number) => setTimeout(cb, ms);
 
 export const EMPTY_ARRAY = [];
@@ -271,9 +273,8 @@ if (debug) {
   Object.freeze(EMPTY_ARRAY);
 }
 
-export const PT_INITIALIZED_EVENT = `ptinit`;
-
-export const TOP_WIN_ID = 1;
+export const PT_INITIALIZED_EVENT = `pt0`;
+export const PT_IFRAME_APPENDED = `pt1`;
 
 export const randomId = () => Math.round(Math.random() * 9999999999 + PlatformInstanceId.body);
 
@@ -286,3 +287,5 @@ export const randomId = () => Math.round(Math.random() * 9999999999 + PlatformIn
  * @public
  */
 export const SCRIPT_TYPE = `text/partytown`;
+
+export const SCRIPT_TYPE_EXEC = `-x`;

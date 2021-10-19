@@ -18,7 +18,7 @@ export class HTMLAnchorElement extends HTMLElement {
     return getUrl(this) + '';
   }
   set href(href: string) {
-    setInstanceStateValue(this, StateProp.href, href);
+    setInstanceStateValue(this, StateProp.url, href);
     setter(this, ['href'], href);
   }
   get origin() {

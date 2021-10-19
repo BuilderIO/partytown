@@ -1,4 +1,5 @@
 import { deserializeFromMain } from './worker-serialization';
+import { environments } from './worker-constants';
 import type { ForwardMainTriggerData } from '../types';
 
 export const workerForwardedTriggerHandle = ({
@@ -7,12 +8,13 @@ export const workerForwardedTriggerHandle = ({
   $forward$,
   $args$,
 }: ForwardMainTriggerData) => {
-  let args = deserializeFromMain($winId$, $instanceId$, [], $args$);
-  let target = self as any;
-  let globalProperty = target[$forward$[0]];
-
   // see src/lib/main/snippet.ts and src/lib/sandbox/main-forward-trigger.ts
   try {
+    const win = environments[$winId$].$window$;
+    const target = $forward$[0] in win ? win : $forward$[0] in self ? (self as any) : {};
+    const args = deserializeFromMain($winId$, $instanceId$, [], $args$);
+    const globalProperty = target[$forward$[0]];
+
     if (Array.isArray(globalProperty)) {
       globalProperty.push(...args);
     } else if (typeof globalProperty === 'function') {

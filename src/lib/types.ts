@@ -1,3 +1,5 @@
+import type { HTMLDocument } from './web-worker/worker-document';
+import type { HTMLElement } from './web-worker/worker-element';
 import type { Location } from './web-worker/worker-location';
 
 export type CreateWorker = (workerName: string) => Worker;
@@ -14,31 +16,32 @@ export type MessengerRequestCallback = (
 
 export type MessengerResponseCallback = (accessRsp: MainAccessResponse) => void;
 
+export type WinId = number;
+
 export type MessageFromWorkerToSandbox =
   | [WorkerMessageType.MainDataRequestFromWorker]
-  | [WorkerMessageType.InitializedWorkerScript, number, string]
-  | [WorkerMessageType.InitializeNextWorkerScript]
-  | [WorkerMessageType.ForwardWorkerAccessResponse, MainAccessResponse]
-  | [WorkerMessageType.RunStateHandlers, number, StateProp];
+  | [WorkerMessageType.InitializedWebWorker]
+  | [WorkerMessageType.InitializedEnvironmentScript, WinId, number, string]
+  | [WorkerMessageType.InitializeNextScript, WinId];
 
 export type MessageFromSandboxToWorker =
   | [WorkerMessageType.MainDataResponseToWorker, InitWebWorkerData]
-  | [WorkerMessageType.InitializeNextWorkerScript, InitializeScriptData]
+  | [WorkerMessageType.InitializeEnvironment, InitializeEnvironmentData]
+  | [WorkerMessageType.InitializedEnvironment, WinId]
+  | [WorkerMessageType.InitializeNextScript, InitializeScriptData]
   | [WorkerMessageType.RefHandlerCallback, RefHandlerCallbackData]
-  | [WorkerMessageType.ForwardWorkerAccessRequest, MainAccessRequest]
-  | [WorkerMessageType.ForwardMainTrigger, ForwardMainTriggerData]
-  | [WorkerMessageType.RunStateHandlers, number, StateProp];
+  | [WorkerMessageType.ForwardMainTrigger, ForwardMainTriggerData];
 
 export const enum WorkerMessageType {
   MainDataRequestFromWorker,
   MainDataResponseToWorker,
-  InitializedWorkerScript,
-  InitializeNextWorkerScript,
+  InitializedWebWorker,
+  InitializeEnvironment,
+  InitializedEnvironment,
+  InitializedEnvironmentScript,
+  InitializeNextScript,
   RefHandlerCallback,
-  ForwardWorkerAccessRequest,
-  ForwardWorkerAccessResponse,
   ForwardMainTrigger,
-  RunStateHandlers,
 }
 
 export interface ForwardMainTriggerData {
@@ -60,16 +63,12 @@ export type PostMessageToWorker = (msg: MessageFromSandboxToWorker) => void;
 
 export interface MainWindowContext {
   $winId$: number;
-  $parentWinId$: number;
-  $cleanupInc$: number;
-  $config$: PartytownConfig | undefined;
-  $interfaces$?: InterfaceInfo[];
-  $isInitialized$?: boolean;
-  $libPath$: string;
+  $isInitialized$?: number;
   $startTime$?: number;
   $url$: string;
   $window$: MainWindow;
-  $worker$?: PartytownWebWorker;
+  $instanceIds$: WeakMap<any, number>;
+  $instances$: [number, any][];
 }
 
 export interface PartytownWebWorker extends Worker {
@@ -77,26 +76,47 @@ export interface PartytownWebWorker extends Worker {
 }
 
 export interface InitWebWorkerData {
-  $winId$: number;
-  $parentWinId$: number;
   $config$: PartytownConfig;
-  $documentCompatMode$: string;
-  $documentReadyState$: string;
-  $documentReferrer$: string;
-  $firstScriptId$: number;
   $htmlConstructors$: string[];
   $interfaces$: InterfaceInfo[];
   $libPath$?: string;
-  $url$: string;
 }
 
 export interface InitWebWorkerContext {
-  $currentScriptId$: number;
-  $currentScriptUrl$: string;
-  $importScripts$: (...urls: string[]) => void;
-  $isInitialized$?: boolean;
-  $location$: Location;
+  $isInitialized$?: number;
   $postMessage$: (msg: MessageFromWorkerToSandbox) => void;
+}
+
+export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {
+  $forwardedTriggers$: string[];
+  $windowMembers$: MembersInterfaceTypeInfo;
+  $windowMemberNames$: string[];
+}
+
+export interface InitializeEnvironmentData {
+  $winId$: number;
+  $parentWinId$: number;
+  $isTop$?: number;
+  $url$: string;
+}
+
+export interface WebWorkerEnvironment extends Omit<InitializeEnvironmentData, '$url$'> {
+  $window$: Window;
+  $document$: HTMLDocument;
+  $documentElement$: HTMLElement;
+  $head$: HTMLElement;
+  $body$: HTMLElement;
+  $location$: Location;
+  $run$: (content: string) => void;
+  $currentScriptId$?: number;
+  $currentScriptUrl$?: string;
+  $isInitialized$?: number;
+}
+
+export interface WebWorkerGlobal {
+  $memberName$: string;
+  $interfaceType$: InterfaceType;
+  $implementation$: any;
 }
 
 export type InterfaceInfo = [InterfaceType, string, MembersInterfaceTypeInfo];
@@ -121,16 +141,18 @@ export const enum InterfaceType {
   DocumentFragmentNode = 11,
 
   // Global Constructors and window function implementations
-  Function = 12,
-  CSSStyleDeclaration = 13,
-  DOMStringMap = 14,
-  DOMTokenList = 15,
-  History = 16,
-  MutationObserver = 17,
-  NodeList = 18,
-  NamedNodeMap = 19,
-  Screen = 20,
-  Storage = 21,
+  Property = 12,
+  Function = 13,
+  CSSStyleDeclaration = 14,
+  DOMStringMap = 15,
+  DOMTokenList = 16,
+  History = 17,
+  Location = 18,
+  MutationObserver = 19,
+  NodeList = 20,
+  NamedNodeMap = 21,
+  Screen = 22,
+  Storage = 23,
 }
 
 export const enum PlatformInstanceId {
@@ -140,8 +162,6 @@ export const enum PlatformInstanceId {
   head,
   body,
 }
-
-export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {}
 
 export interface InitializeScriptData {
   $winId$: number;
@@ -161,7 +181,6 @@ export interface MainAccessRequest {
   $msgId$: number;
   $winId$: number;
   $contextWinId$?: number;
-  $forwardToWorkerAccess$: boolean;
   $instanceId$: number;
   $interfaceType$: InterfaceType;
   $nodeName$?: string;
@@ -169,7 +188,7 @@ export interface MainAccessRequest {
   $memberPath$: string[];
   $data$?: SerializedTransfer;
   $immediateSetters$?: ImmediateSetter[];
-  $newInstanceId$?: number;
+  $assignInstanceId$?: number;
 }
 
 export type ImmediateSetter = [string[], SerializedTransfer | undefined];
@@ -185,8 +204,9 @@ export interface MainAccessResponse {
 
 export const enum SerializedType {
   Array,
-  Instance,
+  Event,
   Function,
+  Instance,
   Object,
   Primitive,
   Ref,
@@ -194,9 +214,11 @@ export const enum SerializedType {
 
 export type SerializedArrayTransfer = [SerializedType.Array, (SerializedTransfer | undefined)[]];
 
-export type SerializedInstanceTransfer = [SerializedType.Instance, SerializedInstance];
+export type SerializedEventTransfer = [SerializedType.Event, SerializedObject];
 
 export type SerializedFunctionTransfer = [SerializedType.Function];
+
+export type SerializedInstanceTransfer = [SerializedType.Instance, SerializedInstance];
 
 export type SerializedObjectTransfer = [
   SerializedType.Object,
@@ -210,27 +232,25 @@ export type SerializedPrimitiveTransfer =
 export type SerializedRefTransfer = [SerializedType.Ref, SerializedRefTransferData];
 
 export interface SerializedRefTransferData {
-  /**
-   * The window the reference "meant" to be on
-   */
   $winId$: number;
-  /**
-   * The window the reference is "actually" persisted in
-   */
-  $contextWinId$: number;
   $instanceId$: number;
   $refId$: number;
 }
 
 export type SerializedTransfer =
   | SerializedArrayTransfer
-  | SerializedInstanceTransfer
+  | SerializedEventTransfer
   | SerializedFunctionTransfer
+  | SerializedInstanceTransfer
   | SerializedObjectTransfer
   | SerializedPrimitiveTransfer
   | SerializedPrimitiveTransfer
   | SerializedRefTransfer
   | [];
+
+export interface SerializedObject {
+  [key: string]: SerializedTransfer | undefined;
+}
 
 export interface SerializedInstance {
   $winId$: number;
@@ -244,9 +264,9 @@ export interface SerializedInstance {
    */
   $nodeName$?: string;
   /**
-   * Node list data
+   * Instance data
    */
-  $items$?: any[];
+  $data$?: any;
 }
 
 /**
@@ -353,17 +373,8 @@ export type PartytownForwardProperty = [
 ];
 
 export interface MainWindow extends Window {
-  frameElement: MainFrameElement | null;
   partytown?: PartytownConfig;
-  parent: MainWindow;
-  top: MainWindow;
   _ptf?: any[];
-  _ptWin?: (win: MainWindow) => void;
-  _ptId?: number;
-}
-
-export interface MainFrameElement extends HTMLIFrameElement {
-  _ptId?: number;
 }
 
 export const enum NodeName {
@@ -388,9 +399,8 @@ export const enum NodeName {
 export const enum StateProp {
   errorHandlers = 'error',
   loadHandlers = 'load',
-  href = 'href',
-  loadError = 1,
-  partyWinId = 2,
+  loadErrorStatus = 1,
+  innerHTML = 2,
   url = 3,
 }
 

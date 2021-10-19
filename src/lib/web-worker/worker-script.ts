@@ -1,31 +1,44 @@
+import { getEnv } from './worker-environment';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getter, setter } from './worker-proxy';
 import { HTMLSrcElement } from './worker-element';
-import { ImmediateSettersKey, InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import { ImmediateSettersKey } from './worker-constants';
 import { resolveUrl } from './worker-exec';
-import { serializeForMain } from './worker-serialization';
+import { serializeInstanceForMain } from './worker-serialization';
 import { StateProp } from '../types';
 
 export class HTMLScriptElement extends HTMLSrcElement {
+  get innerHTML() {
+    return getInstanceStateValue<string>(this, StateProp.innerHTML) || '';
+  }
+  set innerHTML(scriptContent: string) {
+    setInstanceStateValue(this, StateProp.innerHTML, scriptContent);
+  }
+
+  get innerText() {
+    return this.innerHTML;
+  }
+  set innerText(content: string) {
+    this.innerHTML = content;
+  }
+
   get src() {
-    if (this[WinIdKey] === webWorkerCtx.$winId$) {
-      return getInstanceStateValue<string>(this, StateProp.url) || '';
-    }
-    return getter(this, ['src']);
+    return getInstanceStateValue<string>(this, StateProp.url) || '';
   }
   set src(url: string) {
-    if (this[WinIdKey] === webWorkerCtx.$winId$) {
-      url = resolveUrl(url) + '';
-      setInstanceStateValue(this, StateProp.url, url);
-      if (this[ImmediateSettersKey]) {
-        this[ImmediateSettersKey]!.push([
-          ['src'],
-          serializeForMain(this[WinIdKey], this[InstanceIdKey], url),
-        ]);
-      }
-    } else {
-      setter(this, ['src'], url);
+    url = resolveUrl(getEnv(this), url);
+    setInstanceStateValue(this, StateProp.url, url);
+
+    if (this[ImmediateSettersKey]) {
+      this[ImmediateSettersKey]!.push([['src'], serializeInstanceForMain(this, url)]);
     }
+  }
+
+  get textContent() {
+    return this.innerHTML;
+  }
+  set textContent(content: string) {
+    this.innerHTML = content;
   }
 
   get type() {

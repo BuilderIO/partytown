@@ -1,70 +1,49 @@
-import {
-  AccessType,
-  MainAccessRequest,
-  MainAccessResponse,
-  MainWindowContext,
-  WorkerMessageType,
-} from '../types';
+import { AccessType, MainAccessRequest, MainAccessResponse, PartytownWebWorker } from '../types';
 import { deserializeFromWorker, serializeForWorker } from './main-serialization';
 import { EMPTY_ARRAY, isPromise, len } from '../utils';
-import { forwardMsgResolves, winCtxs } from './main-constants';
 import { getInstance, setInstanceId } from './main-instances';
+import { getWinCtx } from './main-register-window';
 
 export const mainAccessHandler = async (
-  winCtx: MainWindowContext,
+  worker: PartytownWebWorker,
   accessReq: MainAccessRequest
 ) => {
+  let $winId$ = accessReq.$winId$;
   let accessRsp: MainAccessResponse = {
     $msgId$: accessReq.$msgId$,
-    $winId$: accessReq.$winId$,
+    $winId$,
   };
-
   let instanceId = accessReq.$instanceId$;
   let accessType = accessReq.$accessType$;
   let memberPath = accessReq.$memberPath$;
   let memberPathLength = len(memberPath);
   let lastMemberName = memberPath[memberPathLength - 1];
   let immediateSetters = accessReq.$immediateSetters$ || EMPTY_ARRAY;
+  let winCtx = await getWinCtx($winId$);
   let instance: any;
   let rtnValue: any;
   let data: any;
   let i: number;
-  let count: number;
-  let tmr: any;
   let immediateSetterTarget: any;
   let immediateSetterMemberPath;
   let immediateSetterMemberNameLen;
 
   try {
     // deserialize the data, such as a getter value or function arguments
-    data = deserializeFromWorker(accessReq.$data$);
+    data = deserializeFromWorker(worker, accessReq.$data$);
 
-    if (accessReq.$forwardToWorkerAccess$) {
-      // same as continue;
-    } else if (accessType === AccessType.GlobalConstructor) {
+    if (accessType === AccessType.GlobalConstructor) {
       // create a new instance of a global constructor
-      setInstanceId(winCtx, new (winCtx.$window$ as any)[lastMemberName](...data), instanceId);
+      setInstanceId(winCtx, new (winCtx!.$window$ as any)[lastMemberName](...data), instanceId);
     } else {
       // get the existing instance
-      instance = getInstance(accessRsp.$winId$, instanceId);
+      instance = getInstance($winId$, instanceId);
       if (instance) {
         for (i = 0; i < memberPathLength - 1; i++) {
           instance = instance[memberPath[i]];
         }
 
         if (accessType === AccessType.Get) {
-          if (lastMemberName === '_ptId') {
-            await new Promise<void>((resolve) => {
-              count = 0;
-              tmr = setInterval(() => {
-                if (isMemberInInstance(instance, memberPath) || count > 99) {
-                  clearInterval(tmr);
-                  resolve();
-                }
-                count++;
-              }, 40);
-            });
-          }
           rtnValue = instance[lastMemberName];
         } else if (accessType === AccessType.Set) {
           instance[lastMemberName] = data;
@@ -81,11 +60,11 @@ export const mainAccessHandler = async (
             }
 
             immediateSetterTarget[immediateSetterMemberPath[immediateSetterMemberNameLen - 1]] =
-              deserializeFromWorker(immediateSetter[1]);
+              deserializeFromWorker(worker, immediateSetter[1]);
           });
 
-          if (accessReq.$newInstanceId$) {
-            setInstanceId(winCtx, rtnValue, accessReq.$newInstanceId$);
+          if (accessReq.$assignInstanceId$) {
+            setInstanceId(winCtx, rtnValue, accessReq.$assignInstanceId$);
           }
         }
 
@@ -93,32 +72,14 @@ export const mainAccessHandler = async (
           rtnValue = await rtnValue;
           accessRsp.$isPromise$ = true;
         }
-        accessRsp.$rtnValue$ = serializeForWorker(winCtx, rtnValue);
+        accessRsp.$rtnValue$ = serializeForWorker($winId$, rtnValue);
       } else {
-        accessRsp.$error$ = `${instanceId} not found`;
+        accessRsp.$error$ = instanceId + ' not found';
       }
     }
   } catch (e: any) {
     accessRsp.$error$ = String(e.stack || e);
   }
 
-  if (accessReq.$forwardToWorkerAccess$) {
-    return new Promise<MainAccessResponse>((resolve) => {
-      const forwardToWinId = accessReq.$contextWinId$ || accessReq.$winId$;
-      const otherWinCtx = winCtxs.get(forwardToWinId);
-
-      tmr = setTimeout(() => {
-        forwardMsgResolves.delete(accessReq.$msgId$);
-        accessRsp.$error$ = `Timeout`;
-        resolve(accessRsp);
-      }, 30000);
-
-      forwardMsgResolves.set(accessReq.$msgId$, [resolve, tmr]);
-      otherWinCtx!.$worker$!.postMessage([WorkerMessageType.ForwardWorkerAccessRequest, accessReq]);
-    });
-  } else {
-    return accessRsp;
-  }
+  return accessRsp;
 };
-
-const isMemberInInstance = (instance: any, memberPath: string[]) => memberPath[0] in instance;

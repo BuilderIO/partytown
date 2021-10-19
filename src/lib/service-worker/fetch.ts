@@ -73,7 +73,6 @@ const httpRequestFromWebWorker = (self: ServiceWorkerGlobalScope, req: Request) 
   new Promise<Response>(async (resolve) => {
     const accessReq: MainAccessRequest = await req.clone().json();
     const responseData = await sendMessageToSandboxFromServiceWorker(self, accessReq);
-
     resolve(response(JSON.stringify(responseData), 'application/json'));
   });
 

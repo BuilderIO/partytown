@@ -1,4 +1,4 @@
-import { debug, PT_INITIALIZED_EVENT, SCRIPT_TYPE } from '../utils';
+import { debug, PT_IFRAME_APPENDED, PT_INITIALIZED_EVENT, SCRIPT_TYPE } from '../utils';
 import type { MainWindow } from '../types';
 
 export function loader(
@@ -44,8 +44,9 @@ export function loader(
 
   scripts = doc.querySelectorAll(`script[type="${SCRIPT_TYPE}"]`);
 
-  if (location !== parent.location) {
-    (parent as MainWindow)._ptWin!(win);
+  if (top !== win) {
+    // this is an iframe
+    top!.dispatchEvent(new CustomEvent(PT_IFRAME_APPENDED, { detail: win }));
   } else {
     if (scripts!.length) {
       timeout = setTimeout(fallback, debug ? 60000 : 10000);

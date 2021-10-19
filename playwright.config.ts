@@ -4,7 +4,7 @@ const config: PlaywrightTestConfig = {
   use: {
     baseURL: 'http://localhost:5000/',
     viewport: {
-      width: 480,
+      width: 520,
       height: 600,
     },
     contextOptions: {
@@ -12,6 +12,8 @@ const config: PlaywrightTestConfig = {
         dir: 'tests/videos/',
       },
     },
+    geolocation: { latitude: 88, longitude: 99 },
+    permissions: ['geolocation'],
   },
 };
 
