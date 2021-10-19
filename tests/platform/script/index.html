@@ -65,7 +65,7 @@
               elm.className = 'testJSONP';
             };
             script.dataset.testjsonp = true;
-            script.src = './jsonp-a.js';
+            script.src = './whatever/plz/resolve/../../../jsonp-a.js';
             document.head.appendChild(script);
           })();
         </script>
@@ -144,6 +144,116 @@
             });
             script.src = './image/404.gif';
             document.head.appendChild(script);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set innerHTML, window.someWindowVar</strong>
+        <code id="testInnerHTML"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testInnerHTML');
+            const script = document.createElement('script');
+            script.innerHTML = `
+              window.someWindowVar = 88;
+            `;
+            document.head.appendChild(script);
+            elm.textContent = window.someWindowVar;
+            elm.className = 'testInnerHTML';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set textContent, window.someWindowVar</strong>
+        <code id="testTextContent"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testTextContent');
+            const script = document.createElement('script');
+            script.textContent = `
+              window.someWindowVar = 99;
+            `;
+            document.head.appendChild(script);
+            elm.textContent = window.someWindowVar;
+            elm.className = 'testTextContent';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set innerText, window.someWindowVar</strong>
+        <code some-attr="101" id="testInnerText"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testInnerText');
+            const script = document.createElement('script');
+            script.innerText = `
+              const elm = document.getElementById('testInnerText');
+              window.someWindowVar = elm.getAttribute('some-attr');
+            `;
+            document.head.appendChild(script);
+            elm.textContent = window.someWindowVar;
+            elm.className = 'testInnerText';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set innerHTML, someGlobalVar</strong>
+        <code some-attr="111" id="testInnerHTMLGlobalVar"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testInnerHTMLGlobalVar');
+            const script = document.createElement('script');
+            script.innerText = `
+              const elm = document.getElementById('testInnerHTMLGlobalVar');
+              someGlobalVar = elm.getAttribute('some-attr');
+            `;
+            document.head.appendChild(script);
+            elm.textContent = someGlobalVar;
+            elm.className = 'testInnerHTMLGlobalVar';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set innerHTML, error</strong>
+        <code id="testInnerHTMLError"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testInnerHTMLError');
+            const script = document.createElement('script');
+            script.id = 'pt-error';
+            script.innerText = `
+              throw 'gahh';
+            `;
+            document.head.appendChild(script);
+            const scriptElm = document.getElementById('pt-error');
+            elm.textContent = scriptElm.getAttribute('data-pterror')
+            elm.className = 'testInnerHTMLError';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>async/defer</strong>
+        <code id="testAsync"></code>
+        <script src="defer-1.js" defer type="text/partytown"></script>
+        <script src="async-1.js" async type="text/partytown"></script>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testAsync');
+            elm.textContent += 'b1';
+          })();
+        </script>
+        <script src="async-2.js" async type="text/partytown"></script>
+        <script src="defer-2.js" async defer type="text/partytown"></script>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testAsync');
+            elm.textContent += ' b2';
           })();
         </script>
       </li>

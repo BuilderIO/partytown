@@ -33,13 +33,13 @@ test('document', async ({ page }) => {
   await expect(testDefaultView).toHaveText('window');
 
   const testDocElement = page.locator('#testDocElement');
-  await expect(testDocElement).toHaveText('HTML');
+  await expect(testDocElement).toHaveText('HTML HTMLHtmlElement');
 
   const testHead = page.locator('#testHead');
-  await expect(testHead).toHaveText('HEAD');
+  await expect(testHead).toHaveText('HEAD HTMLHeadElement');
 
   const testBody = page.locator('#testBody');
-  await expect(testBody).toHaveText('BODY');
+  await expect(testBody).toHaveText('BODY HTMLBodyElement');
 
   const testCompatMode = page.locator('#testCompatMode');
   await expect(testCompatMode).toHaveText('CSS1Compat');

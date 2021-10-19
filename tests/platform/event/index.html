@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Partytown Test Page" />
-    <title>Events</title>
+    <title>Event</title>
     <link
       rel="icon"
       id="favicon"
@@ -50,11 +50,11 @@
     </style>
   </head>
   <body>
-    <h1 class="title">Events</h1>
+    <h1>Event</h1>
     <ul>
       <li>
         <strong>button.addEventListener('click')</strong>
-        <button id="buttonAddEventListener">incremement</button>
+        <button id="buttonAddEventListener">inc</button>
         <code id="testAddEventListener">0</code>
         <code id="testTarget"></code>
         <script type="text/partytown">
@@ -94,23 +94,79 @@
         </script>
       </li>
 
-      <!-- <li>
-        <strong>iframe click listener</strong>
-        <button id="iframeButtonInc"></button>
-        <code id="iframeTestInc">0</code>
+      <li>
+        <strong>window.addEventListener('click')</strong>
+        <code id="testWinAddEventListenerCount">0</code>
+        <code id="testWinAddEventListener"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('iframeTestInc');
-            const li = elm.parentNode;
-            const iframe = document.createElement('iframe');
-            iframe.addEventListener('load', () => {
-              elm.className = 'iframeTestInc';
+            let count = 0;
+            window.addEventListener('click', function (ev) {
+              document.getElementById('testWinAddEventListenerCount').textContent = ++count;
+              document.getElementById('testWinAddEventListener').textContent =
+                this.constructor.name + ' ' + ev.type;
             });
-            iframe.src = 'iframe.html';
-            li.parentNode.insertBefore(iframe, li.nextSibling);
           })();
         </script>
-      </li> -->
+      </li>
+
+      <li>
+        <strong>document.createEvent('Event')</strong>
+        <code id="testCreateEvent" class="currentTarget"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testCreateEvent');
+            const event = document.createEvent('Event');
+            event.initEvent('DOC_CREATE', true, false);
+            elm.addEventListener('DOC_CREATE', (ev) => {
+              elm.textContent = [
+                ev.type,
+                ev.bubbles,
+                ev.cancelable,
+                ev.currentTarget.className,
+              ].join(' ');
+              elm.className = 'testCreateEvent';
+            });
+            elm.dispatchEvent(event);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>new Event('NEW_EVENT')</strong>
+        <code id="testNewEvent" class="target"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testNewEvent');
+            const event = new Event('NEW_EVENT', { cancelable: true });
+            elm.addEventListener('NEW_EVENT', (ev) => {
+              elm.textContent = [ev.type, ev.bubbles, ev.cancelable, ev.target.className].join(' ');
+              elm.className = 'testNewEvent';
+            });
+            elm.dispatchEvent(event);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>new CustomEvent('NEW_CUSTOM_EVENT')</strong>
+        <code id="testNewCustomEvent"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testNewCustomEvent');
+            const event = new CustomEvent('NEW_CUSTOM_EVENT', {
+              bubbles: true,
+              cancelable: true,
+              detail: 88,
+            });
+            elm.addEventListener('NEW_CUSTOM_EVENT', (ev) => {
+              elm.textContent = [ev.type, ev.bubbles, ev.cancelable, ev.detail].join(' ');
+              elm.className = 'testNewCustomEvent';
+            });
+            elm.dispatchEvent(event);
+          })();
+        </script>
+      </li>
 
       <script type="text/partytown">
         (function () {

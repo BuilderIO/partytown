@@ -70,4 +70,20 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testMemberNames');
   const testMemberNames = page.locator('#testMemberNames');
   await expect(testMemberNames).toHaveText('1985');
+
+  await page.waitForSelector('.testParentMemberNames');
+  const testParentMemberNames = page.locator('#testParentMemberNames');
+  await expect(testParentMemberNames).toHaveText('1985 1885');
+
+  await page.waitForSelector('.testNoDeadlock');
+  const testNoDeadlock = page.locator('#testNoDeadlock');
+  await expect(testNoDeadlock).toHaveText('99');
+
+  await page.waitForSelector('.testWWGlobalNotShared');
+  const testWWGlobalNotShared = page.locator('#testWWGlobalNotShared');
+  await expect(testWWGlobalNotShared).toHaveText('true');
+
+  await page.waitForSelector('.testFrameElement');
+  const testFrameElement = page.locator('#testFrameElement');
+  await expect(testFrameElement).toHaveText('frameElement');
 });

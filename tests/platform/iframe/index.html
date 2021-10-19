@@ -106,7 +106,7 @@
             elm.parentNode.insertBefore(iframe, null);
 
             iframe.contentWindow.document.head.innerHTML = `
-              <style>body { background: cornflowerblue; color: white; text-align: center;}</style>
+              <style>body { background: cornflowerblue; color: white; }</style>
             `;
 
             iframe.contentWindow.document.body.innerHTML = `contentWindow`;
@@ -185,7 +185,9 @@
             const elm = document.getElementById('testSetSomeWindowVar');
             const iframe = document.createElement('iframe');
             iframe.addEventListener('load', function (ev) {
-              elm.textContent = iframe.contentWindow.someWindowVar.year;
+              const iframeWin = iframe.contentWindow;
+              const iframeSomeWindowVar = iframeWin.someWindowVar;
+              elm.textContent = iframeSomeWindowVar.year;
               elm.className = 'testSetSomeWindowVar';
             });
             iframe.src = 'external-js.html';
@@ -207,11 +209,18 @@
           (function () {
             const elm = document.getElementById('testTopSomeValue');
             const iframe = document.createElement('iframe');
-            elm.parentNode.insertBefore(iframe, null);
 
-            iframe.contentDocument.head.innerHTML = `
+            const elmParentNode = elm.parentNode;
+            elmParentNode.insertBefore(iframe, null);
+
+            const iframeWin = iframe.contentWindow;
+            const iframeDoc = iframeWin.document;
+            const iframeHead = iframeDoc.head;
+
+            iframeHead.innerHTML = `
               <style>body { background: peachpuff; }</style>
             `;
+
             iframe.contentDocument.body.innerHTML = window.year + window.gw;
 
             const script = iframe.contentDocument.createElement('script');
@@ -221,7 +230,6 @@
 
               const parentWin = window.parent;
               const parentWinValue = parentWin.gw;
-
               const value = parentWinValue + topWinValue;
 
               const parentDocument = parentWin.document;
@@ -336,6 +344,7 @@
           })();
         </script>
       </li>
+
       <li>
         <strong>about:blank location</strong>
         <code id="testAboutBlank"></code>
@@ -399,7 +408,7 @@
             elm.parentNode.appendChild(iframe);
 
             iframe.contentWindow.document.head.innerHTML = `
-              <style>body { background: blue; }</style>
+              <style>body { background: blue; color: white; }</style>
             `;
 
             const script = document.createElement('script');
@@ -513,33 +522,93 @@
 
             iframe.contentDocument.body.appendChild(script);
 
-            setTimeout(() => {
-              // TODO!!! Remove the timeout!!!
-              const win = window;
+            const win = window;
 
-              const objA = win.objA;
-              const objB = objA.objB;
-              const objBSum = objB.sum;
-              const objBNum = objB.num;
+            const objA = win.objA;
+            const objB = objA.objB;
+            const objBSum = objB.sum;
+            const objBNum = objB.num;
 
-              const winSubtract = win.subtract;
-              const winNum = win.num;
+            const winSubtract = win.subtract;
+            const winNum = win.num;
 
-              const subtractResult = subtract(winNum);
-              const objBSumResult = objBSum(objBNum);
-              const result = objBSumResult + ' ' + subtractResult;
+            const subtractResult = subtract(winNum);
+            const objBSumResult = objBSum(objBNum);
+            const result = objBSumResult + ' ' + subtractResult;
 
-              const div = iframe.contentDocument.createElement('div');
-              div.id = 'output';
-              div.textContent = result;
-              iframe.contentWindow.document.body.appendChild(div);
+            const div = iframe.contentDocument.createElement('div');
+            div.id = 'output';
+            div.textContent = result;
+            iframe.contentWindow.document.body.appendChild(div);
 
-              elm.textContent = iframe.contentDocument.getElementById('output').textContent;
-              elm.className = 'testParentMemberNames';
-            }, 200);
+            elm.textContent = iframe.contentDocument.getElementById('output').textContent;
+            elm.className = 'testParentMemberNames';
           };
 
           elm.parentNode.insertBefore(iframe, null);
+        </script>
+      </li>
+
+      <li>
+        <strong>iframe onload calls parent, no deadlock</strong>
+        <code id="testNoDeadlock"></code>
+        <script type="text/partytown">
+          const elm = document.getElementById('testNoDeadlock');
+          const iframe = document.createElement('iframe');
+          iframe.id = 'deadlock-iframe';
+          iframe.src = 'no-deadlock.html';
+          iframe.onload = () => {
+            const script = document.createElement('script');
+            script.onload = () => {
+              const iframeWin = iframe.contentWindow;
+              const fn = iframeWin.fn;
+              const result = fn(11);
+              const output = iframeWin.document.getElementById('output');
+              output.textContent = result;
+              elm.className = 'testNoDeadlock';
+            };
+            script.src = 'no-deadlock.js';
+            iframe.contentDocument.head.appendChild(script);
+          };
+          elm.parentNode.insertBefore(iframe, null);
+        </script>
+      </li>
+
+      <li>
+        <strong>global web worker var not shared</strong>
+        <code id="testWWGlobalValue"></code>
+        <code id="testWWGlobalNotShared"></code>
+        <script type="text/partytown" src="no-global-share.js"></script>
+        <script type="text/partytown">
+          const elm = document.getElementById('testWWGlobalNotShared');
+          const iframe = document.createElement('iframe');
+          iframe.src = 'no-global-share.html';
+          iframe.onload = () => {
+            const out1 = document.getElementById('testWWGlobalValue').textContent;
+            const out2 = iframe.contentDocument.getElementById('testWWGlobalValue').textContent;
+            const testWWGlobalNotShared = document.getElementById('testWWGlobalNotShared');
+            testWWGlobalNotShared.textContent = String(out1 !== out2);
+            testWWGlobalNotShared.className = 'testWWGlobalNotShared';
+          };
+          elm.parentNode.appendChild(iframe);
+        </script>
+      </li>
+
+      <li>
+        <strong>frameElement</strong>
+        <code id="testFrameElement"></code>
+        <script type="text/partytown">
+          const elm = document.getElementById('testFrameElement');
+          const iframe = document.createElement('iframe');
+          iframe.setAttribute('id', 'frameElement');
+          elm.parentNode.appendChild(iframe);
+
+          iframe.contentDocument.head.innerHTML = `
+            <style>body { background: aquamarine; }</style>
+          `;
+          iframe.contentDocument.body.textContent = iframe.contentWindow.frameElement.id;
+          elm.textContent = iframe.contentWindow.document.body.textContent;
+          elm.className = 'testFrameElement';
         </script>
       </li>
     </ul>

@@ -172,7 +172,8 @@
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testDocElement');
-            elm.textContent = document.documentElement.tagName;
+            const documentElement = document.documentElement;
+            elm.textContent = documentElement.tagName + ' ' + documentElement.constructor.name;
           })();
         </script>
       </li>
@@ -183,7 +184,7 @@
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testHead');
-            elm.textContent = document.head.tagName;
+            elm.textContent = document.head.tagName + ' ' + document.head.constructor.name;
           })();
         </script>
       </li>
@@ -194,7 +195,7 @@
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testBody');
-            elm.textContent = document.body.tagName;
+            elm.textContent = document.body.tagName + ' ' + document.body.constructor.name;
           })();
         </script>
       </li>

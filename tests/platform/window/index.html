@@ -53,6 +53,65 @@
     <h1>Window</h1>
     <ul>
       <li>
+        <strong>Window.name</strong>
+        <code id="testWindowName"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testWindowName');
+            elm.textContent = Window.name;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>window.name</strong>
+        <code id="testName" style="font-size: 10px"></code>
+        <code id="testNameEquals"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testName');
+            elm.textContent = window.name;
+
+            const elmEqls = document.getElementById('testNameEquals');
+            elmEqls.textContent = name === window.name;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>window.top same</strong>
+        <code id="testTop"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testTop');
+            elm.textContent = window.top.name === window.name;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>window.parent same</strong>
+        <code id="testParent"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testParent');
+            elm.textContent = window.parent.name === window.name;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>window.HTMLBodyElement.name</strong>
+        <code id="testHTMLBodyElementName"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testHTMLBodyElementName');
+            elm.textContent = HTMLBodyElement.name + ' ' + window.HTMLBodyElement.name;
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>getComputedStyle()</strong>
         <code id="testGetComputedStyle" style="color: purple"></code>
         <script type="text/partytown">
@@ -90,7 +149,7 @@
           (function () {
             const b = document.getElementById('testBtoa');
             const a = document.getElementById('testAtob');
-            b.textContent = btoa('88');
+            b.textContent = window.btoa('88');
             a.textContent = atob(b.textContent);
           })();
         </script>
@@ -111,22 +170,13 @@
       </li>
 
       <li>
-        <strong>Window.name</strong>
-        <code id="testWindowName"></code>
-        <script type="text/partytown">
-          (function () {
-            const elm = document.getElementById('testWindowName');
-            elm.textContent = Window.name;
-          })();
-        </script>
-      </li>
-
-      <li>
         <strong>Worker HTML Constructors</strong>
         <code id="wwHTMLConstructors"></code>
         <script type="text/partytown">
           (function () {
-            const htmlCstrs = Object.getOwnPropertyNames(window).filter((c) => c.startsWith('HTML')).sort();
+            const htmlCstrs = Object.getOwnPropertyNames(window)
+              .filter((c) => c.startsWith('HTML') && c.endsWith('Element'))
+              .sort();
             const elm = document.getElementById('wwHTMLConstructors');
             elm.textContent = htmlCstrs.join(' ');
           })();
@@ -139,7 +189,7 @@
         <script>
           (function () {
             const htmlCstrs = Object.getOwnPropertyNames(window)
-              .filter((c) => c.startsWith('HTML'))
+              .filter((c) => c.startsWith('HTML') && c.endsWith('Element'))
               .sort();
             const elm = document.getElementById('mainHTMLConstructors');
             elm.textContent = htmlCstrs.join(' ');
@@ -164,6 +214,163 @@
             const elm3 = document.getElementById('testScreenOrientation');
             const orientation = screen.orientation;
             elm3.textContent = (screen.orientation || {}).type;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>window.postMessage()</strong>
+        <code>
+          <span id="testPostMessage"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testPostMessage');
+            window.onmessage = (ev) => {
+              if (ev.data === '88') {
+                elm.textContent = ev.type + ' ' + ev.data;
+                elm.className = 'testPostMessage';
+              }
+            };
+            window.postMessage('88');
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set/get window.someWindowNumber</strong>
+        <code>
+          <span id="testSomeWindowNumber"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testSomeWindowNumber');
+            window.someWindowNumber = 1885;
+            elm.textContent = window.someWindowNumber;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set/get someGlobalNumber</strong>
+        <code>
+          <span id="testSomeGlobalNumber"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testSomeGlobalNumber');
+            someGlobalNumber = 1985;
+            elm.textContent = someGlobalNumber;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set/get window.someWindowObject</strong>
+        <code>
+          <span id="testSomeWindowObject"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testSomeWindowObject');
+            window.someWindowObject = {
+              some: {
+                object: 88
+              }
+            };
+            elm.textContent = JSON.stringify(window.someWindowObject);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set/get someGlobalObject</strong>
+        <code>
+          <span id="testSomeGlobalObject"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testSomeGlobalObject');
+            someGlobalObject = {
+              some: {
+                object: 99
+              }
+            };
+            elm.textContent = JSON.stringify(someGlobalObject);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>window.Promise</strong>
+        <code>
+          <span id="testPromise"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const p = new window.Promise((resolve) => {
+              resolve('resolved');
+            }).then((val) => {
+              const elm = document.getElementById('testPromise');
+              elm.textContent = val;
+              elm.className = 'testPromise';
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>window.Promise polyfilled</strong>
+        <code>
+          <span id="testPromisePolyfilled"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            window.Promise = undefined;
+
+            Promise = class ShadyPromise {
+              constructor(fn) {
+                fn((v) => setTimeout(this.cb('polyfill ' + v)));
+              }
+              then(cb) {
+                this.cb = cb;
+              }
+            };
+
+            const p = new Promise((resolve) => {
+              setTimeout(() => resolve('resolved'));
+            }).then((val) => {
+              const elm = document.getElementById('testPromisePolyfilled');
+              elm.textContent = val;
+              elm.className = 'testPromisePolyfilled';
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>window.performance</strong>
+        <code>
+          <span id="testPerformance"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testPerformance');
+            elm.textContent = window.performance.now() + performance.now();
+            elm.className = 'testPerformance';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>window.frameElement</strong>
+        <code>
+          <span id="testFrameElement"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testFrameElement');
+            elm.textContent = String(window.frameElement);
           })();
         </script>
       </li>

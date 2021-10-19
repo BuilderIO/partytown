@@ -5,21 +5,24 @@ test('storage', async ({ page }) => {
 
   await page.waitForSelector('.completed');
 
-  const test0 = page.locator('#test0');
-  await expect(test0).toHaveText('88');
+  const testWinEquals = page.locator('#testWinEquals');
+  await expect(testWinEquals).toHaveText('true');
 
-  const test1 = page.locator('#test1');
-  await expect(test1).toHaveText('1');
+  const testLocalStorageSetGet = page.locator('#testLocalStorageSetGet');
+  await expect(testLocalStorageSetGet).toHaveText('88');
 
-  const test2 = page.locator('#test2');
-  await expect(test2).toHaveText('0');
+  const testLocalStorageLen = page.locator('#testLocalStorageLen');
+  await expect(testLocalStorageLen).toHaveText('1');
 
-  const test3 = page.locator('#test3');
-  await expect(test3).toHaveText('88');
+  const testLocalStorageClear = page.locator('#testLocalStorageClear');
+  await expect(testLocalStorageClear).toHaveText('0');
 
-  const test4 = page.locator('#test4');
-  await expect(test4).toHaveText('1');
+  const testSessionStorageSetGet = page.locator('#testSessionStorageSetGet');
+  await expect(testSessionStorageSetGet).toHaveText('88');
 
-  const test5 = page.locator('#test5');
-  await expect(test5).toHaveText('0');
+  const testSessionStorageLen = page.locator('#testSessionStorageLen');
+  await expect(testSessionStorageLen).toHaveText('1');
+
+  const testWinSessionStorage = page.locator('#testWinSessionStorage');
+  await expect(testWinSessionStorage).toHaveText('1');
 });

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('events', async ({ page }) => {
-  await page.goto('/platform/events/');
+  await page.goto('/platform/event/');
 
   await page.waitForSelector('.completed');
 
@@ -33,4 +33,19 @@ test('events', async ({ page }) => {
   await buttonAdd.click();
   await buttonInc.click();
   await expect(testInc).toHaveText('3');
+
+  const testWinAddEventListener = page.locator('#testWinAddEventListener');
+  await expect(testWinAddEventListener).toHaveText('Window click');
+
+  await page.waitForSelector('.testCreateEvent');
+  const testCreateEvent = page.locator('#testCreateEvent');
+  await expect(testCreateEvent).toHaveText('DOC_CREATE true false currentTarget');
+
+  await page.waitForSelector('.testNewEvent');
+  const testNewEvent = page.locator('#testNewEvent');
+  await expect(testNewEvent).toHaveText('NEW_EVENT false true target');
+
+  await page.waitForSelector('.testNewCustomEvent');
+  const testNewCustomEvent = page.locator('#testNewCustomEvent');
+  await expect(testNewCustomEvent).toHaveText('NEW_CUSTOM_EVENT true true 88');
 });

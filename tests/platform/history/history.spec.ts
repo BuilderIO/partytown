@@ -5,6 +5,9 @@ test('history', async ({ page }) => {
 
   await page.waitForSelector('.completed');
 
+  const testWinEquals = page.locator('#testWinEquals');
+  await expect(testWinEquals).toHaveText('true');
+
   const testPushStateStr = page.locator('#testPushStateStr');
   await expect(testPushStateStr).toHaveText('88');
 

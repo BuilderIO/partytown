@@ -53,6 +53,18 @@
     <h1>History</h1>
     <ul>
       <li>
+        <strong>window.history === history</strong>
+        <code id="testWinEquals"></code>
+        <script type="text/partytown">
+          (function () {
+            const equals = history === window.history;
+            const elm = document.getElementById('testWinEquals');
+            elm.textContent = String(equals);
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>pushState(88, '')</strong>
         <code id="testPushStateStr"></code>
         <script type="text/partytown">

@@ -57,12 +57,24 @@
     <h1>Storage</h1>
     <ul>
       <li>
+        <strong>window.localStorage === localStorage</strong>
+        <code id="testWinEquals"></code>
+        <script type="text/partytown">
+          (function () {
+            const equals = localStorage === window.localStorage;
+            const elm = document.getElementById('testWinEquals');
+            elm.textContent = String(equals);
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>localStorage set/get</strong>
-        <code id="test0"></code>
+        <code id="testLocalStorageSetGet"></code>
         <script type="text/partytown">
           (function () {
             localStorage.setItem('mph', '88');
-            const elm = document.getElementById('test0');
+            const elm = document.getElementById('testLocalStorageSetGet');
             elm.textContent = localStorage.getItem('mph');
           })();
         </script>
@@ -70,10 +82,10 @@
 
       <li>
         <strong>localStorage length</strong>
-        <code id="test1"></code>
+        <code id="testLocalStorageLen"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('test1');
+            const elm = document.getElementById('testLocalStorageLen');
             elm.textContent = localStorage.length;
           })();
         </script>
@@ -81,11 +93,11 @@
 
       <li>
         <strong>localStorage clear</strong>
-        <code id="test2"></code>
+        <code id="testLocalStorageClear"></code>
         <script type="text/partytown">
           (function () {
             localStorage.clear();
-            const elm = document.getElementById('test2');
+            const elm = document.getElementById('testLocalStorageClear');
             elm.textContent = localStorage.length;
           })();
         </script>
@@ -93,11 +105,11 @@
 
       <li>
         <strong>sessionStorage set/get</strong>
-        <code id="test3"></code>
+        <code id="testSessionStorageSetGet"></code>
         <script type="text/partytown">
           (function () {
             sessionStorage.setItem('mph', '88');
-            const elm = document.getElementById('test3');
+            const elm = document.getElementById('testSessionStorageSetGet');
             elm.textContent = sessionStorage.getItem('mph');
           })();
         </script>
@@ -105,23 +117,24 @@
 
       <li>
         <strong>sessionStorage length</strong>
-        <code id="test4"></code>
+        <code id="testSessionStorageLen"></code>
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('test4');
+            const elm = document.getElementById('testSessionStorageLen');
             elm.textContent = sessionStorage.length;
           })();
         </script>
       </li>
 
       <li>
-        <strong>sessionStorage clear</strong>
-        <code id="test5"></code>
+        <strong>window.sessionStorage clear</strong>
+        <code id="testWinSessionStorage"></code>
         <script type="text/partytown">
           (function () {
-            sessionStorage.clear();
-            const elm = document.getElementById('test5');
-            elm.textContent = sessionStorage.length;
+            window.sessionStorage.clear();
+            window.sessionStorage.setItem('item', '88');
+            const elm = document.getElementById('testWinSessionStorage');
+            elm.textContent = window.sessionStorage.length;
           })();
         </script>
       </li>
