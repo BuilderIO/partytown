@@ -38,21 +38,21 @@
     "version": "npm run build.prod"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.18.11",
-    "@playwright/test": "^1.15.0",
+    "@microsoft/api-extractor": "^7.18.16",
+    "@playwright/test": "^1.15.2",
     "@types/fs-extra": "^9.0.13",
-    "@types/react": "^17.0.24",
-    "concurrently": "^6.2.2",
+    "@types/react": "^17.0.30",
+    "concurrently": "^6.3.0",
     "fs-extra": "^10.0.0",
     "gzip-size": "^6.0.0",
     "np": "^7.5.0",
     "prettier": "^2.4.1",
-    "rollup": "^2.57.0",
+    "rollup": "^2.58.0",
     "rollup-plugin-terser": "^7.0.2",
     "sirv-cli": "^1.0.14",
     "start-server-and-test": "^1.14.0",
     "tslib": "^2.3.1",
-    "typescript": "^4.4.3"
+    "typescript": "^4.4.4"
   },
   "prettier": {
     "trailingComma": "es5",
