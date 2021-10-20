@@ -96,10 +96,13 @@ const serializeObjectForMain = (
   propValue?: any
 ) => {
   serializedObj = {};
-  for (propName in obj) {
-    propValue = obj[propName];
-    if (includeFunctions || typeof propValue !== 'function') {
-      serializedObj[propName] = serializeForMain(winId, instanceId, propValue, added);
+  if (!added.has(obj)) {
+    added.add(obj);
+    for (propName in obj) {
+      propValue = obj[propName];
+      if (includeFunctions || typeof propValue !== 'function') {
+        serializedObj[propName] = serializeForMain(winId, instanceId, propValue, added);
+      }
     }
   }
   return serializedObj;
