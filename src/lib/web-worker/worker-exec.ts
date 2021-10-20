@@ -38,7 +38,7 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
         logWorker(`Execute script (${instanceId}) src: ${scriptSrc}`, winId);
       }
 
-      rsp = await fetch(scriptSrc, { mode: 'no-cors' });
+      rsp = await self.fetch(scriptSrc);
       if (rsp.ok) {
         scriptContent = await rsp.text();
 

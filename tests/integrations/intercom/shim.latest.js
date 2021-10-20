@@ -50,9 +50,9 @@
       return Object.prototype.hasOwnProperty.call(e, t);
     }),
     (n.p = 'https://js.intercomcdn.com/'),
-    n((n.s = 933));
+    n((n.s = 927));
 })({
-  12: function (e, t, n) {
+  13: function (e, t, n) {
     'use strict';
     n.d(t, 'd', function () {
       return a;
@@ -60,10 +60,10 @@
       n.d(t, 'c', function () {
         return u;
       }),
-      n.d(t, 'g', function () {
+      n.d(t, 'i', function () {
         return s;
       }),
-      n.d(t, 'h', function () {
+      n.d(t, 'j', function () {
         return d;
       }),
       n.d(t, 'e', function () {
@@ -75,13 +75,19 @@
       n.d(t, 'f', function () {
         return f;
       }),
-      n.d(t, 'j', function () {
+      n.d(t, 'g', function () {
         return p;
       }),
-      n.d(t, 'i', function () {
+      n.d(t, 'h', function () {
         return w;
+      }),
+      n.d(t, 'l', function () {
+        return v;
+      }),
+      n.d(t, 'k', function () {
+        return h;
       });
-    var o = n(7),
+    var o = n(8),
       r = /iphone|ipad|ipod|android|blackberry|opera mini|iemobile/i,
       i = [
         '.intercom-lightweight-app-launcher',
@@ -127,6 +133,31 @@
       return void 0 === e && (e = m().userAgent), /iPad|iPhone|iPod/.test(e) && !window.MSStream;
     }
     function p() {
+      var e;
+      return (
+        (null ===
+          (e = (function () {
+            if (f()) {
+              var e = m().appVersion.match(/OS (\d+)_(\d+)_?(\d+)?/);
+              return {
+                major: parseInt(e[1], 10),
+                minor: parseInt(e[2], 10),
+                patch: parseInt(e[3] || 0, 10),
+              };
+            }
+            return null;
+          })()) || void 0 === e
+          ? void 0
+          : e.major) >= 15
+      );
+    }
+    function w() {
+      var e = m().userAgent,
+        t = f(e),
+        n = !!e.match(/WebKit/i);
+      return t && n && !e.match(/CriOS/i) && p();
+    }
+    function v() {
       return (
         !Object(o.a)() &&
         i.some(function (e) {
@@ -138,7 +169,7 @@
         })
       );
     }
-    var w = function () {
+    var h = function () {
       return 'ontouchstart' in window || navigator.maxTouchPoints > 0;
     };
     t.a = {
@@ -174,7 +205,7 @@
           })
         );
       },
-      messengerHasDisplayNoneSet: p,
+      messengerHasDisplayNoneSet: v,
       isMobileBrowser: s,
       isIOSFirefox: function () {
         return !!m().userAgent.match('FxiOS');
@@ -210,12 +241,14 @@
         );
       },
       isIOS: f,
+      isIOS15: p,
+      isIOS15Safari: w,
       isAndroid: function (e) {
         return void 0 === e && (e = m().userAgent), e && e.toLowerCase().indexOf('android') > -1;
       },
     };
   },
-  187: function (e, t, n) {
+  189: function (e, t, n) {
     'use strict';
     n.d(t, 'a', function () {
       return a;
@@ -226,7 +259,7 @@
       n.d(t, 'c', function () {
         return l;
       });
-    var o = n(7);
+    var o = n(8);
     function r(e, t) {
       var n = Object.keys(e);
       if (Object.getOwnPropertySymbols) {
@@ -267,7 +300,7 @@
         e
       );
     }
-    var a = n(197),
+    var a = n(198),
       u = Object.assign;
     function s() {
       var e;
@@ -296,11 +329,11 @@
       return !1;
     }
   },
-  197: function (e, t) {
+  198: function (e, t) {
     e.exports = {
       source_map: 'hidden-source-map',
       api_base: 'https://api-iam.intercom.io',
-      public_path: '/integrations/intercom/',
+      public_path: 'https://js.intercomcdn.com/',
       sheets_proxy_path: 'https://intercom-sheets.com/sheets_proxy',
       sentry_proxy_path: 'https://www.intercom-reporting.com/sentry/index.html',
       install_mode_base: 'https://app.intercom.com',
@@ -312,7 +345,7 @@
       priv_sep_html_path: 'https://www.intercom-reporting.com',
     };
   },
-  258: function (e, t, n) {
+  260: function (e, t, n) {
     'use strict';
     n.d(t, 'b', function () {
       return r;
@@ -320,7 +353,7 @@
       n.d(t, 'a', function () {
         return i;
       });
-    var o = n(12),
+    var o = n(13),
       r = function (e, t, n) {
         void 0 === n && (n = 'en'),
           o.a.isFirefox() && (e.contentDocument.open(), e.contentDocument.close()),
@@ -335,7 +368,7 @@
         return (t.type = 'text/javascript'), (t.charset = 'utf-8'), (t.src = e), t;
       };
   },
-  7: function (e, t, n) {
+  8: function (e, t, n) {
     'use strict';
     n.d(t, 'a', function () {
       return o;
@@ -344,10 +377,10 @@
       return window.INTERCOM_PRIVILEGE_SEPARATION;
     };
   },
-  933: function (e, t, n) {
-    e.exports = n(954);
+  927: function (e, t, n) {
+    e.exports = n(948);
   },
-  954: function (e, t, n) {
+  948: function (e, t, n) {
     'use strict';
     n.r(t);
     var o = [
@@ -365,7 +398,7 @@
         var t = e.document.createElement('iframe');
         return t.setAttribute('style', o), t;
       },
-      i = n(197),
+      i = n(198),
       c = [],
       a = 0,
       u = function (e) {
@@ -579,31 +612,11 @@
         } catch (e) {
           return null;
         }
-      };
-    function E(e, t, n) {
-      return (
-        t in e
-          ? Object.defineProperty(e, t, {
-              value: n,
-              enumerable: !0,
-              configurable: !0,
-              writable: !0,
-            })
-          : (e[t] = n),
-        e
-      );
-    }
-    var k = (function () {
+      },
+      I = (function () {
         function e(e, t, n, o) {
           var r = this;
-          E(this, 'selector', void 0),
-            E(this, 'timeoutValue', void 0),
-            E(this, 'callback', void 0),
-            E(this, 'timeout', void 0),
-            E(this, 'waitTimeout', void 0),
-            E(this, 'document', void 0),
-            E(this, 'observer', void 0),
-            (this.selector = e),
+          (this.selector = e),
             (this.timeoutValue = t),
             (this.callback = o),
             (this.observer = new MutationObserver(this._check.bind(this))),
@@ -643,34 +656,34 @@
           e
         );
       })(),
-      I = n(187),
-      _ = [
+      E = n(189),
+      k = [
         /^https:\/\/www\.intercom\.com\/legal\/terms-and-policies/,
         /demo.dev.dynatracelabs.com\/#monitors/,
       ],
-      x = Object(I.c)() ? [].concat(_, [/intercom-privilege-separation-enabled/]) : [].concat(_),
-      A = function (e) {
+      _ = Object(E.c)() ? [].concat(k, [/intercom-privilege-separation-enabled/]) : [].concat(k),
+      x = function (e) {
         return (
           !0 === e.INTERCOM_PRIVILEGE_SEPARATION ||
-          x.some(function (t) {
+          _.some(function (t) {
             return t.test(e.location.href);
           })
         );
       },
-      P = ['https://js.intercomcdn.com', 'https://www.intercom-reporting.com'],
-      L = ['http://intercom-js.test'],
-      M = ['intercom:get-dom-element'],
-      T = function (e) {
+      A = ['https://js.intercomcdn.com', 'https://www.intercom-reporting.com'],
+      P = ['http://intercom-js.test'],
+      L = ['intercom:get-dom-element'],
+      M = function (e) {
         var t,
           n,
           o,
           r = e.source,
           i = e.data,
           c = e.origin,
-          a = [].concat(P);
+          a = [].concat(A);
         if (
-          (Object(I.c)() && (a = [].concat(L)), -1 !== a.indexOf(c)) &&
-          (A(window) || -1 !== M.indexOf(i.type))
+          (Object(E.c)() && (a = [].concat(P)), -1 !== a.indexOf(c)) &&
+          (x(window) || -1 !== L.indexOf(i.type))
         )
           switch (i.type) {
             case 'intercom:ready':
@@ -809,23 +822,23 @@
               break;
             case 'intercom:delayed-node-visibility-check':
               !(function (e, t, n) {
-                new k(t.selector, t.timeoutValue, t.wait, function (t) {
+                new I(t.selector, t.timeoutValue, t.wait, function (t) {
                   e.postMessage({ type: 'intercom:callback', payload: t, callbackId: n }, '*');
                 });
               })(r, i.payload, i.callbackId);
           }
       },
-      C = n(197),
-      q = function (e) {
-        e.addEventListener('message', T);
+      T = n(198),
+      C = function (e) {
+        e.addEventListener('message', M);
       },
-      R = function () {
+      q = function () {
         var e = (function (e) {
           return p(p({}, v(e)), h(e));
         })(window);
         return 'window=' + encodeURIComponent(JSON.stringify(e)) + '&localStorage=';
       },
-      D = function (e) {
+      R = function (e) {
         if (
           !(function (e) {
             return !!e.document.querySelector('iframe[name="intercom-messenger"]');
@@ -834,26 +847,26 @@
           m(e);
           var t = r(e);
           (t.name = 'intercom-messenger'),
-            (t.src = C.priv_sep_html_path + '/frame.html?' + R()),
+            (t.src = T.priv_sep_html_path + '/frame.html?' + q()),
             e.document.body.appendChild(t),
-            q(e),
+            C(e),
             u(e);
         }
       },
-      H = ['turbo:visit', 'turbolinks:visit', 'page:before-change'],
-      N = ['turbo:before-cache', 'turbolinks:before-cache'],
-      V = ['turbo:load', 'turbolinks:load', 'page:change'];
-    var F = n(258),
-      z = n(197).public_path;
-    var W = z + 'frame.de73e9af.js',
-      B = z + 'vendor.0373bc32.js',
-      G = z + 'frame-modern.123a8fdf.js',
-      X = z + 'vendor-modern.913bfe6d.js',
-      J = /bot|googlebot|crawler|spider|robot|crawling|facebookexternalhit/i,
-      U = function () {
+      D = ['turbo:visit', 'turbolinks:visit', 'page:before-change'],
+      H = ['turbo:before-cache', 'turbolinks:before-cache'],
+      N = ['turbo:load', 'turbolinks:load', 'page:change'];
+    var V = n(260),
+      F = n(198).public_path;
+    var W = F + 'frame.f40b61a2.js',
+      z = F + 'vendor.4f82cdd3.js',
+      B = F + 'frame-modern.54c869a5.js',
+      G = F + 'vendor-modern.50181e45.js',
+      X = /bot|googlebot|crawler|spider|robot|crawling|facebookexternalhit/i,
+      J = function () {
         return window.Intercom && window.Intercom.booted;
       },
-      Y = function () {
+      K = function () {
         var e,
           t = !!(e = navigator.userAgent.match(/Chrom(?:e|ium)\/([0-9\.]+)/)) && e[1];
         return (
@@ -863,7 +876,7 @@
           })
         );
       },
-      $ = function () {
+      U = function () {
         var e = document.querySelector('meta[name="referrer"]'),
           t = e ? '<meta name="referrer" content="' + e.content + '">' : '',
           n = document.createElement('iframe');
@@ -876,17 +889,16 @@
           n.setAttribute('tabIndex', '-1'),
           n.setAttribute('title', 'Intercom'),
           document.body.appendChild(n),
-          Object(F.b)(
+          Object(V.b)(
             n,
             '<!doctype html>\n    <html lang="en">\n      <head>\n        ' +
               t +
               '\n      </head>\n      <body>\n      </body>\n    </html>'
           );
-
         var o,
-          r = !!(o = Y()) && o[0] >= 81,
-          i = Object(F.a)(r ? G : W),
-          c = Object(F.a)(r ? X : B);
+          r = !!(o = K()) && o[0] >= 81,
+          i = Object(V.a)(r ? B : W),
+          c = Object(V.a)(r ? G : z);
         return (
           n.contentDocument.head.appendChild(i),
           n.contentDocument.head.appendChild(c),
@@ -896,11 +908,11 @@
           n
         );
       },
-      K = function () {
+      Y = function () {
         var e = document.getElementById('intercom-frame');
         e && e.parentNode && e.parentNode.removeChild(e), delete window.__intercomAssignLocation;
       },
-      Q = function () {
+      $ = function () {
         if (!window.Intercom) {
           var e = function e() {
             for (var t = arguments.length, n = new Array(t), o = 0; o < t; o++) n[o] = arguments[o];
@@ -909,11 +921,11 @@
           (e.q = []), (window.Intercom = e);
         }
       },
-      Z = function () {
-        U() || (Q(), $(), (window.Intercom.booted = !0));
+      Q = function () {
+        J() || ($(), U(), (window.Intercom.booted = !0));
       };
-    A(window)
-      ? D(window)
+    x(window)
+      ? R(window)
       : ('attachEvent' in window && !window.addEventListener) ||
         (navigator &&
           navigator.userAgent &&
@@ -923,23 +935,23 @@
         ('onpropertychange' in document &&
           window.matchMedia &&
           /MSIE 10\.0/.test(navigator.userAgent)) ||
-        (navigator && navigator.userAgent && J.test(navigator.userAgent)) ||
+        (navigator && navigator.userAgent && X.test(navigator.userAgent)) ||
         window.isIntercomMessengerSheet ||
-        U() ||
-        (Z(),
+        J() ||
+        (Q(),
         (function (e, t, n) {
-          V.forEach(function (t) {
+          N.forEach(function (t) {
             document.addEventListener(t, e);
           }),
-            N.forEach(function (e) {
+            H.forEach(function (e) {
               document.addEventListener(e, t);
             }),
-            H.forEach(function (e) {
+            D.forEach(function (e) {
               document.addEventListener(e, n);
             });
-        })(Z, K, function () {
-          window.Intercom('shutdown', !1), delete window.Intercom, K(), Q();
+        })(Q, Y, function () {
+          window.Intercom('shutdown', !1), delete window.Intercom, Y(), $();
         }),
-        q(window));
+        C(window));
   },
 });
