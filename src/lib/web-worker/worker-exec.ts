@@ -28,14 +28,25 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
   let errorMsg = '';
   let env = environments[winId];
   let rsp: Response;
+  let scriptUrl: URL;
 
   if (scriptSrc) {
     try {
-      scriptSrc = resolveUrl(env, scriptSrc);
+      scriptUrl = resolveToUrl(env, scriptSrc);
+      scriptSrc = scriptUrl + '';
       setStateValue(instanceId, StateProp.url, scriptSrc);
 
       if (debug && webWorkerCtx.$config$.logScriptExecution) {
         logWorker(`Execute script (${instanceId}) src: ${scriptSrc}`, winId);
+      }
+
+      if (scriptUrl.origin !== origin) {
+        try {
+          await self.fetch(scriptSrc, { method: 'OPTIONS' });
+        } catch (e) {
+          scriptSrc = 'https://partytown.builder.io/api/proxy?p=' + scriptSrc;
+          logWorker(`Proxied script (${instanceId}) src: ${scriptSrc}`, winId);
+        }
       }
 
       rsp = await self.fetch(scriptSrc);

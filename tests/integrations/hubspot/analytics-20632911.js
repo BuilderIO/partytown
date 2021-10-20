@@ -2835,15 +2835,18 @@ _hsq.push(['setTrackingDomain', 'track.hubspot.com']);
     return t;
   });
   function loadHstc(t, e) {
+    console.warn('loadHstc', 1);
     function i() {
       new hstc.tracking.Runner(t).run();
     }
     var n = t.getDocument();
+    console.warn('loadHstc', 2, n, 'n.readyState', n.readyState);
     !n.readyState || 'complete' == n.readyState || (n.addEventListener && 'loaded' == n.readyState)
       ? i()
       : hstc.utils.addEventListener(e, 'load', i, !0);
   }
   !(function (t, e) {
+    console.warn('go', t, e);
     try {
       var i = t.getWindow();
       if (!i[e]) {
