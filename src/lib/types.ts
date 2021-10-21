@@ -80,6 +80,7 @@ export interface InitWebWorkerData {
   $htmlConstructors$: string[];
   $interfaces$: InterfaceInfo[];
   $libPath$?: string;
+  lastLog?: string;
 }
 
 export interface InitWebWorkerContext {

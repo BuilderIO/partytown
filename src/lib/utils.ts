@@ -46,11 +46,14 @@ export const logWorker = (msg: string, winId = -1) => {
         color = `#9844bf`;
       }
 
-      console.debug.apply(console, [
-        `%c${prefix}`,
-        `background: ${color}; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
-        msg,
-      ]);
+      if (webWorkerCtx.lastLog !== msg) {
+        webWorkerCtx.lastLog = msg;
+        console.debug.apply(console, [
+          `%c${prefix}`,
+          `background: ${color}; color: white; padding: 2px 3px; border-radius: 2px; font-size: 0.8em;`,
+          msg,
+        ]);
+      }
     } catch (e) {}
   }
 };
