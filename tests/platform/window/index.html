@@ -149,8 +149,10 @@
           (function () {
             const b = document.getElementById('testBtoa');
             const a = document.getElementById('testAtob');
-            b.textContent = window.btoa('88');
-            a.textContent = atob(b.textContent);
+            const v1 = window.btoa('88');
+            const v2 = atob(v1);
+            b.textContent = v1;
+            a.textContent = v2;
           })();
         </script>
       </li>
@@ -371,6 +373,38 @@
           (function () {
             const elm = document.getElementById('testFrameElement');
             elm.textContent = String(window.frameElement);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>innerWidth/Height</strong>
+        <code>
+          <span id="testInnerWidthHeight"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testInnerWidthHeight');
+            if (typeof window.innerWidth === 'number' && typeof window.innerWidth === 'number') {
+              elm.textContent = window.innerWidth + 'x' + window.innerHeight;
+            }
+            elm.className = 'testInnerWidthHeight';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>devicePixelRatio</strong>
+        <code>
+          <span id="testDevicePixelRatio"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDevicePixelRatio');
+            if (typeof window.devicePixelRatio === 'number') {
+              elm.textContent = window.devicePixelRatio;
+            }
+            elm.className = 'testDevicePixelRatio';
           })();
         </script>
       </li>

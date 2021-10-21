@@ -130,7 +130,8 @@ export const createEnvironment = ({
     const windowFunctionWhiteList =
       'addEventListener,removeEventListener,dispatchEvent,postMessage'.split(',');
 
-    const windowPropertyWhiteList = 'onmessage,onload,onerror'.split(',');
+    const windowPropertyWhiteList =
+      'devicePixelRatio,innerHeight,innerWidth,onmessage,onload,onerror'.split(',');
 
     const initWindowInstance = (win: any) => {
       win[WinIdKey] = $winId$;

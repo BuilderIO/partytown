@@ -79,4 +79,10 @@ test('window', async ({ page }) => {
 
   const testFrameElement = page.locator('#testFrameElement');
   await expect(testFrameElement).toHaveText('null');
+
+  const testInnerWidthHeight = page.locator('#testInnerWidthHeight');
+  await expect(testInnerWidthHeight).not.toHaveText('');
+
+  const testDevicePixelRatio = page.locator('#testDevicePixelRatio');
+  await expect(testDevicePixelRatio).not.toHaveText('');
 });
