@@ -58,4 +58,7 @@ test('element', async ({ page }) => {
 
   const testParagraphConstructor = page.locator('#testParagraphConstructor');
   await expect(testParagraphConstructor).toHaveText('HTMLParagraphElement HTMLParagraphElement');
+
+  const testStyleElement = page.locator('#testStyleElement');
+  await expect(testStyleElement).toHaveText('rgb(0, 0, 255)');
 });

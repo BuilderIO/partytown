@@ -269,6 +269,28 @@
         </script>
       </li>
 
+      <li>
+        <strong>style element</strong>
+        <code id="testStyleElement"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testStyleElement');
+
+            const css = document.createTextNode(`
+              #testStyleElement {
+                color: blue;
+              }
+            `);
+            const style = document.createElement('style');
+            style.setAttribute('mph', '88');
+            style.appendChild(css);
+            document.head.appendChild(style);
+
+            elm.textContent = getComputedStyle(elm).color;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');
