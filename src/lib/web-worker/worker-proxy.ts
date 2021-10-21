@@ -175,40 +175,6 @@ export const applyBeforeSyncSetters = (instance: WorkerProxy) => {
   }
 };
 
-const createComplexMember = (
-  interfaceType: InterfaceType,
-  instance: WorkerProxy,
-  memberPath: string[]
-) => {
-  if (
-    interfaceType === InterfaceType.CommentNode ||
-    interfaceType === InterfaceType.DocumentTypeNode
-  ) {
-    // have these nodes interfaces just use the same as a text node
-    interfaceType = InterfaceType.TextNode;
-  }
-
-  const interfaceInfo = webWorkerCtx.$interfaces$.find((i) => i[0] === interfaceType);
-  if (interfaceInfo) {
-    const memberTypeInfo = interfaceInfo[2];
-    const memberInfo = memberTypeInfo[memberPath[len(memberPath) - 1]];
-    if (memberInfo === InterfaceType.Function) {
-      return (...args: any[]) => callMethod(instance, memberPath, args);
-    } else if (memberInfo > InterfaceType.Window) {
-      return proxy(memberInfo, instance, [...memberPath]);
-    }
-  }
-
-  const stateValue = getInstanceStateValue<Function>(instance, memberPath[0]);
-  if (typeof stateValue === 'function') {
-    return (...args: any[]) => {
-      const rtnValue = stateValue.apply(instance, args);
-      logWorkerCall(instance, memberPath, args, rtnValue);
-      return rtnValue;
-    };
-  }
-};
-
 export const proxy = <T = any>(
   interfaceType: InterfaceType,
   target: T,
@@ -243,10 +209,33 @@ export const proxy = <T = any>(
         return globalRtnValue;
       }
 
+      if (
+        interfaceType === InterfaceType.CommentNode ||
+        interfaceType === InterfaceType.DocumentTypeNode
+      ) {
+        // have these nodes interfaces just use the same as a text node
+        interfaceType = InterfaceType.TextNode;
+      }
+
       const memberPath = [...initMemberPath, String(propKey)];
-      const complexProp = createComplexMember(interfaceType, target, memberPath);
-      if (complexProp) {
-        return complexProp;
+      const interfaceInfo = webWorkerCtx.$interfaces$.find((i) => i[0] === interfaceType);
+      if (interfaceInfo) {
+        const memberTypeInfo = interfaceInfo[2];
+        const memberInfo = memberTypeInfo[memberPath[len(memberPath) - 1]];
+        if (memberInfo === InterfaceType.Function) {
+          return (...args: any[]) => callMethod(target, memberPath, args);
+        } else if (memberInfo > InterfaceType.Window) {
+          return proxy(memberInfo, target, [...memberPath]);
+        }
+      }
+
+      const stateValue = getInstanceStateValue<Function>(target, memberPath[0]);
+      if (typeof stateValue === 'function') {
+        return (...args: any[]) => {
+          const rtnValue = stateValue.apply(target, args);
+          logWorkerCall(target, memberPath, args, rtnValue);
+          return rtnValue;
+        };
       }
 
       return getter(target, memberPath);
