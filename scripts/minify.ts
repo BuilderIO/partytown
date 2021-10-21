@@ -81,8 +81,6 @@ function managlePropsPlugin(): Plugin {
     $implementation$: '',
     $interfaces$: '',
     $instanceId$: '',
-    $instanceIds$: '',
-    $instances$: '',
     $interfaceType$: '',
     $isInitialized$: '',
     $isPromise$: '',

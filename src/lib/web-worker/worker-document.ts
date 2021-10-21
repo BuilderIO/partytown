@@ -1,9 +1,9 @@
+import { AccessType, ImmediateSetter, InterfaceType, NodeName } from '../types';
 import { callMethod } from './worker-proxy';
 import { constructInstance, getElementConstructor } from './worker-constructors';
 import { createEnvironment, getEnv, getEnvWindow } from './worker-environment';
 import { getPartytownScript } from './worker-exec';
 import { HTMLElement } from './worker-element';
-import { ImmediateSetter, InterfaceType, NodeName } from '../types';
 import { ImmediateSettersKey, WinIdKey } from './worker-constants';
 import { SCRIPT_TYPE, randomId, toUpper, defineConstructorName } from '../utils';
 import { serializeForMain } from './worker-serialization';
@@ -27,9 +27,17 @@ export class HTMLDocument extends HTMLElement {
       // and the contentWindow's parentWinId is the iframe element's winId
       createEnvironment({ $winId$: instanceId, $parentWinId$: winId, $url$: 'about:blank' });
 
-      immediateSetter.push([['srcdoc'], serializeForMain(winId, instanceId, getPartytownScript())]);
+      immediateSetter.push([
+        AccessType.Set,
+        ['srcdoc'],
+        serializeForMain(winId, instanceId, getPartytownScript()),
+      ]);
     } else if (tagName === NodeName.Script) {
-      immediateSetter.push([['type'], serializeForMain(winId, instanceId, SCRIPT_TYPE)]);
+      immediateSetter.push([
+        AccessType.Set,
+        ['type'],
+        serializeForMain(winId, instanceId, SCRIPT_TYPE),
+      ]);
     }
 
     return elm;

@@ -35,7 +35,7 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
 
   if (scriptElm) {
     // read the next script found
-    scriptElm.dataset.ptid = $instanceId$ = getAndSetInstanceId(winCtx, scriptElm, $winId$) as any;
+    scriptElm.dataset.ptid = $instanceId$ = getAndSetInstanceId(scriptElm, $winId$) as any;
 
     scriptData = {
       $winId$,

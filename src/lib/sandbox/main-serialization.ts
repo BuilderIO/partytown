@@ -12,7 +12,7 @@ import {
   SerializedType,
   WorkerMessageType,
 } from '../types';
-import { mainRefs, winCtxs } from './main-constants';
+import { mainRefs } from './main-constants';
 
 export const serializeForWorker = (
   $winId$: number,
@@ -48,7 +48,7 @@ export const serializeForWorker = (
           {
             $winId$,
             $interfaceType$: value.nodeType,
-            $instanceId$: getAndSetInstanceId(winCtxs[$winId$]!, value),
+            $instanceId$: getAndSetInstanceId(value),
             $nodeName$: value.nodeName,
           },
         ];

@@ -611,6 +611,33 @@
           elm.className = 'testFrameElement';
         </script>
       </li>
+
+      <li>
+        <strong id="labelSyncSetAttr">before sync setters, setAttribute</strong>
+        <script type="text/partytown">
+          (function () {
+            const label = document.getElementById('labelSyncSetAttr');
+            const iframe = document.createElement('iframe');
+            label.parentNode.appendChild(iframe);
+
+            iframe.contentDocument.head.innerHTML = `<style>body { background: gray; }</style>`;
+
+            const script = iframe.contentDocument.createElement('script');
+            script.innerHTML = `
+              const code = document.createElement('code');
+              code.setAttribute('data-mph', 88);
+              code.textContent = code.dataset.mph;
+              code.id = 'testSyncSetAttr';
+              code.className = 'testSyncSetAttr';
+
+              const label = parent.document.getElementById('labelSyncSetAttr');
+              label.parentNode.insertBefore(code, label.nextSibling);
+              document.body.appendChild(document.createTextNode(code.textContent));
+            `;
+            iframe.contentDocument.body.appendChild(script);
+          })();
+        </script>
+      </li>
     </ul>
 
     <hr />

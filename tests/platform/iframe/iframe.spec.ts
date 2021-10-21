@@ -86,4 +86,8 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testFrameElement');
   const testFrameElement = page.locator('#testFrameElement');
   await expect(testFrameElement).toHaveText('frameElement');
+
+  await page.waitForSelector('.testSyncSetAttr');
+  const testSyncSetAttr = page.locator('#testSyncSetAttr');
+  await expect(testSyncSetAttr).toHaveText('88');
 });

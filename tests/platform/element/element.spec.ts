@@ -49,6 +49,11 @@ test('element', async ({ page }) => {
   const testSyncSettersCall = page.locator('#testSyncSettersCall');
   await expect(testSyncSettersCall).toHaveText('some-id');
 
+  const testSyncSetAttr = page.locator('#testSyncSetAttr');
+  const attrVal = await testSyncSetAttr.getAttribute('data-year');
+  await expect(testSyncSetAttr).toHaveText('1885');
+  expect(attrVal).toBe('1885');
+
   const testAttrsNodeType = page.locator('#testAttrsNodeType');
   await expect(testAttrsNodeType).toHaveText('2 id');
 

@@ -1,3 +1,11 @@
+import {
+  AccessType,
+  EventHandler,
+  InitializeScriptData,
+  WebWorkerEnvironment,
+  StateProp,
+  WorkerMessageType,
+} from '../types';
 import { debug, logWorker, nextTick, SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
 import {
   environments,
@@ -6,13 +14,6 @@ import {
   webWorkerCtx,
   WinIdKey,
 } from './worker-constants';
-import {
-  EventHandler,
-  InitializeScriptData,
-  WebWorkerEnvironment,
-  StateProp,
-  WorkerMessageType,
-} from '../types';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue, getStateValue, setStateValue } from './worker-state';
 import type { HTMLElement } from './worker-element';
@@ -167,9 +168,17 @@ export const insertScriptContent = (script: Node) => {
 
     if (immediateSetters) {
       immediateSetters.push(
-        [['type'], serializeForMain(winId, instanceId, SCRIPT_TYPE + SCRIPT_TYPE_EXEC)],
-        [['dataset', datasetType], serializeForMain(winId, instanceId, datasetValue)],
-        [['innerHTML'], serializeForMain(winId, instanceId, scriptContent)]
+        [
+          AccessType.Set,
+          ['type'],
+          serializeForMain(winId, instanceId, SCRIPT_TYPE + SCRIPT_TYPE_EXEC),
+        ],
+        [
+          AccessType.Set,
+          ['dataset', datasetType],
+          serializeForMain(winId, instanceId, datasetValue),
+        ],
+        [AccessType.Set, ['innerHTML'], serializeForMain(winId, instanceId, scriptContent)]
       );
     }
   }

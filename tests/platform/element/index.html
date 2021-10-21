@@ -231,6 +231,21 @@
       </li>
 
       <li>
+        <strong id="labelSyncSetAttr">before sync setters, setAttribute</strong>
+        <script type="text/partytown">
+          (function () {
+            const code = document.createElement('code');
+            code.setAttribute('data-year', 1885);
+            code.textContent = code.dataset.year;
+            code.id = 'testSyncSetAttr';
+
+            const label = document.getElementById('labelSyncSetAttr');
+            label.parentNode.appendChild(code);
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>attributes nodeType/Name</strong>
         <code id="testAttrsNodeType"></code>
         <script type="text/partytown">

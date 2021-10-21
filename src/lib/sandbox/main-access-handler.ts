@@ -25,8 +25,8 @@ export const mainAccessHandler = async (
   let data: any;
   let i: number;
   let immediateSetterTarget: any;
-  let immediateSetterMemberPath;
-  let immediateSetterMemberNameLen;
+  let immediateSetterAccessType: AccessType;
+  let immediateSetterMemberPath: string[];
 
   try {
     // deserialize the data, such as a getter value or function arguments
@@ -34,7 +34,7 @@ export const mainAccessHandler = async (
 
     if (accessType === AccessType.GlobalConstructor) {
       // create a new instance of a global constructor
-      setInstanceId(winCtx, new (winCtx!.$window$ as any)[lastMemberName](...data), instanceId);
+      setInstanceId(new (winCtx!.$window$ as any)[lastMemberName](...data), instanceId);
     } else {
       // get the existing instance
       instance = getInstance($winId$, instanceId);
@@ -52,19 +52,25 @@ export const mainAccessHandler = async (
 
           immediateSetters.map((immediateSetter) => {
             immediateSetterTarget = rtnValue;
-            immediateSetterMemberPath = immediateSetter[0];
-            immediateSetterMemberNameLen = len(immediateSetterMemberPath);
+            immediateSetterAccessType = immediateSetter[0];
+            immediateSetterMemberPath = immediateSetter[1];
 
-            for (i = 0; i < immediateSetterMemberNameLen - 1; i++) {
+            for (i = 0; i < len(immediateSetterMemberPath) - 1; i++) {
               immediateSetterTarget = immediateSetterTarget[immediateSetterMemberPath[i]];
             }
 
-            immediateSetterTarget[immediateSetterMemberPath[immediateSetterMemberNameLen - 1]] =
-              deserializeFromWorker(worker, immediateSetter[1]);
+            if (immediateSetterAccessType === AccessType.Set) {
+              immediateSetterTarget[immediateSetterMemberPath[len(immediateSetterMemberPath) - 1]] =
+                deserializeFromWorker(worker, immediateSetter[2]);
+            } else {
+              immediateSetterTarget[
+                immediateSetterMemberPath[len(immediateSetterMemberPath) - 1]
+              ].apply(immediateSetterTarget, deserializeFromWorker(worker, immediateSetter[2]));
+            }
           });
 
           if (accessReq.$assignInstanceId$) {
-            setInstanceId(winCtx, rtnValue, accessReq.$assignInstanceId$);
+            setInstanceId(rtnValue, accessReq.$assignInstanceId$);
           }
         }
 

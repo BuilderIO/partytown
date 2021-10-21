@@ -67,8 +67,6 @@ export interface MainWindowContext {
   $startTime$?: number;
   $url$: string;
   $window$: MainWindow;
-  $instanceIds$: WeakMap<any, number>;
-  $instances$: [number, any][];
 }
 
 export interface PartytownWebWorker extends Worker {
@@ -192,7 +190,7 @@ export interface MainAccessRequest {
   $assignInstanceId$?: number;
 }
 
-export type ImmediateSetter = [string[], SerializedTransfer | undefined];
+export type ImmediateSetter = [AccessType, string[], SerializedTransfer | undefined];
 
 export interface MainAccessResponse {
   $msgId$: number;

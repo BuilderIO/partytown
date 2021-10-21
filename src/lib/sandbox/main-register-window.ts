@@ -4,10 +4,8 @@ import {
   MainWindow,
   MainWindowContext,
   PartytownWebWorker,
-  PlatformInstanceId,
   WorkerMessageType,
 } from '../types';
-import { setInstanceId } from './main-instances';
 import { winCtxs, windowIds } from './main-constants';
 
 export const registerWindow = (
@@ -32,18 +30,14 @@ export const registerWindow = (
     const sendInitEnvData = () =>
       worker.postMessage([WorkerMessageType.InitializeEnvironment, envData]);
 
-    const winCtx = (winCtxs[$winId$] = {
+    winCtxs[$winId$] = {
       $winId$,
       $window$,
       $url$,
-      $instanceIds$: new WeakMap(),
-      $instances$: [],
-    });
+    };
     if (debug) {
       winCtxs[$winId$]!.$startTime$ = performance.now();
     }
-
-    setInstanceId(winCtx, $window$, PlatformInstanceId.window);
 
     if (debug) {
       const winType = envData.$isTop$ ? 'top' : 'iframe';

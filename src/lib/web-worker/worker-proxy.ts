@@ -93,7 +93,7 @@ export const setter = (instance: WorkerProxy, memberPath: string[], value: any) 
   if (immediateSetters) {
     // queue up setters to be applied immediately after the
     // node is added to the dom
-    immediateSetters.push([memberPath, serializedValue]);
+    immediateSetters.push([AccessType.Set, memberPath, serializedValue]);
   } else {
     syncMessage(instance, AccessType.Set, memberPath, serializedValue);
   }
@@ -104,21 +104,30 @@ export const callMethod = (
   memberPath: string[],
   args: any[],
   immediateSetters?: ImmediateSetter[],
-  assignInstanceId?: number
+  assignInstanceId?: number,
+  isImmediateSetterCall?: boolean
 ) => {
-  applyBeforeSyncSetters(instance);
-  args.map(applyBeforeSyncSetters);
+  if (isImmediateSetterCall && instance[ImmediateSettersKey]) {
+    instance[ImmediateSettersKey]!.push([
+      AccessType.CallMethod,
+      memberPath,
+      serializeInstanceForMain(instance, args),
+    ]);
+  } else {
+    applyBeforeSyncSetters(instance);
+    args.map(applyBeforeSyncSetters);
 
-  const rtnValue = syncMessage(
-    instance,
-    AccessType.CallMethod,
-    memberPath,
-    serializeInstanceForMain(instance, args),
-    immediateSetters,
-    assignInstanceId
-  );
-  logWorkerCall(instance, memberPath, args, rtnValue);
-  return rtnValue;
+    const rtnValue = syncMessage(
+      instance,
+      AccessType.CallMethod,
+      memberPath,
+      serializeInstanceForMain(instance, args),
+      immediateSetters,
+      assignInstanceId
+    );
+    logWorkerCall(instance, memberPath, args, rtnValue);
+    return rtnValue;
+  }
 };
 
 export const createGlobalConstructorProxy = (

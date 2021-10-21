@@ -1,3 +1,4 @@
+import { callMethod } from './worker-proxy';
 import { EventHandler, StateProp } from '../types';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { Node } from './worker-node';
@@ -7,6 +8,11 @@ export class HTMLElement extends Node {
   get localName() {
     return toLower(this.nodeName!);
   }
+
+  setAttribute(...args: any[]) {
+    callMethod(this, ['setAttribute'], args, undefined, undefined, true);
+  }
+
   get tagName() {
     return this.nodeName;
   }
