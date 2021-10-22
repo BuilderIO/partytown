@@ -230,9 +230,9 @@ const logValue = (applyPath: ApplyPath, v: any): string => {
         .join(', ')}]`;
     }
     if ('value' in v) {
-      return JSON.stringify(v.value);
+      return objToString(v.value);
     }
-    return JSON.stringify(v);
+    return objToString(v);
   }
   if (isPromise(v)) {
     return `Promise`;
@@ -242,6 +242,30 @@ const logValue = (applyPath: ApplyPath, v: any): string => {
   }
 
   return `¯\\_(ツ)_/¯ ${String(v)}`.trim();
+};
+
+const objToString = (obj: any) => {
+  const s: string[] = [];
+  for (let key in obj) {
+    const value = obj[key];
+    const type = typeof value;
+    if (type === 'string') {
+      s.push(`${key}: "${value}"`);
+    } else if (type === 'function') {
+      s.push(`${key}: ƒ`);
+    } else if (Array.isArray(type)) {
+      s.push(`${key}: [..]`);
+    } else if (type === 'object' && value) {
+      s.push(`${key}: {..}`);
+    } else {
+      s.push(`${key}: ${String(value)}`);
+    }
+  }
+  let str = s.join(', ');
+  if (str.length > 200) {
+    str = str.substr(0, 200) + '..';
+  }
+  return `{ ${str} }`;
 };
 
 export const len = (obj: { length: number }) => obj.length;
