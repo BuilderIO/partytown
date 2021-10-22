@@ -1,4 +1,4 @@
-import type { ImmediateSetter, InterfaceType } from '../types';
+import type { ApplyPath, InterfaceType } from '../types';
 import {
   ImmediateSettersKey,
   InstanceIdKey,
@@ -13,7 +13,7 @@ export class WorkerProxy {
   [InstanceIdKey]: number;
   [InterfaceTypeKey]: InterfaceType;
   [NodeNameKey]: string | undefined;
-  [ImmediateSettersKey]: ImmediateSetter[] | undefined;
+  [ImmediateSettersKey]: ApplyPath | undefined;
 
   constructor(interfaceType: InterfaceType, instanceId: number, winId?: number, nodeName?: string) {
     this[WinIdKey] = winId!;

@@ -1,6 +1,6 @@
 import { instanceIds, instances, winCtxs } from './main-constants';
-import { randomId } from '../utils';
 import { NodeName, PlatformInstanceId } from '../types';
+import { randomId } from '../utils';
 
 export const getAndSetInstanceId = (
   instance: InstanceType | null | undefined,
@@ -42,7 +42,7 @@ export const getInstance = <T = InstanceType | null>(
 ): T | undefined => {
   const winCtx = winCtxs[winId]!;
   const win = winCtx.$window$;
-  const doc: Document = win.document;
+  const doc = win.document;
   if (instanceId === PlatformInstanceId.window) {
     return win as any;
   }

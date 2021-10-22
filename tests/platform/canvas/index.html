@@ -65,6 +65,23 @@
         </script>
       </li>
 
+      <li>
+        <strong>ctx.measureText('text')</strong>
+        <code id="testMeasureText"></code>
+        <script type="text/partytown">
+          (function () {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            const metrics = ctx.measureText('SomeText');
+            if (typeof metrics.width === 'number') {
+              const elm = document.getElementById('testMeasureText');
+              elm.textContent = metrics.width;
+            }
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

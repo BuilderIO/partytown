@@ -1,4 +1,4 @@
-import { AccessType, StateProp } from '../types';
+import { ApplyPathType, StateProp } from '../types';
 import { environments, ImmediateSettersKey, InstanceIdKey } from './worker-constants';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
@@ -41,9 +41,9 @@ export class HTMLIFrameElement extends HTMLSrcElement {
       iframeContent = updateIframeContent(url, xhr.responseText);
       if (this[ImmediateSettersKey]) {
         this[ImmediateSettersKey]!.push([
-          AccessType.Set,
-          ['srcdoc'],
+          'srcdoc',
           serializeInstanceForMain(this, iframeContent),
+          ApplyPathType.SetValue,
         ]);
       } else {
         setter(this, ['srcdoc'], iframeContent);

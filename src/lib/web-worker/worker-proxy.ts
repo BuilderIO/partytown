@@ -1,14 +1,13 @@
 import {
-  AccessType,
-  ImmediateSetter,
+  ApplyPath,
+  ApplyPathType,
   InterfaceType,
   MainAccessRequest,
   MainAccessResponse,
-  SerializedTransfer,
 } from '../types';
 import {
   defineConstructorName,
-  len,
+  getLastMemberName,
   logWorkerCall,
   logWorkerGlobalConstructor,
   logWorkerGetter,
@@ -36,10 +35,8 @@ import { WorkerProxy } from './worker-proxy-constructor';
 
 const syncMessage = (
   instance: WorkerProxy,
-  $accessType$: AccessType,
-  $memberPath$: string[],
-  $data$?: SerializedTransfer | undefined,
-  $immediateSetters$?: ImmediateSetter[],
+  $applyPath$: ApplyPath,
+  $immediateSetters$?: ApplyPath[],
   $assignInstanceId$?: number
 ) => {
   const $winId$ = instance[WinIdKey];
@@ -51,9 +48,7 @@ const syncMessage = (
     $instanceId$: instance[InstanceIdKey],
     $interfaceType$: instance[InterfaceTypeKey],
     $nodeName$: instance[NodeNameKey],
-    $accessType$,
-    $memberPath$,
-    $data$,
+    $applyPath$,
     $immediateSetters$,
     $assignInstanceId$,
   };
@@ -61,7 +56,7 @@ const syncMessage = (
   const accessRsp: MainAccessResponse = syncSendMessage(webWorkerCtx, accessReq);
 
   const isPromise = accessRsp.$isPromise$;
-  const rtnValue = deserializeFromMain($winId$, $instanceId$, $memberPath$, accessRsp.$rtnValue$!);
+  const rtnValue = deserializeFromMain($winId$, $instanceId$, $applyPath$, accessRsp.$rtnValue$!);
 
   if (accessRsp.$error$) {
     if (isPromise) {
@@ -76,56 +71,52 @@ const syncMessage = (
   return rtnValue;
 };
 
-export const getter = (instance: WorkerProxy, memberPath: string[]) => {
+export const getter = (instance: WorkerProxy, applyPath: ApplyPath) => {
   applyBeforeSyncSetters(instance);
 
-  const rtnValue = syncMessage(instance, AccessType.Get, memberPath);
-  logWorkerGetter(instance, memberPath, rtnValue);
+  const rtnValue = syncMessage(instance, applyPath);
+  logWorkerGetter(instance, applyPath, rtnValue);
   return rtnValue;
 };
 
-export const setter = (instance: WorkerProxy, memberPath: string[], value: any) => {
+export const setter = (instance: WorkerProxy, applyPath: ApplyPath, value: any) => {
   const immediateSetters = instance[ImmediateSettersKey];
   const serializedValue = serializeInstanceForMain(instance, value);
 
-  logWorkerSetter(instance, memberPath, value);
+  logWorkerSetter(instance, applyPath, value);
+
+  applyPath = [...applyPath, serializedValue, ApplyPathType.SetValue];
 
   if (immediateSetters) {
     // queue up setters to be applied immediately after the
     // node is added to the dom
-    immediateSetters.push([AccessType.Set, memberPath, serializedValue]);
+    immediateSetters.push(applyPath);
   } else {
-    syncMessage(instance, AccessType.Set, memberPath, serializedValue);
+    syncMessage(instance, applyPath);
   }
 };
 
 export const callMethod = (
   instance: WorkerProxy,
-  memberPath: string[],
+  applyPath: ApplyPath,
   args: any[],
-  immediateSetters?: ImmediateSetter[],
+  immediateSetters?: ApplyPath[],
   assignInstanceId?: number,
   isImmediateSetterCall?: boolean
 ) => {
   if (isImmediateSetterCall && instance[ImmediateSettersKey]) {
-    instance[ImmediateSettersKey]!.push([
-      AccessType.CallMethod,
-      memberPath,
-      serializeInstanceForMain(instance, args),
-    ]);
+    instance[ImmediateSettersKey]!.push([...applyPath, serializeInstanceForMain(instance, args)]);
   } else {
     applyBeforeSyncSetters(instance);
     args.map(applyBeforeSyncSetters);
 
     const rtnValue = syncMessage(
       instance,
-      AccessType.CallMethod,
-      memberPath,
-      serializeInstanceForMain(instance, args),
+      [...applyPath, serializeInstanceForMain(instance, args)],
       immediateSetters,
       assignInstanceId
     );
-    logWorkerCall(instance, memberPath, args, rtnValue);
+    logWorkerCall(instance, applyPath, args, rtnValue);
     return rtnValue;
   }
 };
@@ -142,12 +133,11 @@ export const createGlobalConstructorProxy = (
 
       args.map(applyBeforeSyncSetters);
 
-      syncMessage(
-        workerProxy,
-        AccessType.GlobalConstructor,
-        [cstrName],
-        serializeForMain(winId, instanceId, args)
-      );
+      syncMessage(workerProxy, [
+        ApplyPathType.GlobalConstructor,
+        cstrName,
+        serializeForMain(winId, instanceId, args),
+      ]);
 
       logWorkerGlobalConstructor(winId, cstrName, args);
 
@@ -178,7 +168,7 @@ export const applyBeforeSyncSetters = (instance: WorkerProxy) => {
 export const proxy = <T = any>(
   interfaceType: InterfaceType,
   target: T,
-  initMemberPath: string[]
+  initApplyPath: ApplyPath
 ): T => {
   if (
     !target ||
@@ -217,28 +207,28 @@ export const proxy = <T = any>(
         interfaceType = InterfaceType.TextNode;
       }
 
-      const memberPath = [...initMemberPath, String(propKey)];
+      const applyPath: ApplyPath = [...initApplyPath, String(propKey)];
       const interfaceInfo = webWorkerCtx.$interfaces$.find((i) => i[0] === interfaceType);
       if (interfaceInfo) {
         const memberTypeInfo = interfaceInfo[2];
-        const memberInfo = memberTypeInfo[memberPath[len(memberPath) - 1]];
+        const memberInfo = memberTypeInfo[getLastMemberName(applyPath)];
         if (memberInfo === InterfaceType.Function) {
-          return (...args: any[]) => callMethod(target, memberPath, args);
+          return (...args: any[]) => callMethod(target, applyPath, args);
         } else if (memberInfo > InterfaceType.Window) {
-          return proxy(memberInfo, target, [...memberPath]);
+          return proxy(memberInfo, target, [...applyPath]);
         }
       }
 
-      const stateValue = getInstanceStateValue<Function>(target, memberPath[0]);
+      const stateValue = getInstanceStateValue<Function>(target, applyPath[0]);
       if (typeof stateValue === 'function') {
         return (...args: any[]) => {
           const rtnValue = stateValue.apply(target, args);
-          logWorkerCall(target, memberPath, args, rtnValue);
+          logWorkerCall(target, applyPath, args, rtnValue);
           return rtnValue;
         };
       }
 
-      return getter(target, memberPath);
+      return getter(target, applyPath);
     },
 
     set(target, propKey, value, receiver) {
@@ -251,7 +241,7 @@ export const proxy = <T = any>(
         target[propKey] = value;
         logWorkerSetter(target, [propKey], value, true);
       } else {
-        setter(target, [...initMemberPath, propKey], value);
+        setter(target, [...initApplyPath, propKey], value);
       }
       return true;
     },

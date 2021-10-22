@@ -3,7 +3,7 @@ import type { MainAccessRequest, MainAccessResponse } from '../types';
 import Sandbox from '@sandbox';
 import SandboxDebug from '@sandbox-debug';
 
-export const onFetchServiceWorkerRequest = (self: ServiceWorkerGlobalScope, ev: FetchEvent) => {
+export const onFetchServiceWorkerRequest = (ev: FetchEvent) => {
   const req = ev.request;
   const pathname = new URL(req.url).pathname;
 
@@ -15,7 +15,7 @@ export const onFetchServiceWorkerRequest = (self: ServiceWorkerGlobalScope, ev: 
     ev.respondWith(response(Sandbox));
   } else if (pathname.endsWith('proxytown')) {
     // proxy request
-    ev.respondWith(httpRequestFromWebWorker(self, req));
+    ev.respondWith(httpRequestFromWebWorker(req));
   }
 };
 
@@ -32,12 +32,9 @@ export const receiveMessageFromSandboxToServiceWorker = (ev: ExtendableMessageEv
   }
 };
 
-const sendMessageToSandboxFromServiceWorker = (
-  self: ServiceWorkerGlobalScope,
-  accessReq: MainAccessRequest
-) =>
+const sendMessageToSandboxFromServiceWorker = (accessReq: MainAccessRequest) =>
   new Promise<MainAccessResponse>(async (resolve) => {
-    const clients = await self.clients.matchAll();
+    const clients = await (self as any as ServiceWorkerGlobalScope).clients.matchAll();
     const client = [...clients].sort((a, b) => {
       if (a.url > b.url) return -1;
       if (a.url < b.url) return 1;
@@ -69,10 +66,10 @@ const swMessageError = (accessReq: MainAccessRequest, $error$: string): MainAcce
 
 type MessageResolve = [(data?: any) => void, any];
 
-const httpRequestFromWebWorker = (self: ServiceWorkerGlobalScope, req: Request) =>
+const httpRequestFromWebWorker = (req: Request) =>
   new Promise<Response>(async (resolve) => {
     const accessReq: MainAccessRequest = await req.clone().json();
-    const responseData = await sendMessageToSandboxFromServiceWorker(self, accessReq);
+    const responseData = await sendMessageToSandboxFromServiceWorker(accessReq);
     resolve(response(JSON.stringify(responseData), 'application/json'));
   });
 

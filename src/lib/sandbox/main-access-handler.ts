@@ -1,8 +1,14 @@
-import { AccessType, MainAccessRequest, MainAccessResponse, PartytownWebWorker } from '../types';
+import {
+  ApplyPath,
+  ApplyPathType,
+  MainAccessRequest,
+  MainAccessResponse,
+  PartytownWebWorker,
+} from '../types';
 import { deserializeFromWorker, serializeForWorker } from './main-serialization';
-import { EMPTY_ARRAY, isPromise, len } from '../utils';
 import { getInstance, setInstanceId } from './main-instances';
 import { getWinCtx } from './main-register-window';
+import { isPromise, len } from '../utils';
 
 export const mainAccessHandler = async (
   worker: PartytownWebWorker,
@@ -14,64 +20,34 @@ export const mainAccessHandler = async (
     $winId$,
   };
   let instanceId = accessReq.$instanceId$;
-  let accessType = accessReq.$accessType$;
-  let memberPath = accessReq.$memberPath$;
-  let memberPathLength = len(memberPath);
-  let lastMemberName = memberPath[memberPathLength - 1];
-  let immediateSetters = accessReq.$immediateSetters$ || EMPTY_ARRAY;
+  let applyPath = accessReq.$applyPath$;
+  let immediateSetters = accessReq.$immediateSetters$;
   let winCtx = await getWinCtx($winId$);
   let instance: any;
   let rtnValue: any;
-  let data: any;
-  let i: number;
-  let immediateSetterTarget: any;
-  let immediateSetterAccessType: AccessType;
-  let immediateSetterMemberPath: string[];
 
   try {
-    // deserialize the data, such as a getter value or function arguments
-    data = deserializeFromWorker(worker, accessReq.$data$);
-
-    if (accessType === AccessType.GlobalConstructor) {
+    if (applyPath[0] === ApplyPathType.GlobalConstructor) {
       // create a new instance of a global constructor
-      setInstanceId(new (winCtx!.$window$ as any)[lastMemberName](...data), instanceId);
+      const constructedInstance = new (winCtx.$window$ as any)[applyPath[1]](
+        ...deserializeFromWorker(worker, applyPath[2])
+      );
+
+      setInstanceId(constructedInstance, instanceId);
     } else {
       // get the existing instance
       instance = getInstance($winId$, instanceId);
       if (instance) {
-        for (i = 0; i < memberPathLength - 1; i++) {
-          instance = instance[memberPath[i]];
+        rtnValue = applyToInstance(worker, instance, applyPath);
+
+        if (immediateSetters) {
+          immediateSetters.map((immediateSetter) =>
+            applyToInstance(worker, rtnValue, immediateSetter)
+          );
         }
 
-        if (accessType === AccessType.Get) {
-          rtnValue = instance[lastMemberName];
-        } else if (accessType === AccessType.Set) {
-          instance[lastMemberName] = data;
-        } else if (accessType === AccessType.CallMethod) {
-          rtnValue = instance[lastMemberName].apply(instance, data);
-
-          immediateSetters.map((immediateSetter) => {
-            immediateSetterTarget = rtnValue;
-            immediateSetterAccessType = immediateSetter[0];
-            immediateSetterMemberPath = immediateSetter[1];
-
-            for (i = 0; i < len(immediateSetterMemberPath) - 1; i++) {
-              immediateSetterTarget = immediateSetterTarget[immediateSetterMemberPath[i]];
-            }
-
-            if (immediateSetterAccessType === AccessType.Set) {
-              immediateSetterTarget[immediateSetterMemberPath[len(immediateSetterMemberPath) - 1]] =
-                deserializeFromWorker(worker, immediateSetter[2]);
-            } else {
-              immediateSetterTarget[
-                immediateSetterMemberPath[len(immediateSetterMemberPath) - 1]
-              ].apply(immediateSetterTarget, deserializeFromWorker(worker, immediateSetter[2]));
-            }
-          });
-
-          if (accessReq.$assignInstanceId$) {
-            setInstanceId(rtnValue, accessReq.$assignInstanceId$);
-          }
+        if (accessReq.$assignInstanceId$) {
+          setInstanceId(rtnValue, accessReq.$assignInstanceId$);
         }
 
         if (isPromise(rtnValue)) {
@@ -88,4 +64,34 @@ export const mainAccessHandler = async (
   }
 
   return accessRsp;
+};
+
+const applyToInstance = (worker: PartytownWebWorker, instance: any, applyPath: ApplyPath) => {
+  let i = 0;
+  let l = len(applyPath);
+  let next: any;
+  let current: any;
+  let previous: any;
+
+  for (; i < l; i++) {
+    current = applyPath[i];
+    next = applyPath[i + 1];
+    previous = applyPath[i - 1];
+
+    if (!Array.isArray(next)) {
+      if (typeof current === 'string') {
+        // current is the member name, but not a method
+        instance = instance[current];
+      } else if (next === ApplyPathType.SetValue) {
+        // current is the setter value
+        instance[previous] = deserializeFromWorker(worker, current);
+      } else if (typeof instance[previous] === 'function') {
+        // current is the method args
+        // previous is the method name
+        instance = instance[previous].apply(instance, deserializeFromWorker(worker, current));
+      }
+    }
+  }
+
+  return instance;
 };

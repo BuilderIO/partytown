@@ -61,7 +61,7 @@ function keepConstructorNames() {
 function managlePropsPlugin(): Plugin {
   const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$'.split('');
   const mangleProps: { [key: string]: string } = {
-    $accessType$: '',
+    $applyPath$: '',
     $args$: '',
     $assignInstanceId$: '',
     $body$: '',
@@ -89,7 +89,6 @@ function managlePropsPlugin(): Plugin {
     $libPath$: '',
     $location$: '',
     $memberName$: '',
-    $memberPath$: '',
     $msgId$: '',
     $nodeName$: '',
     $parentWinId$: '',

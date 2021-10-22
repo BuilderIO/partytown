@@ -1,4 +1,4 @@
-import { AccessType, StateProp } from '../types';
+import { ApplyPathType, StateProp } from '../types';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getter, setter } from './worker-proxy';
@@ -31,9 +31,9 @@ export class HTMLScriptElement extends HTMLSrcElement {
 
     if (this[ImmediateSettersKey]) {
       this[ImmediateSettersKey]!.push([
-        AccessType.Set,
-        ['src'],
+        'src',
         serializeInstanceForMain(this, url),
+        ApplyPathType.SetValue,
       ]);
     }
   }

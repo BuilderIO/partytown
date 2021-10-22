@@ -1,4 +1,4 @@
-import { AccessType, InterfaceType, NodeName, PlatformInstanceId } from './types';
+import { ApplyPath, InterfaceType, NodeName, PlatformInstanceId } from './types';
 import {
   InstanceIdKey,
   InterfaceTypeKey,
@@ -74,14 +74,14 @@ const winColor = (winId: number) => {
 
 export const logWorkerGetter = (
   target: any,
-  memberPath: string[],
+  applyPath: ApplyPath,
   rtnValue: any,
   restrictedToWorker = false
 ) => {
   if (debug && webWorkerCtx.$config$.logGetters) {
     try {
-      const msg = `Get ${logTargetProp(target, AccessType.Get, memberPath)}, returned: ${logValue(
-        memberPath,
+      const msg = `Get ${logTargetProp(target, 'Get', applyPath)}, returned: ${logValue(
+        applyPath,
         rtnValue
       )}${restrictedToWorker ? ' (restricted to worker)' : ''}`;
       if (!msg.includes('Symbol(')) {
@@ -93,30 +93,29 @@ export const logWorkerGetter = (
 
 export const logWorkerSetter = (
   target: any,
-  memberPath: string[],
+  applyPath: ApplyPath,
   value: any,
   restrictedToWorker = false
 ) => {
   if (debug && webWorkerCtx.$config$.logSetters) {
     try {
       logWorker(
-        `Set ${logTargetProp(target, AccessType.Set, memberPath)}, value: ${logValue(
-          memberPath,
-          value
-        )}${restrictedToWorker ? ' (restricted to worker)' : ''}`,
+        `Set ${logTargetProp(target, 'Set', applyPath)}, value: ${logValue(applyPath, value)}${
+          restrictedToWorker ? ' (restricted to worker)' : ''
+        }`,
         target[WinIdKey]
       );
     } catch (e) {}
   }
 };
 
-export const logWorkerCall = (target: any, memberPath: string[], args: any[], rtnValue: any) => {
+export const logWorkerCall = (target: any, applyPath: ApplyPath, args: any[], rtnValue: any) => {
   if (debug && webWorkerCtx.$config$.logCalls) {
     try {
       logWorker(
-        `Call ${logTargetProp(target, AccessType.CallMethod, memberPath)}(${args
-          .map((v) => logValue(memberPath, v))
-          .join(', ')}), returned: ${logValue(memberPath, rtnValue)}`,
+        `Call ${logTargetProp(target, 'Call', applyPath)}(${args
+          .map((v) => logValue(applyPath, v))
+          .join(', ')}), returned: ${logValue(applyPath, rtnValue)}`,
         target[WinIdKey]
       );
     } catch (e) {}
@@ -131,7 +130,7 @@ export const logWorkerGlobalConstructor = (winId: number, cstrName: string, args
   }
 };
 
-const logTargetProp = (target: any, accessType: AccessType, memberPath: string[]) => {
+const logTargetProp = (target: any, accessType: 'Get' | 'Set' | 'Call', applyPath: string[]) => {
   let n = '';
   if (target) {
     const instanceId = target[InstanceIdKey];
@@ -166,20 +165,20 @@ const logTargetProp = (target: any, accessType: AccessType, memberPath: string[]
       console.warn('¯\\_(ツ)_/¯ TARGET', target);
     }
   }
-  if (AccessType.Get === accessType && memberPath.length > 1) {
-    const first = memberPath.slice(0, memberPath.length - 1);
-    const last = memberPath[memberPath.length - 1];
+  if ('Get' === accessType && applyPath.length > 1) {
+    const first = applyPath.slice(0, applyPath.length - 1);
+    const last = applyPath[applyPath.length - 1];
     if (!isNaN(last as any)) {
       return (n += `${first.join('.')}[${last}]`);
     }
   }
-  return (n += memberPath.join('.'));
+  return (n += applyPath.join('.'));
 };
 
 /**
  * Helper just to have pretty console logs while debugging
  */
-const logValue = (memberPath: string[], v: any): string => {
+const logValue = (applyPath: ApplyPath, v: any): string => {
   const type = typeof v;
   if (v === undefined) {
     return 'undefined';
@@ -188,7 +187,7 @@ const logValue = (memberPath: string[], v: any): string => {
     return JSON.stringify(v);
   }
   if (type === 'string') {
-    if (memberPath.includes('cookie')) {
+    if (applyPath.includes('cookie')) {
       return JSON.stringify(v.substr(0, 10) + '...');
     }
     return JSON.stringify(v);
@@ -227,7 +226,7 @@ const logValue = (memberPath: string[], v: any): string => {
     }
     if (v[Symbol.iterator]) {
       return `[${Array.from(v)
-        .map((i) => logValue(memberPath, i))
+        .map((i) => logValue(applyPath, i))
         .join(', ')}]`;
     }
     if ('value' in v) {
@@ -250,8 +249,6 @@ export const len = (obj: { length: number }) => obj.length;
 export const getConstructorName = (obj: { constructor?: { name?: string } } | undefined | null) =>
   (obj && obj.constructor && obj.constructor.name) || '';
 
-export const noop = () => {};
-
 const startsWith = (str: string, val: string) => str.startsWith(val);
 
 export const isValidMemberName = (memberName: string) => {
@@ -262,6 +259,15 @@ export const isValidMemberName = (memberName: string) => {
   } else {
     return true;
   }
+};
+
+export const getLastMemberName = (applyPath: ApplyPath, i?: number) => {
+  for (i = len(applyPath) - 1; i >= 0; i--) {
+    if (typeof applyPath[i] === 'string') {
+      return applyPath[i] as string;
+    }
+  }
+  return applyPath[0] as string;
 };
 
 export const defineConstructorName = (Cstr: any, value: string) =>

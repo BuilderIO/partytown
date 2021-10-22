@@ -1,5 +1,5 @@
 import {
-  AccessType,
+  ApplyPathType,
   EventHandler,
   InitializeScriptData,
   WebWorkerEnvironment,
@@ -169,16 +169,17 @@ export const insertScriptContent = (script: Node) => {
     if (immediateSetters) {
       immediateSetters.push(
         [
-          AccessType.Set,
-          ['type'],
+          'type',
           serializeForMain(winId, instanceId, SCRIPT_TYPE + SCRIPT_TYPE_EXEC),
+          ApplyPathType.SetValue,
         ],
         [
-          AccessType.Set,
-          ['dataset', datasetType],
+          'dataset',
+          datasetType,
           serializeForMain(winId, instanceId, datasetValue),
+          ApplyPathType.SetValue,
         ],
-        [AccessType.Set, ['innerHTML'], serializeForMain(winId, instanceId, scriptContent)]
+        ['innerHTML', serializeForMain(winId, instanceId, scriptContent), ApplyPathType.SetValue]
       );
     }
   }

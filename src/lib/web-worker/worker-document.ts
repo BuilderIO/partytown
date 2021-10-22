@@ -1,4 +1,4 @@
-import { AccessType, ImmediateSetter, InterfaceType, NodeName } from '../types';
+import { ApplyPath, ApplyPathType, InterfaceType, NodeName } from '../types';
 import { callMethod } from './worker-proxy';
 import { constructInstance, getElementConstructor } from './worker-constructors';
 import { createEnvironment, getEnv, getEnvWindow } from './worker-environment';
@@ -20,7 +20,7 @@ export class HTMLDocument extends HTMLElement {
     const instanceId = randomId();
     const ElementCstr = getElementConstructor(tagName);
     const elm = new ElementCstr(InterfaceType.Element, instanceId, winId, tagName);
-    const immediateSetter: ImmediateSetter[] = (elm[ImmediateSettersKey] = []);
+    const immediateSetter: ApplyPath = (elm[ImmediateSettersKey] = []);
 
     if (tagName === NodeName.IFrame) {
       // an iframe element's instanceId is the same as its contentWindow's winId
@@ -28,15 +28,15 @@ export class HTMLDocument extends HTMLElement {
       createEnvironment({ $winId$: instanceId, $parentWinId$: winId, $url$: 'about:blank' });
 
       immediateSetter.push([
-        AccessType.Set,
-        ['srcdoc'],
+        'srcdoc',
         serializeForMain(winId, instanceId, getPartytownScript()),
+        ApplyPathType.SetValue,
       ]);
     } else if (tagName === NodeName.Script) {
       immediateSetter.push([
-        AccessType.Set,
-        ['type'],
+        'type',
         serializeForMain(winId, instanceId, SCRIPT_TYPE),
+        ApplyPathType.SetValue,
       ]);
     }
 

@@ -142,16 +142,17 @@ export const enum InterfaceType {
   // Global Constructors and window function implementations
   Property = 12,
   Function = 13,
-  CSSStyleDeclaration = 14,
-  DOMStringMap = 15,
-  DOMTokenList = 16,
-  History = 17,
-  Location = 18,
-  MutationObserver = 19,
-  NodeList = 20,
-  NamedNodeMap = 21,
-  Screen = 22,
-  Storage = 23,
+  CanvasRenderingContext2D = 14,
+  CSSStyleDeclaration = 15,
+  DOMStringMap = 16,
+  DOMTokenList = 17,
+  History = 18,
+  Location = 19,
+  MutationObserver = 20,
+  NodeList = 21,
+  NamedNodeMap = 22,
+  Screen = 23,
+  Storage = 24,
 }
 
 export const enum PlatformInstanceId {
@@ -169,13 +170,6 @@ export interface InitializeScriptData {
   $url$?: string;
 }
 
-export const enum AccessType {
-  Get,
-  Set,
-  CallMethod,
-  GlobalConstructor,
-}
-
 export interface MainAccessRequest {
   $msgId$: number;
   $winId$: number;
@@ -183,14 +177,17 @@ export interface MainAccessRequest {
   $instanceId$: number;
   $interfaceType$: InterfaceType;
   $nodeName$?: string;
-  $accessType$: AccessType;
-  $memberPath$: string[];
-  $data$?: SerializedTransfer;
-  $immediateSetters$?: ImmediateSetter[];
+  $applyPath$: ApplyPath;
+  $immediateSetters$?: ApplyPath[];
   $assignInstanceId$?: number;
 }
 
-export type ImmediateSetter = [AccessType, string[], SerializedTransfer | undefined];
+export const enum ApplyPathType {
+  SetValue = 0,
+  GlobalConstructor = 1,
+}
+
+export type ApplyPath = any[];
 
 export interface MainAccessResponse {
   $msgId$: number;

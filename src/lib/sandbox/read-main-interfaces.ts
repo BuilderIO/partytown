@@ -1,5 +1,5 @@
-import { debug, getConstructorName, isValidMemberName, logMain, noop } from '../utils';
-import { InitWebWorkerData, InterfaceType, MainWindow } from '../types';
+import { debug, getConstructorName, isValidMemberName, logMain } from '../utils';
+import { InitWebWorkerData, InterfaceInfo, InterfaceType, MainWindow } from '../types';
 
 export const readMainInterfaces = (win: MainWindow) => {
   // web worker has requested data from the main thread
@@ -10,6 +10,8 @@ export const readMainInterfaces = (win: MainWindow) => {
 
   const docImpl = doc.implementation.createHTMLDocument();
   const inputElm = docImpl.createElement('input');
+  const canvas = docImpl.createElement('canvas');
+  const canvasRenderingContext2D = canvas.getContext('2d');
 
   const implementations: MainImplementation[] = [
     [InterfaceType.Window, win],
@@ -19,10 +21,10 @@ export const readMainInterfaces = (win: MainWindow) => {
     [InterfaceType.DOMStringMap, inputElm.dataset],
     [InterfaceType.DOMTokenList, inputElm.classList],
     [InterfaceType.Element, inputElm],
-    [InterfaceType.Element, docImpl.createElement('canvas')],
+    [InterfaceType.CanvasRenderingContext2D, canvasRenderingContext2D],
     [InterfaceType.History, win.history],
     [InterfaceType.Location, win.location],
-    [InterfaceType.MutationObserver, new MutationObserver(noop)],
+    [InterfaceType.MutationObserver, new MutationObserver(() => {})],
     [InterfaceType.NamedNodeMap, inputElm.attributes],
     [InterfaceType.NodeList, inputElm.childNodes],
     [InterfaceType.Screen, win.screen],
@@ -32,40 +34,36 @@ export const readMainInterfaces = (win: MainWindow) => {
 
   const initWebWorkerData: InitWebWorkerData = {
     $config$,
-    $htmlConstructors$: Object.getOwnPropertyNames(win).filter((c) => /^HT.*t$/i.test(c)),
-    $interfaces$: [],
     $libPath$: new URL($libPath$, $url$) + '',
-  };
+    $htmlConstructors$: Object.getOwnPropertyNames(win).filter((c) => /^H.*t$/i.test(c)),
+    $interfaces$: implementations.map(([interfaceType, impl, cstrName]) => {
+      let memberName: string;
+      let value: any;
+      let type: string;
+      let objCstrName: string;
+      let objImpl: MainImplementation | undefined;
+      let interfaceInfo: InterfaceInfo = [interfaceType, cstrName, {}];
 
-  implementations.map(([interfaceType, impl, cstrName]) => {
-    let memberName: string;
-    let value: any;
-    let type: string;
-    let objCstrName: string;
-    let objImpl: MainImplementation | undefined;
-    let interfaceInfo = initWebWorkerData.$interfaces$.find((i) => i[0] === interfaceType);
-
-    if (!interfaceInfo) {
-      initWebWorkerData.$interfaces$.push((interfaceInfo = [interfaceType, cstrName, {}]));
-    }
-
-    for (memberName in impl) {
-      if (isValidMemberName(memberName)) {
-        value = impl[memberName];
-        type = typeof value;
-        if (type === 'function') {
-          interfaceInfo[2][memberName] = InterfaceType.Function;
-        } else if (type === 'object') {
-          objCstrName = getConstructorName(value);
-          objImpl = implementations.find((i) => i[2] === objCstrName);
-          if (objImpl) {
-            // this object's constructor is one of the interfaces we care about
-            interfaceInfo[2][memberName] = objImpl[0];
+      for (memberName in impl) {
+        if (isValidMemberName(memberName)) {
+          value = impl[memberName];
+          type = typeof value;
+          if (type === 'function') {
+            interfaceInfo[2][memberName] = InterfaceType.Function;
+          } else if (type === 'object') {
+            objCstrName = getConstructorName(value);
+            objImpl = implementations.find((i) => i[2] === objCstrName);
+            if (objImpl) {
+              // this object's constructor is one of the interfaces we care about
+              interfaceInfo[2][memberName] = objImpl[0];
+            }
           }
         }
       }
-    }
-  });
+
+      return interfaceInfo;
+    }),
+  };
 
   if (debug) {
     logMain(
