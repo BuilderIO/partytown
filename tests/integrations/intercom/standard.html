@@ -55,6 +55,7 @@
     <script>
       //Set your APP_ID
       var APP_ID = 'fyq3wodw';
+      var HACK_URL = 'shim.latest.js';
 
       window.intercomSettings = {
         app_id: APP_ID,
@@ -80,6 +81,7 @@
             s.type = 'text/javascript';
             s.async = true;
             s.src = 'https://widget.intercom.io/widget/' + APP_ID;
+            //s.src = HACK_URL;
             var x = d.getElementsByTagName('script')[0];
             x.parentNode.insertBefore(s, x);
           };

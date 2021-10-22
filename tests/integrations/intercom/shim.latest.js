@@ -49,7 +49,7 @@
     (n.o = function (e, t) {
       return Object.prototype.hasOwnProperty.call(e, t);
     }),
-    (n.p = 'https://js.intercomcdn.com/'),
+    (n.p = './'),
     n((n.s = 927));
 })({
   13: function (e, t, n) {
@@ -248,7 +248,7 @@
       },
     };
   },
-  189: function (e, t, n) {
+  190: function (e, t, n) {
     'use strict';
     n.d(t, 'a', function () {
       return a;
@@ -300,7 +300,7 @@
         e
       );
     }
-    var a = n(198),
+    var a = n(199),
       u = Object.assign;
     function s() {
       var e;
@@ -329,11 +329,11 @@
       return !1;
     }
   },
-  198: function (e, t) {
+  199: function (e, t) {
     e.exports = {
       source_map: 'hidden-source-map',
       api_base: 'https://api-iam.intercom.io',
-      public_path: 'https://js.intercomcdn.com/',
+      public_path: './',
       sheets_proxy_path: 'https://intercom-sheets.com/sheets_proxy',
       sentry_proxy_path: 'https://www.intercom-reporting.com/sentry/index.html',
       install_mode_base: 'https://app.intercom.com',
@@ -374,6 +374,7 @@
       return o;
     });
     var o = function () {
+      console.warn('INTERCOM_PRIVILEGE_SEPARATION', 2);
       return window.INTERCOM_PRIVILEGE_SEPARATION;
     };
   },
@@ -398,7 +399,7 @@
         var t = e.document.createElement('iframe');
         return t.setAttribute('style', o), t;
       },
-      i = n(198),
+      i = n(199),
       c = [],
       a = 0,
       u = function (e) {
@@ -656,7 +657,7 @@
           e
         );
       })(),
-      E = n(189),
+      E = n(190),
       k = [
         /^https:\/\/www\.intercom\.com\/legal\/terms-and-policies/,
         /demo.dev.dynatracelabs.com\/#monitors/,
@@ -828,7 +829,7 @@
               })(r, i.payload, i.callbackId);
           }
       },
-      T = n(198),
+      T = n(199),
       C = function (e) {
         e.addEventListener('message', M);
       },
@@ -857,11 +858,11 @@
       H = ['turbo:before-cache', 'turbolinks:before-cache'],
       N = ['turbo:load', 'turbolinks:load', 'page:change'];
     var V = n(260),
-      F = n(198).public_path;
-    var W = F + 'frame.f40b61a2.js',
-      z = F + 'vendor.4f82cdd3.js',
-      B = F + 'frame-modern.54c869a5.js',
-      G = F + 'vendor-modern.50181e45.js',
+      F = n(199).public_path;
+    var W = F + 'frame.f68a64ff.js',
+      z = F + 'vendor.83a55d10.js',
+      B = F + 'frame-modern.5069da72.js',
+      G = F + 'vendor-modern.d054d6ff.js',
       X = /bot|googlebot|crawler|spider|robot|crawling|facebookexternalhit/i,
       J = function () {
         return window.Intercom && window.Intercom.booted;
