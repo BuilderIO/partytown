@@ -15,6 +15,8 @@ export const toLower = (str: string) => str.toLowerCase();
 
 export const toUpper = (str: string) => str.toUpperCase();
 
+export const noop = () => {};
+
 export const logMain = (msg: string) => {
   if (debug) {
     console.debug.apply(console, [
@@ -158,6 +160,8 @@ const logTargetProp = (target: any, accessType: 'Get' | 'Set' | 'Call', applyPat
       n = 'documentTypeNode.';
     } else if (target[InterfaceTypeKey] === InterfaceType.MutationObserver) {
       n = 'mutationObserver.';
+    } else if (target[InterfaceTypeKey] === InterfaceType.ResizeObserver) {
+      n = 'resizeObserver.';
     } else if (target[InterfaceTypeKey] <= InterfaceType.DocumentFragmentNode) {
       n = 'node.';
     } else {

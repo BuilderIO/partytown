@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test('window', async ({ page }) => {
+test('mutation-observer', async ({ page }) => {
   await page.goto('/platform/mutation-observer/');
 
   const buttonObserve = page.locator('#buttonObserve');

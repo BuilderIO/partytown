@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Partytown Test Page" />
-    <title>MutationObserver</title>
+    <title>ResizeObserver</title>
 
     <script>
       partytown = {
@@ -67,69 +67,72 @@
     </style>
   </head>
   <body>
-    <h1>MutationObserver</h1>
+    <h1>ResizeObserver</h1>
+
     <ul>
       <li>
         <button id="buttonObserve">observe</button>
-        <button id="buttonAttr">set attribute</button>
-        <button id="buttonChildList">add child</button>
-
-        <code id="testMutationObserver"></code>
-        <code id="target"></code>
+        <button id="buttonIncrease">+</button>
+        <button id="buttonDecrease">-</button>
 
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('testMutationObserver');
+            let step = 0;
+            function nextStep() {
+              step++;
+              const elm = document.getElementById('testResizeObserver');
+              elm.classList.add('step' + step);
+              const testStep = document.getElementById('testStep');
+              testStep.textContent = 'step' + step;
+            }
+
             const targetNode = document.getElementById('target');
 
-            const config = { attributes: true, childList: true };
-
-            const callback = function (mutationList, observer) {
-              mutationList.forEach((mutation) => {
-                elm.textContent = mutation.type;
-              });
-            };
-
-            const observer = new MutationObserver(callback);
+            const resizeObserver = new ResizeObserver((entries) => {
+              for (let entry of entries) {
+                entry.target.textContent = 'Height: ' + entry.contentRect.height + 'px';
+              }
+            });
 
             const buttonObserve = document.getElementById('buttonObserve');
             buttonObserve.addEventListener('click', () => {
+              const elm = document.getElementById('testResizeObserver');
               if (buttonObserve.textContent === 'observe') {
-                elm.textContent = '';
-                targetNode.textContent = '';
-                observer.observe(targetNode, config);
+                resizeObserver.observe(elm);
                 buttonObserve.textContent = 'disconnect';
               } else {
-                observer.disconnect();
+                resizeObserver.disconnect();
                 buttonObserve.textContent = 'observe';
-                elm.textContent = '';
-                targetNode.textContent = '';
               }
-            });
-          })();
-        </script>
-        <script>
-          (function () {
-            const targetNode = document.getElementById('target');
-            const buttonAttr = document.getElementById('buttonAttr');
-
-            buttonAttr.addEventListener('click', () => {
-              targetNode.setAttribute('mutate', rand());
+              nextStep();
             });
 
-            const buttonChildList = document.getElementById('buttonChildList');
-            buttonChildList.addEventListener('click', () => {
-              targetNode.textContent = '';
-              targetNode.appendChild(document.createTextNode(rand()));
+            const buttonIncrease = document.getElementById('buttonIncrease');
+            buttonIncrease.addEventListener('click', () => {
+              const elm = document.getElementById('testResizeObserver');
+              elm.style.height = parseInt(elm.style.height.replace('px', ''), 10) + 10 + 'px';
+              nextStep();
             });
 
-            function rand() {
-              return Math.round(Math.random() * 899 + 100);
-            }
+            const buttonDecrease = document.getElementById('buttonDecrease');
+            buttonDecrease.addEventListener('click', () => {
+              const elm = document.getElementById('testResizeObserver');
+              elm.style.height = parseInt(elm.style.height.replace('px', ''), 10) - 10 + 'px';
+              nextStep();
+            });
+
+            document.body.className = 'completed'
           })();
         </script>
       </li>
     </ul>
+
+    <div
+      id="testResizeObserver"
+      style="height: 40px; text-align: center; border: 1px solid blue; background-color: #eee"
+    ></div>
+
+    <div id="testStep"></div>
 
     <p><a href="/">All Tests</a></p>
   </body>

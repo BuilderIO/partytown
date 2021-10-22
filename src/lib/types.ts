@@ -151,8 +151,9 @@ export const enum InterfaceType {
   MutationObserver = 20,
   NodeList = 21,
   NamedNodeMap = 22,
-  Screen = 23,
-  Storage = 24,
+  ResizeObserver = 23,
+  Screen = 24,
+  Storage = 25,
 }
 
 export const enum PlatformInstanceId {

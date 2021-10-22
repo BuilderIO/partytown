@@ -1,4 +1,4 @@
-import { debug, getConstructorName, isValidMemberName, logMain } from '../utils';
+import { debug, getConstructorName, isValidMemberName, logMain, noop } from '../utils';
 import { InitWebWorkerData, InterfaceInfo, InterfaceType, MainWindow } from '../types';
 
 export const readMainInterfaces = (win: MainWindow) => {
@@ -24,9 +24,10 @@ export const readMainInterfaces = (win: MainWindow) => {
     [InterfaceType.CanvasRenderingContext2D, canvasRenderingContext2D],
     [InterfaceType.History, win.history],
     [InterfaceType.Location, win.location],
-    [InterfaceType.MutationObserver, new MutationObserver(() => {})],
+    [InterfaceType.MutationObserver, new MutationObserver(noop)],
     [InterfaceType.NamedNodeMap, inputElm.attributes],
     [InterfaceType.NodeList, inputElm.childNodes],
+    [InterfaceType.ResizeObserver, new ResizeObserver(noop)],
     [InterfaceType.Screen, win.screen],
     [InterfaceType.Storage, win.localStorage],
     [InterfaceType.TextNode, docImpl.createTextNode('')],
