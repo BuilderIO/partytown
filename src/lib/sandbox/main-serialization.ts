@@ -78,10 +78,14 @@ export const serializeForWorker = (
       }
 
       if (cstrName === 'Event') {
-        return [SerializedType.Event, serializeObjectForWorker($winId$, value, false, added)];
+        return [SerializedType.Event, serializeObjectForWorker($winId$, value, added)];
       }
 
-      return [SerializedType.Object, serializeObjectForWorker($winId$, value, true, added)];
+      if (cstrName === 'CSSStyleDeclaration') {
+        return [SerializedType.Object, serializeObjectForWorker($winId$, value, added)];
+      }
+
+      return [SerializedType.Object, serializeObjectForWorker($winId$, value, added, true, true)];
     }
   }
 };
@@ -89,17 +93,23 @@ export const serializeForWorker = (
 const serializeObjectForWorker = (
   winId: number,
   obj: any,
-  includeFunctions: boolean,
   added: Set<any>,
+  includeFunctions?: boolean,
+  includeEmptyStrings?: boolean,
   serializedObj?: SerializedObject,
   propName?: string,
   propValue?: any
 ) => {
   serializedObj = {};
-  for (propName in obj) {
-    propValue = obj[propName];
-    if (isValidMemberName(propName) && (includeFunctions || typeof propValue !== 'function')) {
-      serializedObj[propName] = serializeForWorker(winId, propValue, added);
+  if (!added.has(obj)) {
+    added.add(obj);
+    for (propName in obj) {
+      propValue = obj[propName];
+      if (isValidMemberName(propName) && (includeFunctions || typeof propValue !== 'function')) {
+        if (includeEmptyStrings || propValue !== '') {
+          serializedObj[propName] = serializeForWorker(winId, propValue, added);
+        }
+      }
     }
   }
   return serializedObj;

@@ -5,6 +5,7 @@ import { HTMLCanvasElement } from './worker-canvas';
 import { HTMLElement } from './worker-element';
 import { HTMLIFrameElement } from './worker-iframe';
 import { HTMLScriptElement } from './worker-script';
+import { HTMLStyleElement } from './worker-style';
 import type { InitWebWorkerData } from '../types';
 import { webWorkerCtx } from './worker-constants';
 
@@ -37,6 +38,7 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   elementConstructors.CANVAS = HTMLCanvasElement;
   elementConstructors.IFRAME = HTMLIFrameElement;
   elementConstructors.SCRIPT = HTMLScriptElement;
+  elementConstructors.STYLE = HTMLStyleElement;
 
   webWorkerCtx.$isInitialized$ = 1;
 
