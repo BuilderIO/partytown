@@ -9,6 +9,10 @@ export class HTMLElement extends Node {
     return toLower(this.nodeName!);
   }
 
+  get namespaceURI() {
+    return 'http://www.w3.org/1999/xhtml';
+  }
+
   setAttribute(...args: any[]) {
     callMethod(this, ['setAttribute'], args, undefined, undefined, true);
   }

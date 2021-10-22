@@ -66,4 +66,7 @@ test('element', async ({ page }) => {
 
   const testStyleElement = page.locator('#testStyleElement');
   await expect(testStyleElement).toHaveText('rgb(0, 0, 255)');
+
+  const testNamespaceURI = page.locator('#testNamespaceURI');
+  await expect(testNamespaceURI).toHaveText('http://www.w3.org/1999/xhtml');
 });

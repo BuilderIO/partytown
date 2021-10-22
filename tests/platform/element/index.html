@@ -306,6 +306,17 @@
         </script>
       </li>
 
+      <li>
+        <strong>namespaceURI</strong>
+        <code id="testNamespaceURI"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testNamespaceURI');
+            elm.textContent = elm.namespaceURI;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');
