@@ -12,7 +12,7 @@ export const workerForwardedTriggerHandle = ({
   try {
     const win = environments[$winId$].$window$;
     const target = $forward$[0] in win ? win : $forward$[0] in self ? (self as any) : {};
-    const args = deserializeFromMain($winId$, $instanceId$, [], $args$);
+    const args = deserializeFromMain($instanceId$, [], $args$);
     const globalProperty = target[$forward$[0]];
 
     if (Array.isArray(globalProperty)) {

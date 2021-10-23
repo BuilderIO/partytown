@@ -52,7 +52,6 @@ export interface ForwardMainTriggerData {
 }
 
 export interface RefHandlerCallbackData {
-  $winId$: number;
   $instanceId$: number;
   $refId$: number;
   $thisArg$: SerializedTransfer | undefined;
@@ -173,14 +172,24 @@ export interface InitializeScriptData {
 
 export interface MainAccessRequest {
   $msgId$: number;
+  $tasks$: MainAccessTask[];
+}
+
+export interface MainAccessTask {
   $winId$: number;
-  $contextWinId$?: number;
   $instanceId$: number;
   $interfaceType$: InterfaceType;
-  $nodeName$?: string;
   $applyPath$: ApplyPath;
+  $nodeName$?: string;
   $immediateSetters$?: ApplyPath[];
   $assignInstanceId$?: number;
+}
+
+export interface MainAccessResponse {
+  $msgId$: number;
+  $error$?: string;
+  $rtnValue$?: SerializedTransfer;
+  $isPromise$?: any;
 }
 
 export const enum ApplyPathType {
@@ -189,15 +198,6 @@ export const enum ApplyPathType {
 }
 
 export type ApplyPath = any[];
-
-export interface MainAccessResponse {
-  $msgId$: number;
-  $winId$: number;
-  $error$?: string;
-  $contextWinId$?: number;
-  $rtnValue$?: SerializedTransfer;
-  $isPromise$?: any;
-}
 
 export const enum SerializedType {
   Array,

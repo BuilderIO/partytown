@@ -2,7 +2,6 @@ import { debug, logMain, normalizedWinId } from '../utils';
 import {
   InitializeEnvironmentData,
   MainWindow,
-  MainWindowContext,
   PartytownWebWorker,
   WorkerMessageType,
 } from '../types';
@@ -50,18 +49,4 @@ export const registerWindow = (
       $window$.addEventListener('load', sendInitEnvData);
     }
   }
-};
-
-export const getWinCtx = (winId: number) => {
-  let i = 0;
-  return new Promise<MainWindowContext>((resolve) => {
-    const callback = () => {
-      if (winCtxs[winId] || i++ > 999) {
-        resolve(winCtxs[winId]!);
-      } else {
-        setTimeout(callback, 9);
-      }
-    };
-    callback();
-  });
 };

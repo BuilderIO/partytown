@@ -118,7 +118,6 @@ export const serializeInstanceForMain = (
     : [SerializedType.Primitive, value];
 
 export const deserializeFromMain = (
-  winId: number,
   instanceId: number | undefined | null,
   applyPath: ApplyPath,
   serializedValueTransfer?: SerializedTransfer,
@@ -143,24 +142,21 @@ export const deserializeFromMain = (
 
     if (serializedType === SerializedType.Array) {
       return (serializedValue as SerializedTransfer[]).map((v) =>
-        deserializeFromMain(winId, instanceId, applyPath, v)
+        deserializeFromMain(instanceId, applyPath, v)
       );
     }
 
     if (serializedType === SerializedType.Event) {
-      return constructEvent(
-        deserializeObjectFromMain(winId, instanceId!, applyPath, serializedValue)
-      );
+      return constructEvent(deserializeObjectFromMain(instanceId!, applyPath, serializedValue));
     }
 
     if (serializedType === SerializedType.Object) {
-      return deserializeObjectFromMain(winId, instanceId!, applyPath, serializedValue);
+      return deserializeObjectFromMain(instanceId!, applyPath, serializedValue);
     }
   }
 };
 
 const deserializeObjectFromMain = (
-  winId: number,
   instanceId: number,
   applyPath: ApplyPath,
   serializedValue: any,
@@ -169,7 +165,7 @@ const deserializeObjectFromMain = (
 ) => {
   obj = {};
   for (key in serializedValue) {
-    obj[key] = deserializeFromMain(winId, instanceId, [...applyPath, key], serializedValue[key]);
+    obj[key] = deserializeFromMain(instanceId, [...applyPath, key], serializedValue[key]);
   }
   return obj;
 };
@@ -200,7 +196,6 @@ export const constructSerializedInstance = ({
 };
 
 export const callWorkerRefHandler = ({
-  $winId$,
   $instanceId$,
   $refId$,
   $thisArg$,
@@ -208,8 +203,8 @@ export const callWorkerRefHandler = ({
 }: RefHandlerCallbackData) => {
   if (webWorkerRefsByRefId[$refId$]) {
     try {
-      const thisArg = deserializeFromMain($winId$, $instanceId$, [], $thisArg$);
-      const args = deserializeFromMain($winId$, $instanceId$, [], $args$);
+      const thisArg = deserializeFromMain($instanceId$, [], $thisArg$);
+      const args = deserializeFromMain($instanceId$, [], $args$);
       webWorkerRefsByRefId[$refId$].apply(thisArg, args);
     } catch (e) {
       console.error(e);

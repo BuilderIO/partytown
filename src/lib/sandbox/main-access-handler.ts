@@ -7,60 +7,79 @@ import {
 } from '../types';
 import { deserializeFromWorker, serializeForWorker } from './main-serialization';
 import { getInstance, setInstanceId } from './main-instances';
-import { getWinCtx } from './main-register-window';
 import { isPromise, len } from '../utils';
+import { winCtxs } from './main-constants';
 
 export const mainAccessHandler = async (
   worker: PartytownWebWorker,
   accessReq: MainAccessRequest
 ) => {
-  let $winId$ = accessReq.$winId$;
-  let accessRsp: MainAccessResponse = {
+  const accessRsp: MainAccessResponse = {
     $msgId$: accessReq.$msgId$,
-    $winId$,
   };
-  let instanceId = accessReq.$instanceId$;
-  let applyPath = accessReq.$applyPath$;
-  let immediateSetters = accessReq.$immediateSetters$;
-  let winCtx = await getWinCtx($winId$);
-  let instance: any;
-  let rtnValue: any;
+  const errors: string[] = [];
 
-  try {
-    if (applyPath[0] === ApplyPathType.GlobalConstructor) {
-      // create a new instance of a global constructor
-      const constructedInstance = new (winCtx.$window$ as any)[applyPath[1]](
-        ...deserializeFromWorker(worker, applyPath[2])
-      );
+  for (const task of accessReq.$tasks$) {
+    try {
+      let winId = task.$winId$;
+      let instanceId = task.$instanceId$;
+      let applyPath = task.$applyPath$;
+      let instance: any;
+      let rtnValue: any;
 
-      setInstanceId(constructedInstance, instanceId);
-    } else {
-      // get the existing instance
-      instance = getInstance($winId$, instanceId);
-      if (instance) {
-        rtnValue = applyToInstance(worker, instance, applyPath);
-
-        if (immediateSetters) {
-          immediateSetters.map((immediateSetter) =>
-            applyToInstance(worker, rtnValue, immediateSetter)
-          );
-        }
-
-        if (accessReq.$assignInstanceId$) {
-          setInstanceId(rtnValue, accessReq.$assignInstanceId$);
-        }
-
-        if (isPromise(rtnValue)) {
-          rtnValue = await rtnValue;
-          accessRsp.$isPromise$ = true;
-        }
-        accessRsp.$rtnValue$ = serializeForWorker($winId$, rtnValue);
-      } else {
-        accessRsp.$error$ = instanceId + ' not found';
+      if (!winCtxs[winId]) {
+        await new Promise<void>((resolve) => {
+          let i = 0;
+          let callback = () => {
+            if (winCtxs[winId] || i++ > 999) {
+              resolve();
+            } else {
+              setTimeout(callback, 9);
+            }
+          };
+          callback();
+        });
       }
+
+      if (applyPath[0] === ApplyPathType.GlobalConstructor) {
+        // create a new instance of a global constructor
+        const constructedInstance = new (winCtxs[winId]!.$window$ as any)[applyPath[1]](
+          ...deserializeFromWorker(worker, applyPath[2])
+        );
+
+        setInstanceId(constructedInstance, instanceId);
+      } else {
+        // get the existing instance
+        instance = getInstance(winId, instanceId);
+        if (instance) {
+          rtnValue = applyToInstance(worker, instance, applyPath);
+
+          if (task.$immediateSetters$) {
+            task.$immediateSetters$.map((immediateSetter) =>
+              applyToInstance(worker, rtnValue, immediateSetter)
+            );
+          }
+
+          if (task.$assignInstanceId$) {
+            setInstanceId(rtnValue, task.$assignInstanceId$);
+          }
+
+          if (isPromise(rtnValue)) {
+            rtnValue = await rtnValue;
+            accessRsp.$isPromise$ = true;
+          }
+          accessRsp.$rtnValue$ = serializeForWorker(winId, rtnValue);
+        } else {
+          accessRsp.$error$ = instanceId + ' not found';
+        }
+      }
+    } catch (e: any) {
+      errors.push(String(e.stack || e));
     }
-  } catch (e: any) {
-    accessRsp.$error$ = String(e.stack || e);
+  }
+
+  if (len(errors)) {
+    accessRsp.$error$ = errors.join('\n');
   }
 
   return accessRsp;

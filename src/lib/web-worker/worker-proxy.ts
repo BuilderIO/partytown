@@ -4,10 +4,12 @@ import {
   InterfaceType,
   MainAccessRequest,
   MainAccessResponse,
+  MainAccessTask,
 } from '../types';
 import {
   defineConstructorName,
   getLastMemberName,
+  len,
   logWorkerCall,
   logWorkerGlobalConstructor,
   logWorkerGetter,
@@ -33,48 +35,65 @@ import {
 import syncSendMessage from '@sync-send-message-to-main';
 import { WorkerProxy } from './worker-proxy-constructor';
 
-const syncMessage = (
+const taskQueue: MainAccessTask[] = [];
+
+const queue = (
   instance: WorkerProxy,
   $applyPath$: ApplyPath,
+  isSetter?: boolean,
   $immediateSetters$?: ApplyPath[],
   $assignInstanceId$?: number
 ) => {
-  const $winId$ = instance[WinIdKey];
   const $instanceId$ = instance[InstanceIdKey];
-
-  const accessReq: MainAccessRequest = {
-    $msgId$: randomId(),
-    $winId$,
-    $instanceId$: instance[InstanceIdKey],
+  taskQueue.push({
+    $winId$: instance[WinIdKey],
+    $instanceId$,
     $interfaceType$: instance[InterfaceTypeKey],
     $nodeName$: instance[NodeNameKey],
     $applyPath$,
     $immediateSetters$,
     $assignInstanceId$,
-  };
+  });
 
-  const accessRsp: MainAccessResponse = syncSendMessage(webWorkerCtx, accessReq);
+  if (!isSetter) {
+    return sync($instanceId$, $applyPath$);
+  }
 
-  const isPromise = accessRsp.$isPromise$;
-  const rtnValue = deserializeFromMain($winId$, $instanceId$, $applyPath$, accessRsp.$rtnValue$!);
+  setTimeout(() => sync($instanceId$, $applyPath$), 50);
+};
 
-  if (accessRsp.$error$) {
-    if (isPromise) {
-      return Promise.reject(accessRsp.$error$);
+const sync = (instanceId: number, applyPath: ApplyPath) => {
+  if (len(taskQueue)) {
+    const accessReq: MainAccessRequest = {
+      $msgId$: randomId(),
+      $tasks$: taskQueue.slice(),
+    };
+    taskQueue.length = 0;
+
+    const accessRsp: MainAccessResponse = syncSendMessage(webWorkerCtx, accessReq);
+
+    const isPromise = accessRsp.$isPromise$;
+
+    const rtnValue = deserializeFromMain(instanceId, applyPath, accessRsp.$rtnValue$!);
+
+    if (accessRsp.$error$) {
+      if (isPromise) {
+        return Promise.reject(accessRsp.$error$);
+      }
+      throw new Error(accessRsp.$error$);
     }
-    throw new Error(accessRsp.$error$);
-  }
 
-  if (isPromise) {
-    return Promise.resolve(rtnValue);
+    if (isPromise) {
+      return Promise.resolve(rtnValue);
+    }
+    return rtnValue;
   }
-  return rtnValue;
 };
 
 export const getter = (instance: WorkerProxy, applyPath: ApplyPath) => {
   applyBeforeSyncSetters(instance);
 
-  const rtnValue = syncMessage(instance, applyPath);
+  const rtnValue = queue(instance, applyPath);
   logWorkerGetter(instance, applyPath, rtnValue);
   return rtnValue;
 };
@@ -92,7 +111,7 @@ export const setter = (instance: WorkerProxy, applyPath: ApplyPath, value: any) 
     // node is added to the dom
     immediateSetters.push(applyPath);
   } else {
-    syncMessage(instance, applyPath);
+    queue(instance, applyPath, true);
   }
 };
 
@@ -101,18 +120,20 @@ export const callMethod = (
   applyPath: ApplyPath,
   args: any[],
   immediateSetters?: ApplyPath[],
-  assignInstanceId?: number,
-  isImmediateSetterCall?: boolean
+  assignInstanceId?: number
 ) => {
-  if (isImmediateSetterCall && instance[ImmediateSettersKey]) {
+  const isSetter = setterMethods.some((m) => applyPath.includes(m));
+
+  if (isSetter && instance[ImmediateSettersKey]) {
     instance[ImmediateSettersKey]!.push([...applyPath, serializeInstanceForMain(instance, args)]);
   } else {
     applyBeforeSyncSetters(instance);
     args.map(applyBeforeSyncSetters);
 
-    const rtnValue = syncMessage(
+    const rtnValue = queue(
       instance,
       [...applyPath, serializeInstanceForMain(instance, args)],
+      isSetter,
       immediateSetters,
       assignInstanceId
     );
@@ -133,7 +154,7 @@ export const createGlobalConstructorProxy = (
 
       args.map(applyBeforeSyncSetters);
 
-      syncMessage(workerProxy, [
+      queue(workerProxy, [
         ApplyPathType.GlobalConstructor,
         cstrName,
         serializeForMain(winId, instanceId, args),
@@ -259,3 +280,5 @@ const shouldRestrictToWorker = (interfaceType: InterfaceType, propKey: string) =
   interfaceType === InterfaceType.Window &&
   (!webWorkerCtx.$windowMemberNames$.includes(propKey) ||
     webWorkerCtx.$forwardedTriggers$.includes(propKey));
+
+const setterMethods = ['addEventListener', 'setAttribute', 'setItem'];

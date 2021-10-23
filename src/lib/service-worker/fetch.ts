@@ -58,9 +58,7 @@ const sendMessageToSandboxFromServiceWorker = (accessReq: MainAccessRequest) =>
   });
 
 const swMessageError = (accessReq: MainAccessRequest, $error$: string): MainAccessResponse => ({
-  $winId$: accessReq.$winId$,
   $msgId$: accessReq.$msgId$,
-  $contextWinId$: accessReq.$contextWinId$,
   $error$,
 });
 

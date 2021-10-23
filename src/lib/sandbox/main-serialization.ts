@@ -163,7 +163,6 @@ const deserializeRefFromWorker = (
   if (!ref) {
     ref = function (this: any, ...args: any[]) {
       const refHandlerData: RefHandlerCallbackData = {
-        $winId$,
         $instanceId$,
         $refId$,
         $thisArg$: serializeForWorker($winId$, this),
