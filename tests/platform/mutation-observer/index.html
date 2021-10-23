@@ -106,21 +106,34 @@
                 targetNode.textContent = '';
               }
             });
+
+            document.body.className = 'completed';
           })();
         </script>
         <script>
           (function () {
+            let step = 0;
+            function nextStep() {
+              step++;
+              const elm = document.getElementById('testMutationObserver');
+              elm.classList.add('step' + step);
+              const testStep = document.getElementById('testStep');
+              testStep.textContent = 'step' + step;
+            }
+
             const targetNode = document.getElementById('target');
             const buttonAttr = document.getElementById('buttonAttr');
 
             buttonAttr.addEventListener('click', () => {
               targetNode.setAttribute('mutate', rand());
+              nextStep();
             });
 
             const buttonChildList = document.getElementById('buttonChildList');
             buttonChildList.addEventListener('click', () => {
               targetNode.textContent = '';
               targetNode.appendChild(document.createTextNode(rand()));
+              nextStep();
             });
 
             function rand() {
@@ -130,6 +143,8 @@
         </script>
       </li>
     </ul>
+
+    <div id="testStep"></div>
 
     <p><a href="/">All Tests</a></p>
   </body>
