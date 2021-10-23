@@ -1,7 +1,6 @@
-import { applyBeforeSyncSetters, callMethod } from './worker-proxy';
+import { callMethod, setter } from './worker-proxy';
 import { getEnv } from './worker-environment';
-import type { HTMLDocument } from './worker-document';
-import { insertIframe, insertScriptContent } from './worker-exec';
+import { insertIframe, runScriptContent } from './worker-exec';
 import {
   InstanceIdKey,
   InterfaceTypeKey,
@@ -9,7 +8,10 @@ import {
   webWorkerCtx,
   WinIdKey,
 } from './worker-constants';
-import { NodeName, WorkerMessageType } from '../types';
+import { NodeName, StateProp, WorkerMessageType } from '../types';
+import { getInstanceStateValue } from './worker-state';
+import type { HTMLDocument } from './worker-document';
+import { SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
 import { WorkerProxy } from './worker-proxy-constructor';
 
 export class Node extends WorkerProxy {
@@ -36,12 +38,20 @@ export class Node extends WorkerProxy {
     const isIFrame = nodeName === NodeName.IFrame;
 
     if (isScript) {
-      insertScriptContent(newNode);
+      const scriptContent = getInstanceStateValue<string>(newNode, StateProp.innerHTML);
+
+      if (scriptContent) {
+        const errorMsg = runScriptContent(getEnv(newNode), instanceId, scriptContent, winId);
+        const datasetType = errorMsg ? 'pterror' : 'ptid';
+        const datasetValue = errorMsg || instanceId;
+
+        setter(newNode, ['type'], SCRIPT_TYPE + SCRIPT_TYPE_EXEC);
+        setter(newNode, ['dataset', datasetType], datasetValue);
+        setter(newNode, ['innerHTML'], scriptContent);
+      }
     }
 
-    applyBeforeSyncSetters(newNode);
-
-    newNode = callMethod(this, ['insertBefore'], [newNode, referenceNode], undefined, instanceId);
+    newNode = callMethod(this, ['insertBefore'], [newNode, referenceNode]);
 
     if (isIFrame) {
       insertIframe(newNode);

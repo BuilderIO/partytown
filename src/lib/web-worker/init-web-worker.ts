@@ -2,11 +2,13 @@ import { defineConstructorName, EMPTY_ARRAY, logWorker } from '../utils';
 import { elementConstructors, getTagNameFromConstructor } from './worker-constructors';
 import { HTMLAnchorElement } from './worker-anchor';
 import { HTMLCanvasElement } from './worker-canvas';
-import { HTMLElement } from './worker-element';
+import { HTMLElement, HTMLSrcElement } from './worker-element';
+import { HTMLDocument } from './worker-document';
 import { HTMLIFrameElement } from './worker-iframe';
 import { HTMLScriptElement } from './worker-script';
 import { HTMLStyleElement } from './worker-style';
 import type { InitWebWorkerData } from '../types';
+import { Node } from './worker-node';
 import { webWorkerCtx } from './worker-constants';
 
 export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
@@ -24,6 +26,10 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   webWorkerCtx.$postMessage$ = postMessage.bind(self);
 
   (self as any).postMessage = (self as any).importScripts = undefined;
+
+  (self as any).Node = Node;
+  (self as any).Element = (self as any).HTMLElement = HTMLSrcElement;
+  (self as any).Document = HTMLDocument;
 
   // create the same HTMLElement constructors that were found on main's window
   // and add each constructor to the elementConstructors map, to be used by windows later

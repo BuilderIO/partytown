@@ -54,12 +54,6 @@ export const mainAccessHandler = async (
         if (instance) {
           rtnValue = applyToInstance(worker, instance, applyPath);
 
-          if (task.$immediateSetters$) {
-            task.$immediateSetters$.map((immediateSetter) =>
-              applyToInstance(worker, rtnValue, immediateSetter)
-            );
-          }
-
           if (task.$assignInstanceId$) {
             setInstanceId(rtnValue, task.$assignInstanceId$);
           }

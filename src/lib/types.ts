@@ -181,7 +181,6 @@ export interface MainAccessTask {
   $interfaceType$: InterfaceType;
   $applyPath$: ApplyPath;
   $nodeName$?: string;
-  $immediateSetters$?: ApplyPath[];
   $assignInstanceId$?: number;
 }
 

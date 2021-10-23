@@ -317,6 +317,22 @@
         </script>
       </li>
 
+      <li id="liAppendChild">
+        <strong>appendChild()</strong>
+        <script type="text/partytown">
+          (function () {
+            const text = document.createTextNode('');
+            text.textContent = 'text';
+            const code = document.createElement('code');
+            code.id = 'testAppendChild';
+            code.appendChild(text);
+
+            const li = document.getElementById('liAppendChild');
+            li.appendChild(code);
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

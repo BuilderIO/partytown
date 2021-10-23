@@ -1,25 +1,17 @@
+import { debug, logWorker, nextTick, SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
 import {
-  ApplyPathType,
   EventHandler,
   InitializeScriptData,
   WebWorkerEnvironment,
   StateProp,
   WorkerMessageType,
 } from '../types';
-import { debug, logWorker, nextTick, SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
-import {
-  environments,
-  ImmediateSettersKey,
-  InstanceIdKey,
-  webWorkerCtx,
-  WinIdKey,
-} from './worker-constants';
+import { environments, InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue, getStateValue, setStateValue } from './worker-state';
-import type { HTMLElement } from './worker-element';
 import type { Location } from './worker-location';
 import type { Node } from './worker-node';
-import { serializeForMain } from './worker-serialization';
+import type { WorkerProxy } from './worker-proxy-constructor';
 
 export const initNextScriptsInWebWorker = async (initScript: InitializeScriptData) => {
   let winId = initScript.$winId$;
@@ -155,36 +147,6 @@ export const insertIframe = (iframe: Node) => {
   callback();
 };
 
-export const insertScriptContent = (script: Node) => {
-  const scriptContent = getInstanceStateValue<string>(script, StateProp.innerHTML);
-
-  if (scriptContent) {
-    const winId = script[WinIdKey];
-    const instanceId = script[InstanceIdKey];
-    const immediateSetters = script[ImmediateSettersKey];
-    const errorMsg = runScriptContent(getEnv(script), instanceId, scriptContent, winId);
-    const datasetType = errorMsg ? 'pterror' : 'ptid';
-    const datasetValue = errorMsg || instanceId;
-
-    if (immediateSetters) {
-      immediateSetters.push(
-        [
-          'type',
-          serializeForMain(winId, instanceId, SCRIPT_TYPE + SCRIPT_TYPE_EXEC),
-          ApplyPathType.SetValue,
-        ],
-        [
-          'dataset',
-          datasetType,
-          serializeForMain(winId, instanceId, datasetValue),
-          ApplyPathType.SetValue,
-        ],
-        ['innerHTML', serializeForMain(winId, instanceId, scriptContent), ApplyPathType.SetValue]
-      );
-    }
-  }
-};
-
 const resolveToUrl = (env: WebWorkerEnvironment, url?: string, baseLocation?: Location) => {
   baseLocation = env.$location$;
   while (!baseLocation.host) {
@@ -199,7 +161,7 @@ const resolveToUrl = (env: WebWorkerEnvironment, url?: string, baseLocation?: Lo
 
 export const resolveUrl = (env: WebWorkerEnvironment, url?: string) => resolveToUrl(env, url) + '';
 
-export const getUrl = (elm: HTMLElement) =>
+export const getUrl = (elm: WorkerProxy) =>
   resolveToUrl(getEnv(elm), getInstanceStateValue(elm, StateProp.url));
 
 export const updateIframeContent = (url: string, html: string) =>

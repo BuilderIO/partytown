@@ -1,12 +1,11 @@
-import { ApplyPath, ApplyPathType, InterfaceType, NodeName } from '../types';
-import { callMethod } from './worker-proxy';
+import { callMethod, setter } from './worker-proxy';
 import { constructInstance, getElementConstructor } from './worker-constructors';
 import { createEnvironment, getEnv, getEnvWindow } from './worker-environment';
 import { getPartytownScript } from './worker-exec';
 import { HTMLElement } from './worker-element';
-import { ImmediateSettersKey, WinIdKey } from './worker-constants';
+import { InterfaceType, NodeName } from '../types';
 import { SCRIPT_TYPE, randomId, toUpper, defineConstructorName } from '../utils';
-import { serializeForMain } from './worker-serialization';
+import { WinIdKey } from './worker-constants';
 
 export class HTMLDocument extends HTMLElement {
   get body() {
@@ -20,24 +19,17 @@ export class HTMLDocument extends HTMLElement {
     const instanceId = randomId();
     const ElementCstr = getElementConstructor(tagName);
     const elm = new ElementCstr(InterfaceType.Element, instanceId, winId, tagName);
-    const immediateSetter: ApplyPath = (elm[ImmediateSettersKey] = []);
+
+    callMethod(this, ['createElement'], [tagName], instanceId);
 
     if (tagName === NodeName.IFrame) {
       // an iframe element's instanceId is the same as its contentWindow's winId
       // and the contentWindow's parentWinId is the iframe element's winId
       createEnvironment({ $winId$: instanceId, $parentWinId$: winId, $url$: 'about:blank' });
 
-      immediateSetter.push([
-        'srcdoc',
-        serializeForMain(winId, instanceId, getPartytownScript()),
-        ApplyPathType.SetValue,
-      ]);
+      setter(elm, ['srcdoc'], getPartytownScript());
     } else if (tagName === NodeName.Script) {
-      immediateSetter.push([
-        'type',
-        serializeForMain(winId, instanceId, SCRIPT_TYPE),
-        ApplyPathType.SetValue,
-      ]);
+      setter(elm, ['type'], SCRIPT_TYPE);
     }
 
     return elm;

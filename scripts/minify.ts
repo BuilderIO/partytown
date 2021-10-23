@@ -77,7 +77,6 @@ function managlePropsPlugin(): Plugin {
     $forwardedTriggers$: '',
     $head$: '',
     $htmlConstructors$: '',
-    $immediateSetters$: '',
     $implementation$: '',
     $interfaces$: '',
     $instanceId$: '',

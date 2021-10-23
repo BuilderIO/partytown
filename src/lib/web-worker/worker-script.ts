@@ -1,11 +1,9 @@
-import { ApplyPathType, StateProp } from '../types';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getter, setter } from './worker-proxy';
 import { HTMLSrcElement } from './worker-element';
-import { ImmediateSettersKey } from './worker-constants';
 import { resolveUrl } from './worker-exec';
-import { serializeInstanceForMain } from './worker-serialization';
+import { StateProp } from '../types';
 
 export class HTMLScriptElement extends HTMLSrcElement {
   get innerHTML() {
@@ -28,14 +26,7 @@ export class HTMLScriptElement extends HTMLSrcElement {
   set src(url: string) {
     url = resolveUrl(getEnv(this), url);
     setInstanceStateValue(this, StateProp.url, url);
-
-    if (this[ImmediateSettersKey]) {
-      this[ImmediateSettersKey]!.push([
-        'src',
-        serializeInstanceForMain(this, url),
-        ApplyPathType.SetValue,
-      ]);
-    }
+    setter(this, ['src'], url);
   }
 
   get textContent() {

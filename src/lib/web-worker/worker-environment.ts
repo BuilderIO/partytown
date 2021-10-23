@@ -11,7 +11,6 @@ import {
   webWorkerCtx,
   WinIdKey,
 } from './worker-constants';
-import { HTMLElement } from './worker-element';
 import {
   InitializeEnvironmentData,
   InterfaceType,
@@ -20,7 +19,6 @@ import {
   WorkerMessageType,
 } from '../types';
 import { Location } from './worker-location';
-import { Node } from './worker-node';
 
 export const createEnvironment = ({
   $winId$,
@@ -188,10 +186,7 @@ export const createEnvironment = ({
         win[memberName] = createGlobalConstructorProxy($winId$, interfaceType, memberName);
       });
 
-      win.Document = HTMLDocument;
-      win.Element = win.HTMLElement = HTMLElement;
       win.Image = createImageConstructor($winId$);
-      win.Node = Node;
       win.Window = Window;
 
       win.performance = self.performance;

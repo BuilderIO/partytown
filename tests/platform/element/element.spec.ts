@@ -69,4 +69,7 @@ test('element', async ({ page }) => {
 
   const testNamespaceURI = page.locator('#testNamespaceURI');
   await expect(testNamespaceURI).toHaveText('http://www.w3.org/1999/xhtml');
+
+  const testAppendChild = page.locator('#testAppendChild');
+  await expect(testAppendChild).toHaveText('text');
 });

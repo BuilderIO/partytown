@@ -1,6 +1,5 @@
 import type { HTMLElement } from './worker-element';
 import { InterfaceType, NodeName } from '../types';
-import { Node } from './worker-node';
 import { toUpper } from '../utils';
 import { WorkerProxy } from './worker-proxy-constructor';
 
@@ -29,7 +28,7 @@ const getConstructor = (interfaceType: InterfaceType, nodeName?: string): typeof
   if (interfaceType === InterfaceType.Element) {
     return getElementConstructor(nodeName!);
   } else if (interfaceType <= InterfaceType.DocumentFragmentNode) {
-    return Node;
+    return (self as any).Node;
   } else {
     return WorkerProxy;
   }

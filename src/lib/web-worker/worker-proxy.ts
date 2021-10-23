@@ -21,14 +21,11 @@ import {
   serializeForMain,
   serializeInstanceForMain,
 } from './worker-serialization';
-import { getEnv } from './worker-environment';
 import { getInstanceStateValue } from './worker-state';
 import {
-  ImmediateSettersKey,
   InstanceIdKey,
   InterfaceTypeKey,
   NodeNameKey,
-  ProxyKey,
   webWorkerCtx,
   WinIdKey,
 } from './worker-constants';
@@ -41,7 +38,6 @@ const queue = (
   instance: WorkerProxy,
   $applyPath$: ApplyPath,
   isSetter?: boolean,
-  $immediateSetters$?: ApplyPath[],
   $assignInstanceId$?: number
 ) => {
   const $instanceId$ = instance[InstanceIdKey];
@@ -51,7 +47,6 @@ const queue = (
     $interfaceType$: instance[InterfaceTypeKey],
     $nodeName$: instance[NodeNameKey],
     $applyPath$,
-    $immediateSetters$,
     $assignInstanceId$,
   });
 
@@ -91,55 +86,35 @@ const sync = (instanceId: number, applyPath: ApplyPath) => {
 };
 
 export const getter = (instance: WorkerProxy, applyPath: ApplyPath) => {
-  applyBeforeSyncSetters(instance);
-
   const rtnValue = queue(instance, applyPath);
   logWorkerGetter(instance, applyPath, rtnValue);
   return rtnValue;
 };
 
 export const setter = (instance: WorkerProxy, applyPath: ApplyPath, value: any) => {
-  const immediateSetters = instance[ImmediateSettersKey];
   const serializedValue = serializeInstanceForMain(instance, value);
 
   logWorkerSetter(instance, applyPath, value);
 
-  applyPath = [...applyPath, serializedValue, ApplyPathType.SetValue];
-
-  if (immediateSetters) {
-    // queue up setters to be applied immediately after the
-    // node is added to the dom
-    immediateSetters.push(applyPath);
-  } else {
-    queue(instance, applyPath, true);
-  }
+  queue(instance, [...applyPath, serializedValue, ApplyPathType.SetValue], true);
 };
 
 export const callMethod = (
   instance: WorkerProxy,
   applyPath: ApplyPath,
   args: any[],
-  immediateSetters?: ApplyPath[],
   assignInstanceId?: number
 ) => {
   const isSetter = setterMethods.some((m) => applyPath.includes(m));
 
-  if (isSetter && instance[ImmediateSettersKey]) {
-    instance[ImmediateSettersKey]!.push([...applyPath, serializeInstanceForMain(instance, args)]);
-  } else {
-    applyBeforeSyncSetters(instance);
-    args.map(applyBeforeSyncSetters);
-
-    const rtnValue = queue(
-      instance,
-      [...applyPath, serializeInstanceForMain(instance, args)],
-      isSetter,
-      immediateSetters,
-      assignInstanceId
-    );
-    logWorkerCall(instance, applyPath, args, rtnValue);
-    return rtnValue;
-  }
+  const rtnValue = queue(
+    instance,
+    [...applyPath, serializeInstanceForMain(instance, args)],
+    isSetter,
+    assignInstanceId
+  );
+  logWorkerCall(instance, applyPath, args, rtnValue);
+  return rtnValue;
 };
 
 export const createGlobalConstructorProxy = (
@@ -151,8 +126,6 @@ export const createGlobalConstructorProxy = (
     constructor(...args: any[]) {
       const instanceId = randomId();
       const workerProxy = new WorkerProxy(interfaceType, instanceId, winId);
-
-      args.map(applyBeforeSyncSetters);
 
       queue(workerProxy, [
         ApplyPathType.GlobalConstructor,
@@ -169,23 +142,6 @@ export const createGlobalConstructorProxy = (
   return defineConstructorName(GlobalCstr, cstrName);
 };
 
-export const applyBeforeSyncSetters = (instance: WorkerProxy) => {
-  if (instance) {
-    const beforeSyncValues = instance[ImmediateSettersKey];
-    if (beforeSyncValues) {
-      instance[ImmediateSettersKey] = undefined;
-
-      callMethod(
-        getEnv(instance).$document$,
-        ['createElement'],
-        [instance[NodeNameKey]],
-        beforeSyncValues,
-        instance[InstanceIdKey]
-      );
-    }
-  }
-};
-
 export const proxy = <T = any>(
   interfaceType: InterfaceType,
   target: T,
@@ -194,7 +150,6 @@ export const proxy = <T = any>(
   if (
     !target ||
     (typeof target !== 'object' && typeof target !== 'function') ||
-    (target as any)[ProxyKey] ||
     String(target).includes('[native')
   ) {
     return target;
@@ -281,4 +236,4 @@ const shouldRestrictToWorker = (interfaceType: InterfaceType, propKey: string) =
   (!webWorkerCtx.$windowMemberNames$.includes(propKey) ||
     webWorkerCtx.$forwardedTriggers$.includes(propKey));
 
-const setterMethods = ['addEventListener', 'setAttribute', 'setItem'];
+const setterMethods = ['addEventListener', 'createElement', 'setAttribute', 'setItem'];
