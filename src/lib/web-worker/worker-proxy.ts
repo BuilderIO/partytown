@@ -7,9 +7,11 @@ import {
   MainAccessTask,
 } from '../types';
 import {
+  debug,
   defineConstructorName,
   getLastMemberName,
   len,
+  logWorker,
   logWorkerCall,
   logWorkerGlobalConstructor,
   logWorkerGetter,
@@ -59,6 +61,10 @@ const queue = (
 
 const sync = (instanceId: number, applyPath: ApplyPath) => {
   if (len(taskQueue)) {
+    if (debug && webWorkerCtx.$config$.logMainAccess) {
+      logWorker(`Main access, tasks sent: ${taskQueue.length}`);
+    }
+
     const accessReq: MainAccessRequest = {
       $msgId$: randomId(),
       $tasks$: taskQueue.slice(),

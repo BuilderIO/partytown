@@ -312,6 +312,10 @@ export interface PartytownConfig {
    */
   logImageRequests?: boolean;
   /**
+   * Log calls to main access, which also shows how many tasks were sent per message (debug mode required)
+   */
+  logMainAccess?: boolean;
+  /**
    * Log script executions (debug mode required)
    */
   logScriptExecution?: boolean;
