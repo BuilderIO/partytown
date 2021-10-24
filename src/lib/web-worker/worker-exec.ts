@@ -33,12 +33,14 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
         logWorker(`Execute script (${instanceId}) src: ${scriptSrc}`, winId);
       }
 
-      if (scriptUrl.origin !== origin) {
-        try {
-          await self.fetch(scriptSrc, { method: 'OPTIONS' });
-        } catch (e) {
+      try {
+        rsp = await self.fetch(scriptSrc);
+      } catch (e) {
+        if (scriptUrl.origin !== origin) {
           scriptSrc = 'https://partytown.builder.io/api/proxy?p=' + scriptSrc;
           logWorker(`Proxied script (${instanceId}) src: ${scriptSrc}`, winId);
+        } else {
+          throw e;
         }
       }
 

@@ -74,6 +74,10 @@ export const createEnvironment = ({
         $location$.href = loc + '';
       }
 
+      get origin() {
+        return $location$.origin;
+      }
+
       get parent() {
         return environments[$parentWinId$].$window$;
       }

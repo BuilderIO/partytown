@@ -409,6 +409,19 @@
         </script>
       </li>
 
+      <li>
+        <strong>origin</strong>
+        <code>
+          <span id="testOrigin"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testOrigin');
+            elm.textContent = origin;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

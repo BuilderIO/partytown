@@ -85,4 +85,9 @@ test('window', async ({ page }) => {
 
   const testDevicePixelRatio = page.locator('#testDevicePixelRatio');
   await expect(testDevicePixelRatio).not.toHaveText('');
+
+  const testOrigin = page.locator('#testOrigin');
+  const origin = new URL(await testOrigin.textContent());
+  expect(origin.pathname).toBe('/');
+  expect(origin.hostname).toBe('localhost');
 });
