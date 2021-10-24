@@ -1,3 +1,4 @@
+import { getter } from './worker-proxy';
 import {
   InstanceIdKey,
   webWorkerRefIdsByRef,
@@ -45,3 +46,35 @@ export const setWorkerRef = (ref: RefHandler, refId?: number) => {
   }
   return refId;
 };
+
+/**
+ * Properties to add to the Constructor's prototype
+ * that should only do a main read once, cache the value, and
+ * returned the cached value after in subsequent reads after that
+ */
+export const readonlyCachedProps = (Cstr: any, props: string[]) =>
+  props.map((propName) => {
+    Object.defineProperty(Cstr.prototype, propName, {
+      get() {
+        let stateRecord = webWorkerState[this[InstanceIdKey]];
+        if (stateRecord && propName in stateRecord) {
+          return stateRecord[propName];
+        }
+
+        let val = getter(this, [propName]);
+        setInstanceStateValue(this, propName, val);
+        return val;
+      },
+      set(val) {
+        setInstanceStateValue(this, propName, val);
+      },
+    });
+  });
+
+/**
+ * Properties that always return a value, without doing a main access.
+ * Same as:
+ * get propName() { return propValue }
+ */
+export const constantProps = (Cstr: any, props: { [propName: string]: any }) =>
+  Object.keys(props).map((propName) => (Cstr.prototype[propName] = props[propName]));

@@ -76,4 +76,7 @@ test('document', async ({ page }) => {
 
   const testDocCstrName = page.locator('#testDocCstrName');
   await expect(testDocCstrName).toHaveText('HTMLDocument');
+
+  const testReadyState = page.locator('#testReadyState');
+  await expect(testReadyState).toHaveText('complete');
 });

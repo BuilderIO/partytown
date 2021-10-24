@@ -1,4 +1,5 @@
 import { callMethod, setter } from './worker-proxy';
+import { constantProps, readonlyCachedProps } from './worker-state';
 import { constructInstance, getElementConstructor } from './worker-constructors';
 import { createEnvironment, getEnv, getEnvWindow } from './worker-environment';
 import { defineConstructorName, randomId, SCRIPT_TYPE } from '../utils';
@@ -87,19 +88,16 @@ export class HTMLDocument extends HTMLElement {
   set location(url: any) {
     getEnv(this).$location$.href = url + '';
   }
-
-  get parentNode() {
-    return null;
-  }
-
-  get parentElement() {
-    return null;
-  }
-
-  get readyState() {
-    return 'complete';
-  }
 }
+
+readonlyCachedProps(HTMLDocument, ['compatMode', 'referrer']);
+
+constantProps(HTMLDocument, {
+  createEventObject: undefined,
+  parentElement: null,
+  parentNode: null,
+  readyState: 'complete',
+});
 
 export const constructDocumentElementChild = (
   winId: number,

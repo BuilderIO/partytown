@@ -207,6 +207,8 @@
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testCompatMode');
+            document.compatMode;
+            document.compatMode;
             elm.textContent = document.compatMode;
           })();
         </script>
@@ -344,6 +346,32 @@
         </script>
       </li>
 
+      <li>
+        <strong>referrer</strong>
+        <code id="testReferrer"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testReferrer');
+            document.referrer;
+            document.referrer;
+            elm.textContent = document.referrer;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>readyState</strong>
+        <code id="testReadyState"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testReadyState');
+            document.readyState;
+            document.readyState;
+            elm.textContent = document.readyState;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');
@@ -361,6 +389,7 @@
         logSetters: true,
         logStackTraces: false,
         logScriptExecution: true,
+        logMainAccess: true,
       };
     </script>
     <script src="/~partytown/debug/partytown.js" async defer></script>

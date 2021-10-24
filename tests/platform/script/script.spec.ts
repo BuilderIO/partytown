@@ -49,4 +49,10 @@ test('script', async ({ page }) => {
   expect(testAsyncText.includes('a2')).toBe(true);
   expect(testAsyncText.includes('d1')).toBe(true);
   expect(testAsyncText.includes('d2')).toBe(true);
+
+  await page.waitForSelector('.testSrcAttr');
+  const testSrcAttr = page.locator('#testSrcAttr');
+  const srcAttr = await testSrcAttr.textContent();
+  const srcUrl = new URL(srcAttr);
+  expect(srcUrl.pathname).toBe('/platform/script/set-get-attr.js');
 });

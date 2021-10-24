@@ -1,6 +1,6 @@
+import { callMethod, getter, setter } from './worker-proxy';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
-import { getter, setter } from './worker-proxy';
 import { HTMLSrcElement } from './worker-element';
 import { resolveUrl } from './worker-exec';
 import { StateProp } from '../types';
@@ -27,6 +27,21 @@ export class HTMLScriptElement extends HTMLSrcElement {
     url = resolveUrl(getEnv(this), url);
     setInstanceStateValue(this, StateProp.url, url);
     setter(this, ['src'], url);
+  }
+
+  getAttribute(attrName: string) {
+    if (attrName === 'src') {
+      return this.src;
+    }
+    return callMethod(this, ['getAttribute'], [attrName]);
+  }
+
+  setAttribute(attrName: string, attrValue: any) {
+    if (attrName === 'src') {
+      this.src = attrValue;
+    } else {
+      callMethod(this, ['setAttribute'], [attrName, attrValue]);
+    }
   }
 
   get textContent() {
