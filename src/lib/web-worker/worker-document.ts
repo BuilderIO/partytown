@@ -1,10 +1,10 @@
 import { callMethod, setter } from './worker-proxy';
 import { constructInstance, getElementConstructor } from './worker-constructors';
 import { createEnvironment, getEnv, getEnvWindow } from './worker-environment';
+import { defineConstructorName, randomId, SCRIPT_TYPE } from '../utils';
 import { getPartytownScript } from './worker-exec';
 import { HTMLElement } from './worker-element';
 import { InterfaceType, NodeName } from '../types';
-import { SCRIPT_TYPE, randomId, toUpper, defineConstructorName } from '../utils';
 import { WinIdKey } from './worker-constants';
 
 export class HTMLDocument extends HTMLElement {
@@ -13,7 +13,7 @@ export class HTMLDocument extends HTMLElement {
   }
 
   createElement(tagName: string) {
-    tagName = toUpper(tagName);
+    tagName = tagName.toUpperCase();
 
     const winId = this[WinIdKey];
     const instanceId = randomId();
@@ -61,7 +61,7 @@ export class HTMLDocument extends HTMLElement {
   }
 
   getElementsByTagName(tagName: string) {
-    tagName = toUpper(tagName);
+    tagName = tagName.toUpperCase();
     if (tagName === NodeName.Body) {
       return [this.body];
     } else if (tagName === NodeName.Head) {
@@ -118,5 +118,5 @@ export const constructDocumentElementChild = (
     },
     `HTML${titleCaseNodeName}Element`
   );
-  return new HtmlCstr(InterfaceType.Element, instanceId, winId, toUpper(titleCaseNodeName));
+  return new HtmlCstr(InterfaceType.Element, instanceId, winId, titleCaseNodeName.toUpperCase());
 };

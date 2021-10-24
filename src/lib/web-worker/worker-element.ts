@@ -1,11 +1,10 @@
 import { EventHandler, StateProp } from '../types';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { Node } from './worker-node';
-import { toLower } from '../utils';
 
 export class HTMLElement extends Node {
   get localName() {
-    return toLower(this.nodeName!);
+    return this.nodeName!.toLowerCase();
   }
 
   get namespaceURI() {

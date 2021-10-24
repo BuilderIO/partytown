@@ -11,10 +11,6 @@ export const debug = (globalThis as any).partytownDebug;
 
 export const isPromise = (v: any): v is Promise<unknown> => typeof v === 'object' && v && v.then;
 
-export const toLower = (str: string) => str.toLowerCase();
-
-export const toUpper = (str: string) => str.toUpperCase();
-
 export const noop = () => {};
 
 export const logMain = (msg: string) => {
@@ -147,9 +143,9 @@ const logTargetProp = (target: any, accessType: 'Get' | 'Set' | 'Call', applyPat
     } else if (instanceId === PlatformInstanceId.body) {
       n = 'document.body.';
     } else if (target.nodeType === 1) {
-      n = toLower(target.nodeName) + '.';
+      n = target.nodeName.toLowerCase() + '.';
     } else if (target[InterfaceTypeKey] === InterfaceType.Element && target[NodeNameKey]) {
-      n = `<${toLower(target[NodeNameKey])}>`;
+      n = `<${target[NodeNameKey].toLowerCase()}>`;
     } else if (target[InterfaceTypeKey] === InterfaceType.CommentNode) {
       n = 'comment.';
     } else if (target[InterfaceTypeKey] === InterfaceType.AttributeNode) {
@@ -218,7 +214,7 @@ const logValue = (applyPath: ApplyPath, v: any): string => {
         return `window`;
       }
       if (v[InterfaceTypeKey] === InterfaceType.Element && v[NodeNameKey]) {
-        return `<${toLower(v[NodeNameKey])}>`;
+        return `<${v[NodeNameKey].toLowerCase()}>`;
       }
       if (v[InterfaceTypeKey] === InterfaceType.DocumentTypeNode) {
         return `<!DOCTYPE ${v[NodeNameKey]}>`;
@@ -282,7 +278,7 @@ const startsWith = (str: string, val: string) => str.startsWith(val);
 export const isValidMemberName = (memberName: string) => {
   if (startsWith(memberName, 'webkit') || startsWith(memberName, 'toJSON')) {
     return false;
-  } else if (startsWith(memberName, 'on') && toLower(memberName) === memberName) {
+  } else if (startsWith(memberName, 'on') && memberName.toLowerCase() === memberName) {
     return false;
   } else {
     return true;

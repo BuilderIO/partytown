@@ -1,6 +1,5 @@
 import type { HTMLElement } from './worker-element';
 import { InterfaceType, NodeName } from '../types';
-import { toUpper } from '../utils';
 import { WorkerProxy } from './worker-proxy-constructor';
 
 export const constructInstance = (
@@ -40,7 +39,7 @@ export const getElementConstructor = (nodeName: string): typeof HTMLElement =>
 export const elementConstructors: { [tagName: string]: typeof HTMLElement } = {};
 
 export const getTagNameFromConstructor = (t: string) => {
-  t = toUpper(t.substr(4).replace('Element', ''));
+  t = t.substr(4).replace('Element', '').toUpperCase();
   return (
     {
       IMAGE: 'IMG',
