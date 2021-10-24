@@ -157,6 +157,7 @@ export const enum InterfaceType {
 
 export const enum PlatformInstanceId {
   window,
+  screen,
   document,
   documentElement,
   head,

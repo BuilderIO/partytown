@@ -333,6 +333,24 @@
         </script>
       </li>
 
+      <li id="liDimensions">
+        <strong>dimensions</strong>
+        <code id="testDimensions"></code>
+        <script type="text/partytown">
+          (function () {
+            const li = document.getElementById('liDimensions');
+
+            li.clientWidth;
+            li.clientWidth;
+            li.clientHeight;
+            li.clientHeight;
+
+            const elm = document.getElementById('testDimensions');
+            elm.textContent = li.clientWidth + 'x' + li.clientHeight;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

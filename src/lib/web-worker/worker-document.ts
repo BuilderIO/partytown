@@ -90,9 +90,10 @@ export class HTMLDocument extends HTMLElement {
   }
 }
 
-readonlyCachedProps(HTMLDocument, ['compatMode', 'referrer']);
+readonlyCachedProps(HTMLDocument, ['referrer', 'title']);
 
 constantProps(HTMLDocument, {
+  compatMode: 'CSS1Compat',
   createEventObject: undefined,
   parentElement: null,
   parentNode: null,

@@ -132,7 +132,8 @@ const logTargetProp = (target: any, accessType: 'Get' | 'Set' | 'Call', applyPat
   let n = '';
   if (target) {
     const instanceId = target[InstanceIdKey];
-    if (instanceId === PlatformInstanceId.window) {
+    const interfaceType = target[InterfaceTypeKey];
+    if (interfaceType === InterfaceType.Window) {
       n = '';
     } else if (instanceId === PlatformInstanceId.document) {
       n = 'document.';
@@ -144,22 +145,24 @@ const logTargetProp = (target: any, accessType: 'Get' | 'Set' | 'Call', applyPat
       n = 'document.body.';
     } else if (target.nodeType === 1) {
       n = target.nodeName.toLowerCase() + '.';
-    } else if (target[InterfaceTypeKey] === InterfaceType.Element && target[NodeNameKey]) {
+    } else if (interfaceType === InterfaceType.Element && target[NodeNameKey]) {
       n = `<${target[NodeNameKey].toLowerCase()}>`;
-    } else if (target[InterfaceTypeKey] === InterfaceType.CommentNode) {
+    } else if (interfaceType === InterfaceType.CommentNode) {
       n = 'comment.';
-    } else if (target[InterfaceTypeKey] === InterfaceType.AttributeNode) {
+    } else if (interfaceType === InterfaceType.AttributeNode) {
       n = 'attributes.';
-    } else if (target[InterfaceTypeKey] === InterfaceType.DocumentFragmentNode) {
+    } else if (interfaceType === InterfaceType.DocumentFragmentNode) {
       n = 'fragment.';
-    } else if (target[InterfaceTypeKey] === InterfaceType.DocumentTypeNode) {
+    } else if (interfaceType === InterfaceType.DocumentTypeNode) {
       n = 'documentTypeNode.';
-    } else if (target[InterfaceTypeKey] === InterfaceType.MutationObserver) {
-      n = 'mutationObserver.';
-    } else if (target[InterfaceTypeKey] === InterfaceType.ResizeObserver) {
-      n = 'resizeObserver.';
-    } else if (target[InterfaceTypeKey] <= InterfaceType.DocumentFragmentNode) {
+    } else if (interfaceType <= InterfaceType.DocumentFragmentNode) {
       n = 'node.';
+    } else if (interfaceType === InterfaceType.MutationObserver) {
+      n = 'mutationObserver.';
+    } else if (interfaceType === InterfaceType.ResizeObserver) {
+      n = 'resizeObserver.';
+    } else if (interfaceType === InterfaceType.Screen) {
+      n = 'screen.';
     } else {
       n = '¯\\_(ツ)_/¯ TARGET.';
       console.warn('¯\\_(ツ)_/¯ TARGET', target);
@@ -196,7 +199,8 @@ const logValue = (applyPath: ApplyPath, v: any): string => {
     return `[${v.map(logValue).join(', ')}]`;
   }
   if (type === 'object') {
-    const instanceId = v[InstanceIdKey];
+    const instanceId: number = v[InstanceIdKey];
+    const interfaceType: InterfaceType = v[InterfaceTypeKey];
     if (typeof instanceId === 'number') {
       if (instanceId === PlatformInstanceId.body) {
         return `<body>`;
@@ -210,18 +214,22 @@ const logValue = (applyPath: ApplyPath, v: any): string => {
       if (instanceId === PlatformInstanceId.head) {
         return `<head>`;
       }
-      if (instanceId === PlatformInstanceId.window) {
+      if (interfaceType === InterfaceType.Window) {
         return `window`;
       }
-      if (v[InterfaceTypeKey] === InterfaceType.Element && v[NodeNameKey]) {
+      if (interfaceType === InterfaceType.Screen) {
+        return `screen`;
+      }
+      if (interfaceType === InterfaceType.Element && v[NodeNameKey]) {
         return `<${v[NodeNameKey].toLowerCase()}>`;
       }
-      if (v[InterfaceTypeKey] === InterfaceType.DocumentTypeNode) {
+      if (interfaceType === InterfaceType.DocumentTypeNode) {
         return `<!DOCTYPE ${v[NodeNameKey]}>`;
       }
-      if (v[InterfaceTypeKey] <= InterfaceType.DocumentFragmentNode) {
+      if (interfaceType <= InterfaceType.DocumentFragmentNode) {
         return v[NodeNameKey];
       }
+
       return '¯\\_(ツ)_/¯ instance obj';
     }
     if (v[Symbol.iterator]) {

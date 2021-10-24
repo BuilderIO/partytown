@@ -7,6 +7,14 @@ import {
   MainAccessTask,
 } from '../types';
 import {
+  cachedDimensions,
+  InstanceIdKey,
+  InterfaceTypeKey,
+  NodeNameKey,
+  webWorkerCtx,
+  WinIdKey,
+} from './worker-constants';
+import {
   debug,
   defineConstructorName,
   getLastMemberName,
@@ -24,13 +32,6 @@ import {
   serializeInstanceForMain,
 } from './worker-serialization';
 import { getInstanceStateValue } from './worker-state';
-import {
-  InstanceIdKey,
-  InterfaceTypeKey,
-  NodeNameKey,
-  webWorkerCtx,
-  WinIdKey,
-} from './worker-constants';
 import syncSendMessage from '@sync-send-message-to-main';
 import { WorkerProxy } from './worker-proxy-constructor';
 
@@ -92,7 +93,26 @@ const sync = (instanceId: number, applyPath: ApplyPath) => {
 };
 
 export const getter = (instance: WorkerProxy, applyPath: ApplyPath) => {
-  const rtnValue = queue(instance, applyPath);
+  let cacheKey = [instance[WinIdKey], instance[InstanceIdKey], applyPath[0]].join('.');
+  let rtnValue = cachedDimensions.get(cacheKey);
+  let key: string;
+
+  if (typeof rtnValue === 'number') {
+    logWorkerGetter(instance, applyPath, rtnValue);
+    return rtnValue;
+  }
+
+  rtnValue = queue(instance, applyPath);
+
+  if (rtnValue && !rtnValue[InstanceIdKey] && rtnValue.ptD === 9) {
+    for (key in rtnValue) {
+      cachedDimensions.set(
+        instance[WinIdKey] + '.' + instance[InstanceIdKey] + '.' + key,
+        rtnValue[key]
+      );
+    }
+    rtnValue = cachedDimensions.get(cacheKey);
+  }
   logWorkerGetter(instance, applyPath, rtnValue);
   return rtnValue;
 };
@@ -120,6 +140,11 @@ export const callMethod = (
     assignInstanceId
   );
   logWorkerCall(instance, applyPath, args, rtnValue);
+
+  if (!isSetter) {
+    cachedDimensions.clear();
+  }
+
   return rtnValue;
 };
 

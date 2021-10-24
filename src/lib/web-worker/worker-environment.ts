@@ -19,6 +19,7 @@ import {
   WorkerMessageType,
 } from '../types';
 import { Location } from './worker-location';
+import { WorkerProxy } from './worker-proxy-constructor';
 
 export const createEnvironment = ({
   $winId$,
@@ -196,6 +197,7 @@ export const createEnvironment = ({
       win.performance = self.performance;
       win.name = name + (debug ? `${normalizedWinId($winId$)} (${$winId$})` : ($winId$ as any));
       win.navigator = createNavigator($winId$);
+      win.screen = new WorkerProxy(InterfaceType.Screen, PlatformInstanceId.screen, $winId$);
 
       windowPropertyWhiteList.map((propName) =>
         Object.defineProperty(win, propName, {

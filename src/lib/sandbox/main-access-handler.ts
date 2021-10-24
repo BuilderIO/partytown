@@ -94,6 +94,12 @@ const applyToInstance = (worker: PartytownWebWorker, instance: any, applyPath: A
     if (!Array.isArray(next)) {
       if (typeof current === 'string') {
         // current is the member name, but not a method
+        if (dimensionPropNames.includes(current) && typeof instance[current] === 'number') {
+          const dimensionValues: any = { ptD: 9 };
+          dimensionPropNames.map((propName) => (dimensionValues[propName] = instance[propName]));
+          return dimensionValues;
+        }
+
         instance = instance[current];
       } else if (next === ApplyPathType.SetValue) {
         // current is the setter value
@@ -108,3 +114,8 @@ const applyToInstance = (worker: PartytownWebWorker, instance: any, applyPath: A
 
   return instance;
 };
+
+const dimensionPropNames =
+  'clientHeight,clientWidth,clientTop,clientLeft,scrollHeight,scrollWidth,scrollTop,scrollLeft,offsetHeight,offsetWidth,offsetTop,offsetLeft,height,width,availHeight,availWidth'.split(
+    ','
+  );

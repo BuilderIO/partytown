@@ -72,4 +72,11 @@ test('element', async ({ page }) => {
 
   const testAppendChild = page.locator('#testAppendChild');
   await expect(testAppendChild).toHaveText('text');
+
+  const testDimensions = page.locator('#testDimensions');
+  const dimensions = (await testDimensions.textContent()).split('x');
+  const w = parseInt(dimensions[0], 10);
+  const h = parseInt(dimensions[0], 10);
+  expect(w > 9).toBe(true);
+  expect(h > 9).toBe(true);
 });

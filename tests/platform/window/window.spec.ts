@@ -45,9 +45,6 @@ test('window', async ({ page }) => {
   const main = await mainHTMLConstructors.innerText();
   expect(ww).toBe(main);
 
-  const testScreenHasWidth = page.locator('#testScreenHasWidth');
-  await expect(testScreenHasWidth).toHaveText('true');
-
   const testPostMessage = page.locator('#testPostMessage');
   await page.waitForSelector('.testPostMessage');
   await expect(testPostMessage).toHaveText('message 88');

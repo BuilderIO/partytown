@@ -10,5 +10,6 @@ export const webWorkerRefIdsByRef = new WeakMap<RefHandler, number>();
 
 export const webWorkerState: StateMap = {};
 export const webWorkerCtx: WebWorkerContext = {} as any;
+export const cachedDimensions = new Map<string, any>();
 
 export const environments: { [winId: number]: WebWorkerEnvironment } = {};
