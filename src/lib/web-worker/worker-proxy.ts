@@ -111,7 +111,7 @@ export const callMethod = (
   args: any[],
   assignInstanceId?: number
 ) => {
-  const isSetter = setterMethods.some((m) => applyPath.includes(m));
+  const isSetter = setterMethods.some((m) => applyPath.join('.').includes(m));
 
   const rtnValue = queue(
     instance,
@@ -242,4 +242,7 @@ const shouldRestrictToWorker = (interfaceType: InterfaceType, propKey: string) =
   (!webWorkerCtx.$windowMemberNames$.includes(propKey) ||
     webWorkerCtx.$forwardedTriggers$.includes(propKey));
 
-const setterMethods = ['addEventListener', 'createElement', 'setAttribute', 'setItem'];
+const setterMethods =
+  'addEventListener,createElement,setAttribute,setItem,classList.add,classList.remove,classList.toggle'.split(
+    ','
+  );
