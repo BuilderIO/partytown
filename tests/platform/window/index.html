@@ -363,6 +363,10 @@
         </code>
         <script type="text/partytown">
           (function () {
+            window.innerWidth;
+            window.innerHeight;
+            window.innerWidth;
+            window.innerHeight;
             const elm = document.getElementById('testInnerWidthHeight');
             if (typeof window.innerWidth === 'number' && typeof window.innerWidth === 'number') {
               elm.textContent = window.innerWidth + 'x' + window.innerHeight;
@@ -381,6 +385,9 @@
           (function () {
             const elm = document.getElementById('testDevicePixelRatio');
             if (typeof window.devicePixelRatio === 'number') {
+              window.devicePixelRatio;
+              window.devicePixelRatio;
+              window.devicePixelRatio;
               elm.textContent = window.devicePixelRatio;
             }
             elm.className = 'testDevicePixelRatio';
@@ -418,6 +425,7 @@
         logSetters: true,
         logStackTraces: false,
         logScriptExecution: true,
+        logMainAccess: true,
       };
     </script>
     <script src="/~partytown/debug/partytown.js" async defer></script>

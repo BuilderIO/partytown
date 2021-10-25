@@ -76,8 +76,8 @@ export interface InitWebWorkerData {
   $config$: PartytownConfig;
   $htmlConstructors$: string[];
   $interfaces$: InterfaceInfo[];
-  $libPath$?: string;
-  lastLog?: string;
+  $dimensionPropNames$: string[];
+  $libPath$: string;
 }
 
 export interface InitWebWorkerContext {
@@ -89,6 +89,7 @@ export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContex
   $forwardedTriggers$: string[];
   $windowMembers$: MembersInterfaceTypeInfo;
   $windowMemberNames$: string[];
+  lastLog?: string;
 }
 
 export interface InitializeEnvironmentData {

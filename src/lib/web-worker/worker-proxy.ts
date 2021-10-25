@@ -10,7 +10,6 @@ import {
   cachedDimensions,
   InstanceIdKey,
   InterfaceTypeKey,
-  NodeNameKey,
   webWorkerCtx,
   WinIdKey,
 } from './worker-constants';
@@ -272,6 +271,6 @@ const shouldRestrictToWorker = (interfaceType: InterfaceType, propKey: string) =
     webWorkerCtx.$forwardedTriggers$.includes(propKey));
 
 const setterMethods =
-  'addEventListener,removeEventListener,createElement,createTextNode,setAttribute,setItem,classList.add,classList.remove,classList.toggle'.split(
+  'addEventListener,removeEventListener,createElement,createTextNode,setAttribute,setItem,removeItem,classList.add,classList.remove,classList.toggle'.split(
     ','
   );

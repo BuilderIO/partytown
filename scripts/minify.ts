@@ -70,6 +70,7 @@ function managlePropsPlugin(): Plugin {
     $currentScriptId$: '',
     $currentScriptUrl$: '',
     $data$: '',
+    $dimensionPropNames$: '',
     $document$: '',
     $documentElement$: '',
     $error$: '',

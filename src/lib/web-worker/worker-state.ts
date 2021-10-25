@@ -52,8 +52,8 @@ export const setWorkerRef = (ref: RefHandler, refId?: number) => {
  * that should only do a main read once, cache the value, and
  * returned the cached value after in subsequent reads after that
  */
-export const readonlyCachedProps = (Cstr: any, props: string[]) =>
-  props.map((propName) => {
+export const readonlyCachedProps = (Cstr: any, props: string) =>
+  props.split(',').map((propName) => {
     Object.defineProperty(Cstr.prototype, propName, {
       get() {
         let stateRecord = webWorkerState[this[InstanceIdKey]];

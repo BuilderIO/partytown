@@ -94,9 +94,9 @@ const applyToInstance = (worker: PartytownWebWorker, instance: any, applyPath: A
     if (!Array.isArray(next)) {
       if (typeof current === 'string') {
         // current is the member name, but not a method
-        if (dimensionPropNames.includes(current) && typeof instance[current] === 'number') {
+        if ($dimensionPropNames$.includes(current) && typeof instance[current] === 'number') {
           const dimensionValues: any = { ptD: 9 };
-          dimensionPropNames.map((propName) => (dimensionValues[propName] = instance[propName]));
+          $dimensionPropNames$.map((propName) => (dimensionValues[propName] = instance[propName]));
           return dimensionValues;
         }
 
@@ -115,7 +115,7 @@ const applyToInstance = (worker: PartytownWebWorker, instance: any, applyPath: A
   return instance;
 };
 
-const dimensionPropNames =
-  'clientHeight,clientWidth,clientTop,clientLeft,scrollHeight,scrollWidth,scrollTop,scrollLeft,offsetHeight,offsetWidth,offsetTop,offsetLeft,height,width,availHeight,availWidth'.split(
+export const $dimensionPropNames$ =
+  'innerHeight,innerWidth,outerHeight,outerWidth,clientHeight,clientWidth,clientTop,clientLeft,scrollHeight,scrollWidth,scrollTop,scrollLeft,offsetHeight,offsetWidth,offsetTop,offsetLeft,height,width,availHeight,availWidth,screenLeft,screenTop,screenX,screenY'.split(
     ','
   );

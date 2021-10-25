@@ -112,7 +112,7 @@ export class HTMLDocument extends HTMLElement {
   }
 }
 
-readonlyCachedProps(HTMLDocument, ['referrer', 'title']);
+readonlyCachedProps(HTMLDocument, 'referrer,title');
 
 constantProps(HTMLDocument, {
   compatMode: 'CSS1Compat',
