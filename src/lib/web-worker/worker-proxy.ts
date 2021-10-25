@@ -48,24 +48,24 @@ const queue = (
     $winId$: instance[WinIdKey],
     $instanceId$,
     $interfaceType$: instance[InterfaceTypeKey],
-    $nodeName$: instance[NodeNameKey],
     $applyPath$,
     $assignInstanceId$,
   });
 
   if (!isSetter) {
-    return sync($instanceId$, $applyPath$);
+    return sync();
   }
 
-  setTimeout(() => sync($instanceId$, $applyPath$), 50);
+  setTimeout(sync, 50);
 };
 
-const sync = (instanceId: number, applyPath: ApplyPath) => {
+const sync = () => {
   if (len(taskQueue)) {
     if (debug && webWorkerCtx.$config$.logMainAccess) {
       logWorker(`Main access, tasks sent: ${taskQueue.length}`);
     }
 
+    const endTask = taskQueue[len(taskQueue) - 1];
     const accessReq: MainAccessRequest = {
       $msgId$: randomId(),
       $tasks$: taskQueue.slice(),
@@ -76,7 +76,11 @@ const sync = (instanceId: number, applyPath: ApplyPath) => {
 
     const isPromise = accessRsp.$isPromise$;
 
-    const rtnValue = deserializeFromMain(instanceId, applyPath, accessRsp.$rtnValue$!);
+    const rtnValue = deserializeFromMain(
+      endTask.$instanceId$,
+      endTask.$applyPath$,
+      accessRsp.$rtnValue$!
+    );
 
     if (accessRsp.$error$) {
       if (isPromise) {
