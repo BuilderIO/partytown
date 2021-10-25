@@ -268,6 +268,6 @@ const shouldRestrictToWorker = (interfaceType: InterfaceType, propKey: string) =
     webWorkerCtx.$forwardedTriggers$.includes(propKey));
 
 const setterMethods =
-  'addEventListener,createElement,setAttribute,setItem,classList.add,classList.remove,classList.toggle'.split(
+  'addEventListener,removeEventListener,createElement,createTextNode,setAttribute,setItem,classList.add,classList.remove,classList.toggle'.split(
     ','
   );

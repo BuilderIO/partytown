@@ -36,6 +36,28 @@ export class HTMLDocument extends HTMLElement {
     return elm;
   }
 
+  createElementNS(ns: string, tagName: string) {
+    tagName = tagName.toUpperCase();
+    const winId = this[WinIdKey];
+    const instanceId = randomId();
+    const elm = constructInstance(InterfaceType.Element, instanceId, winId, tagName);
+
+    callMethod(this, ['createElementNS'], [ns, tagName], instanceId);
+
+    return elm;
+  }
+
+  createTextNode(text: string) {
+    const winId = this[WinIdKey];
+    const instanceId = randomId();
+
+    const node = constructInstance(InterfaceType.TextNode, instanceId, winId);
+
+    callMethod(this, ['createTextNode'], [text], instanceId);
+
+    return node;
+  }
+
   createEvent(type: string) {
     return new Event(type);
   }
