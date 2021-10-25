@@ -323,9 +323,11 @@
           (function () {
             const text = document.createTextNode('');
             text.textContent = 'text';
+            const span = document.createElement('span');
+            span.insertBefore(text, null);
             const code = document.createElement('code');
             code.id = 'testAppendChild';
-            code.appendChild(text);
+            code.appendChild(span);
 
             const li = document.getElementById('liAppendChild');
             li.appendChild(code);

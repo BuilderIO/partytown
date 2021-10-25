@@ -1,4 +1,4 @@
-import { callMethod, setter } from './worker-proxy';
+import { callMethod, setter, sync } from './worker-proxy';
 import { getEnv } from './worker-environment';
 import { insertIframe, runScriptContent } from './worker-exec';
 import {
@@ -51,12 +51,13 @@ export class Node extends WorkerProxy {
       }
     }
 
-    newNode = callMethod(this, ['insertBefore'], [newNode, referenceNode]);
+    callMethod(this, ['insertBefore'], [newNode, referenceNode]);
 
     if (isIFrame) {
       insertIframe(newNode);
     }
     if (isScript) {
+      sync();
       webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextScript, winId]);
     }
 

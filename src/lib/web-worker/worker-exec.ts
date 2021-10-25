@@ -120,7 +120,7 @@ const runStateLoadHandlers = (instanceId: number, type: StateProp, handlers?: Ev
 };
 
 export const insertIframe = (iframe: Node) => {
-  // and iframe element's instanceId is also
+  // an iframe element's instanceId is also
   // the winId of it's contentWindow
   let i = 0;
   const winId = iframe[InstanceIdKey];

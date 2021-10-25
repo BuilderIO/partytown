@@ -58,7 +58,7 @@ const queue = (
   setTimeout(sync, 50);
 };
 
-const sync = () => {
+export const sync = () => {
   if (len(taskQueue)) {
     if (debug && webWorkerCtx.$config$.logMainAccess) {
       logWorker(`Main access, tasks sent: ${taskQueue.length}`);
@@ -271,6 +271,6 @@ const shouldRestrictToWorker = (interfaceType: InterfaceType, propKey: string) =
     webWorkerCtx.$forwardedTriggers$.includes(propKey));
 
 const setterMethods =
-  'addEventListener,removeEventListener,createElement,createTextNode,setAttribute,setItem,removeItem,classList.add,classList.remove,classList.toggle'.split(
+  'addEventListener,removeEventListener,createElement,createTextNode,insertBefore,setAttribute,setItem,removeItem,classList.add,classList.remove,classList.toggle'.split(
     ','
   );
