@@ -62,6 +62,17 @@
           })();
         </script>
       </li>
+
+      <li>
+        <strong>namespaceURI</strong>
+        <code id="testNamespaceURI"></code>
+        <script type="text/partytown">
+          (function () {
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            document.getElementById('testNamespaceURI').textContent = svg.namespaceURI;
+          })();
+        </script>
+      </li>
     </ul>
 
     <script type="text/partytown">

@@ -7,4 +7,7 @@ test('svg', async ({ page }) => {
 
   const testCreateNS = page.locator('#testCreateNS');
   await expect(testCreateNS).toHaveText('SVG 1');
+
+  const testNamespaceURI = page.locator('#testNamespaceURI');
+  await expect(testNamespaceURI).toHaveText('http://www.w3.org/2000/svg');
 });

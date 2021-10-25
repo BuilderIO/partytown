@@ -8,7 +8,7 @@ export class HTMLElement extends Node {
   }
 
   get namespaceURI() {
-    return 'http://www.w3.org/1999/xhtml';
+    return 'http://www.w3.org/' + (this.tagName === 'SVG' ? '2000/svg' : '1999/xhtml');
   }
 
   get tagName() {
