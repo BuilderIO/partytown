@@ -149,11 +149,10 @@ export const enum InterfaceType {
   History = 18,
   Location = 19,
   MutationObserver = 20,
-  NodeList = 21,
-  NamedNodeMap = 22,
-  ResizeObserver = 23,
-  Screen = 24,
-  Storage = 25,
+  NamedNodeMap = 21,
+  ResizeObserver = 22,
+  Screen = 23,
+  Storage = 24,
 }
 
 export const enum PlatformInstanceId {
@@ -201,9 +200,12 @@ export type ApplyPath = any[];
 
 export const enum SerializedType {
   Array,
+  CSSRule,
+  CSSRuleList,
   Event,
   Function,
   Instance,
+  NodeList,
   Object,
   Primitive,
   Ref,
@@ -211,16 +213,27 @@ export const enum SerializedType {
 
 export type SerializedArrayTransfer = [SerializedType.Array, (SerializedTransfer | undefined)[]];
 
+export type SerializedCSSRuleTransfer = [SerializedType.CSSRule, SerializedCSSRule];
+
+export type SerializedCSSRuleListTransfer = [SerializedType.CSSRuleList, SerializedCSSRule[]];
+
 export type SerializedEventTransfer = [SerializedType.Event, SerializedObject];
 
 export type SerializedFunctionTransfer = [SerializedType.Function];
 
 export type SerializedInstanceTransfer = [SerializedType.Instance, SerializedInstance];
 
+export type SerializedNodeListTransfer = [
+  SerializedType.NodeList,
+  (SerializedTransfer | undefined)[]
+];
+
 export type SerializedObjectTransfer = [
   SerializedType.Object,
   { [key: string]: SerializedTransfer | undefined }
 ];
+
+export type SerializedCSSRule = { [key: string]: string };
 
 export type SerializedPrimitiveTransfer =
   | [SerializedType.Primitive, string | number | boolean | null | undefined]
@@ -236,9 +249,12 @@ export interface SerializedRefTransferData {
 
 export type SerializedTransfer =
   | SerializedArrayTransfer
+  | SerializedCSSRuleTransfer
+  | SerializedCSSRuleListTransfer
   | SerializedEventTransfer
   | SerializedFunctionTransfer
   | SerializedInstanceTransfer
+  | SerializedNodeListTransfer
   | SerializedObjectTransfer
   | SerializedPrimitiveTransfer
   | SerializedPrimitiveTransfer
@@ -401,8 +417,9 @@ export const enum StateProp {
   errorHandlers = 'error',
   loadHandlers = 'load',
   loadErrorStatus = 1,
-  innerHTML = 2,
-  url = 3,
+  cssRules = 2,
+  innerHTML = 3,
+  url = 4,
 }
 
 export type EventHandler = (ev: any) => void;

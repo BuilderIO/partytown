@@ -128,7 +128,11 @@ export const deserializeFromMain = (
     serializedType = serializedValueTransfer[0];
     serializedValue = serializedValueTransfer[1] as any;
 
-    if (serializedType === SerializedType.Primitive) {
+    if (
+      serializedType === SerializedType.Primitive ||
+      serializedType === SerializedType.CSSRule ||
+      serializedType === SerializedType.CSSRuleList
+    ) {
       return serializedValue;
     }
 
@@ -138,6 +142,10 @@ export const deserializeFromMain = (
 
     if (serializedType === SerializedType.Instance) {
       return constructSerializedInstance(serializedValue);
+    }
+
+    if (serializedType === SerializedType.NodeList) {
+      return new NodeList(serializedValue.map(constructSerializedInstance));
     }
 
     if (serializedType === SerializedType.Array) {
@@ -188,8 +196,6 @@ export const constructSerializedInstance = ({
     return env.$head$;
   } else if ($instanceId$ === PlatformInstanceId.body) {
     return env.$body$;
-  } else if ($interfaceType$ === InterfaceType.NodeList) {
-    return new NodeList($data$!.map(constructSerializedInstance));
   } else {
     return constructInstance($interfaceType$, $instanceId$!, $winId$, $nodeName$);
   }

@@ -17,10 +17,11 @@ export const mainAccessHandler = async (
   const accessRsp: MainAccessResponse = {
     $msgId$: accessReq.$msgId$,
   };
-  const errors: string[] = [];
+  const totalTasks = len(accessReq.$tasks$);
 
-  for (const task of accessReq.$tasks$) {
+  for (let i = 0; i < totalTasks; i++) {
     try {
+      let task = accessReq.$tasks$[i];
       let winId = task.$winId$;
       let instanceId = task.$instanceId$;
       let applyPath = task.$applyPath$;
@@ -68,12 +69,15 @@ export const mainAccessHandler = async (
         }
       }
     } catch (e: any) {
-      errors.push(String(e.stack || e));
+      if (i === totalTasks - 1) {
+        // last task is the only one we can throw a sync error
+        accessRsp.$error$ = String(e.stack || e);
+      } else {
+        // this is an error from an async setter, but we're
+        // not able to throw a sync error, just console.error
+        console.error(e);
+      }
     }
-  }
-
-  if (len(errors)) {
-    accessRsp.$error$ = errors.join('\n');
   }
 
   return accessRsp;
@@ -85,6 +89,7 @@ const applyToInstance = (worker: PartytownWebWorker, instance: any, applyPath: A
   let next: any;
   let current: any;
   let previous: any;
+  let args: any[];
 
   for (; i < l; i++) {
     current = applyPath[i];
@@ -92,9 +97,13 @@ const applyToInstance = (worker: PartytownWebWorker, instance: any, applyPath: A
     previous = applyPath[i - 1];
 
     if (!Array.isArray(next)) {
-      if (typeof current === 'string') {
+      if (typeof current === 'string' || typeof current === 'number') {
+        // getter
         // current is the member name, but not a method
-        if ($dimensionPropNames$.includes(current) && typeof instance[current] === 'number') {
+        if (
+          $dimensionPropNames$.includes(current as any) &&
+          typeof instance[current] === 'number'
+        ) {
           const dimensionValues: any = { ptD: 9 };
           $dimensionPropNames$.map((propName) => (dimensionValues[propName] = instance[propName]));
           return dimensionValues;
@@ -102,12 +111,25 @@ const applyToInstance = (worker: PartytownWebWorker, instance: any, applyPath: A
 
         instance = instance[current];
       } else if (next === ApplyPathType.SetValue) {
+        // setter
+        // previous is the setter name
         // current is the setter value
+        // next tells us this was a setter
         instance[previous] = deserializeFromWorker(worker, current);
       } else if (typeof instance[previous] === 'function') {
+        // method call
         // current is the method args
         // previous is the method name
-        instance = instance[previous].apply(instance, deserializeFromWorker(worker, current));
+        args = deserializeFromWorker(worker, current);
+
+        if (previous === 'insertRule') {
+          // possible that the async insertRule has thrown an error
+          // and the subsequent async insertRule's have bad indexes
+          if (args[1] > len(instance.cssRules)) {
+            args[1] = len(instance.cssRules);
+          }
+        }
+        instance = instance[previous].apply(instance, args);
       }
     }
   }

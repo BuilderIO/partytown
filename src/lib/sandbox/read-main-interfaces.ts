@@ -27,7 +27,6 @@ export const readMainInterfaces = (win: MainWindow) => {
     [InterfaceType.Location, win.location],
     [InterfaceType.MutationObserver, new MutationObserver(noop)],
     [InterfaceType.NamedNodeMap, inputElm.attributes],
-    [InterfaceType.NodeList, inputElm.childNodes],
     [InterfaceType.ResizeObserver, new ResizeObserver(noop)],
     [InterfaceType.Screen, win.screen],
     [InterfaceType.Storage, win.localStorage],

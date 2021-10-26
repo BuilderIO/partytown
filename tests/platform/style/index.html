@@ -53,29 +53,108 @@
     <h1>Style</h1>
     <ul>
       <li>
-        <strong>sheet === null</strong>
-        <code id="testSheetNull"></code>
+        <strong>sheet.type</strong>
+        <code id="testSheetType"></code>
         <script type="text/partytown">
           (function () {
             const style = document.createElement('style');
-            const elm = document.getElementById('testSheetNull');
-            elm.textContent = String(style.sheet);
+            document.head.appendChild(style);
+            const elm = document.getElementById('testSheetType');
+            elm.textContent = style.sheet.type;
           })();
         </script>
       </li>
 
       <li>
         <strong>sheet.cssRules.length</strong>
-        <code id="testSheetInnerHtml"></code>
+        <code id="testCssRulesLength"></code>
         <script type="text/partytown">
           (function () {
             const style = document.createElement('style');
-            style.innerHTML = `#testSheetInnerHtml { color: blue; }`;
+            style.innerHTML = `#testCssRulesLength { color: blue; }`;
             document.head.appendChild(style);
-            const elm = document.getElementById('testSheetInnerHtml');
-            const cssRules = style.sheet.cssRules;
+            const elm = document.getElementById('testCssRulesLength');
+            elm.textContent = style.sheet.cssRules.length;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>sheet.ownerNode</strong>
+        <code id="testOwnerNode"></code>
+        <script type="text/partytown">
+          (function () {
+            const style = document.createElement('style');
+            document.head.appendChild(style);
+            const elm = document.getElementById('testOwnerNode');
+            elm.textContent = style.sheet.ownerNode.nodeName;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>sheet.cssRules[0].cssText</strong>
+        <code id="testCssRules0"></code>
+        <script type="text/partytown">
+          (function () {
+            const style = document.createElement('style');
+            style.innerHTML = `#testCssRules0 { color: red; }`;
+            document.head.appendChild(style);
+            const elm = document.getElementById('testCssRules0');
+            const sheet = style.sheet;
+            const cssRules = sheet.cssRules;
             const cssRule = cssRules[0];
             elm.textContent = cssRule.cssText;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>sheet.cssRules.item(0).selectorText</strong>
+        <code id="testCssRulesItem0"></code>
+        <script type="text/partytown">
+          (function () {
+            const style = document.createElement('style');
+            style.innerHTML = `#testCssRulesItem0 { color: maroon; }`;
+            document.head.appendChild(style);
+            const elm = document.getElementById('testCssRulesItem0');
+            elm.textContent = style.sheet.cssRules.item(0).selectorText;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>sheet.insertRule()</strong>
+        <code id="testInsertRule"></code>
+        <script type="text/partytown">
+          (function () {
+            const style = document.createElement('style');
+            document.head.appendChild(style);
+            style.sheet.insertRule(`#testInsertRule { color: blue; }`);
+            const elm = document.getElementById('testInsertRule');
+            const sheet = style.sheet;
+            const cssRules = sheet.cssRules;
+            const cssRule = cssRules[0];
+            elm.textContent = cssRule.selectorText;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>sheet.deleteRule()</strong>
+        <code id="testDeleteRule"></code>
+        <script type="text/partytown">
+          (function () {
+            const style = document.createElement('style');
+            document.head.appendChild(style);
+            style.sheet.insertRule(`#testDeleteRule { color: red; }`, 0);
+            style.sheet.insertRule(`#testDeleteRule { color: green; }`, 1);
+            style.sheet.insertRule(`#testDeleteRule { color: blue; }`, 2);
+            const elm = document.getElementById('testDeleteRule');
+            const sheet = style.sheet;
+            sheet.deleteRule(2);
+            const computedStyle = getComputedStyle(elm);
+            elm.textContent = computedStyle.color + ' ' + sheet.cssRules.length;
           })();
         </script>
       </li>

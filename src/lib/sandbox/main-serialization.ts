@@ -5,6 +5,7 @@ import {
   PartytownWebWorker,
   PlatformInstanceId,
   RefHandlerCallbackData,
+  SerializedCSSRule,
   SerializedInstance,
   SerializedObject,
   SerializedRefTransferData,
@@ -68,17 +69,21 @@ export const serializeForWorker = (
 
       if (cstrName === 'HTMLCollection' || cstrName === 'NodeList') {
         return [
-          SerializedType.Instance,
-          {
-            $winId$,
-            $interfaceType$: InterfaceType.NodeList,
-            $data$: Array.from(value).map((v) => serializeForWorker($winId$, v, added)![1]) as any,
-          },
+          SerializedType.NodeList,
+          Array.from(value).map((v) => serializeForWorker($winId$, v, added)![1]) as any,
         ];
       }
 
       if (cstrName === 'Event') {
         return [SerializedType.Event, serializeObjectForWorker($winId$, value, added)];
+      }
+
+      if (cstrName === 'CSSRuleList') {
+        return [SerializedType.CSSRuleList, Array.from(value).map(serializeCssRuleForWorker)];
+      }
+
+      if (cstrName.startsWith('CSS') && cstrName.endsWith('Rule')) {
+        return [SerializedType.CSSRule, serializeCssRuleForWorker(value)];
       }
 
       if (cstrName === 'CSSStyleDeclaration') {
@@ -104,15 +109,28 @@ const serializeObjectForWorker = (
   if (!added.has(obj)) {
     added.add(obj);
     for (propName in obj) {
-      propValue = obj[propName];
-      if (isValidMemberName(propName) && (includeFunctions || typeof propValue !== 'function')) {
-        if (includeEmptyStrings || propValue !== '') {
-          serializedObj[propName] = serializeForWorker(winId, propValue, added);
+      if (isValidMemberName(propName)) {
+        propValue = obj[propName];
+        if (includeFunctions || typeof propValue !== 'function') {
+          if (includeEmptyStrings || propValue !== '') {
+            serializedObj[propName] = serializeForWorker(winId, propValue, added);
+          }
         }
       }
     }
   }
   return serializedObj;
+};
+
+const serializeCssRuleForWorker = (cssRule: any) => {
+  let obj: SerializedCSSRule = {};
+  let key: string;
+  for (key in cssRule) {
+    if (validCssRuleProps.includes(key)) {
+      obj[key] = cssRule[key];
+    }
+  }
+  return obj;
 };
 
 export const deserializeFromWorker = (
@@ -191,3 +209,6 @@ const deserializeObjectFromWorker = (
   }
   return obj;
 };
+
+const validCssRuleProps =
+  'cssText,selectorText,href,media,namespaceURI,prefix,name,conditionText'.split(',');
