@@ -116,6 +116,9 @@ const applyToInstance = (worker: PartytownWebWorker, instance: any, applyPath: A
         // current is the setter value
         // next tells us this was a setter
         instance[previous] = deserializeFromWorker(worker, current);
+
+        // setters never return a value
+        return;
       } else if (typeof instance[previous] === 'function') {
         // method call
         // current is the method args
