@@ -408,6 +408,34 @@
         </script>
       </li>
 
+      <li>
+        <strong>crypto.getRandomValues()</strong>
+        <code>
+          <span id="testCrypto"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testCrypto');
+            const arr = new Uint32Array(1);
+            window.crypto.getRandomValues(arr);
+            elm.textContent = arr[0];
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>window.indexedDB</strong>
+        <code>
+          <span id="testIndexedDB"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testIndexedDB');
+            elm.textContent = !!window.indexedDB;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

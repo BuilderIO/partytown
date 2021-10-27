@@ -147,8 +147,15 @@ export const createEnvironment = ({
       // bind web worker global functions to the environment window
       // window.atob = self.atob.bind(self);
       for (const globalName in self) {
-        if (typeof self[globalName] === 'function' && !(globalName in win)) {
-          win[globalName] = (self as any)[globalName].bind(self);
+        if (!(globalName in win)) {
+          // global properties already in the web worker global
+          // that we can put onto the environment window
+          // function examples: atob(), fetch()
+          // object examples: crypto, performance, indexedDB
+          win[globalName] =
+            typeof self[globalName] === 'function'
+              ? (win[globalName] = (self as any)[globalName].bind(self))
+              : self[globalName];
         }
       }
 
@@ -179,6 +186,8 @@ export const createEnvironment = ({
           isValidInterface &&
           (!(memberName in win) || windowFunctionWhiteList.includes(memberName))
         ) {
+          // functions or properites that were found on the main thread's window
+          // that should have a proxy created on this environment window
           win[memberName] = isFunctionInterface
             ? (...args: any[]) => callMethod(win, [memberName], args)
             : proxy($interfaceType$, win, ['window', memberName]);
@@ -196,7 +205,6 @@ export const createEnvironment = ({
       win.Image = createImageConstructor($winId$);
       win.Window = Window;
 
-      win.performance = self.performance;
       win.name = name + (debug ? `${normalizedWinId($winId$)} (${$winId$})` : ($winId$ as any));
       win.navigator = createNavigator($winId$);
       win.screen = new WorkerProxy(InterfaceType.Screen, PlatformInstanceId.screen, $winId$);

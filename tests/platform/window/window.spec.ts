@@ -87,4 +87,11 @@ test('window', async ({ page }) => {
   const origin = new URL(await testOrigin.textContent());
   expect(origin.pathname).toBe('/');
   expect(origin.hostname).toBe('localhost');
+
+  const testCrypto = page.locator('#testCrypto');
+  const rand = await testCrypto.textContent();
+  expect(isNaN(rand as any)).toBe(false);
+
+  const testIndexedDB = page.locator('#testIndexedDB');
+  await expect(testIndexedDB).toHaveText('true');
 });
