@@ -353,6 +353,24 @@
         </script>
       </li>
 
+      <li>
+        <strong>node === node</strong>
+        <code id="testElementEquality"></code>
+        <script type="text/partytown">
+          (function () {
+            const div1 = document.createElement('div');
+            const equalId = 'elm-equal';
+            div1.id = equalId;
+            document.body.insertBefore(div1, null);
+
+            const div2 = document.getElementById(equalId);
+
+            const elm = document.getElementById('testElementEquality');
+            elm.textContent = div1 === div2;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

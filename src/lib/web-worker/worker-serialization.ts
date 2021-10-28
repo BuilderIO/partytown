@@ -10,7 +10,7 @@ import {
   SerializedType,
 } from '../types';
 import { callMethod } from './worker-proxy';
-import { constructEvent, constructInstance } from './worker-constructors';
+import { constructEvent, getOrCreateInstance } from './worker-constructors';
 import {
   environments,
   InstanceIdKey,
@@ -141,11 +141,11 @@ export const deserializeFromMain = (
     }
 
     if (serializedType === SerializedType.Instance) {
-      return constructSerializedInstance(serializedValue);
+      return getOrCreateSerializedInstance(serializedValue);
     }
 
     if (serializedType === SerializedType.NodeList) {
-      return new NodeList(serializedValue.map(constructSerializedInstance));
+      return new NodeList(serializedValue.map(getOrCreateSerializedInstance));
     }
 
     if (serializedType === SerializedType.Array) {
@@ -178,12 +178,11 @@ const deserializeObjectFromMain = (
   return obj;
 };
 
-export const constructSerializedInstance = ({
+export const getOrCreateSerializedInstance = ({
   $interfaceType$,
   $instanceId$,
   $winId$,
   $nodeName$,
-  $data$,
 }: SerializedInstance): any => {
   const env = environments[$winId$];
   if ($instanceId$ === PlatformInstanceId.window) {
@@ -197,7 +196,7 @@ export const constructSerializedInstance = ({
   } else if ($instanceId$ === PlatformInstanceId.body) {
     return env.$body$;
   } else {
-    return constructInstance($interfaceType$, $instanceId$!, $winId$, $nodeName$);
+    return getOrCreateInstance($interfaceType$, $instanceId$!, $winId$, $nodeName$);
   }
 };
 
@@ -226,7 +225,7 @@ const deserializeRefFromMain = (
   if (!webWorkerRefsByRefId[$refId$]) {
     webWorkerRefIdsByRef.set(
       (webWorkerRefsByRefId[$refId$] = function (this: any, ...args: any[]) {
-        const instance = constructInstance(InterfaceType.Window, instanceId, $winId$);
+        const instance = getOrCreateInstance(InterfaceType.Window, instanceId, $winId$);
         return callMethod(instance, applyPath, args);
       }),
       $refId$

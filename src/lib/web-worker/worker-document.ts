@@ -1,8 +1,8 @@
 import { callMethod, setter } from './worker-proxy';
 import { constantProps, readonlyCachedProps } from './worker-state';
-import { constructInstance, getElementConstructor } from './worker-constructors';
 import { createEnvironment, getEnv, getEnvWindow } from './worker-environment';
 import { defineConstructorName, randomId, SCRIPT_TYPE } from '../utils';
+import { getOrCreateInstance } from './worker-constructors';
 import { getPartytownScript } from './worker-exec';
 import { HTMLElement } from './worker-element';
 import { InterfaceType, NodeName } from '../types';
@@ -18,8 +18,7 @@ export class HTMLDocument extends HTMLElement {
 
     const winId = this[WinIdKey];
     const instanceId = randomId();
-    const ElementCstr = getElementConstructor(tagName);
-    const elm = new ElementCstr(InterfaceType.Element, instanceId, winId, tagName);
+    const elm = getOrCreateInstance(InterfaceType.Element, instanceId, winId, tagName);
 
     callMethod(this, ['createElement'], [tagName], instanceId);
 
@@ -40,7 +39,7 @@ export class HTMLDocument extends HTMLElement {
     tagName = tagName.toUpperCase();
     const winId = this[WinIdKey];
     const instanceId = randomId();
-    const elm = constructInstance(InterfaceType.Element, instanceId, winId, tagName);
+    const elm = getOrCreateInstance(InterfaceType.Element, instanceId, winId, tagName);
 
     callMethod(this, ['createElementNS'], [ns, tagName], instanceId);
 
@@ -51,7 +50,7 @@ export class HTMLDocument extends HTMLElement {
     const winId = this[WinIdKey];
     const instanceId = randomId();
 
-    const node = constructInstance(InterfaceType.TextNode, instanceId, winId);
+    const node = getOrCreateInstance(InterfaceType.TextNode, instanceId, winId);
 
     callMethod(this, ['createTextNode'], [text], instanceId);
 
@@ -65,7 +64,7 @@ export class HTMLDocument extends HTMLElement {
   get currentScript() {
     const currentScriptId = getEnv(this).$currentScriptId$!;
     if (currentScriptId > 0) {
-      return constructInstance(
+      return getOrCreateInstance(
         InterfaceType.Element,
         currentScriptId,
         this[WinIdKey],

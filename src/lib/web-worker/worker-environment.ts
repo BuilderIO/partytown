@@ -1,9 +1,9 @@
 import { callMethod, createGlobalConstructorProxy, getter, proxy, setter } from './worker-proxy';
 import { constructDocumentElementChild, HTMLDocument } from './worker-document';
-import { constructInstance, elementConstructors } from './worker-constructors';
 import { createImageConstructor } from './worker-image';
 import { createNavigator } from './worker-navigator';
 import { debug, logWorker, normalizedWinId } from '../utils';
+import { elementConstructors, getOrCreateInstance } from './worker-constructors';
 import {
   environments,
   InstanceIdKey,
@@ -57,7 +57,7 @@ export const createEnvironment = ({
         const env = getEnv(this);
         const iframeElementInstanceId = this[WinIdKey];
         const iframeElementWinId = env.$parentWinId$;
-        return constructInstance(
+        return getOrCreateInstance(
           InterfaceType.Element,
           iframeElementInstanceId,
           iframeElementWinId,

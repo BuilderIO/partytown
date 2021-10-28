@@ -1,40 +1,49 @@
 import type { HTMLElement } from './worker-element';
 import { InterfaceType, NodeName } from '../types';
+import { webWorkerInstances } from './worker-constants';
 import { WorkerProxy } from './worker-proxy-constructor';
 
-export const constructInstance = (
+export const getOrCreateInstance = (
   interfaceType: InterfaceType,
   instanceId: number,
   winId: number,
   nodeName?: string
 ) => {
-  nodeName =
-    interfaceType === InterfaceType.TextNode
-      ? NodeName.Text
-      : interfaceType === InterfaceType.CommentNode
-      ? NodeName.Comment
-      : interfaceType === InterfaceType.DocumentFragmentNode
-      ? NodeName.DocumentFragment
-      : interfaceType === InterfaceType.DocumentTypeNode
-      ? NodeName.DocumentTypeNode
-      : nodeName;
+  let instance = webWorkerInstances.get(instanceId);
+  if (!instance) {
+    nodeName =
+      interfaceType === InterfaceType.TextNode
+        ? NodeName.Text
+        : interfaceType === InterfaceType.CommentNode
+        ? NodeName.Comment
+        : interfaceType === InterfaceType.DocumentFragmentNode
+        ? NodeName.DocumentFragment
+        : interfaceType === InterfaceType.DocumentTypeNode
+        ? NodeName.DocumentTypeNode
+        : nodeName;
 
-  const Cstr = getConstructor(interfaceType, nodeName);
-  return new Cstr(interfaceType, instanceId, winId, nodeName);
+    webWorkerInstances.set(
+      instanceId,
+      (instance = new (getConstructor(interfaceType, nodeName))(
+        interfaceType,
+        instanceId,
+        winId,
+        nodeName
+      ))
+    );
+  }
+  return instance;
 };
 
 const getConstructor = (interfaceType: InterfaceType, nodeName?: string): typeof WorkerProxy => {
   if (interfaceType === InterfaceType.Element) {
-    return getElementConstructor(nodeName!);
+    return elementConstructors[nodeName!] || elementConstructors.UNKNOWN;
   } else if (interfaceType <= InterfaceType.DocumentFragmentNode) {
     return (self as any).Node;
   } else {
     return WorkerProxy;
   }
 };
-
-export const getElementConstructor = (nodeName: string): typeof HTMLElement =>
-  elementConstructors[nodeName] || elementConstructors.UNKNOWN;
 
 export const elementConstructors: { [tagName: string]: typeof HTMLElement } = {};
 

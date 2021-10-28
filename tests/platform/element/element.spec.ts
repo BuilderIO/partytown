@@ -79,4 +79,7 @@ test('element', async ({ page }) => {
   const h = parseInt(dimensions[0], 10);
   expect(w > 9).toBe(true);
   expect(h > 9).toBe(true);
+
+  const testElementEquality = page.locator('#testElementEquality');
+  await expect(testElementEquality).toHaveText('true');
 });
