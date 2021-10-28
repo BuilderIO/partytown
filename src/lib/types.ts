@@ -179,7 +179,6 @@ export interface MainAccessRequest {
 export interface MainAccessTask {
   $winId$: number;
   $instanceId$: number;
-  $interfaceType$: InterfaceType;
   $applyPath$: ApplyPath;
   $assignInstanceId$?: number;
 }

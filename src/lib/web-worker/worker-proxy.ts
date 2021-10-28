@@ -46,7 +46,6 @@ const queue = (
   taskQueue.push({
     $winId$: instance[WinIdKey],
     $instanceId$,
-    $interfaceType$: instance[InterfaceTypeKey],
     $applyPath$,
     $assignInstanceId$,
   });
