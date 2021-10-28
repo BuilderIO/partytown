@@ -11,6 +11,10 @@ export class HTMLElement extends Node {
     return 'http://www.w3.org/' + (this.tagName === 'SVG' ? '2000/svg' : '1999/xhtml');
   }
 
+  get parentElement() {
+    return this.parentNode;
+  }
+
   get tagName() {
     return this.nodeName;
   }

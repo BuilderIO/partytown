@@ -7,7 +7,8 @@ export const getOrCreateInstance = (
   interfaceType: InterfaceType,
   instanceId: number,
   winId: number,
-  nodeName?: string
+  nodeName?: string,
+  parentInstanceId?: number
 ) => {
   let instance = webWorkerInstances.get(instanceId);
   if (!instance) {
@@ -28,7 +29,8 @@ export const getOrCreateInstance = (
         interfaceType,
         instanceId,
         winId,
-        nodeName
+        nodeName,
+        parentInstanceId
       ))
     );
   }

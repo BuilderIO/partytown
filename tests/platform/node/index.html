@@ -187,6 +187,46 @@
         </script>
       </li>
 
+      <li>
+        <strong>body.parentNode</strong>
+        <code id="testBodyParentNode"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testBodyParentNode');
+            const node = document.createTextNode('');
+            document.body.appendChild(node);
+
+            node.parentNode;
+            node.parentNode;
+            node.parentNode;
+            const parentNode = node.parentNode;
+            elm.textContent = parentNode.nodeName;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>cached parentNode</strong>
+        <code id="testCachedParentNode"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testCachedParentNode');
+            const node = document.createTextNode('');
+
+            const nodeContainer = document.createElement('span');
+            nodeContainer.id = 'cached-parent-node';
+            nodeContainer.appendChild(node);
+            document.body.appendChild(nodeContainer);
+
+            node.parentNode;
+            node.parentNode;
+            node.parentNode;
+            const parentNode = node.parentNode;
+            elm.textContent = parentNode.id;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

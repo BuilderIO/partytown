@@ -121,19 +121,20 @@ constantProps(HTMLDocument, {
   readyState: 'complete',
 });
 
-export const constructDocumentElementChild = (
+export const constructPlatformDocumentNode = (
   winId: number,
   instanceId: number,
-  titleCaseNodeName: 'Body' | 'Head',
-  documentElement: HTMLElement
+  titleCaseNodeName: 'Body' | 'Head' | 'Html',
+  parentNode: any,
+  parentElement: any
 ) => {
   const HtmlCstr: typeof HTMLElement = defineConstructorName(
     class extends HTMLElement {
       get parentElement() {
-        return documentElement;
+        return parentElement;
       }
       get parentNode() {
-        return documentElement;
+        return parentNode;
       }
     },
     `HTML${titleCaseNodeName}Element`

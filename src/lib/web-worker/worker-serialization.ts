@@ -182,21 +182,24 @@ export const getOrCreateSerializedInstance = ({
   $interfaceType$,
   $instanceId$,
   $winId$,
+  $parentInstanceId$,
   $nodeName$,
-}: SerializedInstance): any => {
-  const env = environments[$winId$];
-  if ($instanceId$ === PlatformInstanceId.window) {
+}: SerializedInstance): any =>
+  getPlatformInstance($winId$, $instanceId$) ||
+  getOrCreateInstance($interfaceType$, $instanceId$!, $winId$, $nodeName$, $parentInstanceId$);
+
+export const getPlatformInstance = (winId: number, instanceId: number | undefined) => {
+  const env = environments[winId];
+  if (instanceId === PlatformInstanceId.window) {
     return env.$window$;
-  } else if ($instanceId$ === PlatformInstanceId.document) {
+  } else if (instanceId === PlatformInstanceId.document) {
     return env.$document$;
-  } else if ($instanceId$ === PlatformInstanceId.documentElement) {
+  } else if (instanceId === PlatformInstanceId.documentElement) {
     return env.$documentElement$;
-  } else if ($instanceId$ === PlatformInstanceId.head) {
+  } else if (instanceId === PlatformInstanceId.head) {
     return env.$head$;
-  } else if ($instanceId$ === PlatformInstanceId.body) {
+  } else if (instanceId === PlatformInstanceId.body) {
     return env.$body$;
-  } else {
-    return getOrCreateInstance($interfaceType$, $instanceId$!, $winId$, $nodeName$);
   }
 };
 

@@ -281,7 +281,8 @@
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testBodyParentNode');
-            elm.textContent = document.body.parentNode.nodeName + ' ' + document.body.parentElement.nodeName;
+            elm.textContent =
+              document.body.parentNode.nodeName + ' ' + document.body.parentElement.nodeName;
           })();
         </script>
       </li>
@@ -292,7 +293,9 @@
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testDocumentElementParentNode');
-            elm.textContent = document.documentElement.parentNode.nodeName + ' ' + String(document.documentElement.parentElement);
+            const parentNode = document.documentElement.parentNode.nodeName;
+            const parentElement = String(document.documentElement.parentElement);
+            elm.textContent = parentNode + ' ' + parentElement;
           })();
         </script>
       </li>

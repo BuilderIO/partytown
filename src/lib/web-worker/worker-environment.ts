@@ -1,5 +1,5 @@
 import { callMethod, createGlobalConstructorProxy, getter, proxy, setter } from './worker-proxy';
-import { constructDocumentElementChild, HTMLDocument } from './worker-document';
+import { constructPlatformDocumentNode, HTMLDocument } from './worker-document';
 import { createImageConstructor } from './worker-image';
 import { createNavigator } from './worker-navigator';
 import { debug, logWorker, normalizedWinId } from '../utils';
@@ -108,24 +108,27 @@ export const createEnvironment = ({
       NodeName.Document
     );
 
-    const $documentElement$ = new elementConstructors.HTML(
-      InterfaceType.Element,
-      PlatformInstanceId.documentElement,
+    const $documentElement$ = constructPlatformDocumentNode(
       $winId$,
-      NodeName.DocumentElement
+      PlatformInstanceId.documentElement,
+      'Html',
+      $document$,
+      null
     );
 
-    const $head$ = constructDocumentElementChild(
+    const $head$ = constructPlatformDocumentNode(
       $winId$,
       PlatformInstanceId.head,
       'Head',
+      $documentElement$,
       $documentElement$
     );
 
-    const $body$ = constructDocumentElementChild(
+    const $body$ = constructPlatformDocumentNode(
       $winId$,
       PlatformInstanceId.body,
       'Body',
+      $documentElement$,
       $documentElement$
     );
 

@@ -1,26 +1,25 @@
-import { callMethod, setter, sync } from './worker-proxy';
+import { callMethod, getter, setter, sync } from './worker-proxy';
 import { getEnv } from './worker-environment';
+import { getInstanceStateValue } from './worker-state';
 import { insertIframe, runScriptContent } from './worker-exec';
 import {
   InstanceIdKey,
   InterfaceTypeKey,
   NodeNameKey,
+  ParentInstanceIdKey,
   webWorkerCtx,
+  webWorkerInstances,
   WinIdKey,
 } from './worker-constants';
 import { NodeName, StateProp, WorkerMessageType } from '../types';
-import { getInstanceStateValue } from './worker-state';
 import type { HTMLDocument } from './worker-document';
 import { SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
 import { WorkerProxy } from './worker-proxy-constructor';
+import { getPlatformInstance } from './worker-serialization';
 
 export class Node extends WorkerProxy {
   appendChild(node: Node) {
     return this.insertBefore(node, null);
-  }
-
-  get ownerDocument(): HTMLDocument {
-    return getEnv(this).$document$;
   }
 
   get href() {
@@ -70,5 +69,24 @@ export class Node extends WorkerProxy {
 
   get nodeType() {
     return this[InterfaceTypeKey];
+  }
+
+  get ownerDocument(): HTMLDocument {
+    return getEnv(this).$document$;
+  }
+
+  get parentNode() {
+    let winId = this[WinIdKey];
+    let parentInstanceId = this[ParentInstanceIdKey];
+    let parentNode: any =
+      getPlatformInstance(winId, parentInstanceId) || webWorkerInstances.get(parentInstanceId!);
+
+    if (!parentNode) {
+      parentNode = getter(this, ['parentNode']);
+      if (parentNode) {
+        this[ParentInstanceIdKey] = parentNode[InstanceIdKey];
+      }
+    }
+    return parentNode;
   }
 }

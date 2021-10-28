@@ -35,4 +35,10 @@ test('node', async ({ page }) => {
   const testCompareDocumentPosition = page.locator('#testCompareDocumentPosition');
   const docPosition = parseInt(await testCompareDocumentPosition.textContent(), 10);
   expect(docPosition).toBeGreaterThanOrEqual(35);
+
+  const testBodyParentNode = page.locator('#testBodyParentNode');
+  await expect(testBodyParentNode).toHaveText('BODY');
+
+  const testCachedParentNode = page.locator('#testCachedParentNode');
+  await expect(testCachedParentNode).toHaveText('cached-parent-node');
 });

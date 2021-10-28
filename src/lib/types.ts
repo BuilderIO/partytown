@@ -267,6 +267,7 @@ export interface SerializedObject {
 export interface SerializedInstance {
   $winId$: number;
   $instanceId$?: number;
+  $parentInstanceId$?: number;
   /**
    * Node Type for Element (1), Text (3) and Document (9)
    */
