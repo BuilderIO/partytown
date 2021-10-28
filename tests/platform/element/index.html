@@ -342,13 +342,17 @@
           (function () {
             const li = document.getElementById('liDimensions');
 
+            // should only be one main access
             li.clientWidth;
             li.clientWidth;
             li.clientHeight;
             li.clientHeight;
+            li.offsetWidth;
+            li.offsetHeight;
 
+            const dimensions = li.clientWidth + 'x' + li.clientHeight
             const elm = document.getElementById('testDimensions');
-            elm.textContent = li.clientWidth + 'x' + li.clientHeight;
+            elm.textContent = dimensions;
           })();
         </script>
       </li>

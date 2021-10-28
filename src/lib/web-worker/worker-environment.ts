@@ -1,3 +1,4 @@
+import { cachedDimensionProps, cachedReadonlyProps } from './worker-state';
 import { callMethod, createGlobalConstructorProxy, getter, proxy, setter } from './worker-proxy';
 import { constructPlatformDocumentNode, HTMLDocument } from './worker-document';
 import { createImageConstructor } from './worker-image';
@@ -19,7 +20,6 @@ import {
   WorkerMessageType,
 } from '../types';
 import { Location } from './worker-location';
-import { readonlyCachedProps } from './worker-state';
 import { WorkerProxy } from './worker-proxy-constructor';
 
 export const createEnvironment = ({
@@ -137,9 +137,7 @@ export const createEnvironment = ({
     const windowFunctionWhiteList =
       'addEventListener,removeEventListener,dispatchEvent,postMessage'.split(',');
 
-    const windowPropertyWhiteList = webWorkerCtx.$dimensionPropNames$.concat(
-      'onmessage,onload,onerror'.split(',')
-    );
+    const windowPropertyWhiteList = 'onmessage,onload,onerror'.split(',');
 
     const initWindowInstance = (win: any) => {
       win[WinIdKey] = $winId$;
@@ -220,7 +218,8 @@ export const createEnvironment = ({
       );
     };
 
-    readonlyCachedProps(Window, 'devicePixelRatio');
+    cachedReadonlyProps(Window, 'devicePixelRatio');
+    cachedDimensionProps(Window);
 
     const $window$: any = new Window();
 

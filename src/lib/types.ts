@@ -76,7 +76,6 @@ export interface InitWebWorkerData {
   $config$: PartytownConfig;
   $htmlConstructors$: string[];
   $interfaces$: InterfaceInfo[];
-  $dimensionPropNames$: string[];
   $libPath$: string;
 }
 
@@ -180,6 +179,7 @@ export interface MainAccessTask {
   $winId$: number;
   $instanceId$: number;
   $applyPath$: ApplyPath;
+  $groupedGetters$?: string[];
   $assignInstanceId$?: number;
 }
 
@@ -191,8 +191,8 @@ export interface MainAccessResponse {
 }
 
 export const enum ApplyPathType {
-  SetValue = 0,
-  GlobalConstructor = 1,
+  SetValue,
+  GlobalConstructor,
 }
 
 export type ApplyPath = any[];

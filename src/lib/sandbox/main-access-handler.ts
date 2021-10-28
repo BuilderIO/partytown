@@ -53,7 +53,7 @@ export const mainAccessHandler = async (
         // get the existing instance
         instance = getInstance(winId, instanceId);
         if (instance) {
-          rtnValue = applyToInstance(worker, instance, applyPath);
+          rtnValue = applyToInstance(worker, instance, applyPath, task.$groupedGetters$);
 
           if (task.$assignInstanceId$) {
             setInstanceId(rtnValue, task.$assignInstanceId$);
@@ -83,7 +83,12 @@ export const mainAccessHandler = async (
   return accessRsp;
 };
 
-const applyToInstance = (worker: PartytownWebWorker, instance: any, applyPath: ApplyPath) => {
+const applyToInstance = (
+  worker: PartytownWebWorker,
+  instance: any,
+  applyPath: ApplyPath,
+  groupedGetters?: string[]
+) => {
   let i = 0;
   let l = len(applyPath);
   let next: any;
@@ -99,16 +104,15 @@ const applyToInstance = (worker: PartytownWebWorker, instance: any, applyPath: A
     if (!Array.isArray(next)) {
       if (typeof current === 'string' || typeof current === 'number') {
         // getter
-        // current is the member name, but not a method
-        if (
-          $dimensionPropNames$.includes(current as any) &&
-          typeof instance[current] === 'number'
-        ) {
-          const dimensionValues: any = { ptD: 9 };
-          $dimensionPropNames$.map((propName) => (dimensionValues[propName] = instance[propName]));
-          return dimensionValues;
+        if (i + 1 === l && groupedGetters) {
+          // instead of getting one property, we actually want to get many properties
+          // This is useful for getting all dimensions in one call
+          const groupedRtnValues: any = {};
+          groupedGetters.map((propName) => (groupedRtnValues[propName] = instance[propName]));
+          return groupedRtnValues;
         }
 
+        // current is the member name, but not a method
         instance = instance[current];
       } else if (next === ApplyPathType.SetValue) {
         // setter
@@ -139,8 +143,3 @@ const applyToInstance = (worker: PartytownWebWorker, instance: any, applyPath: A
 
   return instance;
 };
-
-export const $dimensionPropNames$ =
-  'innerHeight,innerWidth,outerHeight,outerWidth,clientHeight,clientWidth,clientTop,clientLeft,scrollHeight,scrollWidth,scrollTop,scrollLeft,offsetHeight,offsetWidth,offsetTop,offsetLeft,height,width,availHeight,availWidth,screenLeft,screenTop,screenX,screenY'.split(
-    ','
-  );

@@ -6,13 +6,7 @@ import {
   MainAccessResponse,
   MainAccessTask,
 } from '../types';
-import {
-  cachedDimensions,
-  InstanceIdKey,
-  InterfaceTypeKey,
-  webWorkerCtx,
-  WinIdKey,
-} from './worker-constants';
+import { cachedDimensions, InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import {
   debug,
   defineConstructorName,
@@ -40,7 +34,8 @@ const queue = (
   instance: WorkerProxy,
   $applyPath$: ApplyPath,
   isSetter?: boolean,
-  $assignInstanceId$?: number
+  $assignInstanceId$?: number,
+  $groupedGetters$?: string[]
 ) => {
   const $instanceId$ = instance[InstanceIdKey];
   taskQueue.push({
@@ -48,6 +43,7 @@ const queue = (
     $instanceId$,
     $applyPath$,
     $assignInstanceId$,
+    $groupedGetters$,
   });
 
   if (!isSetter) {
@@ -94,28 +90,16 @@ export const sync = () => {
   }
 };
 
-export const getter = (instance: WorkerProxy, applyPath: ApplyPath) => {
-  let cacheKey = [instance[WinIdKey], instance[InstanceIdKey], applyPath[0]].join('.');
-  let rtnValue = cachedDimensions.get(cacheKey);
-  let key: string;
-
-  if (typeof rtnValue === 'number') {
-    logWorkerGetter(instance, applyPath, rtnValue);
-    return rtnValue;
-  }
-
-  rtnValue = queue(instance, applyPath);
-
-  if (rtnValue && !rtnValue[InstanceIdKey] && rtnValue.ptD === 9) {
-    for (key in rtnValue) {
-      cachedDimensions.set(
-        instance[WinIdKey] + '.' + instance[InstanceIdKey] + '.' + key,
-        rtnValue[key]
-      );
+export const getter = (instance: WorkerProxy, applyPath: ApplyPath, groupedGetters?: string[]) => {
+  const rtnValue = queue(instance, applyPath, false, undefined, groupedGetters);
+  if (debug) {
+    if (groupedGetters) {
+      logWorkerGetter(instance, applyPath, rtnValue, false, true);
+    } else {
+      logWorkerGetter(instance, applyPath, rtnValue);
     }
-    rtnValue = cachedDimensions.get(cacheKey);
   }
-  logWorkerGetter(instance, applyPath, rtnValue);
+
   return rtnValue;
 };
 

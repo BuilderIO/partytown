@@ -1,9 +1,11 @@
-import { getter } from './worker-proxy';
+import { getter, setter } from './worker-proxy';
 import {
+  cachedDimensions,
   InstanceIdKey,
   webWorkerRefIdsByRef,
   webWorkerRefsByRefId,
   webWorkerState,
+  WinIdKey,
 } from './worker-constants';
 import { randomId } from '../utils';
 import type { RefHandler, StateRecord } from '../types';
@@ -52,7 +54,7 @@ export const setWorkerRef = (ref: RefHandler, refId?: number) => {
  * that should only do a main read once, cache the value, and
  * returned the cached value after in subsequent reads after that
  */
-export const readonlyCachedProps = (Cstr: any, props: string) =>
+export const cachedReadonlyProps = (Cstr: any, props: string) =>
   props.split(',').map((propName) => {
     Object.defineProperty(Cstr.prototype, propName, {
       get() {
@@ -78,3 +80,45 @@ export const readonlyCachedProps = (Cstr: any, props: string) =>
  */
 export const constantProps = (Cstr: any, props: { [propName: string]: any }) =>
   Object.keys(props).map((propName) => (Cstr.prototype[propName] = props[propName]));
+
+/**
+ * Known dimension properties to add to the Constructor's prototype
+ * that when called they'll check the dimension cache, and if it's
+ * not in the cache then to get all dimensions in one call and
+ * set its cache.
+ */
+export const cachedDimensionProps = (Cstr: any) =>
+  dimensionPropNames.map((propName) => {
+    Object.defineProperty(Cstr.prototype, propName, {
+      get() {
+        const dimension = cachedDimensions.get(getDimensionCacheKey(this, propName));
+        if (typeof dimension === 'number') {
+          return dimension;
+        }
+
+        const groupedDimensions: { [key: string]: number } = getter(
+          this,
+          [propName],
+          dimensionPropNames
+        );
+
+        Object.entries(groupedDimensions).map(([dimensionPropName, value]) => {
+          cachedDimensions.set(getDimensionCacheKey(this, dimensionPropName), value);
+        });
+
+        return groupedDimensions[propName];
+      },
+      set(val) {
+        cachedDimensions.set(getDimensionCacheKey(this, propName), val);
+        setter(this, [propName], val);
+      },
+    });
+  });
+
+const dimensionPropNames =
+  'innerHeight,innerWidth,outerHeight,outerWidth,clientHeight,clientWidth,clientTop,clientLeft,scrollHeight,scrollWidth,scrollTop,scrollLeft,offsetHeight,offsetWidth,offsetTop,offsetLeft'.split(
+    ','
+  );
+
+const getDimensionCacheKey = (instance: WorkerProxy, memberName: string) =>
+  instance[WinIdKey] + '.' + instance[InstanceIdKey] + '.' + memberName;

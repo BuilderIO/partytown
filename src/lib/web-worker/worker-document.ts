@@ -1,5 +1,5 @@
 import { callMethod, setter } from './worker-proxy';
-import { constantProps, readonlyCachedProps } from './worker-state';
+import { cachedReadonlyProps, constantProps } from './worker-state';
 import { createEnvironment, getEnv, getEnvWindow } from './worker-environment';
 import { defineConstructorName, randomId, SCRIPT_TYPE } from '../utils';
 import { getOrCreateInstance } from './worker-constructors';
@@ -111,7 +111,7 @@ export class HTMLDocument extends HTMLElement {
   }
 }
 
-readonlyCachedProps(HTMLDocument, 'referrer,title');
+cachedReadonlyProps(HTMLDocument, 'referrer,title');
 
 constantProps(HTMLDocument, {
   compatMode: 'CSS1Compat',

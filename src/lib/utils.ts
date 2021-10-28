@@ -74,14 +74,17 @@ export const logWorkerGetter = (
   target: any,
   applyPath: ApplyPath,
   rtnValue: any,
-  restrictedToWorker = false
+  restrictedToWorker = false,
+  groupedGetters = false
 ) => {
   if (debug && webWorkerCtx.$config$.logGetters) {
     try {
       const msg = `Get ${logTargetProp(target, 'Get', applyPath)}, returned: ${logValue(
         applyPath,
         rtnValue
-      )}${restrictedToWorker ? ' (restricted to worker)' : ''}`;
+      )}${restrictedToWorker ? ' (restricted to worker)' : ''}${
+        groupedGetters ? ' (grouped getter)' : ''
+      }`;
       if (!msg.includes('Symbol(')) {
         logWorker(msg, target[WinIdKey]);
       }

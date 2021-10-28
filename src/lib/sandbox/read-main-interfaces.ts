@@ -1,5 +1,4 @@
 import { debug, getConstructorName, isValidMemberName, logMain, noop } from '../utils';
-import { $dimensionPropNames$ } from './main-access-handler';
 import { InitWebWorkerData, InterfaceInfo, InterfaceType, MainWindow } from '../types';
 
 export const readMainInterfaces = (win: MainWindow) => {
@@ -36,7 +35,6 @@ export const readMainInterfaces = (win: MainWindow) => {
   const initWebWorkerData: InitWebWorkerData = {
     $config$,
     $libPath$: new URL($libPath$, $url$) + '',
-    $dimensionPropNames$,
     $htmlConstructors$: Object.getOwnPropertyNames(win).filter((c) => /^H.*t$/i.test(c)),
     $interfaces$: implementations.map(([interfaceType, impl, cstrName]) => {
       let memberName: string;

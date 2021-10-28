@@ -1,8 +1,9 @@
+import { cachedDimensionProps } from './worker-state';
 import { defineConstructorName, EMPTY_ARRAY, logWorker } from '../utils';
 import { elementConstructors, getTagNameFromConstructor } from './worker-constructors';
 import { HTMLAnchorElement } from './worker-anchor';
 import { HTMLCanvasElement } from './worker-canvas';
-import { HTMLElement, HTMLSrcElement } from './worker-element';
+import { HTMLElement } from './worker-element';
 import { HTMLDocument } from './worker-document';
 import { HTMLIFrameElement } from './worker-iframe';
 import { HTMLScriptElement } from './worker-script';
@@ -28,7 +29,7 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   (self as any).postMessage = (self as any).importScripts = undefined;
 
   (self as any).Node = Node;
-  (self as any).Element = (self as any).HTMLElement = HTMLSrcElement;
+  cachedDimensionProps(((self as any).Element = (self as any).HTMLElement = HTMLElement));
   (self as any).Document = HTMLDocument;
 
   // create the same HTMLElement constructors that were found on main's window
