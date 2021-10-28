@@ -74,6 +74,11 @@
             const elm = document.getElementsByTagName('h1')[0];
             const t = document.getElementById('testGetBoundingClientRect');
             const y = document.getElementById('testGetBoundingClientRectY');
+            // should only be one main access
+            elm.getBoundingClientRect();
+            elm.getBoundingClientRect();
+            elm.getBoundingClientRect();
+            elm.getBoundingClientRect();
             const r = elm.getBoundingClientRect();
             t.textContent = JSON.stringify(r);
             y.textContent = r.y;

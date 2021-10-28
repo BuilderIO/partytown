@@ -1,4 +1,4 @@
-import { cachedDimensionProps } from './worker-state';
+import { cachedDimensionMethods, cachedDimensionProps } from './worker-state';
 import { defineConstructorName, EMPTY_ARRAY, logWorker } from '../utils';
 import { elementConstructors, getTagNameFromConstructor } from './worker-constructors';
 import { HTMLAnchorElement } from './worker-anchor';
@@ -30,6 +30,7 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
 
   (self as any).Node = Node;
   cachedDimensionProps(((self as any).Element = (self as any).HTMLElement = HTMLElement));
+  cachedDimensionMethods(HTMLElement);
   (self as any).Document = HTMLDocument;
 
   // create the same HTMLElement constructors that were found on main's window

@@ -1,4 +1,4 @@
-import { getter, setter } from './worker-proxy';
+import { callMethod, getter, setter } from './worker-proxy';
 import {
   cachedDimensions,
   InstanceIdKey,
@@ -7,7 +7,7 @@ import {
   webWorkerState,
   WinIdKey,
 } from './worker-constants';
-import { randomId } from '../utils';
+import { EMPTY_ARRAY, randomId } from '../utils';
 import type { RefHandler, StateRecord } from '../types';
 import type { WorkerProxy } from './worker-proxy-constructor';
 
@@ -115,10 +115,25 @@ export const cachedDimensionProps = (Cstr: any) =>
     });
   });
 
+export const cachedDimensionMethods = (Cstr: any) =>
+  dimensionMethodNames.map((methodName) => {
+    Cstr.prototype[methodName] = function () {
+      let cacheKey = getDimensionCacheKey(this, methodName);
+      let dimensions = cachedDimensions.get(cacheKey);
+      if (!dimensions) {
+        dimensions = callMethod(this, [methodName], EMPTY_ARRAY);
+        cachedDimensions.set(cacheKey, dimensions);
+      }
+      return dimensions;
+    };
+  });
+
 const dimensionPropNames =
   'innerHeight,innerWidth,outerHeight,outerWidth,clientHeight,clientWidth,clientTop,clientLeft,scrollHeight,scrollWidth,scrollTop,scrollLeft,offsetHeight,offsetWidth,offsetTop,offsetLeft'.split(
     ','
   );
+
+const dimensionMethodNames = 'getClientRects,getBoundingClientRect'.split(',');
 
 const getDimensionCacheKey = (instance: WorkerProxy, memberName: string) =>
   instance[WinIdKey] + '.' + instance[InstanceIdKey] + '.' + memberName;
