@@ -27,7 +27,7 @@
     "build.prod": "tsc && rollup -c scripts/rollup.config.js --configApi",
     "build.watch": "rollup -c scripts/rollup.config.js -w --configDev",
     "dev": "tsc && concurrently \"npm:build.watch\" \"npm:tsc.watch\" -n build,tsc -c magenta,yellow",
-    "release": "npm run build && npm test && np --no-2fa --no-tests",
+    "release": "npm run build && npm test && np --no-tests",
     "serve": "sirv tests --port 4000 --dev",
     "serve.test": "sirv tests --port 4001  --dev --quiet",
     "test": "playwright test tests/platform --browser=chromium",

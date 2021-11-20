@@ -89,7 +89,7 @@ export function copyBuildToTestSite(opts: BuildOptions): Plugin {
   return {
     name: 'copyBuildToTestSite',
     async writeBundle() {
-      await copy(opts.distLibDir, opts.distTestsDir);
+      await copy(opts.distLibDir, opts.distTestsDir, { overwrite: true, recursive: true });
     },
   };
 }
