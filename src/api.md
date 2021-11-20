@@ -16,6 +16,7 @@ export interface PartytownConfig {
     logCalls?: boolean;
     logGetters?: boolean;
     logImageRequests?: boolean;
+    logMainAccess?: boolean;
     logScriptExecution?: boolean;
     logSendBeaconRequests?: boolean;
     logSetters?: boolean;
