@@ -1,19 +1,20 @@
 import { callMethod, getter } from './worker-proxy';
-import { constantProps, getInstanceStateValue, setInstanceStateValue } from './worker-state';
-import { HTMLElement } from './worker-element';
+import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
+import type { Node } from './worker-node';
 import { StateProp } from '../types';
-import type { WorkerProxy } from './worker-proxy-constructor';
 
-export class HTMLStyleElement extends HTMLElement {
-  get sheet() {
-    return new CSSStyleSheet(this);
-  }
+export const HTMLStyleDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
+  sheet: {
+    get() {
+      return new CSSStyleSheet(this);
+    },
+  },
 }
 
-class CSSStyleSheet {
-  ownerNode: WorkerProxy;
+export class CSSStyleSheet {
+  ownerNode: Node;
 
-  constructor(ownerNode: WorkerProxy) {
+  constructor(ownerNode: Node) {
     this.ownerNode = ownerNode;
   }
 
@@ -59,9 +60,7 @@ class CSSStyleSheet {
   }
 }
 
-constantProps(CSSStyleSheet, { type: 'text/css' });
-
-const getCssRules = (ownerNode: WorkerProxy): any[] => {
+const getCssRules = (ownerNode: Node): any[] => {
   let cssRules = getInstanceStateValue(ownerNode, StateProp.cssRules);
   if (!cssRules) {
     cssRules = getter(ownerNode, ['sheet', 'cssRules']);
@@ -70,7 +69,7 @@ const getCssRules = (ownerNode: WorkerProxy): any[] => {
   return cssRules;
 };
 
-const getCssRule = (ownerNode: WorkerProxy, index: any) => {
+const getCssRule = (ownerNode: Node, index: any) => {
   let cssRules = getCssRules(ownerNode);
   if (cssRules[index] === 0) {
     cssRules[index] = getter(ownerNode, ['sheet', 'cssRules', parseInt(index, 10)]);

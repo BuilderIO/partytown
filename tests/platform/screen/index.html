@@ -78,7 +78,11 @@
           (function () {
             const elm = document.getElementById('testOrientation');
             const orientation = screen.orientation;
-            elm.textContent = (screen.orientation || {}).type;
+            if (orientation) {
+              // safari doesn't have screen.orientation
+              const orientationType = orientation.type;
+              elm.textContent = orientationType;
+            }
           })();
         </script>
       </li>

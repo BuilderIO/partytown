@@ -1,6 +1,5 @@
 import {
   ApplyPath,
-  InterfaceType,
   PlatformInstanceId,
   RefHandlerCallbackData,
   SerializedInstance,
@@ -9,13 +8,12 @@ import {
   SerializedTransfer,
   SerializedType,
 } from '../types';
+import { Attr } from './worker-node';
 import { callMethod } from './worker-proxy';
-import { constructEvent, getOrCreateInstance } from './worker-constructors';
+import { constructEvent, getOrCreateNodeInstance } from './worker-constructors';
 import {
   environments,
   InstanceIdKey,
-  InterfaceTypeKey,
-  NodeNameKey,
   webWorkerRefIdsByRef,
   webWorkerRefsByRefId,
   WinIdKey,
@@ -64,9 +62,8 @@ export const serializeForMain = (
           SerializedType.Instance,
           {
             $winId$: value[WinIdKey],
-            $interfaceType$: value[InterfaceTypeKey],
             $instanceId$: value[InstanceIdKey],
-            $nodeName$: value[NodeNameKey],
+            // $nodeName$: value[NodeNameKey],
           },
         ];
       }
@@ -137,7 +134,7 @@ export const deserializeFromMain = (
     }
 
     if (serializedType === SerializedType.Ref) {
-      return deserializeRefFromMain(instanceId!, applyPath, serializedValue);
+      return deserializeRefFromMain(applyPath, serializedValue);
     }
 
     if (serializedType === SerializedType.Instance) {
@@ -146,6 +143,10 @@ export const deserializeFromMain = (
 
     if (serializedType === SerializedType.NodeList) {
       return new NodeList(serializedValue.map(getOrCreateSerializedInstance));
+    }
+
+    if (serializedType === SerializedType.Attr) {
+      return new Attr(serializedValue);
     }
 
     if (serializedType === SerializedType.Array) {
@@ -179,14 +180,12 @@ const deserializeObjectFromMain = (
 };
 
 export const getOrCreateSerializedInstance = ({
-  $interfaceType$,
-  $instanceId$,
   $winId$,
-  $parentInstanceId$,
+  $instanceId$,
   $nodeName$,
 }: SerializedInstance): any =>
   getPlatformInstance($winId$, $instanceId$) ||
-  getOrCreateInstance($interfaceType$, $instanceId$!, $winId$, $nodeName$, $parentInstanceId$);
+  getOrCreateNodeInstance($winId$, $instanceId$!, $nodeName$!);
 
 export const getPlatformInstance = (winId: number, instanceId: number | undefined) => {
   const env = environments[winId];
@@ -221,14 +220,13 @@ export const callWorkerRefHandler = ({
 };
 
 const deserializeRefFromMain = (
-  instanceId: number,
   applyPath: ApplyPath,
-  { $winId$, $refId$ }: SerializedRefTransferData
+  { $winId$, $instanceId$, $nodeName$, $refId$ }: SerializedRefTransferData
 ) => {
   if (!webWorkerRefsByRefId[$refId$]) {
     webWorkerRefIdsByRef.set(
       (webWorkerRefsByRefId[$refId$] = function (this: any, ...args: any[]) {
-        const instance = getOrCreateInstance(InterfaceType.Window, instanceId, $winId$);
+        const instance = getOrCreateNodeInstance($winId$, $instanceId$, $nodeName$!);
         return callMethod(instance, applyPath, args);
       }),
       $refId$

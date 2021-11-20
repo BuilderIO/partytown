@@ -132,7 +132,8 @@
             const elm = document.getElementById('testComment');
             const c = document.createComment('1.21');
             const hasChildNodes = c.hasChildNodes();
-            elm.textContent = c.nodeType + ' ' + c.nodeName + ' ' + c.data + ' ' + hasChildNodes;
+            const commentText = c.data;
+            elm.textContent = c.nodeType + ' ' + c.nodeName + ' ' + commentText + ' ' + hasChildNodes;
           })();
         </script>
       </li>
@@ -159,6 +160,10 @@
             const div = document.createElement('div');
             div.innerHTML = '<span>fragment</span>';
             f.appendChild(div);
+            f.children;
+            f.children;
+            f.children;
+            f.children;
             const fragDiv = f.children[0];
             const fragSpan = div.children[0];
             const qSpan = f.querySelector('span');
@@ -229,7 +234,7 @@
 
       <script type="text/partytown">
         (function () {
-          document.body.classList.add('completed');
+          document.body.className = 'completed';
         })();
       </script>
     </ul>

@@ -29,6 +29,7 @@ export const mainAccessHandler = async (
       let rtnValue: any;
 
       if (!winCtxs[winId]) {
+        // window (iframe) hasn't finished loading yet
         await new Promise<void>((resolve) => {
           let i = 0;
           let callback = () => {
@@ -42,12 +43,14 @@ export const mainAccessHandler = async (
         });
       }
 
-      if (applyPath[0] === ApplyPathType.GlobalConstructor) {
+      if (
+        applyPath[0] === ApplyPathType.GlobalConstructor &&
+        applyPath[1] in winCtxs[winId]!.$window$
+      ) {
         // create a new instance of a global constructor
         const constructedInstance = new (winCtxs[winId]!.$window$ as any)[applyPath[1]](
           ...deserializeFromWorker(worker, applyPath[2])
         );
-
         setInstanceId(constructedInstance, instanceId);
       } else {
         // get the existing instance
@@ -106,7 +109,7 @@ const applyToInstance = (
         // getter
         if (i + 1 === l && groupedGetters) {
           // instead of getting one property, we actually want to get many properties
-          // This is useful for getting all dimensions in one call
+          // This is useful for getting all dimensions of an element in one call
           const groupedRtnValues: any = {};
           groupedGetters.map((propName) => (groupedRtnValues[propName] = instance[propName]));
           return groupedRtnValues;

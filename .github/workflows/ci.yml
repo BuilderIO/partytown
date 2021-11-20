@@ -17,7 +17,14 @@ jobs:
         with:
           node-version: 14.x
 
-      - name: Install Node Dependencies
+      - name: Cache NPM Dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+
+      - name: Install NPM Dependencies
         run: npm ci
 
       - name: Build
@@ -51,7 +58,14 @@ jobs:
         with:
           node-version: 14.x
 
-      - name: Install Node Dependencies
+      - name: Cache NPM Dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+
+      - name: Install NPM Dependencies
         run: npm ci
 
       - name: Build

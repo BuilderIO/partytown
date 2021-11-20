@@ -2509,7 +2509,7 @@
         );
       }),
         (i.insertStyles = function (e, i, n) {
-          console.warn('insertStyles');
+          //console.warn('insertStyles');
           var t = e.key + '-' + i.name;
           if (
             (!1 === n && void 0 === e.registered[t] && (e.registered[t] = i.styles),

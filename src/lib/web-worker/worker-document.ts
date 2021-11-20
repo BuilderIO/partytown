@@ -1,143 +1,143 @@
 import { callMethod, setter } from './worker-proxy';
-import { cachedReadonlyProps, constantProps } from './worker-state';
 import { createEnvironment, getEnv, getEnvWindow } from './worker-environment';
-import { defineConstructorName, randomId, SCRIPT_TYPE } from '../utils';
-import { getOrCreateInstance } from './worker-constructors';
+import { getOrCreateNodeInstance } from './worker-constructors';
 import { getPartytownScript } from './worker-exec';
-import { HTMLElement } from './worker-element';
-import { InterfaceType, NodeName } from '../types';
+import { NodeName } from '../types';
+import type { Node } from './worker-node';
+import { noop, randomId, SCRIPT_TYPE } from '../utils';
 import { WinIdKey } from './worker-constants';
 
-export class HTMLDocument extends HTMLElement {
-  get body() {
-    return getEnv(this).$body$;
-  }
+export const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
+  body: {
+    get() {
+      return getEnv(this).$body$;
+    },
+  },
 
-  createElement(tagName: string) {
-    tagName = tagName.toUpperCase();
+  createElement: {
+    value(tagName: string) {
+      tagName = tagName.toUpperCase();
 
-    const winId = this[WinIdKey];
-    const instanceId = randomId();
-    const elm = getOrCreateInstance(InterfaceType.Element, instanceId, winId, tagName);
+      const winId = this[WinIdKey];
+      const instanceId = randomId();
+      const elm = getOrCreateNodeInstance(winId, instanceId, tagName);
 
-    callMethod(this, ['createElement'], [tagName], instanceId);
+      callMethod(this, ['createElement'], [tagName], instanceId);
 
-    if (tagName === NodeName.IFrame) {
-      // an iframe element's instanceId is the same as its contentWindow's winId
-      // and the contentWindow's parentWinId is the iframe element's winId
-      createEnvironment({ $winId$: instanceId, $parentWinId$: winId, $url$: 'about:blank' });
+      if (tagName === NodeName.IFrame) {
+        // an iframe element's instanceId is the same as its contentWindow's winId
+        // and the contentWindow's parentWinId is the iframe element's winId
+        createEnvironment({ $winId$: instanceId, $parentWinId$: winId, $url$: 'about:blank' });
 
-      setter(elm, ['srcdoc'], getPartytownScript());
-    } else if (tagName === NodeName.Script) {
-      setter(elm, ['type'], SCRIPT_TYPE);
-    }
-
-    return elm;
-  }
-
-  createElementNS(ns: string, tagName: string) {
-    tagName = tagName.toUpperCase();
-    const winId = this[WinIdKey];
-    const instanceId = randomId();
-    const elm = getOrCreateInstance(InterfaceType.Element, instanceId, winId, tagName);
-
-    callMethod(this, ['createElementNS'], [ns, tagName], instanceId);
-
-    return elm;
-  }
-
-  createTextNode(text: string) {
-    const winId = this[WinIdKey];
-    const instanceId = randomId();
-
-    const node = getOrCreateInstance(InterfaceType.TextNode, instanceId, winId);
-
-    callMethod(this, ['createTextNode'], [text], instanceId);
-
-    return node;
-  }
-
-  createEvent(type: string) {
-    return new Event(type);
-  }
-
-  get currentScript() {
-    const currentScriptId = getEnv(this).$currentScriptId$!;
-    if (currentScriptId > 0) {
-      return getOrCreateInstance(
-        InterfaceType.Element,
-        currentScriptId,
-        this[WinIdKey],
-        NodeName.Script
-      );
-    }
-    return null;
-  }
-
-  get defaultView() {
-    return getEnvWindow(this);
-  }
-
-  get documentElement() {
-    return getEnv(this).$documentElement$;
-  }
-
-  getElementsByTagName(tagName: string) {
-    tagName = tagName.toUpperCase();
-    if (tagName === NodeName.Body) {
-      return [this.body];
-    } else if (tagName === NodeName.Head) {
-      return [this.head];
-    } else {
-      return callMethod(this, ['getElementsByTagName'], [tagName]);
-    }
-  }
-
-  get head() {
-    return getEnv(this).$head$;
-  }
-
-  get implementation() {
-    return {
-      hasFeature: () => true,
-    };
-  }
-
-  get location() {
-    return getEnv(this).$location$;
-  }
-  set location(url: any) {
-    getEnv(this).$location$.href = url + '';
-  }
-}
-
-cachedReadonlyProps(HTMLDocument, 'referrer,title');
-
-constantProps(HTMLDocument, {
-  compatMode: 'CSS1Compat',
-  createEventObject: undefined,
-  parentElement: null,
-  parentNode: null,
-  readyState: 'complete',
-});
-
-export const constructPlatformDocumentNode = (
-  winId: number,
-  instanceId: number,
-  titleCaseNodeName: 'Body' | 'Head' | 'Html',
-  parentNode: any,
-  parentElement: any
-) => {
-  const HtmlCstr: typeof HTMLElement = defineConstructorName(
-    class extends HTMLElement {
-      get parentElement() {
-        return parentElement;
+        setter(elm, ['srcdoc'], getPartytownScript());
+      } else if (tagName === NodeName.Script) {
+        setter(elm, ['type'], SCRIPT_TYPE);
       }
-      get parentNode() {
-        return parentNode;
+
+      return elm;
+    },
+  },
+
+  createElementNS: {
+    value(ns: string, tagName: string) {
+      tagName = tagName.toUpperCase();
+
+      const winId = this[WinIdKey];
+      const instanceId = randomId();
+      const nsElm = getOrCreateNodeInstance(winId, instanceId, tagName);
+
+      callMethod(this, ['createElementNS'], [ns, tagName], instanceId);
+
+      return nsElm;
+    },
+  },
+
+  createTextNode: {
+    value(text: string) {
+      const winId = this[WinIdKey];
+      const instanceId = randomId();
+      const textNode = getOrCreateNodeInstance(winId, instanceId, NodeName.Text);
+
+      callMethod(this, ['createTextNode'], [text], instanceId);
+
+      return textNode;
+    },
+  },
+
+  createEvent: {
+    value: (type: string) => new Event(type),
+  },
+
+  currentScript: {
+    get() {
+      const winId = this[WinIdKey];
+      const currentScriptId = getEnv(this).$currentScriptId$!;
+      if (currentScriptId > 0) {
+        return getOrCreateNodeInstance(winId, currentScriptId, NodeName.Script);
+      }
+      return null;
+    },
+  },
+
+  defaultView: {
+    get() {
+      return getEnvWindow(this);
+    },
+  },
+
+  documentElement: {
+    get() {
+      return getEnv(this).$documentElement$;
+    },
+  },
+
+  getElementsByTagName: {
+    value(tagName: string) {
+      tagName = tagName.toUpperCase();
+      if (tagName === NodeName.Body) {
+        return [getEnv(this).$body$];
+      } else if (tagName === NodeName.Head) {
+        return [getEnv(this).$head$];
+      } else {
+        return callMethod(this, ['getElementsByTagName'], [tagName]);
       }
     },
-    `HTML${titleCaseNodeName}Element`
-  );
-  return new HtmlCstr(InterfaceType.Element, instanceId, winId, titleCaseNodeName.toUpperCase());
+  },
+
+  head: {
+    get() {
+      return getEnv(this).$head$;
+    },
+  },
+
+  implementation: {
+    value: {
+      hasFeature: noop,
+    },
+  },
+
+  location: {
+    get() {
+      return getEnv(this).$location$;
+    },
+    set(url) {
+      getEnv(this).$location$.href = url + '';
+    },
+  },
+
+  nodeType: {
+    value: 9,
+  },
+
+  parentNode: {
+    value: null,
+  },
+
+  parentElement: {
+    value: null,
+  },
+
+  readyState: {
+    value: 'complete',
+  },
 };

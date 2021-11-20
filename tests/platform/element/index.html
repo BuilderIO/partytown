@@ -203,6 +203,10 @@
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testParentElement');
+            elm.parentElement;
+            elm.parentElement;
+            elm.parentElement;
+            elm.parentElement;
             const parentElement = elm.parentElement;
             elm.textContent = parentElement.className;
           })();
@@ -256,7 +260,6 @@
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testAttrsNodeType');
-
             elm.textContent = elm.attributes.id.nodeType + ' ' + elm.attributes.id.nodeName;
           })();
         </script>
@@ -268,12 +271,11 @@
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testAttrsStyleValue');
-
             const attributes = elm.attributes;
             const style = attributes.style;
+            const name = style.name;
             const value = style.value;
-
-            elm.textContent = value;
+            elm.textContent = name + ' ' + value;
           })();
         </script>
       </li>

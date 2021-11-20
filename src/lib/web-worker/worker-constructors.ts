@@ -1,66 +1,22 @@
-import type { HTMLElement } from './worker-element';
-import { InterfaceType, NodeName } from '../types';
-import { webWorkerInstances } from './worker-constants';
-import { WorkerProxy } from './worker-proxy-constructor';
+import type { Node } from './worker-node';
+import { nodeConstructors, webWorkerInstances } from './worker-constants';
 
-export const getOrCreateInstance = (
-  interfaceType: InterfaceType,
-  instanceId: number,
-  winId: number,
-  nodeName?: string,
-  parentInstanceId?: number
-) => {
+export const getOrCreateNodeInstance = (winId: number, instanceId: number, nodeName: string) => {
   let instance = webWorkerInstances.get(instanceId);
   if (!instance) {
-    nodeName =
-      interfaceType === InterfaceType.TextNode
-        ? NodeName.Text
-        : interfaceType === InterfaceType.CommentNode
-        ? NodeName.Comment
-        : interfaceType === InterfaceType.DocumentFragmentNode
-        ? NodeName.DocumentFragment
-        : interfaceType === InterfaceType.DocumentTypeNode
-        ? NodeName.DocumentTypeNode
-        : nodeName;
-
-    webWorkerInstances.set(
-      instanceId,
-      (instance = new (getConstructor(interfaceType, nodeName))(
-        interfaceType,
-        instanceId,
-        winId,
-        nodeName,
-        parentInstanceId
-      ))
-    );
+    instance = createNodeInstance(winId, instanceId, nodeName);
+    webWorkerInstances.set(instanceId, instance);
   }
   return instance;
 };
 
-const getConstructor = (interfaceType: InterfaceType, nodeName?: string): typeof WorkerProxy => {
-  if (interfaceType === InterfaceType.Element) {
-    return elementConstructors[nodeName!] || elementConstructors.UNKNOWN;
-  } else if (interfaceType <= InterfaceType.DocumentFragmentNode) {
-    return (self as any).Node;
-  } else {
-    return WorkerProxy;
-  }
-};
-
-export const elementConstructors: { [tagName: string]: typeof HTMLElement } = {};
-
-export const getTagNameFromConstructor = (t: string) => {
-  t = t.substr(4).replace('Element', '').toUpperCase();
-  return (
-    {
-      IMAGE: 'IMG',
-      OLIST: 'OL',
-      PARAGRAPH: 'P',
-      TABLECELL: 'TD',
-      TABLEROW: 'TR',
-      ULIST: 'UL',
-    }[t] || t
-  );
+export const createNodeInstance = (winId: number, instanceId: number, nodeName: string) => {
+  const NodeCstr: typeof Node = nodeConstructors[nodeName!]
+    ? nodeConstructors[nodeName!]
+    : nodeName!.includes('-')
+    ? nodeConstructors.UNKNOWN
+    : (self as any).HTMLElement;
+  return new NodeCstr(winId, instanceId, [], nodeName);
 };
 
 export const constructEvent = (eventProps: any) =>

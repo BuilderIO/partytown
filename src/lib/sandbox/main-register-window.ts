@@ -10,8 +10,7 @@ import { winCtxs, windowIds } from './main-constants';
 export const registerWindow = (
   worker: PartytownWebWorker,
   $winId$: number,
-  $window$: MainWindow,
-  $isTop$?: number
+  $window$: MainWindow
 ) => {
   if (!windowIds.has($window$)) {
     windowIds.set($window$, $winId$);
@@ -22,7 +21,6 @@ export const registerWindow = (
     const envData: InitializeEnvironmentData = {
       $winId$,
       $parentWinId$: windowIds.get($window$.parent)!,
-      $isTop$,
       $url$,
     };
 
@@ -39,7 +37,7 @@ export const registerWindow = (
     }
 
     if (debug) {
-      const winType = envData.$isTop$ ? 'top' : 'iframe';
+      const winType = envData.$winId$ === envData.$parentWinId$ ? 'top' : 'iframe';
       logMain(`Registered ${winType} window ${normalizedWinId($winId$)} (${$winId$})`);
     }
 

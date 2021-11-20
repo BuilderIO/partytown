@@ -71,7 +71,7 @@
           (function () {
             history.pushState(88, '');
             const elm = document.getElementById('testPushStateStr');
-            elm.textContent = history.state;
+            elm.textContent = JSON.stringify(history.state);
           })();
         </script>
       </li>

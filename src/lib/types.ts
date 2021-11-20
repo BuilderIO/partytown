@@ -1,7 +1,3 @@
-import type { HTMLDocument } from './web-worker/worker-document';
-import type { HTMLElement } from './web-worker/worker-element';
-import type { Location } from './web-worker/worker-location';
-
 export type CreateWorker = (workerName: string) => Worker;
 
 export type Messenger = (
@@ -74,10 +70,30 @@ export interface PartytownWebWorker extends Worker {
 
 export interface InitWebWorkerData {
   $config$: PartytownConfig;
-  $htmlConstructors$: string[];
   $interfaces$: InterfaceInfo[];
   $libPath$: string;
 }
+
+/**
+ * [0] Constructor name
+ * [1] Prototype parent construtor name
+ * [2] InterfaceMember[]
+ * [3]? Node Name
+ */
+export type InterfaceInfo =
+  | [string, string, InterfaceMember[], InterfaceType, string]
+  | [string, string, InterfaceMember[]];
+
+/**
+ * [0] Member name
+ * [1] Constructor name or interface type
+ * [2]? If there's a value it's a static prop
+ */
+export type InterfaceMember =
+  | [string, string]
+  | [string, InterfaceType.Function]
+  | [string, InterfaceType.Property]
+  | [string, InterfaceType.Property, string | number | boolean];
 
 export interface InitWebWorkerContext {
   $isInitialized$?: number;
@@ -86,6 +102,7 @@ export interface InitWebWorkerContext {
 
 export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {
   $forwardedTriggers$: string[];
+  $htmlConstructors$: InterfaceInfo[];
   $windowMembers$: MembersInterfaceTypeInfo;
   $windowMemberNames$: string[];
   lastLog?: string;
@@ -94,18 +111,16 @@ export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContex
 export interface InitializeEnvironmentData {
   $winId$: number;
   $parentWinId$: number;
-  $isTop$?: number;
   $url$: string;
 }
 
 export interface WebWorkerEnvironment extends Omit<InitializeEnvironmentData, '$url$'> {
   $window$: Window;
-  $document$: HTMLDocument;
+  $document$: Document;
   $documentElement$: HTMLElement;
   $head$: HTMLElement;
   $body$: HTMLElement;
   $location$: Location;
-  $run$: (content: string) => void;
   $currentScriptId$?: number;
   $currentScriptUrl$?: string;
   $isInitialized$?: number;
@@ -116,8 +131,6 @@ export interface WebWorkerGlobal {
   $interfaceType$: InterfaceType;
   $implementation$: any;
 }
-
-export type InterfaceInfo = [InterfaceType, string, MembersInterfaceTypeInfo];
 
 export interface MembersInterfaceTypeInfo {
   [memberName: string]: InterfaceType;
@@ -132,6 +145,11 @@ export const enum InterfaceType {
   AttributeNode = 2,
   TextNode = 3,
   CDataSectionNode = 4,
+
+  // NodeType 5 and 6 not used in the standards
+  Function = 5,
+  Property = 6,
+
   ProcessingInstructionNode = 7,
   CommentNode = 8,
   Document = 9,
@@ -139,24 +157,11 @@ export const enum InterfaceType {
   DocumentFragmentNode = 11,
 
   // Global Constructors and window function implementations
-  Property = 12,
-  Function = 13,
-  CanvasRenderingContext2D = 14,
-  CSSStyleDeclaration = 15,
-  DOMStringMap = 16,
-  DOMTokenList = 17,
-  History = 18,
-  Location = 19,
-  MutationObserver = 20,
-  NamedNodeMap = 21,
-  ResizeObserver = 22,
-  Screen = 23,
-  Storage = 24,
+  EnvGlobalConstructor = 12,
 }
 
 export const enum PlatformInstanceId {
   window,
-  screen,
   document,
   documentElement,
   head,
@@ -199,6 +204,7 @@ export type ApplyPath = any[];
 
 export const enum SerializedType {
   Array,
+  Attr,
   CSSRule,
   CSSRuleList,
   Event,
@@ -211,6 +217,8 @@ export const enum SerializedType {
 }
 
 export type SerializedArrayTransfer = [SerializedType.Array, (SerializedTransfer | undefined)[]];
+
+export type SerializedAttrTransfer = [SerializedType.Attr, SerializedAttr];
 
 export type SerializedCSSRuleTransfer = [SerializedType.CSSRule, SerializedCSSRule];
 
@@ -232,6 +240,8 @@ export type SerializedObjectTransfer = [
   { [key: string]: SerializedTransfer | undefined }
 ];
 
+export type SerializedAttr = [string, string];
+
 export type SerializedCSSRule = { [key: string]: string };
 
 export type SerializedPrimitiveTransfer =
@@ -243,11 +253,13 @@ export type SerializedRefTransfer = [SerializedType.Ref, SerializedRefTransferDa
 export interface SerializedRefTransferData {
   $winId$: number;
   $instanceId$: number;
+  $nodeName$?: string;
   $refId$: number;
 }
 
 export type SerializedTransfer =
   | SerializedArrayTransfer
+  | SerializedAttrTransfer
   | SerializedCSSRuleTransfer
   | SerializedCSSRuleListTransfer
   | SerializedEventTransfer
@@ -266,12 +278,7 @@ export interface SerializedObject {
 
 export interface SerializedInstance {
   $winId$: number;
-  $instanceId$?: number;
-  $parentInstanceId$?: number;
-  /**
-   * Node Type for Element (1), Text (3) and Document (9)
-   */
-  $interfaceType$: InterfaceType;
+  $instanceId$: number;
   /**
    * Node name for Node instances
    */

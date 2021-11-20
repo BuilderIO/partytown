@@ -6,7 +6,7 @@ import {
   WorkerMessageType,
 } from '../types';
 import { randomId } from '../utils';
-import { readMainInterfaces } from './read-main-interfaces';
+import { readMainPlatform } from './read-main-platform';
 import { registerWindow } from './main-register-window';
 import { winCtxs } from './main-constants';
 
@@ -20,13 +20,11 @@ export const onMessageFromWebWorker = (
   if (msgType === WorkerMessageType.MainDataRequestFromWorker) {
     // web worker has requested data from the main thread
     // collect up all the info about the main thread interfaces
-    const initWebWorkerData = readMainInterfaces(mainWindow);
-
     // send the main thread interface data to the web worker
-    worker.postMessage([WorkerMessageType.MainDataResponseToWorker, initWebWorkerData]);
+    worker.postMessage([WorkerMessageType.MainDataResponseToWorker, readMainPlatform(mainWindow)]);
   } else if (msgType === WorkerMessageType.InitializedWebWorker) {
     // web worker has finished initializing and ready to run scripts
-    registerWindow(worker, randomId(), mainWindow, 1);
+    registerWindow(worker, randomId(), mainWindow);
   } else {
     const winCtx = winCtxs[msg[1]]!;
     if (winCtx) {

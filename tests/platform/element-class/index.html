@@ -70,7 +70,8 @@
         <script type="text/partytown">
           (function() {
             const elm = document.getElementById('testClassList');
-            elm.classList.add('testClassList');
+            const classList = elm.classList;
+            classList.add('testClassList');
             elm.textContent = elm.className;
           })();
         </script>
@@ -149,11 +150,11 @@
           })();
         </script>
       </li>
-    </ul>
 
-    <script type="text/partytown">
-      document.body.classList.add('completed');
-    </script>
+      <script type="text/partytown">
+        document.body.classList.add('completed');
+      </script>
+    </ul>
 
     <hr />
     <p><a href="/">All Tests</a></p>

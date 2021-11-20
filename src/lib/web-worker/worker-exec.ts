@@ -1,4 +1,4 @@
-import { debug, logWorker, nextTick, SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
+import { debug, logWorker, nextTick, SCRIPT_TYPE } from '../utils';
 import {
   EventHandler,
   InitializeScriptData,
@@ -6,11 +6,9 @@ import {
   StateProp,
   WorkerMessageType,
 } from '../types';
-import { environments, InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import { environments, InstanceIdKey, webWorkerCtx } from './worker-constants';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue, getStateValue, setStateValue } from './worker-state';
-import type { Location } from './worker-location';
-import type { Node } from './worker-node';
 import type { WorkerProxy } from './worker-proxy-constructor';
 
 export const initNextScriptsInWebWorker = async (initScript: InitializeScriptData) => {
@@ -50,7 +48,7 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
 
         env.$currentScriptId$ = instanceId;
         env.$currentScriptUrl$ = scriptSrc;
-        env.$run$(scriptContent);
+        run(env, scriptContent);
         runStateLoadHandlers(instanceId, StateProp.loadHandlers);
       } else {
         console.error(rsp.status, 'url:', scriptSrc);
@@ -100,7 +98,7 @@ export const runScriptContent = (
 
     env.$currentScriptId$ = instanceId;
     env.$currentScriptUrl$ = '';
-    env.$run$(scriptContent);
+    run(env, scriptContent);
   } catch (contentError: any) {
     console.error(scriptContent, contentError);
     errorMsg = String(contentError.stack || contentError) + '';
@@ -112,6 +110,11 @@ export const runScriptContent = (
   return errorMsg;
 };
 
+const run = (env: WebWorkerEnvironment, script: string) => {
+  const runInEnv = new Function(`with(this){${script}}`);
+  runInEnv.apply(env.$window$);
+};
+
 const runStateLoadHandlers = (instanceId: number, type: StateProp, handlers?: EventHandler[]) => {
   handlers = getStateValue(instanceId, type);
   if (handlers) {
@@ -119,7 +122,7 @@ const runStateLoadHandlers = (instanceId: number, type: StateProp, handlers?: Ev
   }
 };
 
-export const insertIframe = (iframe: Node) => {
+export const insertIframe = (iframe: WorkerProxy) => {
   // an iframe element's instanceId is also
   // the winId of it's contentWindow
   let i = 0;
@@ -154,11 +157,11 @@ const resolveToUrl = (env: WebWorkerEnvironment, url?: string, baseLocation?: Lo
   while (!baseLocation.host) {
     env = environments[env.$parentWinId$];
     baseLocation = env.$location$;
-    if (env.$isTop$) {
+    if (env.$winId$ === env.$parentWinId$) {
       break;
     }
   }
-  return new URL(url || '', baseLocation);
+  return new URL(url || '', baseLocation as any);
 };
 
 export const resolveUrl = (env: WebWorkerEnvironment, url?: string) => resolveToUrl(env, url) + '';

@@ -58,9 +58,6 @@ export const getInstance = <T = InstanceType | null>(
   if (instanceId === PlatformInstanceId.body) {
     return doc.body as any;
   }
-  if (instanceId === PlatformInstanceId.screen) {
-    return win.screen as any;
-  }
   instanceItem = instances.find((i) => i[0] === instanceId);
   if (instanceItem) {
     return instanceItem[1];

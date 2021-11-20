@@ -1,21 +1,11 @@
-import { callMethod, getter, setter, sync } from './worker-proxy';
+import { callMethod, setter, sync } from './worker-proxy';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue } from './worker-state';
 import { insertIframe, runScriptContent } from './worker-exec';
-import {
-  InstanceIdKey,
-  InterfaceTypeKey,
-  NodeNameKey,
-  ParentInstanceIdKey,
-  webWorkerCtx,
-  webWorkerInstances,
-  WinIdKey,
-} from './worker-constants';
-import { NodeName, StateProp, WorkerMessageType } from '../types';
-import type { HTMLDocument } from './worker-document';
+import { InstanceIdKey, NodeNameKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import { NodeName, SerializedAttr, StateProp, WorkerMessageType } from '../types';
 import { SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
 import { WorkerProxy } from './worker-proxy-constructor';
-import { getPlatformInstance } from './worker-serialization';
 
 export class Node extends WorkerProxy {
   appendChild(node: Node) {
@@ -23,6 +13,8 @@ export class Node extends WorkerProxy {
   }
 
   get href() {
+    // some scripts are just using node.href and looping up the tree
+    // just adding this prop to all nodes to avoid unnecessary main access
     return;
   }
   set href(_: any) {}
@@ -68,25 +60,26 @@ export class Node extends WorkerProxy {
   }
 
   get nodeType() {
-    return this[InterfaceTypeKey];
+    return 3;
   }
 
-  get ownerDocument(): HTMLDocument {
+  get ownerDocument(): Document {
     return getEnv(this).$document$;
   }
+}
 
-  get parentNode() {
-    let winId = this[WinIdKey];
-    let parentInstanceId = this[ParentInstanceIdKey];
-    let parentNode: any =
-      getPlatformInstance(winId, parentInstanceId) || webWorkerInstances.get(parentInstanceId!);
+export class Attr {
+  name: string;
+  value: string;
 
-    if (!parentNode) {
-      parentNode = getter(this, ['parentNode']);
-      if (parentNode) {
-        this[ParentInstanceIdKey] = parentNode[InstanceIdKey];
-      }
-    }
-    return parentNode;
+  constructor(serializedAttr: SerializedAttr) {
+    this.name = serializedAttr[0];
+    this.value = serializedAttr[1];
+  }
+  get nodeName() {
+    return this.name;
+  }
+  get nodeType() {
+    return 2;
   }
 }

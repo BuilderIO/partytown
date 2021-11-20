@@ -1,32 +1,41 @@
-import type { InterfaceType } from '../types';
+import type { ApplyPath } from '../types';
 import {
+  ApplyPathKey,
   InstanceIdKey,
-  InterfaceTypeKey,
   NodeNameKey,
-  ParentInstanceIdKey,
+  PropInstancesKey,
   WinIdKey,
 } from './worker-constants';
-import { proxy } from './worker-proxy';
+import { getter, setter } from './worker-proxy';
 
 export class WorkerProxy {
   [WinIdKey]: number;
   [InstanceIdKey]: number;
-  [InterfaceTypeKey]: InterfaceType;
+  [ApplyPathKey]: string[];
   [NodeNameKey]: string | undefined;
-  [ParentInstanceIdKey]: number | undefined;
+  [PropInstancesKey]: { [propName: string]: WorkerProxy };
 
-  constructor(
-    interfaceType: InterfaceType,
-    instanceId: number,
-    winId?: number,
-    nodeName?: string,
-    parentInstanceId?: number
-  ) {
+  constructor(winId: number, instanceId: number, applyPath?: ApplyPath, nodeName?: string) {
     this[WinIdKey] = winId!;
     this[InstanceIdKey] = instanceId!;
+    this[ApplyPathKey] = applyPath || [];
     this[NodeNameKey] = nodeName;
-    this[ParentInstanceIdKey] = parentInstanceId;
+    this[PropInstancesKey] = {};
+  }
+}
 
-    return proxy((this[InterfaceTypeKey] = interfaceType), this, []);
+export class WorkerTrapProxy extends WorkerProxy {
+  constructor(winId: number, instanceId: number, applyPath?: ApplyPath, nodeName?: string) {
+    super(winId, instanceId, applyPath, nodeName);
+
+    return new Proxy(this, {
+      get(instance, propName) {
+        return getter(instance, [propName]);
+      },
+      set(instance, propName, propValue) {
+        setter(instance, [propName], propValue);
+        return true;
+      },
+    });
   }
 }

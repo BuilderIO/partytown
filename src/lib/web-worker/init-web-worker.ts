@@ -1,27 +1,17 @@
-import { cachedDimensionMethods, cachedDimensionProps } from './worker-state';
-import { defineConstructorName, EMPTY_ARRAY, logWorker } from '../utils';
-import { elementConstructors, getTagNameFromConstructor } from './worker-constructors';
-import { HTMLAnchorElement } from './worker-anchor';
-import { HTMLCanvasElement } from './worker-canvas';
-import { HTMLElement } from './worker-element';
-import { HTMLDocument } from './worker-document';
-import { HTMLIFrameElement } from './worker-iframe';
-import { HTMLScriptElement } from './worker-script';
-import { HTMLStyleElement } from './worker-style';
+import { CSSStyleSheet } from './worker-style';
+import { defineWorkerInterface, patchPrototypes } from './worker-define-constructors';
+import { EMPTY_ARRAY, logWorker } from '../utils';
 import type { InitWebWorkerData } from '../types';
 import { Node } from './worker-node';
 import { webWorkerCtx } from './worker-constants';
+import { Window } from './worker-window';
 
 export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
+  // merge it into the web worker context object
   Object.assign(webWorkerCtx, initWebWorkerData);
 
   webWorkerCtx.$forwardedTriggers$ = (webWorkerCtx.$config$.forward || EMPTY_ARRAY).map(
     (f) => f[0]
-  );
-
-  webWorkerCtx.$windowMembers$ = webWorkerCtx.$interfaces$[0][2];
-  webWorkerCtx.$windowMemberNames$ = Object.keys(webWorkerCtx.$windowMembers$).filter(
-    (m) => !webWorkerCtx.$forwardedTriggers$.includes(m)
   );
 
   webWorkerCtx.$postMessage$ = postMessage.bind(self);
@@ -29,24 +19,12 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   (self as any).postMessage = (self as any).importScripts = undefined;
 
   (self as any).Node = Node;
-  cachedDimensionProps(((self as any).Element = (self as any).HTMLElement = HTMLElement));
-  cachedDimensionMethods(HTMLElement);
-  (self as any).Document = HTMLDocument;
+  (self as any).Window = Window;
+  (self as any).CSSStyleSheet = CSSStyleSheet;
 
-  // create the same HTMLElement constructors that were found on main's window
-  // and add each constructor to the elementConstructors map, to be used by windows later
-  webWorkerCtx.$htmlConstructors$.map(
-    (htmlCstrName) =>
-      (elementConstructors[getTagNameFromConstructor(htmlCstrName)] = defineConstructorName(
-        class extends HTMLElement {},
-        htmlCstrName
-      ))
-  );
-  elementConstructors.A = HTMLAnchorElement;
-  elementConstructors.CANVAS = HTMLCanvasElement;
-  elementConstructors.IFRAME = HTMLIFrameElement;
-  elementConstructors.SCRIPT = HTMLScriptElement;
-  elementConstructors.STYLE = HTMLStyleElement;
+  webWorkerCtx.$interfaces$.map(defineWorkerInterface);
+
+  patchPrototypes();
 
   webWorkerCtx.$isInitialized$ = 1;
 

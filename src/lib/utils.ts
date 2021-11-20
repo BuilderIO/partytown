@@ -1,7 +1,7 @@
 import { ApplyPath, InterfaceType, NodeName, PlatformInstanceId } from './types';
 import {
+  ApplyPathKey,
   InstanceIdKey,
-  InterfaceTypeKey,
   NodeNameKey,
   webWorkerCtx,
   WinIdKey,
@@ -11,7 +11,7 @@ export const debug = (globalThis as any).partytownDebug;
 
 export const isPromise = (v: any): v is Promise<unknown> => typeof v === 'object' && v && v.then;
 
-export const noop = () => {};
+export const noop = () => true;
 
 export const logMain = (msg: string) => {
   if (debug) {
@@ -100,6 +100,7 @@ export const logWorkerSetter = (
 ) => {
   if (debug && webWorkerCtx.$config$.logSetters) {
     try {
+      applyPath = applyPath.slice(0, applyPath.length - 2);
       logWorker(
         `Set ${logTargetProp(target, 'Set', applyPath)}, value: ${logValue(applyPath, value)}${
           restrictedToWorker ? ' (restricted to worker)' : ''
@@ -113,6 +114,7 @@ export const logWorkerSetter = (
 export const logWorkerCall = (target: any, applyPath: ApplyPath, args: any[], rtnValue: any) => {
   if (debug && webWorkerCtx.$config$.logCalls) {
     try {
+      applyPath = applyPath.slice(0, applyPath.length - 1);
       logWorker(
         `Call ${logTargetProp(target, 'Call', applyPath)}(${args
           .map((v) => logValue(applyPath, v))
@@ -135,8 +137,8 @@ const logTargetProp = (target: any, accessType: 'Get' | 'Set' | 'Call', applyPat
   let n = '';
   if (target) {
     const instanceId = target[InstanceIdKey];
-    const interfaceType = target[InterfaceTypeKey];
-    if (interfaceType === InterfaceType.Window) {
+    const cstrName = getConstructorName(target);
+    if (instanceId === PlatformInstanceId.window) {
       n = '';
     } else if (instanceId === PlatformInstanceId.document) {
       n = 'document.';
@@ -146,32 +148,41 @@ const logTargetProp = (target: any, accessType: 'Get' | 'Set' | 'Call', applyPat
       n = 'document.head.';
     } else if (instanceId === PlatformInstanceId.body) {
       n = 'document.body.';
-    } else if (target.nodeType === 1) {
-      n = target.nodeName.toLowerCase() + '.';
-    } else if (interfaceType === InterfaceType.Element && target[NodeNameKey]) {
-      n = `<${target[NodeNameKey].toLowerCase()}>`;
-    } else if (interfaceType === InterfaceType.CommentNode) {
-      n = 'comment.';
-    } else if (interfaceType === InterfaceType.AttributeNode) {
+    } else if (target[NodeNameKey]) {
+      let nodeName: string = target[NodeNameKey];
+      if (nodeName === NodeName.Text) {
+        n = 'textNode.';
+      } else if (nodeName === NodeName.Comment) {
+        n = 'commentNode.';
+      } else if (nodeName === NodeName.Document) {
+        n = 'document.';
+      } else if (nodeName === NodeName.DocumentTypeNode) {
+        n = 'doctype.';
+      } else {
+        n = target.nodeName.toLowerCase() + 'Element.';
+      }
+    } else if (target.nodeType === InterfaceType.AttributeNode) {
       n = 'attributes.';
-    } else if (interfaceType === InterfaceType.DocumentFragmentNode) {
-      n = 'fragment.';
-    } else if (interfaceType === InterfaceType.DocumentTypeNode) {
-      n = 'documentTypeNode.';
-    } else if (interfaceType <= InterfaceType.DocumentFragmentNode) {
-      n = 'node.';
-    } else if (interfaceType === InterfaceType.MutationObserver) {
+    } else if (cstrName === 'CanvasRenderingContext2D') {
+      n = 'context2D.';
+    } else if (cstrName === 'CSSStyleDeclaration') {
+      n = 'value.';
+    } else if (cstrName === 'MutationObserver') {
       n = 'mutationObserver.';
-    } else if (interfaceType === InterfaceType.ResizeObserver) {
+    } else if (cstrName === 'NamedNodeMap') {
+      n = 'namedNodeMap.';
+    } else if (cstrName === 'ResizeObserver') {
       n = 'resizeObserver.';
-    } else if (interfaceType === InterfaceType.Screen) {
-      n = 'screen.';
     } else {
       n = '¯\\_(ツ)_/¯ TARGET.';
       console.warn('¯\\_(ツ)_/¯ TARGET', target);
     }
+
+    if (target[ApplyPathKey] && target[ApplyPathKey].length) {
+      n += [...target[ApplyPathKey]].join('.') + '.';
+    }
   }
-  if ('Get' === accessType && applyPath.length > 1) {
+  if (applyPath.length > 1) {
     const first = applyPath.slice(0, applyPath.length - 1);
     const last = applyPath[applyPath.length - 1];
     if (!isNaN(last as any)) {
@@ -203,7 +214,6 @@ const logValue = (applyPath: ApplyPath, v: any): string => {
   }
   if (type === 'object') {
     const instanceId: number = v[InstanceIdKey];
-    const interfaceType: InterfaceType = v[InterfaceTypeKey];
     if (typeof instanceId === 'number') {
       if (instanceId === PlatformInstanceId.body) {
         return `<body>`;
@@ -217,30 +227,34 @@ const logValue = (applyPath: ApplyPath, v: any): string => {
       if (instanceId === PlatformInstanceId.head) {
         return `<head>`;
       }
-      if (interfaceType === InterfaceType.Window) {
+      if (instanceId === PlatformInstanceId.window) {
         return `window`;
       }
-      if (interfaceType === InterfaceType.Screen) {
-        return `screen`;
-      }
-      if (interfaceType === InterfaceType.Element && v[NodeNameKey]) {
-        return `<${v[NodeNameKey].toLowerCase()}>`;
-      }
-      if (interfaceType === InterfaceType.DocumentTypeNode) {
-        return `<!DOCTYPE ${v[NodeNameKey]}>`;
-      }
-      if (interfaceType <= InterfaceType.DocumentFragmentNode) {
-        return v[NodeNameKey];
+
+      if (v[NodeNameKey]) {
+        if (v.nodeType === 1) {
+          return `<${v[NodeNameKey].toLowerCase()}>`;
+        }
+        if (v.nodeType === InterfaceType.DocumentTypeNode) {
+          return `<!DOCTYPE ${v[NodeNameKey]}>`;
+        }
+        if (v.nodeType <= InterfaceType.DocumentFragmentNode) {
+          return v[NodeNameKey];
+        }
       }
 
       return '¯\\_(ツ)_/¯ instance obj';
     }
+
     if (v[Symbol.iterator]) {
       return `[${Array.from(v)
         .map((i) => logValue(applyPath, i))
         .join(', ')}]`;
     }
     if ('value' in v) {
+      if (typeof v.value === 'string') {
+        return `"${v.value}"`;
+      }
       return objToString(v.value);
     }
     return objToString(v);
@@ -287,9 +301,12 @@ export const getConstructorName = (obj: { constructor?: { name?: string } } | un
 const startsWith = (str: string, val: string) => str.startsWith(val);
 
 export const isValidMemberName = (memberName: string) => {
-  if (startsWith(memberName, 'webkit') || startsWith(memberName, 'toJSON')) {
-    return false;
-  } else if (startsWith(memberName, 'on') && memberName.toLowerCase() === memberName) {
+  if (
+    startsWith(memberName, 'webkit') ||
+    startsWith(memberName, 'toJSON') ||
+    startsWith(memberName, 'constructor') ||
+    startsWith(memberName, 'toString')
+  ) {
     return false;
   } else {
     return true;
@@ -333,3 +350,18 @@ export const randomId = () => Math.round(Math.random() * 9999999999 + PlatformIn
 export const SCRIPT_TYPE = `text/partytown`;
 
 export const SCRIPT_TYPE_EXEC = `-x`;
+
+export const definePrototypeProperty = (
+  Cstr: any,
+  memberName: string,
+  descriptor: PropertyDescriptor
+) => Object.defineProperty(Cstr.prototype, memberName, { ...descriptor, configurable: true });
+
+export const definePrototypePropertyDescriptor = (Cstr: any, propertyDescriptorMap: any) =>
+  Object.defineProperties(Cstr.prototype, propertyDescriptorMap);
+
+export const definePrototypeValue = (Cstr: any, memberName: string, value: any) =>
+  definePrototypeProperty(Cstr, memberName, {
+    value,
+    writable: true,
+  });

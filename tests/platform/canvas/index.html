@@ -59,8 +59,9 @@
           (function () {
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
+            const fillStyle = ctx.fillStyle;
             const elm = document.getElementById('testGetContext2d');
-            elm.textContent = String(ctx.fillStyle);
+            elm.textContent = String(fillStyle);
           })();
         </script>
       </li>

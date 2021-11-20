@@ -1,62 +1,66 @@
 import { callMethod, getter, setter } from './worker-proxy';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
-import { HTMLSrcElement } from './worker-element';
+import { HTMLSrcElementDescriptorMap } from './worker-src-element';
+import type { Node } from './worker-node';
 import { resolveUrl } from './worker-exec';
 import { StateProp } from '../types';
 
-export class HTMLScriptElement extends HTMLSrcElement {
-  get innerHTML() {
+const innerHTMLDescriptor: PropertyDescriptor & ThisType<Node> = {
+  get() {
     return getInstanceStateValue<string>(this, StateProp.innerHTML) || '';
-  }
-  set innerHTML(scriptContent: string) {
+  },
+  set(scriptContent: string) {
     setInstanceStateValue(this, StateProp.innerHTML, scriptContent);
-  }
+  },
+};
 
-  get innerText() {
-    return this.innerHTML;
-  }
-  set innerText(content: string) {
-    this.innerHTML = content;
-  }
+export const HTMLScriptDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
+  innerHTML: innerHTMLDescriptor,
+  innerText: innerHTMLDescriptor,
 
-  get src() {
-    return getInstanceStateValue<string>(this, StateProp.url) || '';
-  }
-  set src(url: string) {
-    url = resolveUrl(getEnv(this), url);
-    setInstanceStateValue(this, StateProp.url, url);
-    setter(this, ['src'], url);
-  }
+  src: {
+    get() {
+      return getInstanceStateValue<string>(this, StateProp.url) || '';
+    },
+    set(url: string) {
+      url = resolveUrl(getEnv(this), url);
+      setInstanceStateValue(this, StateProp.url, url);
+      setter(this, ['src'], url);
+    },
+  },
 
-  getAttribute(attrName: string) {
-    if (attrName === 'src') {
-      return this.src;
-    }
-    return callMethod(this, ['getAttribute'], [attrName]);
-  }
+  getAttribute: {
+    value(attrName: string) {
+      if (attrName === 'src') {
+        return (this as any).src;
+      }
+      return callMethod(this, ['getAttribute'], [attrName]);
+    },
+  },
 
-  setAttribute(attrName: string, attrValue: any) {
-    if (attrName === 'src') {
-      this.src = attrValue;
-    } else {
-      callMethod(this, ['setAttribute'], [attrName, attrValue]);
-    }
-  }
+  setAttribute: {
+    value(attrName: string, attrValue: any) {
+      if (attrName === 'src') {
+        (this as any).src = attrValue;
+      } else {
+        callMethod(this, ['setAttribute'], [attrName, attrValue]);
+      }
+    },
+  },
 
-  get textContent() {
-    return this.innerHTML;
-  }
-  set textContent(content: string) {
-    this.innerHTML = content;
-  }
+  textContent: innerHTMLDescriptor,
 
-  get type() {
-    return getter(this, ['type']);
-  }
-  set type(type: string) {
-    if (type !== 'text/javascript') {
-      setter(this, ['type'], type);
-    }
-  }
-}
+  type: {
+    get() {
+      return getter(this, ['type']);
+    },
+    set(type: string) {
+      if (type !== 'text/javascript') {
+        setter(this, ['type'], type);
+      }
+    },
+  },
+
+  ...HTMLSrcElementDescriptorMap
+};

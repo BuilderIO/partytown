@@ -138,6 +138,20 @@
       </li>
 
       <li>
+        <strong>window.requestAnimationFrame()</strong>
+        <code id="testWindowRaf"></code>
+        <script type="text/partytown">
+          (function () {
+            window.requestAnimationFrame(() => {
+              const elm = document.getElementById('testWindowRaf');
+              elm.textContent = true;
+              elm.classList.add('testWindowRaf');
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>btoa</strong>
         <code id="testBtoa"></code>
       </li>
@@ -167,34 +181,6 @@
               const elm = document.getElementById('testPrompt');
               elm.textContent = prompt('MPH');
             });
-          })();
-        </script>
-      </li>
-
-      <li>
-        <strong>Worker HTML Constructors</strong>
-        <code id="wwHTMLConstructors"></code>
-        <script type="text/partytown">
-          (function () {
-            const htmlCstrs = Object.getOwnPropertyNames(window)
-              .filter((c) => c.startsWith('HTML') && c.endsWith('Element'))
-              .sort();
-            const elm = document.getElementById('wwHTMLConstructors');
-            elm.textContent = htmlCstrs.join(' ');
-          })();
-        </script>
-      </li>
-
-      <li>
-        <strong>Main HTML Constructors</strong>
-        <code id="mainHTMLConstructors"></code>
-        <script>
-          (function () {
-            const htmlCstrs = Object.getOwnPropertyNames(window)
-              .filter((c) => c.startsWith('HTML') && c.endsWith('Element'))
-              .sort();
-            const elm = document.getElementById('mainHTMLConstructors');
-            elm.textContent = htmlCstrs.join(' ');
           })();
         </script>
       </li>

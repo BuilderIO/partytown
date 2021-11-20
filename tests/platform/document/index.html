@@ -232,7 +232,9 @@
         <script type="text/partytown" data-current-script="inlined">
           (function () {
             const elm = document.getElementById('testCurrentScript');
-            elm.textContent = document.currentScript.dataset.currentScript;
+            const currentScript = document.currentScript;
+            const dataset = currentScript.dataset;
+            elm.textContent = dataset.currentScript;
           })();
         </script>
       </li>

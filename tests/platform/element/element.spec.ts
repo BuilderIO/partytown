@@ -58,7 +58,7 @@ test('element', async ({ page }) => {
   await expect(testAttrsNodeType).toHaveText('2 id');
 
   const testAttrsStyleValue = page.locator('#testAttrsStyleValue');
-  await expect(testAttrsStyleValue).toHaveText('color: red');
+  await expect(testAttrsStyleValue).toHaveText('style color: red');
   await expect(testAttrsStyleValue).toHaveCSS('color', 'rgb(255, 0, 0)');
 
   const testParagraphConstructor = page.locator('#testParagraphConstructor');
