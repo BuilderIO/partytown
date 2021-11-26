@@ -1,7 +1,6 @@
 import { OutputOptions, Plugin, rollup, RollupOptions } from 'rollup';
 import {
   BuildOptions,
-  copyBuildToTestSite,
   fileSize,
   MessageType,
   syncCommunicationModulesPlugin,
@@ -38,7 +37,6 @@ export function buildServiceWorker(opts: BuildOptions): RollupOptions {
       sandboxContentPlugin(opts, 'sw'),
       watchDir(opts, join(opts.tscLibDir, 'sandbox')),
       watchDir(opts, join(opts.tscLibDir, 'web-worker')),
-      copyBuildToTestSite(opts),
     ],
   };
 }
