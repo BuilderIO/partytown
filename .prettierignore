@@ -1,0 +1,6 @@
+.cache
+/lib
+/node_modules
+/react
+/tsc
+api.md
