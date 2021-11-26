@@ -9,7 +9,7 @@
 
 ⚠️ Warning! This is experimental! ⚠️
 
-Partytown is a lazy-loaded `6kb` library to help relocate resource intensive scripts into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), and off of the [main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread). Its goal is to help speed up sites by dedicating the main thread to your code, and offloading third-party scripts to a web worker.
+Partytown is a lazy-loaded library to help relocate resource intensive scripts into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), and off of the [main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread). Its goal is to help speed up sites by dedicating the main thread to your code, and offloading third-party scripts to a web worker.
 
 - [Information](#information)
   - [Negative Impacts From Third-Party Scripts](#negative-impacts-from-Third-Party-Scripts)
@@ -153,9 +153,11 @@ Partytown relies on [Web Workers](https://developer.mozilla.org/en-US/docs/Web/A
 
 #### What About Atomics?
 
-[Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics) are the latest and greatest way to accomplish the challenge of _synchronously_ sending data between the main thread and the web worker. Honestly, it looks like Atomics may be the preferred and "correct" way to perform these tasks. However, as of right now, more research is needed into how Atomics could be used in production, while also using with the service worker fallback when Atomics are not supported.
+Partytown will use [Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics) when they're enabled by the browser.
 
-See [Draft PR #10](https://github.com/BuilderIO/partytown/pull/10) for more info.
+To enable Atomics communication, the browser's [crossOriginIsolated](https://developer.mozilla.org/en-US/docs/Web/API/crossOriginIsolated) boolean must be `true`. More details can be found at [Making your website "cross-origin isolated" using COOP and COEP](https://web.dev/coop-coep/).
+
+More research needs to be done to better document and understand how to best enable Atomics. If you're interested in helping, please ping us in the [Partytown Discord](https://discord.gg/hbuEtxdEZ3). ⚛️
 
 ### Browser Features And Fallback
 
