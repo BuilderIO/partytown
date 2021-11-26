@@ -53,14 +53,18 @@ export function loader(
       doc.addEventListener(PT_INITIALIZED_EVENT, function () {
         clearTimeout(timeout);
       });
-
-      if (win.crossOriginIsolated) {
+      let useAtomics = win.crossOriginIsolated;
+      if (debug && useAtomics) {
+        useAtomics = !window.location.search.includes('forceServiceWorker');
+      }
+      if (useAtomics) {
         // atomics support
         ready('atomics');
       } else if ('serviceWorker' in nav) {
         // service worker support
+        const isolatedQuery = win.crossOriginIsolated ? '?isolated' : '';
         nav.serviceWorker
-          .register(libPath + 'partytown-sw.js', {
+          .register(libPath + 'partytown-sw.js' + isolatedQuery, {
             scope: libPath,
           })
           .then(

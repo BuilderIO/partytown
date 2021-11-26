@@ -3,6 +3,7 @@ import {
   MainWindow,
   MessageFromWorkerToSandbox,
   PartytownWebWorker,
+  WinId,
   WorkerMessageType,
 } from '../types';
 import { randomId } from '../utils';
@@ -17,16 +18,12 @@ export const onMessageFromWebWorker = (
 ) => {
   const msgType = msg[0];
 
-  if (msgType === WorkerMessageType.MainDataRequestFromWorker) {
-    // web worker has requested data from the main thread
-    // collect up all the info about the main thread interfaces
-    // send the main thread interface data to the web worker
-    worker.postMessage([WorkerMessageType.MainDataResponseToWorker, readMainPlatform(mainWindow)]);
-  } else if (msgType === WorkerMessageType.InitializedWebWorker) {
+  if (msgType === WorkerMessageType.InitializedWebWorker) {
     // web worker has finished initializing and ready to run scripts
     registerWindow(worker, randomId(), mainWindow);
   } else {
-    const winCtx = winCtxs[msg[1]]!;
+    const winId = msg[1] as WinId;
+    const winCtx = winCtxs[winId]!;
     if (winCtx) {
       if (msgType === WorkerMessageType.InitializeNextScript) {
         // web worker has been initialized with the main data

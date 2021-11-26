@@ -3,11 +3,17 @@ export type CreateWorker = (workerName: string) => Worker;
 export type Messenger = (
   sandboxWindow: Window,
   receiveMessage: MessengerRequestCallback
-) => Promise<boolean>;
+) => Promise<MessengerHandler | null>;
 
 export type MessengerRequestCallback = (
   accessReq: MainAccessRequest,
   responseCallback: MessengerResponseCallback
+) => void;
+
+export type MessengerHandler = (
+  worker: PartytownWebWorker,
+  mainWindow: MainWindow,
+  msg: MessageFromWorkerToSandbox
 ) => void;
 
 export type MessengerResponseCallback = (accessRsp: MainAccessResponse) => void;
@@ -18,7 +24,8 @@ export type MessageFromWorkerToSandbox =
   | [WorkerMessageType.MainDataRequestFromWorker]
   | [WorkerMessageType.InitializedWebWorker]
   | [WorkerMessageType.InitializedEnvironmentScript, WinId, number, string]
-  | [WorkerMessageType.InitializeNextScript, WinId];
+  | [WorkerMessageType.InitializeNextScript, WinId]
+  | [WorkerMessageType.ForwardWorkerAccessRequest, MainAccessRequest];
 
 export type MessageFromSandboxToWorker =
   | [WorkerMessageType.MainDataResponseToWorker, InitWebWorkerData]
@@ -38,6 +45,7 @@ export const enum WorkerMessageType {
   InitializeNextScript,
   RefHandlerCallback,
   ForwardMainTrigger,
+  ForwardWorkerAccessRequest,
 }
 
 export interface ForwardMainTriggerData {
@@ -72,6 +80,7 @@ export interface InitWebWorkerData {
   $config$: PartytownConfig;
   $interfaces$: InterfaceInfo[];
   $libPath$: string;
+  $sharedDataBuffer$?: SharedArrayBuffer;
 }
 
 /**

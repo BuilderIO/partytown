@@ -10,7 +10,7 @@ export const HTMLSrcElementDescriptorMap: PropertyDescriptorMap & ThisType<Node>
       const callbacks = getInstanceStateValue<EventHandler[]>(this, eventName) || [];
       callbacks.push(args[1]);
       setInstanceStateValue(this, eventName, callbacks);
-    }
+    },
   },
   async: {
     get: noop,
@@ -39,4 +39,3 @@ export const HTMLSrcElementDescriptorMap: PropertyDescriptorMap & ThisType<Node>
     },
   },
 };
- 

@@ -29,11 +29,15 @@
     "dev": "tsc && concurrently \"npm:build.watch\" \"npm:tsc.watch\" -n build,tsc -c magenta,yellow",
     "release": "npm run build && npm test && np --no-tests",
     "serve": "sirv tests --port 4000 --dev",
-    "serve.test": "sirv tests --port 4001  --dev --quiet",
+    "serve.test": "sirv tests --port 4001 --dev --quiet",
+    "serve.atomics": "node scripts/serve.js 4000",
+    "serve.atomics.test": "node scripts/serve.js 4002",
     "test": "playwright test tests/platform --browser=chromium",
+    "test.atomics": "playwright test tests/platform --config playwright.atomics.config.ts --browser=chromium",
     "test.webkit": "playwright test tests/platform --browser=webkit",
     "tsc.watch": "tsc -w",
-    "version": "npm run build.prod"
+    "version": "npm run build.prod",
+    "fmt": "prettier --config package.json --write src"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.18.19",
@@ -45,9 +49,11 @@
     "gzip-size": "^6.0.0",
     "node-fetch": "^3.1.0",
     "np": "^7.6.0",
+    "polka": "^0.5.2",
     "prettier": "^2.4.1",
     "rollup": "^2.60.0",
     "rollup-plugin-terser": "^7.0.2",
+    "sirv": "^1.0.18",
     "sirv-cli": "^1.0.14",
     "tslib": "^2.3.1",
     "typescript": "^4.5.2"

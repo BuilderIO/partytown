@@ -62,5 +62,5 @@ export const HTMLScriptDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
     },
   },
 
-  ...HTMLSrcElementDescriptorMap
+  ...HTMLSrcElementDescriptorMap,
 };
