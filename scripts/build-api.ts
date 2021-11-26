@@ -12,12 +12,12 @@ function buildIntegrationApi(opts: BuildOptions) {
   const extractorConfig = ExtractorConfig.loadFileAndPrepare(
     join(opts.srcIntegrationDir, 'api-extractor.json')
   );
-  extractorConfig.untrimmedFilePath;
   const result = Extractor.invoke(extractorConfig, {
     localBuild: true,
     showVerboseMessages: true,
   });
   if (!result.succeeded) {
+    console.error(result);
     process.exit(1);
   }
 }
