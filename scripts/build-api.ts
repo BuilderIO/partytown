@@ -17,7 +17,6 @@ function buildIntegrationApi(opts: BuildOptions) {
     showVerboseMessages: true,
   });
   if (!result.succeeded) {
-    console.error(result);
     process.exit(1);
   }
 }
