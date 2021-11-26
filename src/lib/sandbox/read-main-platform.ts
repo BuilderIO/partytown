@@ -1,23 +1,16 @@
 import { debug, getConstructorName, isValidMemberName, logMain, noop } from '../utils';
-import { InterfaceType, InterfaceInfo, InterfaceMember, InitWebWorkerData } from '../types';
+import {
+  InterfaceType,
+  InterfaceInfo,
+  InterfaceMember,
+  InitWebWorkerData,
+  PartytownConfig,
+} from '../types';
 
 export const readMainPlatform = (win: any) => {
-  const doc = win.document;
-  const $config$ = win.partytown || {};
-  const $libPath$ = ($config$.lib || '/~partytown/') + (debug ? 'debug/' : '');
-
-  const initWebWorkerData: InitWebWorkerData = {
-    $config$,
-    $libPath$: new URL($libPath$, win.location) + '',
-    $interfaces$: readMainInterfaces(win, doc),
-  };
-
-  return initWebWorkerData;
-};
-
-const readMainInterfaces = (win: any, doc: Document) => {
   const startTime = debug ? performance.now() : 0;
 
+  const doc = (win as Window).document;
   const docImpl = doc.implementation.createHTMLDocument();
   const textNode = docImpl.createTextNode('');
   const comment = docImpl.createComment('');
@@ -73,22 +66,31 @@ const readMainInterfaces = (win: any, doc: Document) => {
       return [cstrName, CstrPrototype, impl, interfaceType];
     });
 
-  const interfaces: InterfaceInfo[] = [
+  const $interfaces$: InterfaceInfo[] = [
     readImplentation('Window', win),
     readImplentation('Node', textNode),
   ];
 
+  const config: PartytownConfig = win.partytown || {};
+  const libPath = (config.lib || '/~partytown/') + (debug ? 'debug/' : '');
+
+  const initWebWorkerData: InitWebWorkerData = {
+    $config$: JSON.stringify(config, (_, v) => (typeof v === 'function' ? String(v) : v)) as any,
+    $libPath$: new URL(libPath, win.location) + '',
+    $interfaces$,
+  };
+
   impls.map(([cstrName, CstrPrototype, impl, intefaceType]) =>
-    readOwnImplentation(interfaces, cstrName, CstrPrototype, impl, intefaceType)
+    readOwnImplentation($interfaces$, cstrName, CstrPrototype, impl, intefaceType)
   );
 
   if (debug) {
     logMain(
-      `Read ${interfaces.length} interfaces in ${(performance.now() - startTime).toFixed(1)}ms`
+      `Read ${$interfaces$.length} interfaces in ${(performance.now() - startTime).toFixed(1)}ms`
     );
   }
 
-  return interfaces;
+  return initWebWorkerData;
 };
 
 const readImplentation = (cstrName: string, impl: any) => {

@@ -294,6 +294,15 @@ export interface SerializedInstance {
  */
 export interface PartytownConfig {
   /**
+   * The `resolveUrl()` hook can be used to modify the URL about to be
+   * requested, which could be used to rewrite urls so they go through a proxy.
+   *
+   * @param url The URL to be resolved. This is a URL https://developer.mozilla.org/en-US/docs/Web/API/URL, not a string.
+   * @param location The current window location.
+   * @returns The returned value must be a URL interface, otherwise the default resolved URL is used.
+   */
+  resolveUrl?(url: URL, location: Location): URL | undefined | null;
+  /**
    * When set to `true`, Partytown scripts are not inlined and not minified.
    */
   debug?: boolean;
