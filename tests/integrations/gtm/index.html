@@ -12,7 +12,9 @@
         resolveUrl(url, location) {
           if (location.hostname !== 'localhost') {
             if (url.hostname.includes('google')) {
-              return '/api/proxy?url=' + url.href;
+              const proxyUrl = new URL('/api/proxy', location);
+              proxyUrl.searchParams.append('url', url);
+              return proxyUrl;
             }
           }
         },
