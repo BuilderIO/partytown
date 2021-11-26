@@ -85,15 +85,6 @@ export function submodulePackageJson(
   };
 }
 
-export function copyBuildToTestSite(opts: BuildOptions): Plugin {
-  return {
-    name: 'copyBuildToTestSite',
-    async writeBundle() {
-      await copy(opts.distLibDir, opts.distTestsDir, { overwrite: true, recursive: true });
-    },
-  };
-}
-
 export function watchDir(opts: BuildOptions, dir: string): Plugin {
   return {
     name: 'watchDir',
@@ -126,7 +117,6 @@ export interface BuildOptions {
   distLibDir: string;
   distLibDebugDir: string;
   distReactDir: string;
-  distTestsDir: string;
   srcDir: string;
   srcIntegrationDir: string;
   srcLibDir: string;
