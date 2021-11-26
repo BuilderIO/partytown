@@ -9,7 +9,7 @@ export const HTMLStyleDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
       return new CSSStyleSheet(this);
     },
   },
-}
+};
 
 export class CSSStyleSheet {
   ownerNode: Node;

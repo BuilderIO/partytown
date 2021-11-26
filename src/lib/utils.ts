@@ -7,7 +7,7 @@ import {
   WinIdKey,
 } from './web-worker/worker-constants';
 
-export const debug = (globalThis as any).partytownDebug;
+export const debug = !!(globalThis as any).partytownDebug;
 
 export const isPromise = (v: any): v is Promise<unknown> => typeof v === 'object' && v && v.then;
 

@@ -49,5 +49,5 @@ export const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
     },
   },
 
-  ...HTMLSrcElementDescriptorMap
+  ...HTMLSrcElementDescriptorMap,
 };

@@ -5,17 +5,18 @@ import SandboxDebug from '@sandbox-debug';
 
 export const onFetchServiceWorkerRequest = (ev: FetchEvent) => {
   const req = ev.request;
-  const pathname = new URL(req.url).pathname;
-
+  const url = new URL(req.url);
+  const pathname = url.pathname;
+  const isolated = false;
   if (debug && pathname.endsWith('debug/partytown-sandbox-sw.html')) {
     // debug version (sandbox and web worker are not inlined)
-    ev.respondWith(response(SandboxDebug));
+    ev.respondWith(response(SandboxDebug, isolated));
   } else if (!debug && pathname.endsWith('partytown-sandbox-sw.html')) {
     // sandbox and webworker, minified and inlined
-    ev.respondWith(response(Sandbox));
+    ev.respondWith(response(Sandbox, isolated));
   } else if (pathname.endsWith('proxytown')) {
     // proxy request
-    ev.respondWith(httpRequestFromWebWorker(req));
+    ev.respondWith(httpRequestFromWebWorker(req, isolated));
   }
 };
 
@@ -64,20 +65,25 @@ const swMessageError = (accessReq: MainAccessRequest, $error$: string): MainAcce
 
 type MessageResolve = [(data?: any) => void, any];
 
-const httpRequestFromWebWorker = (req: Request) =>
+const httpRequestFromWebWorker = (req: Request, isolated: boolean) =>
   new Promise<Response>(async (resolve) => {
     const accessReq: MainAccessRequest = await req.clone().json();
     const responseData = await sendMessageToSandboxFromServiceWorker(accessReq);
-    resolve(response(JSON.stringify(responseData), 'application/json'));
+    resolve(response(JSON.stringify(responseData), isolated, 'application/json'));
   });
 
-const response = (body: string, contentType?: string) =>
-  new Response(body, {
-    headers: {
-      'content-type': contentType || 'text/html',
-      'Cache-Control': 'no-store',
-    },
+const response = (body: string, isolated: boolean, contentType?: string) => {
+  const headers: HeadersInit = {
+    'content-type': contentType || 'text/html',
+    'Cache-Control': 'no-store',
+  };
+  if (isolated) {
+    headers['Cross-Origin-Embedder-Policy'] = 'require-corp';
+  }
+  return new Response(body, {
+    headers,
   });
+};
 
 const enum ContentType {
   HTML,
