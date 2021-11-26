@@ -23,6 +23,7 @@ export interface PartytownConfig {
   logSendBeaconRequests?: boolean;
   logSetters?: boolean;
   logStackTraces?: boolean;
+  resolveUrl?(url: URL, location: Location): URL | undefined | null;
 }
 
 // @public
