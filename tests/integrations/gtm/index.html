@@ -9,6 +9,13 @@
 
     <script>
       partytown = {
+        resolveUrl(url, location) {
+          if (location.hostname !== 'localhost') {
+            if (url.hostname.includes('google')) {
+              return '/api/proxy?url=' + url.href;
+            }
+          }
+        },
         debug: true,
         forward: [['dataLayer', 1]],
         logCalls: true,

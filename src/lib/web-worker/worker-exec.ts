@@ -17,6 +17,7 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
   let scriptContent = initScript.$content$;
   let scriptSrc = initScript.$url$;
   let errorMsg = '';
+  let proxyScriptUrl: string;
   let env = environments[winId];
   let rsp: Response;
   let scriptUrl: URL;
@@ -25,21 +26,11 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
     try {
       scriptUrl = resolveToUrl(env, scriptSrc);
       scriptSrc = scriptUrl + '';
+
       setStateValue(instanceId, StateProp.url, scriptSrc);
 
       if (debug && webWorkerCtx.$config$.logScriptExecution) {
         logWorker(`Execute script (${instanceId}) src: ${scriptSrc}`, winId);
-      }
-
-      try {
-        rsp = await self.fetch(scriptSrc);
-      } catch (e) {
-        if (scriptUrl.origin !== origin) {
-          scriptSrc = 'https://partytown.builder.io/api/proxy?p=' + scriptSrc;
-          logWorker(`Proxied script (${instanceId}) src: ${scriptSrc}`, winId);
-        } else {
-          throw e;
-        }
       }
 
       rsp = await self.fetch(scriptSrc);
@@ -161,7 +152,15 @@ const resolveToUrl = (env: WebWorkerEnvironment, url?: string, baseLocation?: Lo
       break;
     }
   }
-  return new URL(url || '', baseLocation as any);
+
+  const resolvedUrl = new URL(url || '', baseLocation as any);
+  if (webWorkerCtx.$config$.resolveUrl) {
+    const configResolvedUrl = webWorkerCtx.$config$.resolveUrl!(resolvedUrl, baseLocation);
+    if (configResolvedUrl) {
+      return configResolvedUrl;
+    }
+  }
+  return resolvedUrl;
 };
 
 export const resolveUrl = (env: WebWorkerEnvironment, url?: string) => resolveToUrl(env, url) + '';

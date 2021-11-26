@@ -2,10 +2,10 @@ import fetch from 'node-fetch';
 
 export default function (request, response) {
   try {
-    if (!request.query.p) {
-      response.status(400).send(`Missing "p" querystring`);
+    const proxyUrl = request.query.url;
+    if (!proxyUrl) {
+      response.status(400).send(`Missing "url" querystring`);
     } else {
-      const proxyUrl = request.query.p;
       const proxyHeaders = {
         'accept': request.headers.accept,
         'accept-encoding': request.headers['accept-encoding'],

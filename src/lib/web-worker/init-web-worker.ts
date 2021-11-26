@@ -10,6 +10,9 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   // merge it into the web worker context object
   Object.assign(webWorkerCtx, initWebWorkerData);
 
+  webWorkerCtx.$config$ = JSON.parse(webWorkerCtx.$config$ as any);
+  'get,set,method,resolveUrl'.split(',').map(parseConfigFn);
+
   webWorkerCtx.$forwardedTriggers$ = (webWorkerCtx.$config$.forward || EMPTY_ARRAY).map(
     (f) => f[0]
   );
@@ -29,4 +32,14 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   webWorkerCtx.$isInitialized$ = 1;
 
   logWorker(`Initialized web worker`);
+};
+
+const parseConfigFn = (optionName: string) => {
+  let fnStr: string = (webWorkerCtx.$config$ as any)[optionName];
+  if (fnStr) {
+    if (fnStr.startsWith('(') || fnStr.startsWith('function')) {
+      fnStr = `${optionName}:${fnStr}`;
+    }
+    Object.assign(webWorkerCtx.$config$, new Function(`return{${fnStr}}`)());
+  }
 };

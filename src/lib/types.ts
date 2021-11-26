@@ -294,6 +294,27 @@ export interface SerializedInstance {
  */
 export interface PartytownConfig {
   /**
+   * The `set()` hook is called before a setter value is assigned to the instance.
+   */
+  set?(instance: any, member: string | number, value: any): any;
+  /**
+   * The `get()` hook is called before calling a getter.
+   */
+  get?(instance: any, member: string | number): any;
+  /**
+   * The `method()` hook is called before calling a method call on an instance.
+   */
+  method?(instance: any, member: string | number, args: any[]): any;
+  /**
+   * Third-party scripts may load fine from a `<script>` tag in the main thread's
+   * document. However, not all scripts include with the
+   * [Access-Control-Allow-Origin](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS)
+   * response header. As an option, the `proxy()` config can be used to send cross-origin
+   * requests through the proxy as a way to provide the `Access-Control-Allow-Origin` header.
+   * When returning a `string` value, the return url will be used for the `fetch()`.
+   */
+  resolveUrl?(url: URL, location: Location): URL | undefined | null;
+  /**
    * When set to `true`, Partytown scripts are not inlined and not minified.
    */
   debug?: boolean;
