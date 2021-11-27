@@ -3,7 +3,7 @@ import {
   ApplyPathKey,
   InstanceIdKey,
   NodeNameKey,
-  PropInstancesKey,
+  InstanceStateKey,
   WinIdKey,
 } from './worker-constants';
 import { getter, setter } from './worker-proxy';
@@ -13,14 +13,14 @@ export class WorkerProxy {
   [InstanceIdKey]: number;
   [ApplyPathKey]: string[];
   [NodeNameKey]: string | undefined;
-  [PropInstancesKey]: { [propName: string]: WorkerProxy };
+  [InstanceStateKey]: { [key: string]: any };
 
   constructor(winId: number, instanceId: number, applyPath?: ApplyPath, nodeName?: string) {
     this[WinIdKey] = winId!;
     this[InstanceIdKey] = instanceId!;
     this[ApplyPathKey] = applyPath || [];
     this[NodeNameKey] = nodeName;
-    this[PropInstancesKey] = {};
+    this[InstanceStateKey] = {};
   }
 }
 

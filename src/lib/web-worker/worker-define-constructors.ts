@@ -10,8 +10,6 @@ import {
   nodeConstructors,
   NodeNameKey,
   nodeTreePropNames,
-  PropInstancesKey,
-  webWorkerState,
   WinIdKey,
 } from './worker-constants';
 import { callMethod, getter, setter } from './worker-proxy';
@@ -29,6 +27,11 @@ import {
   DocumentElementDescriptorMap,
 } from './worker-document';
 import { ElementDescriptorMap } from './worker-element';
+import {
+  getInstanceStateValue,
+  hasInstanceStateValue,
+  setInstanceStateValue,
+} from './worker-state';
 import { HTMLAnchorDescriptorMap } from './worker-anchor';
 import { HTMLCanvasDescriptorMap } from './worker-canvas';
 import { HTMLIFrameDescriptorMap } from './worker-iframe';
@@ -36,7 +39,6 @@ import { HTMLScriptDescriptorMap } from './worker-script';
 import { InterfaceInfo, InterfaceType } from '../types';
 import { Node } from './worker-node';
 import { patchWebWorkerWindowPrototype, Window } from './worker-window';
-import { setInstanceStateValue } from './worker-state';
 import { WorkerProxy, WorkerTrapProxy } from './worker-proxy-constructor';
 
 export const defineWorkerInterface = ([
@@ -72,24 +74,23 @@ export const defineWorkerInterface = ([
       if (typeof memberType === 'string') {
         definePrototypeProperty(Cstr, memberName, {
           get(this: WorkerProxy) {
-            if (!this[PropInstancesKey][memberName]) {
+            if (!hasInstanceStateValue(this, memberName)) {
               const winId = this[WinIdKey];
               const instanceId = this[InstanceIdKey];
               const applyPath = [...this[ApplyPathKey], memberName];
               const nodeName = this[NodeNameKey];
               const PropCstr: typeof WorkerProxy = (self as any)[memberType];
 
-              this[PropInstancesKey][memberName] = new PropCstr(
-                winId,
-                instanceId,
-                applyPath,
-                nodeName
+              setInstanceStateValue(
+                this,
+                memberName,
+                new PropCstr(winId, instanceId, applyPath, nodeName)
               );
             }
-            return this[PropInstancesKey][memberName];
+            return getInstanceStateValue(this, memberName);
           },
           set(this: WorkerProxy, value) {
-            this[PropInstancesKey][memberName] = value;
+            setInstanceStateValue(this, memberName, value);
           },
         });
       } else {
@@ -131,13 +132,14 @@ const TrapConstructors: { [cstrName: string]: 1 } = {
 };
 
 export const patchPrototypes = () => {
-  const Element = self.Element;
+  const Document = self.Document;
   const DocumentFragment = self.DocumentFragment;
+  const Element = self.Element;
 
   patchWebWorkerWindowPrototype();
 
   definePrototypePropertyDescriptor(Element, ElementDescriptorMap);
-  definePrototypePropertyDescriptor(self.Document, DocumentDescriptorMap);
+  definePrototypePropertyDescriptor(Document, DocumentDescriptorMap);
   definePrototypePropertyDescriptor(self.HTMLAnchorElement, HTMLAnchorDescriptorMap);
   definePrototypePropertyDescriptor(self.HTMLCanvasElement, HTMLCanvasDescriptorMap);
   definePrototypePropertyDescriptor(self.HTMLIFrameElement, HTMLIFrameDescriptorMap);
@@ -160,6 +162,8 @@ export const patchPrototypes = () => {
   cachedDimensionProps(Element);
   cachedDimensionProps(Window);
   cachedDimensionMethods(Element);
+
+  cachedReadonlyProps(Document, 'compatMode,referrer');
 };
 
 const definePrototypeNodeType = (Cstr: any, nodeType: number) =>
@@ -188,24 +192,20 @@ const getDimensionCacheKey = (instance: WorkerProxy, memberName: string) =>
  * that should only do a main read once, cache the value, and
  * returned the cached value after in subsequent reads after that
  */
-export const cachedReadonlyProps = (Cstr: any, props: string) =>
-  props.split(',').map((propName) => {
+const cachedReadonlyProps = (Cstr: any, propNames: string) =>
+  propNames.split(',').map((propName) =>
     definePrototypeProperty(Cstr, propName, {
       get(this: WorkerProxy) {
-        let stateRecord = webWorkerState[this[InstanceIdKey]];
-        if (stateRecord && propName in stateRecord) {
-          return stateRecord[propName];
+        if (!hasInstanceStateValue(this, propName)) {
+          setInstanceStateValue(this, propName, getter(this, [propName]));
         }
-
-        let val = getter(this, [propName]);
-        setInstanceStateValue(this, propName, val);
-        return val;
+        return getInstanceStateValue(this, propName);
       },
       set(this: WorkerProxy, val) {
         setInstanceStateValue(this, propName, val);
       },
-    });
-  });
+    })
+  );
 
 /**
  * Properties that always return a value, without doing a main access.
@@ -219,10 +219,10 @@ export const constantProps = (Cstr: any, props: { [propName: string]: any }) =>
  * Known dimension properties to add to the Constructor's prototype
  * that when called they'll check the dimension cache, and if it's
  * not in the cache then to get all dimensions in one call and
- * set its cache.
+ * set its cache. The dimension cache is cleared when another method is called.
  */
 const cachedDimensionProps = (Cstr: any) =>
-  dimensionPropNames.map((propName) => {
+  dimensionPropNames.map((propName) =>
     definePrototypeProperty(Cstr, propName, {
       get(this: Node) {
         const dimension = cachedDimensions.get(getDimensionCacheKey(this, propName));
@@ -242,9 +242,12 @@ const cachedDimensionProps = (Cstr: any) =>
 
         return groupedDimensions[propName];
       },
-    });
-  });
+    })
+  );
 
+/**
+ * Methods that return dimensions that can be cached, similar to cachedDimensionProps()
+ */
 const cachedDimensionMethods = (Cstr: any) =>
   dimensionMethodNames.map((methodName) => {
     Cstr.prototype[methodName] = function () {

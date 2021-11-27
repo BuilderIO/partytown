@@ -2,18 +2,21 @@ import { debug, logWorker, nextTick, SCRIPT_TYPE } from '../utils';
 import {
   EventHandler,
   InitializeScriptData,
-  WebWorkerEnvironment,
+  NodeName,
   StateProp,
+  WebWorkerEnvironment,
   WorkerMessageType,
 } from '../types';
 import { environments, InstanceIdKey, webWorkerCtx } from './worker-constants';
 import { getEnv } from './worker-environment';
-import { getInstanceStateValue, getStateValue, setStateValue } from './worker-state';
+import { getOrCreateNodeInstance } from './worker-constructors';
+import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import type { WorkerProxy } from './worker-proxy-constructor';
 
 export const initNextScriptsInWebWorker = async (initScript: InitializeScriptData) => {
   let winId = initScript.$winId$;
   let instanceId = initScript.$instanceId$;
+  let instance = getOrCreateNodeInstance(winId, instanceId, NodeName.Script);
   let scriptContent = initScript.$content$;
   let scriptSrc = initScript.$url$;
   let errorMsg = '';
@@ -25,7 +28,7 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
     try {
       scriptUrl = resolveToUrl(env, scriptSrc);
       scriptSrc = scriptUrl + '';
-      setStateValue(instanceId, StateProp.url, scriptSrc);
+      setInstanceStateValue(instance!, StateProp.url, scriptSrc);
 
       if (debug && webWorkerCtx.$config$.logScriptExecution) {
         logWorker(`Execute script (${instanceId}) src: ${scriptSrc}`, winId);
@@ -38,16 +41,16 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
         env.$currentScriptId$ = instanceId;
         env.$currentScriptUrl$ = scriptSrc;
         run(env, scriptContent);
-        runStateLoadHandlers(instanceId, StateProp.loadHandlers);
+        runStateLoadHandlers(instance!, StateProp.loadHandlers);
       } else {
         console.error(rsp.status, 'url:', scriptSrc);
         errorMsg = rsp.statusText;
-        runStateLoadHandlers(instanceId, StateProp.errorHandlers);
+        runStateLoadHandlers(instance!, StateProp.errorHandlers);
       }
     } catch (urlError: any) {
       console.error('url:', scriptSrc, urlError);
       errorMsg = String(urlError.stack || urlError) + '';
-      runStateLoadHandlers(instanceId, StateProp.errorHandlers);
+      runStateLoadHandlers(instance!, StateProp.errorHandlers);
     }
   } else if (scriptContent) {
     errorMsg = runScriptContent(env, instanceId, scriptContent, winId);
@@ -104,8 +107,12 @@ const run = (env: WebWorkerEnvironment, script: string) => {
   runInEnv.apply(env.$window$);
 };
 
-const runStateLoadHandlers = (instanceId: number, type: StateProp, handlers?: EventHandler[]) => {
-  handlers = getStateValue(instanceId, type);
+const runStateLoadHandlers = (
+  instance: WorkerProxy,
+  type: StateProp,
+  handlers?: EventHandler[]
+) => {
+  handlers = getInstanceStateValue(instance, type);
   if (handlers) {
     nextTick(() => handlers!.map((cb) => cb({ type })));
   }
