@@ -141,3 +141,27 @@ export const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
     value: 'complete',
   },
 };
+
+export const DocumentElementChildDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
+  parentElement: {
+    get() {
+      return (this as any).parentNode;
+    },
+  },
+  parentNode: {
+    get() {
+      return getEnv(this).$documentElement$;
+    },
+  },
+};
+
+export const DocumentElementDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
+  parentElement: {
+    value: null,
+  },
+  parentNode: {
+    get() {
+      return getEnv(this).$document$;
+    },
+  },
+};

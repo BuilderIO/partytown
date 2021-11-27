@@ -23,7 +23,11 @@ import {
   definePrototypeValue,
   EMPTY_ARRAY,
 } from '../utils';
-import { DocumentDescriptorMap } from './worker-document';
+import {
+  DocumentDescriptorMap,
+  DocumentElementChildDescriptorMap,
+  DocumentElementDescriptorMap,
+} from './worker-document';
 import { ElementDescriptorMap } from './worker-element';
 import { HTMLAnchorDescriptorMap } from './worker-anchor';
 import { HTMLCanvasDescriptorMap } from './worker-canvas';
@@ -139,6 +143,9 @@ export const patchPrototypes = () => {
   definePrototypePropertyDescriptor(self.HTMLIFrameElement, HTMLIFrameDescriptorMap);
   definePrototypePropertyDescriptor(self.HTMLScriptElement, HTMLScriptDescriptorMap);
   definePrototypePropertyDescriptor(self.HTMLStyleElement, HTMLStyleDescriptorMap);
+  definePrototypePropertyDescriptor(self.HTMLHeadElement, DocumentElementChildDescriptorMap);
+  definePrototypePropertyDescriptor(self.HTMLBodyElement, DocumentElementChildDescriptorMap);
+  definePrototypePropertyDescriptor(self.HTMLHtmlElement, DocumentElementDescriptorMap);
 
   constantProps(CSSStyleSheet, { type: 'text/css' });
 
