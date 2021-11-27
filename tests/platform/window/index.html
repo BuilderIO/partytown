@@ -422,6 +422,26 @@
         </script>
       </li>
 
+      <li>
+        <strong>window.fnNotNative()</strong>
+        <code>
+          <span id="testFnNotNative"></span>
+        </code>
+        <script>
+          (function () {
+            window.fnNotNative = () => {};
+          })();
+        </script>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testFnNotNative');
+            const w = window;
+            const fn = w.fnNotNative
+            elm.textContent = typeof fn;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

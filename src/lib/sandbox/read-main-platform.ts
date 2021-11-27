@@ -143,7 +143,9 @@ const readImplentationMember = (
     const memberType = typeof value;
 
     if (memberType === 'function') {
-      interfaceMembers.push([memberName, InterfaceType.Function]);
+      if (String(value).includes(`[native`)) {
+        interfaceMembers.push([memberName, InterfaceType.Function]);
+      }
     } else if (
       memberType === 'object' &&
       value != null &&

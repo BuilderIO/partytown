@@ -90,4 +90,7 @@ test('window', async ({ page }) => {
 
   const testIndexedDB = page.locator('#testIndexedDB');
   await expect(testIndexedDB).toHaveText('true');
+
+  const testFnNotNative = page.locator('#testFnNotNative');
+  await expect(testFnNotNative).toHaveText('undefined');
 });
