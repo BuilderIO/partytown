@@ -1,5 +1,5 @@
 import type { Node } from './worker-node';
-import { NodeNameKey } from './worker-constants';
+import { NamespaceKey, NodeNameKey } from './worker-constants';
 
 export const ElementDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
   localName: {
@@ -9,7 +9,7 @@ export const ElementDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
   },
   namespaceURI: {
     get() {
-      return 'http://www.w3.org/' + (this[NodeNameKey] === 'SVG' ? '2000/svg' : '1999/xhtml');
+      return this[NamespaceKey] || 'http://www.w3.org/1999/xhtml';
     },
   },
   nodeType: {

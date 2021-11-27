@@ -5,6 +5,7 @@ import {
   NodeNameKey,
   InstanceStateKey,
   WinIdKey,
+  NamespaceKey,
 } from './worker-constants';
 import { getter, setter } from './worker-proxy';
 
@@ -13,14 +14,24 @@ export class WorkerProxy {
   [InstanceIdKey]: number;
   [ApplyPathKey]: string[];
   [NodeNameKey]: string | undefined;
+  [NamespaceKey]: string | undefined;
   [InstanceStateKey]: { [key: string]: any };
 
-  constructor(winId: number, instanceId: number, applyPath?: ApplyPath, nodeName?: string) {
+  constructor(
+    winId: number,
+    instanceId: number,
+    applyPath?: ApplyPath,
+    nodeName?: string,
+    namespace?: string
+  ) {
     this[WinIdKey] = winId!;
     this[InstanceIdKey] = instanceId!;
     this[ApplyPathKey] = applyPath || [];
     this[NodeNameKey] = nodeName;
     this[InstanceStateKey] = {};
+    if (namespace) {
+      this[NamespaceKey] = namespace;
+    }
   }
 }
 

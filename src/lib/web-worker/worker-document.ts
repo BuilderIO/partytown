@@ -39,14 +39,14 @@ export const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
   },
 
   createElementNS: {
-    value(ns: string, tagName: string) {
-      tagName = tagName.toUpperCase();
+    value(namespace: string, tagName: string) {
+      tagName = tagName.toLowerCase();
 
       const winId = this[WinIdKey];
       const instanceId = randomId();
-      const nsElm = getOrCreateNodeInstance(winId, instanceId, tagName);
+      const nsElm = getOrCreateNodeInstance(winId, instanceId, tagName, namespace);
 
-      callMethod(this, ['createElementNS'], [ns, tagName], instanceId);
+      callMethod(this, ['createElementNS'], [namespace, tagName], instanceId);
 
       return nsElm;
     },

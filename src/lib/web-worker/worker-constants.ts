@@ -5,6 +5,7 @@ import type { WorkerProxy } from './worker-proxy-constructor';
 export const WinIdKey = Symbol();
 export const InstanceIdKey = Symbol();
 export const NodeNameKey = Symbol();
+export const NamespaceKey = Symbol();
 export const ApplyPathKey = Symbol();
 export const InstanceStateKey = Symbol();
 
