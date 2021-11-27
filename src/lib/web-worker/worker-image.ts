@@ -29,7 +29,7 @@ export const createImageConstructor = (winId: number) => {
         keepalive: true,
       }).then(
         (rsp) => {
-          if (rsp.ok) {
+          if (rsp.ok || rsp.status === 0) {
             this.l.map((cb) => cb({ type: 'load' }));
           } else {
             this.e.map((cb) => cb({ type: 'error' }));
