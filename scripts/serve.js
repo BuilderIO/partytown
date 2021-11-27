@@ -8,14 +8,15 @@ const port = parseInt(process.argv[2], 10);
 const enableAtomics = process.argv.includes('--atomics');
 
 const server = http.createServer((req, rsp) => {
-  let filePath = req.url.split('?')[0];
+  const url = req.url.split('?')[0];
+  let filePath = url;
 
   if (filePath.includes('~partytown')) {
     filePath = filePath.replace('/~partytown', '');
     filePath = path.join(libDir, filePath);
   } else {
     filePath = path.join(testsDir, filePath);
-    if (req.url.endsWith('/')) {
+    if (url.endsWith('/')) {
       filePath = path.join(filePath, 'index.html');
     }
   }
