@@ -9,7 +9,9 @@ test('audio', async ({ page }) => {
   await page.goto('/platform/audio/');
 
   page.on('console', (msg) => {
-    console.log(`Audio Test Error: ${msg.text()}`);
+    if (msg.type() === 'error') {
+      console.log(`Audio Test Error: ${msg.text()}`);
+    }
   });
 
   const ua: string = await page.evaluate('navigator.userAgent');

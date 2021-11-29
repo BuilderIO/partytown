@@ -2,11 +2,7 @@ import { instanceIds, instances, winCtxs } from './main-constants';
 import { NodeName, PlatformInstanceId } from '../types';
 import { randomId } from '../utils';
 
-export const getAndSetInstanceId = (
-  instance: InstanceType | null | undefined,
-  instanceId?: number,
-  nodeName?: string
-) => {
+export const getAndSetInstanceId = (instance: any, instanceId?: number, nodeName?: string) => {
   if (instance) {
     if (instance === (instance as any).window) {
       return PlatformInstanceId.window;
@@ -35,7 +31,7 @@ export const getAndSetInstanceId = (
   return -1;
 };
 
-export const getInstance = <T = InstanceType | null>(
+export const getInstance = <T = any>(
   winId: number,
   instanceId: number,
   instanceItem?: any
@@ -58,25 +54,24 @@ export const getInstance = <T = InstanceType | null>(
   if (instanceId === PlatformInstanceId.body) {
     return doc.body as any;
   }
-  instanceItem = instances.find((i) => i[0] === instanceId);
-  if (instanceItem) {
-    return instanceItem[1];
-  }
+  return instances.get(instanceId);
 };
 
-export const setInstanceId = (instance: InstanceType | null | undefined, instanceId: number) => {
+export const setInstanceId = (instance: any, instanceId: number) => {
   if (instance) {
-    instances.push([instanceId, instance]);
+    instances.set(instanceId, instance);
     instanceIds.set(instance, instanceId);
+    setInc++;
+
+    if (setInc > 99999) {
+      instances.forEach((instance: Node, instanceId) => {
+        if (instance.nodeType && !instance.isConnected) {
+          instances.delete(instanceId);
+        }
+      });
+      setInc = 0;
+    }
   }
 };
 
-interface InstanceNode extends Node {}
-
-interface InstanceWindow extends Window {}
-
-interface InstanceHistory extends History {}
-
-interface InstanceStorage extends Storage {}
-
-type InstanceType = InstanceNode | InstanceWindow | InstanceHistory | InstanceStorage;
+let setInc = 0;
