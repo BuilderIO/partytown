@@ -3,6 +3,10 @@ import { test, expect } from '@playwright/test';
 test('audio', async ({ page }) => {
   await page.goto('/platform/audio/');
 
+  page.on('console', (msg) => {
+    if (msg.type() === 'error') console.log(`Audio Test Error: ${msg.text()}`);
+  });
+
   const ua: string = await page.evaluate('navigator.userAgent');
 
   if (ua.includes('Chrome')) {
