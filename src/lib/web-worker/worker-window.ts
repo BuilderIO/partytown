@@ -1,4 +1,5 @@
 import { ApplyPathType, NodeName, PlatformInstanceId } from '../types';
+import { createAudioConstructor } from './worker-audio';
 import { createNavigator } from './worker-navigator';
 import { createImageConstructor } from './worker-image';
 import { createNodeInstance, getOrCreateNodeInstance } from './worker-constructors';
@@ -104,6 +105,10 @@ export class Window extends WorkerProxy {
     return win;
   }
 
+  get Audio() {
+    return createAudioConstructor(getEnv(this));
+  }
+
   get body() {
     return getEnv(this).$body$;
   }
@@ -147,7 +152,7 @@ export class Window extends WorkerProxy {
   }
 
   get Image() {
-    return createImageConstructor(this[WinIdKey]);
+    return createImageConstructor(getEnv(this));
   }
 
   get name() {

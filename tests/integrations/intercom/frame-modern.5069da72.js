@@ -14174,8 +14174,12 @@
             e && L.a.hasAudioSupport() && this.play(n(228)(`./${e}`))
         },
         load(e) {
-            return this.audio[e] || (this.audio[e] = new Audio(e)),
-            this.audio[e]
+            if (!this.audio[e]) {
+                this.audio[e] = new Audio(e);
+            }
+            return this.audio[e];
+            // return this.audio[e] || (this.audio[e] = new Audio(e)),
+            // this.audio[e]
         },
         playNotification: cr()((function(e) {
             this.play(n(228)(`./${e}`))

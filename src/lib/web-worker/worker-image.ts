@@ -1,9 +1,9 @@
 import { debug, logWorker } from '../utils';
-import { environments, webWorkerCtx } from './worker-constants';
-import type { EventHandler } from '../types';
+import type { EventHandler, WebWorkerEnvironment } from '../types';
 import { resolveUrl } from './worker-exec';
+import { webWorkerCtx } from './worker-constants';
 
-export const createImageConstructor = (winId: number) => {
+export const createImageConstructor = (env: WebWorkerEnvironment) => {
   return class HTMLImageElement {
     s: string;
     l: EventHandler[];
@@ -19,9 +19,8 @@ export const createImageConstructor = (winId: number) => {
       return this.s;
     }
     set src(src: string) {
-      const env = environments[winId];
       if (debug && webWorkerCtx.$config$.logImageRequests) {
-        logWorker(`Image() request: ${resolveUrl(env, src)}`, winId);
+        logWorker(`Image() request: ${resolveUrl(env, src)}`, env.$winId$);
       }
 
       fetch(resolveUrl(env, src), {
