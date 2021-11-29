@@ -1,4 +1,4 @@
-import { BuildOptions, fileSize } from './utils';
+import { BuildOptions, copyOutputToTests, fileSize } from './utils';
 import { join } from 'path';
 import { minifyPlugin } from './minify';
 import type { OutputOptions, RollupOptions } from 'rollup';
@@ -40,6 +40,6 @@ export function buildMainSnippet(opts: BuildOptions): RollupOptions {
   return {
     input: join(opts.tscLibDir, 'main', 'snippet-entry.js'),
     output,
-    plugins: [],
+    plugins: [copyOutputToTests(opts)],
   };
 }

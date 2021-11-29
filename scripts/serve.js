@@ -3,22 +3,14 @@ const http = require('http');
 const fs = require('fs');
 
 const testsDir = path.join(__dirname, '..', 'tests');
-const libDir = path.join(__dirname, '..', 'lib');
 const port = parseInt(process.argv[2], 10);
 const enableAtomics = process.argv.includes('--atomics');
 
 const server = http.createServer((req, rsp) => {
   const url = req.url.split('?')[0];
-  let filePath = url;
-
-  if (filePath.includes('~partytown')) {
-    filePath = filePath.replace('/~partytown', '');
-    filePath = path.join(libDir, filePath);
-  } else {
-    filePath = path.join(testsDir, filePath);
-    if (url.endsWith('/')) {
-      filePath = path.join(filePath, 'index.html');
-    }
+  let filePath = path.join(testsDir, url);
+  if (url.endsWith('/')) {
+    filePath = path.join(filePath, 'index.html');
   }
 
   const readStream = fs.createReadStream(filePath);

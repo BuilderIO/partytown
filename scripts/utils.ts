@@ -1,6 +1,6 @@
 import gzipSize from 'gzip-size';
-import { basename, join } from 'path';
-import { copy, readdirSync, readFileSync, readJson, statSync, writeJson } from 'fs-extra';
+import { basename, relative, resolve, join } from 'path';
+import { copyFile, readdirSync, readFileSync, readJson, statSync, writeJson } from 'fs-extra';
 import type { Plugin, RollupWarning } from 'rollup';
 
 export function syncCommunicationModulesPlugin(opts: BuildOptions, msgType: MessageType): Plugin {
@@ -104,6 +104,18 @@ export function watchDir(opts: BuildOptions, dir: string): Plugin {
   };
 }
 
+export function copyOutputToTests(opts: BuildOptions): Plugin {
+  return {
+    name: 'copyOutputToTests',
+    async writeBundle(writeOpts) {
+      const src = writeOpts.file!;
+      const rel = relative(opts.distLibDir, writeOpts.file!);
+      const dest = resolve(opts.distTestsLibDir, rel);
+      await copyFile(src, dest);
+    },
+  };
+}
+
 export function onwarn(warning: RollupWarning) {
   if (warning.code === 'CIRCULAR_DEPENDENCY') return;
   console.log(warning.code);
@@ -116,6 +128,8 @@ export interface BuildOptions {
   distIntegrationDir: string;
   distLibDir: string;
   distLibDebugDir: string;
+  distTestsLibDir: string;
+  distTestsLibDebugDir: string;
   distReactDir: string;
   srcDir: string;
   srcIntegrationDir: string;
