@@ -1,6 +1,7 @@
 import { OutputOptions, Plugin, rollup, RollupOptions } from 'rollup';
 import {
   BuildOptions,
+  copyOutputToTests,
   fileSize,
   MessageType,
   syncCommunicationModulesPlugin,
@@ -37,6 +38,7 @@ export function buildServiceWorker(opts: BuildOptions): RollupOptions {
       sandboxContentPlugin(opts, 'sw'),
       watchDir(opts, join(opts.tscLibDir, 'sandbox')),
       watchDir(opts, join(opts.tscLibDir, 'web-worker')),
+      copyOutputToTests(opts),
     ],
   };
 }
@@ -63,7 +65,9 @@ async function buildSandboxServiceWorker(opts: BuildOptions, msgType: MessageTyp
 
   let sandboxHtml: string;
   if (debug) {
-    await writeFile(join(opts.distLibDebugDir, `partytown-sandbox-${msgType}.js`), sandboxJsCode);
+    const outName = `partytown-sandbox-${msgType}.js`;
+    await writeFile(join(opts.distLibDebugDir, outName), sandboxJsCode);
+    await writeFile(join(opts.distTestsLibDebugDir, outName), sandboxJsCode);
     sandboxHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><script src="./partytown-sandbox-${msgType}.js"></script></head></html>`;
   } else {
     sandboxHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><script type="module">${sandboxJsCode}</script></head></html>`;
