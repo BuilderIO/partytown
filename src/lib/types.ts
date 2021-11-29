@@ -331,9 +331,11 @@ export interface PartytownConfig {
    */
   forward?: PartytownForwardProperty[];
   /**
-   * Root directory the Partytown library files can be found.
-   * The library path must end with a `/`.
+   * An absolute path to the root directory which Partytown library files
+   * can be found. The library path must start and end with a `/`.
    * By default the files will load from the server's `/~partytown/` directory.
+   * Note that the library path must be on the same origin as the html document,
+   * and is also used as the `scope` of the Partytown service worker.
    */
   lib?: string;
   /**
