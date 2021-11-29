@@ -39,7 +39,6 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
         scriptContent = await rsp.text();
 
         env.$currentScriptId$ = instanceId;
-        env.$currentScriptUrl$ = scriptSrc;
         run(env, scriptContent);
         runStateLoadHandlers(instance!, StateProp.loadHandlers);
       } else {
@@ -57,7 +56,6 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
   }
 
   env.$currentScriptId$ = -1;
-  env.$currentScriptUrl$ = '';
 
   webWorkerCtx.$postMessage$([
     WorkerMessageType.InitializedEnvironmentScript,
@@ -89,7 +87,6 @@ export const runScriptContent = (
     }
 
     env.$currentScriptId$ = instanceId;
-    env.$currentScriptUrl$ = '';
     run(env, scriptContent);
   } catch (contentError: any) {
     console.error(scriptContent, contentError);
@@ -97,7 +94,6 @@ export const runScriptContent = (
   }
 
   env.$currentScriptId$ = -1;
-  env.$currentScriptUrl$ = '';
 
   return errorMsg;
 };
@@ -168,7 +164,7 @@ const resolveToUrl = (env: WebWorkerEnvironment, url?: string, baseLocation?: Lo
   return resolvedUrl;
 };
 
-export const resolveUrl = (env: WebWorkerEnvironment, url?: string) => resolveToUrl(env, url) + '';
+export const resolveUrl = (env: WebWorkerEnvironment, url: string) => resolveToUrl(env, url) + '';
 
 export const getUrl = (elm: WorkerProxy) =>
   resolveToUrl(getEnv(elm), getInstanceStateValue(elm, StateProp.url));

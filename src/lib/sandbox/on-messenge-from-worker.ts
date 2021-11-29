@@ -7,7 +7,6 @@ import {
   WorkerMessageType,
 } from '../types';
 import { randomId } from '../utils';
-import { readMainPlatform } from './read-main-platform';
 import { registerWindow } from './main-register-window';
 import { winCtxs } from './main-constants';
 

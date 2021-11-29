@@ -144,7 +144,7 @@ const applyToInstance = (
         }
       }
     } catch (err) {
-      console.warn(err)
+      console.warn(err);
     }
   }
 

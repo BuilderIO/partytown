@@ -68,7 +68,6 @@ function managlePropsPlugin(): Plugin {
     $config$: '',
     $content$: '',
     $currentScriptId$: '',
-    $currentScriptUrl$: '',
     $data$: '',
     $dimensionPropNames$: '',
     $document$: '',
