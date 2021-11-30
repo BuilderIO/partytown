@@ -331,7 +331,7 @@ export const nextTick = (cb: Function, ms?: number) => setTimeout(cb, ms);
 
 export const EMPTY_ARRAY = [];
 if (debug) {
-  Object.freeze(EMPTY_ARRAY);
+  /*#__PURE__*/ Object.freeze(EMPTY_ARRAY);
 }
 
 export const PT_INITIALIZED_EVENT = `pt0`;

@@ -10,7 +10,7 @@ export function loader(
   scripts?: NodeListOf<HTMLScriptElement>,
   timeout?: any
 ) {
-  function ready(msgType: 'sw' | 'atomics') {
+  function loadSandbox(msgType: 'sw' | 'atomics') {
     if (!sandbox) {
       sandbox = doc.createElement('iframe');
       sandbox.dataset.partytown = 'sandbox';
@@ -37,58 +37,66 @@ export function loader(
     }
   }
 
-  libPath = (win.partytown || {}).lib || '/~partytown/';
-  if (debug) {
-    libPath += 'debug/';
-  }
+  function ready() {
+    libPath = (win.partytown || {}).lib || '/~partytown/';
+    if (debug) {
+      libPath += 'debug/';
+    }
 
-  scripts = doc.querySelectorAll(`script[type="${SCRIPT_TYPE}"]`);
+    scripts = doc.querySelectorAll(`script[type="${SCRIPT_TYPE}"]`);
 
-  if (top !== win) {
-    // this is an iframe
-    top!.dispatchEvent(new CustomEvent(PT_IFRAME_APPENDED, { detail: win }));
-  } else {
-    if (scripts!.length) {
-      timeout = setTimeout(fallback, debug ? 60000 : 10000);
-      doc.addEventListener(PT_INITIALIZED_EVENT, function () {
-        clearTimeout(timeout);
-      });
-      let useAtomics = win.crossOriginIsolated;
-      if (debug && useAtomics) {
-        useAtomics = !window.location.search.includes('forceServiceWorker');
-      }
-      if (useAtomics) {
-        // atomics support
-        ready('atomics');
-      } else if ('serviceWorker' in nav) {
-        // service worker support
-        const isolatedQuery = win.crossOriginIsolated ? '?isolated' : '';
-        nav.serviceWorker
-          .register(libPath + 'partytown-sw.js' + isolatedQuery, {
-            scope: libPath,
-          })
-          .then(
-            function (swRegistration) {
-              if (swRegistration.active) {
-                ready('sw');
-              } else if (swRegistration.installing) {
-                swRegistration.installing.addEventListener('statechange', function (ev) {
-                  if ((ev.target as any as ServiceWorker).state === 'activated') {
-                    ready('sw');
-                  }
-                });
-              } else {
-                console.warn(swRegistration);
+    if (top !== win) {
+      // this is an iframe
+      top!.dispatchEvent(new CustomEvent(PT_IFRAME_APPENDED, { detail: win }));
+    } else {
+      if (scripts!.length) {
+        timeout = setTimeout(fallback, debug ? 60000 : 10000);
+        doc.addEventListener(PT_INITIALIZED_EVENT, function () {
+          clearTimeout(timeout);
+        });
+        let useAtomics = win.crossOriginIsolated;
+        if (debug && useAtomics) {
+          useAtomics = !window.location.search.includes('forceServiceWorker');
+        }
+        if (useAtomics) {
+          // atomics support
+          loadSandbox('atomics');
+        } else if ('serviceWorker' in nav) {
+          // service worker support
+          const isolatedQuery = win.crossOriginIsolated ? '?isolated' : '';
+          nav.serviceWorker
+            .register(libPath + 'partytown-sw.js' + isolatedQuery, {
+              scope: libPath,
+            })
+            .then(
+              function (swRegistration) {
+                if (swRegistration.active) {
+                  loadSandbox('sw');
+                } else if (swRegistration.installing) {
+                  swRegistration.installing.addEventListener('statechange', function (ev) {
+                    if ((ev.target as any as ServiceWorker).state === 'activated') {
+                      loadSandbox('sw');
+                    }
+                  });
+                } else {
+                  console.warn(swRegistration);
+                }
+              },
+              function (e) {
+                console.error(e);
               }
-            },
-            function (e) {
-              console.error(e);
-            }
-          );
-      } else {
-        // no support for atomics or service worker
-        fallback();
+            );
+        } else {
+          // no support for atomics or service worker
+          fallback();
+        }
       }
     }
+  }
+
+  if (doc.readyState === 'complete') {
+    ready();
+  } else {
+    window.addEventListener('load', ready);
   }
 }
