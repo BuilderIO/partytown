@@ -29,8 +29,13 @@ export type GoogleTagManagerProps = {
 export const GoogleTagManager = ({ containerId }: GoogleTagManagerProps): any => {
   return (
     <Fragment>
-      <PartytownScript id="gtm" innerHTML={appendForwardProperty('dataLayer', 1)} />
-      <PartytownScript id="gtm-pt" innerHTML={googleTagManager(containerId)} type={SCRIPT_TYPE} />
+      <PartytownScript id="gtm-fw" innerHTML={appendForwardProperty('dataLayer', 1)} />
+      <PartytownScript id="gtm-pt" innerHTML={googleTagManager()} type={SCRIPT_TYPE} />
+      <script
+        async
+        src={`https://www.googletagmanager.com/gtm.js?id=` + containerId}
+        type={SCRIPT_TYPE}
+      />
     </Fragment>
   );
 };

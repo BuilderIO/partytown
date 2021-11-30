@@ -41,4 +41,4 @@ export const appendForwardProperty = (
 
 export { SCRIPT_TYPE } from '../lib/utils';
 
-export { PartytownConfig, PartytownForwardPropertyName, PartytownForwardPropertyType };
+export type { PartytownConfig, PartytownForwardPropertyName, PartytownForwardPropertyType };
