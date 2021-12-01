@@ -298,14 +298,15 @@ export const len = (obj: { length: number }) => obj.length;
 export const getConstructorName = (obj: { constructor?: { name?: string } } | undefined | null) =>
   (obj && obj.constructor && obj.constructor.name) || '';
 
-const startsWith = (str: string, val: string) => str.startsWith(val);
+export const startsWith = (str: string, val: string) => str.startsWith(val);
 
 export const isValidMemberName = (memberName: string) => {
   if (
     startsWith(memberName, 'webkit') ||
     startsWith(memberName, 'toJSON') ||
     startsWith(memberName, 'constructor') ||
-    startsWith(memberName, 'toString')
+    startsWith(memberName, 'toString') ||
+    startsWith(memberName, '_')
   ) {
     return false;
   } else {

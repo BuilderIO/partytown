@@ -93,4 +93,7 @@ test('window', async ({ page }) => {
 
   const testFnNotNative = page.locator('#testFnNotNative');
   await expect(testFnNotNative).toHaveText('undefined');
+
+  const testNotStandard = page.locator('#testNotStandard');
+  await expect(testNotStandard).toHaveText('undefined');
 });

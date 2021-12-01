@@ -442,6 +442,24 @@
         </script>
       </li>
 
+      <li>
+        <strong>window.__NOT_STANDARD_PROP</strong>
+        <code>
+          <span id="testNotStandard"></span>
+        </code>
+        <script>
+          (function () {
+            window.__NOT_STANDARD_PROP = true;
+          })();
+        </script>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testNotStandard');
+            elm.textContent = String(window.__NOT_STANDARD_PROP);
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');
