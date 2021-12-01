@@ -443,7 +443,7 @@
       </li>
 
       <li>
-        <strong>window.__NOT_STANDARD_PROP</strong>
+        <strong>avoid window.__NOT_STANDARD_PROP</strong>
         <code>
           <span id="testNotStandard"></span>
         </code>
@@ -456,6 +456,25 @@
           (function () {
             const elm = document.getElementById('testNotStandard');
             elm.textContent = String(window.__NOT_STANDARD_PROP);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>avoid window[0]</strong>
+        <code>
+          <span id="testWindowIndex"></span>
+        </code>
+        <script>
+          (function () {
+            window[0] = true;
+          })();
+        </script>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testWindowIndex');
+            const value = window[0];
+            elm.textContent = String(value);
           })();
         </script>
       </li>

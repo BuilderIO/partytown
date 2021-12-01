@@ -96,4 +96,7 @@ test('window', async ({ page }) => {
 
   const testNotStandard = page.locator('#testNotStandard');
   await expect(testNotStandard).toHaveText('undefined');
+
+  const testWindowIndex = page.locator('#testWindowIndex');
+  await expect(testWindowIndex).toHaveText('undefined');
 });

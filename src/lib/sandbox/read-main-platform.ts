@@ -138,7 +138,7 @@ const readImplementationMember = (
   memberName: string,
   cstrName?: string
 ) => {
-  if (isValidMemberName(memberName)) {
+  if (isValidMemberName(memberName) && isNaN((memberName as any)[0])) {
     try {
       const value = implementation[memberName];
       const memberType = typeof value;
