@@ -67,8 +67,8 @@ export const readMainPlatform = (win: any) => {
     });
 
   const $interfaces$: InterfaceInfo[] = [
-    readImplentation('Window', win),
-    readImplentation('Node', textNode),
+    readImplementation('Window', win),
+    readImplementation('Node', textNode),
   ];
 
   const config: PartytownConfig = win.partytown || {};
@@ -81,7 +81,7 @@ export const readMainPlatform = (win: any) => {
   };
 
   impls.map(([cstrName, CstrPrototype, impl, intefaceType]) =>
-    readOwnImplentation($interfaces$, cstrName, CstrPrototype, impl, intefaceType)
+    readOwnImplementation($interfaces$, cstrName, CstrPrototype, impl, intefaceType)
   );
 
   if (debug) {
@@ -93,16 +93,16 @@ export const readMainPlatform = (win: any) => {
   return initWebWorkerData;
 };
 
-const readImplentation = (cstrName: string, impl: any) => {
+const readImplementation = (cstrName: string, impl: any) => {
   const interfaceMembers: InterfaceMember[] = [];
   const interfaceInfo: InterfaceInfo = [cstrName, 'Object', interfaceMembers];
   for (const memberName in impl) {
-    readImplentationMember(interfaceMembers, impl, memberName);
+    readImplementationMember(interfaceMembers, impl, memberName);
   }
   return interfaceInfo;
 };
 
-const readOwnImplentation = (
+const readOwnImplementation = (
   interfaces: InterfaceInfo[],
   cstrName: string,
   CstrPrototype: any,
@@ -114,10 +114,10 @@ const readOwnImplentation = (
     const superCstrName = SuperCstr.constructor.name;
     const interfaceMembers: InterfaceMember[] = [];
 
-    readOwnImplentation(interfaces, superCstrName, SuperCstr, impl, interfaceType);
+    readOwnImplementation(interfaces, superCstrName, SuperCstr, impl, interfaceType);
 
     Object.keys(Object.getOwnPropertyDescriptors(CstrPrototype)).map((memberName) =>
-      readImplentationMember(interfaceMembers, impl, memberName)
+      readImplementationMember(interfaceMembers, impl, memberName)
     );
 
     const interfaceInfo: InterfaceInfo = [
@@ -132,38 +132,42 @@ const readOwnImplentation = (
   }
 };
 
-const readImplentationMember = (
+const readImplementationMember = (
   interfaceMembers: InterfaceMember[],
   implementation: any,
   memberName: string,
   cstrName?: string
 ) => {
   if (isValidMemberName(memberName)) {
-    const value = implementation[memberName];
-    const memberType = typeof value;
+    try {
+      const value = implementation[memberName];
+      const memberType = typeof value;
 
-    if (memberType === 'function') {
-      if (String(value).includes(`[native`)) {
-        interfaceMembers.push([memberName, InterfaceType.Function]);
+      if (memberType === 'function') {
+        if (String(value).includes(`[native`)) {
+          interfaceMembers.push([memberName, InterfaceType.Function]);
+        }
+      } else if (
+        memberType === 'object' &&
+        value != null &&
+        (cstrName = getConstructorName(value)) !== 'Object'
+      ) {
+        if (value.nodeType) {
+          interfaceMembers.push([memberName, value.nodeType]);
+        } else {
+          interfaceMembers.push([memberName, cstrName]);
+        }
+      } else if (memberType !== 'symbol') {
+        // everything else that's not a symbol
+        if (memberName.toUpperCase() === memberName) {
+          // static property, let's get its value
+          interfaceMembers.push([memberName, InterfaceType.Property, value]);
+        } else {
+          interfaceMembers.push([memberName, InterfaceType.Property]);
+        }
       }
-    } else if (
-      memberType === 'object' &&
-      value != null &&
-      (cstrName = getConstructorName(value)) !== 'Object'
-    ) {
-      if (value.nodeType) {
-        interfaceMembers.push([memberName, value.nodeType]);
-      } else {
-        interfaceMembers.push([memberName, cstrName]);
-      }
-    } else if (memberType !== 'symbol') {
-      // everything else that's not a symbol
-      if (memberName.toUpperCase() === memberName) {
-        // static property, let's get its value
-        interfaceMembers.push([memberName, InterfaceType.Property, value]);
-      } else {
-        interfaceMembers.push([memberName, InterfaceType.Property]);
-      }
+    } catch (e) {
+      console.warn(e);
     }
   }
 };
