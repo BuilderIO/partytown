@@ -8,12 +8,18 @@ import { PartytownScript } from '../script';
  *
  * @public
  */
-export type GoogleTagManagerProps = {
+export interface GoogleTagManagerProps {
   /**
    * Google Tag Manager Container ID, formatted as GTM-XXXXXX
    */
   containerId: string;
-};
+
+  /**
+   * The default name of the data layer object initiated by the global site tag or Tag Manager is `dataLayer`.
+   * Use this prop to use a different name for your data layer.
+   */
+  dataLayerName?: string;
+}
 
 /**
  * The Google Tag Manager Partytown component should be added after the opening `<head>`
@@ -26,16 +32,21 @@ export type GoogleTagManagerProps = {
  *
  * @public
  */
-export const GoogleTagManager = ({ containerId }: GoogleTagManagerProps): any => {
+export const GoogleTagManager = ({ containerId, dataLayerName }: GoogleTagManagerProps): any => {
+  let src = `https://www.googletagmanager.com/gtm.js?id=` + containerId;
+
+  if (typeof dataLayerName !== 'string') {
+    dataLayerName = 'dataLayer';
+  }
+  if (dataLayerName !== 'dataLayer') {
+    src += '&l=' + dataLayerName;
+  }
+
   return (
     <Fragment>
-      <PartytownScript id="gtm-fw" innerHTML={appendForwardProperty('dataLayer', 1)} />
-      <PartytownScript id="gtm-pt" innerHTML={googleTagManager()} type={SCRIPT_TYPE} />
-      <script
-        async
-        src={`https://www.googletagmanager.com/gtm.js?id=` + containerId}
-        type={SCRIPT_TYPE}
-      />
+      <PartytownScript id="gtm-fw" innerHTML={appendForwardProperty(dataLayerName, 1)} />
+      <script async src={src} type={SCRIPT_TYPE} />
+      <PartytownScript id="gtm-pt" innerHTML={googleTagManager(dataLayerName)} type={SCRIPT_TYPE} />
     </Fragment>
   );
 };
@@ -50,7 +61,7 @@ export const GoogleTagManager = ({ containerId }: GoogleTagManagerProps): any =>
 export const GoogleTagManagerNoScript = ({ containerId }: GoogleTagManagerProps): any => (
   <noscript>
     <iframe
-      src={'https://www.googletagmanager.com/ns.html?id=' + encodeURIComponent(containerId)}
+      src={'https://www.googletagmanager.com/ns.html?id=' + encodeURIComponent(containerId || '')}
       height="0"
       width="0"
       style={{ display: 'none', visibility: 'hidden' }}

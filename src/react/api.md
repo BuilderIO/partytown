@@ -5,15 +5,16 @@
 ```ts
 
 // @public
-export const GoogleTagManager: ({ containerId }: GoogleTagManagerProps) => any;
+export const GoogleTagManager: ({ containerId, dataLayerName }: GoogleTagManagerProps) => any;
 
 // @public
 export const GoogleTagManagerNoScript: ({ containerId }: GoogleTagManagerProps) => any;
 
 // @public
-export type GoogleTagManagerProps = {
+export interface GoogleTagManagerProps {
     containerId: string;
-};
+    dataLayerName?: string;
+}
 
 // @public
 export const Partytown: (props?: PartytownProps | undefined) => any;
