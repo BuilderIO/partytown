@@ -131,16 +131,19 @@ export interface BuildOptions {
   distTestsLibDir: string;
   distTestsLibDebugDir: string;
   distReactDir: string;
+  distUtilsDir: string;
   srcDir: string;
   srcIntegrationDir: string;
   srcLibDir: string;
   srcReactDir: string;
+  srcUtilsDir: string;
   testsDir: string;
   testsVideosDir: string;
   tscDir: string;
   tscIntegrationDir: string;
   tscLibDir: string;
   tscReactDir: string;
+  tscUtilsDir: string;
   packageJson: any;
 }
 

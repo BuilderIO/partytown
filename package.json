@@ -1,9 +1,12 @@
 {
   "name": "@builder.io/partytown",
   "version": "0.0.15",
-  "description": "Relocate resource intensive 3rd-party scripts off of the main thread and into a web worker.",
+  "description": "Relocate resource intensive third-party scripts off of the main thread and into a web worker.",
   "license": "MIT",
-  "main": "index.js",
+  "main": "index.cjs",
+  "module": "index.mjs",
+  "types": "index.d.ts",
+  "type": "module",
   "exports": {
     "./integration": {
       "import": "./integration/index.mjs",
@@ -13,14 +16,24 @@
       "import": "./react/index.mjs",
       "require": "./react/index.cjs"
     },
+    "./utils": {
+      "import": "./utils/index.mjs",
+      "require": "./utils/index.cjs"
+    },
+    "./package.json": "./package.json",
     ".": {
-      "require": "./index.js"
+      "import": "./index.mjs",
+      "require": "./index.cjs"
     }
   },
   "files": [
+    "index.cjs",
+    "index.mjs",
+    "index.d.ts",
     "integration/",
     "lib/",
-    "react/"
+    "react/",
+    "utils/"
   ],
   "scripts": {
     "build": "tsc && rollup -c scripts/rollup.config.js",
@@ -28,10 +41,10 @@
     "build.watch": "rollup -c scripts/rollup.config.js -w --configDev",
     "dev": "tsc && concurrently \"npm:build.watch\" \"npm:tsc.watch\" -n build,tsc -c magenta,yellow",
     "release": "npm run build && npm test && np --no-tests",
-    "serve": "node scripts/serve.js 4000",
-    "serve.test": "node scripts/serve.js 4001",
-    "serve.atomics": "node scripts/serve.js 4002 --atomics",
-    "serve.atomics.test": "node scripts/serve.js 4003 --atomics",
+    "serve": "node scripts/serve.cjs 4000",
+    "serve.test": "node scripts/serve.cjs 4001",
+    "serve.atomics": "node scripts/serve.cjs 4002 --atomics",
+    "serve.atomics.test": "node scripts/serve.cjs 4003 --atomics",
     "test": "playwright test tests/platform --browser=chromium",
     "test.atomics": "playwright test tests/platform --config playwright.atomics.config.ts --browser=chromium",
     "test.webkit": "playwright test tests/platform --browser=webkit",
