@@ -48,4 +48,8 @@ test('events', async ({ page }) => {
   await page.waitForSelector('.testNewCustomEvent');
   const testNewCustomEvent = page.locator('#testNewCustomEvent');
   await expect(testNewCustomEvent).toHaveText('NEW_CUSTOM_EVENT true true 88');
+
+  await page.waitForSelector('.testCrossOriginMessage');
+  const testCrossOriginMessage = page.locator('#testCrossOriginMessage');
+  await expect(testCrossOriginMessage).toHaveText('message cross origin');
 });

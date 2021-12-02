@@ -44,6 +44,11 @@ export const serializeForWorker = (
     if (type === 'object') {
       cstrName = getConstructorName(value);
 
+      if (cstrName === '') {
+        // error reading this object, probably "DOMException: Blocked from accessing a cross-origin frame."
+        return [SerializedType.Object, {}];
+      }
+
       if (cstrName === 'Window') {
         return [
           SerializedType.Instance,

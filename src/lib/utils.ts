@@ -295,8 +295,12 @@ const objToString = (obj: any) => {
 
 export const len = (obj: { length: number }) => obj.length;
 
-export const getConstructorName = (obj: { constructor?: { name?: string } } | undefined | null) =>
-  (obj && obj.constructor && obj.constructor.name) || '';
+export const getConstructorName = (obj: { constructor: { name: string } } | undefined | null) => {
+  try {
+    return obj!.constructor.name;
+  } catch (e) {}
+  return '';
+};
 
 export const startsWith = (str: string, val: string) => str.startsWith(val);
 

@@ -168,6 +168,37 @@
         </script>
       </li>
 
+      <li>
+        <strong>cross origin message</strong>
+        <code id="testCrossOriginMessage"></code>
+        <script type="text/partytown">
+          (function () {
+            addEventListener('message', (ev) => {
+              const elm = document.getElementById('testCrossOriginMessage');
+              elm.textContent = ev.type + ' ' + ev.data;
+              elm.className = 'testCrossOriginMessage';
+            });
+          })();
+        </script>
+        <script>
+          setTimeout(() => {
+            // simulating cross origin iframe by using a datauri
+            // which won't have the same origin
+            const crossOriginHtml = `
+              <${'script'}>
+                parent.postMessage('cross origin', '${origin}');
+              </${'script'}>
+            `;
+            const dataUri = `data:text/html;base64,${btoa(crossOriginHtml)}`;
+
+            const iframe = document.createElement('iframe');
+            iframe.hidden = true;
+            iframe.src = dataUri;
+            document.body.appendChild(iframe);
+          }, 1000);
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');
