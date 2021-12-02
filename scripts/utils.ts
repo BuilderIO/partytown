@@ -121,6 +121,24 @@ export function onwarn(warning: RollupWarning) {
   console.log(warning.code);
 }
 
+export function getJsBanner(opts: BuildOptions, jsCode: string) {
+  return `/* Partytown ${opts.packageJson.version} - MIT https://builder.io */\n${jsCode}`;
+}
+
+export function jsBannerPlugin(opts: BuildOptions): Plugin {
+  return {
+    name: 'jsBanner',
+    async generateBundle(_, bundles) {
+      for (const f in bundles) {
+        const bundle = bundles[f];
+        if (bundle.type === 'chunk') {
+          bundle.code = getJsBanner(opts, bundle.code);
+        }
+      }
+    },
+  };
+}
+
 export interface BuildOptions {
   isDev: boolean;
   generateApi: boolean;
@@ -144,7 +162,11 @@ export interface BuildOptions {
   tscLibDir: string;
   tscReactDir: string;
   tscUtilsDir: string;
-  packageJson: any;
+  packageJson: PackageJson;
+}
+
+export interface PackageJson {
+  version: string;
 }
 
 export type MessageType = 'sw' | 'atomics';

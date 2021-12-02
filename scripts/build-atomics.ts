@@ -3,6 +3,7 @@ import {
   BuildOptions,
   copyOutputToTests,
   fileSize,
+  getJsBanner,
   syncCommunicationModulesPlugin,
   watchDir,
 } from './utils';
@@ -36,9 +37,10 @@ function buildAtomicsDebug(opts: BuildOptions): RollupOptions {
             for (const f in bundle) {
               const b = bundle[f];
               if (b.type === 'chunk') {
+                const code = getJsBanner(opts, b.code);
                 const outName = `partytown-sandbox-atomics.js`;
-                await writeFile(join(opts.distLibDebugDir, outName), b.code);
-                await writeFile(join(opts.distTestsLibDebugDir, outName), b.code);
+                await writeFile(join(opts.distLibDebugDir, outName), code);
+                await writeFile(join(opts.distTestsLibDebugDir, outName), code);
                 b.code = debugHtml;
               }
             }
@@ -80,7 +82,7 @@ function buildAtomicsMin(opts: BuildOptions): RollupOptions {
             for (const f in bundle) {
               const b = bundle[f];
               if (b.type === 'chunk') {
-                const jsCode = b.code;
+                const jsCode = getJsBanner(opts, b.code);
                 b.code = (minHtmlTop + jsCode.trim() + minHtmlBottom).trim();
               }
             }

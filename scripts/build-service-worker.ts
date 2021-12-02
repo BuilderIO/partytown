@@ -3,10 +3,11 @@ import {
   BuildOptions,
   copyOutputToTests,
   fileSize,
+  jsBannerPlugin,
   MessageType,
+  onwarn,
   syncCommunicationModulesPlugin,
   watchDir,
-  onwarn,
 } from './utils';
 import { join } from 'path';
 import { minifyPlugin } from './minify';
@@ -39,6 +40,7 @@ export function buildServiceWorker(opts: BuildOptions): RollupOptions {
       watchDir(opts, join(opts.tscLibDir, 'sandbox')),
       watchDir(opts, join(opts.tscLibDir, 'web-worker')),
       copyOutputToTests(opts),
+      jsBannerPlugin(opts),
     ],
   };
 }
@@ -58,7 +60,7 @@ async function buildSandboxServiceWorker(opts: BuildOptions, msgType: MessageTyp
     exports: 'none',
     intro: `((window)=>{`,
     outro: `})(window);`,
-    plugins: [...minifyPlugin(debug)],
+    plugins: [...minifyPlugin(debug), jsBannerPlugin(opts)],
   });
 
   const sandboxJsCode = generated.output[0].code;

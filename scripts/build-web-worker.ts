@@ -1,5 +1,11 @@
 import { OutputOptions, Plugin, rollup } from 'rollup';
-import { BuildOptions, MessageType, onwarn, syncCommunicationModulesPlugin } from './utils';
+import {
+  BuildOptions,
+  getJsBanner,
+  MessageType,
+  onwarn,
+  syncCommunicationModulesPlugin,
+} from './utils';
 import { join } from 'path';
 import { writeFile } from 'fs-extra';
 import { minifyPlugin } from './minify';
@@ -21,7 +27,7 @@ export async function buildWebWorker(opts: BuildOptions, msgType: MessageType, d
 
   const generated = await build.generate(output);
 
-  const webWorkerCode = generated.output[0].code;
+  const webWorkerCode = getJsBanner(opts, generated.output[0].code);
   if (debug) {
     const outName = `partytown-ww-${msgType}.js`;
     await writeFile(join(opts.distLibDebugDir, outName), webWorkerCode);
