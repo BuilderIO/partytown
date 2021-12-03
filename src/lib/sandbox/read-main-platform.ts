@@ -120,15 +120,13 @@ const readOwnImplementation = (
       readImplementationMember(interfaceMembers, impl, memberName)
     );
 
-    const interfaceInfo: InterfaceInfo = [
+    interfaces.push([
       cstrName,
       superCstrName,
       interfaceMembers,
       interfaceType,
       (impl as Node).nodeName,
-    ];
-
-    interfaces.push(interfaceInfo);
+    ]);
   }
 };
 
@@ -136,12 +134,14 @@ const readImplementationMember = (
   interfaceMembers: InterfaceMember[],
   implementation: any,
   memberName: string,
+  value?: any,
+  memberType?: string,
   cstrName?: string
 ) => {
-  if (isValidMemberName(memberName) && isNaN((memberName as any)[0])) {
-    try {
-      const value = implementation[memberName];
-      const memberType = typeof value;
+  try {
+    if (isValidMemberName(memberName) && isNaN((memberName as any)[0])) {
+      value = implementation[memberName];
+      memberType = typeof value;
 
       if (memberType === 'function') {
         if (String(value).includes(`[native`)) {
@@ -168,9 +168,9 @@ const readImplementationMember = (
           interfaceMembers.push([memberName, InterfaceType.Property]);
         }
       }
-    } catch (e) {
-      console.warn(e);
     }
+  } catch (e) {
+    console.warn(e);
   }
 };
 
