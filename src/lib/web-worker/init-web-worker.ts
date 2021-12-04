@@ -3,6 +3,7 @@ import { defineWorkerInterface, patchPrototypes } from './worker-define-construc
 import { EMPTY_ARRAY, logWorker } from '../utils';
 import type { InitWebWorkerData } from '../types';
 import { Node } from './worker-node';
+import type { PartytownConfig } from '@builder.io/partytown/intergration';
 import { webWorkerCtx } from './worker-constants';
 import { Window } from './worker-window';
 
@@ -10,12 +11,17 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   // merge it into the web worker context object
   Object.assign(webWorkerCtx, initWebWorkerData);
 
-  webWorkerCtx.$config$ = JSON.parse(webWorkerCtx.$config$ as any);
-  parseConfigFn('resolveUrl');
+  const config: PartytownConfig = (webWorkerCtx.$config$ = JSON.parse(
+    webWorkerCtx.$config$ as any
+  ));
 
-  webWorkerCtx.$forwardedTriggers$ = (webWorkerCtx.$config$.forward || EMPTY_ARRAY).map(
-    (f) => f[0]
-  );
+  if (config.resolveUrl) {
+    Object.assign(config, {
+      resolveUrl: new Function('return ' + config.resolveUrl)(),
+    });
+  }
+
+  webWorkerCtx.$forwardedTriggers$ = (config.forward || EMPTY_ARRAY).map((f) => f[0]);
 
   webWorkerCtx.$postMessage$ = postMessage.bind(self);
 
@@ -32,14 +38,4 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   webWorkerCtx.$isInitialized$ = 1;
 
   logWorker(`Initialized web worker`);
-};
-
-const parseConfigFn = (optionName: string) => {
-  let fnStr: string = (webWorkerCtx.$config$ as any)[optionName];
-  if (fnStr) {
-    if (fnStr.startsWith('(') || fnStr.startsWith('function')) {
-      fnStr = `${optionName}:${fnStr}`;
-    }
-    Object.assign(webWorkerCtx.$config$, new Function(`return{${fnStr}}`)());
-  }
 };

@@ -74,8 +74,18 @@ export const readMainPlatform = (win: any) => {
   const config: PartytownConfig = win.partytown || {};
   const libPath = (config.lib || '/~partytown/') + (debug ? 'debug/' : '');
 
+  const configStr = JSON.stringify(config, (k, v) => {
+    if (typeof v === 'function') {
+      v = String(v);
+      if (v.startsWith(k + '(')) {
+        v = 'function ' + v;
+      }
+    }
+    return v;
+  });
+
   const initWebWorkerData: InitWebWorkerData = {
-    $config$: JSON.stringify(config, (_, v) => (typeof v === 'function' ? String(v) : v)) as any,
+    $config$: configStr as any,
     $libPath$: new URL(libPath, win.location) + '',
     $interfaces$,
   };
