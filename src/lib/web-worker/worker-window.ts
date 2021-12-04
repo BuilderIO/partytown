@@ -14,6 +14,7 @@ import { envGlobalConstructors, environments, WinIdKey } from './worker-constant
 import { getEnv } from './worker-environment';
 import { Location } from './worker-location';
 import { queue } from './worker-proxy';
+import { resolveUrl } from './worker-exec';
 import { serializeInstanceForMain } from './worker-serialization';
 import { WorkerProxy } from './worker-proxy-constructor';
 
@@ -119,6 +120,11 @@ export class Window extends WorkerProxy {
 
   get documentElement() {
     return getEnv(this).$documentElement$;
+  }
+
+  fetch(input: string | URL | Request, init: any) {
+    input = typeof input === 'string' || input instanceof URL ? String(input) : input.url;
+    return fetch(resolveUrl(getEnv(this), input), init);
   }
 
   get frameElement() {

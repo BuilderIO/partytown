@@ -97,6 +97,11 @@ test('window', async ({ page }) => {
   const testNotStandard = page.locator('#testNotStandard');
   await expect(testNotStandard).toHaveText('undefined');
 
-  const testWindowIndex = page.locator('#testWindowIndex');
-  await expect(testWindowIndex).toHaveText('undefined');
+  await page.waitForSelector('.testFetchText');
+  const testFetchText = page.locator('#testFetchText');
+  await expect(testFetchText).toHaveText('text');
+
+  await page.waitForSelector('.testFetchJson');
+  const testFetchJson = page.locator('#testFetchJson');
+  await expect(testFetchJson).toHaveText('{"mph":88}');
 });

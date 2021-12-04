@@ -479,6 +479,39 @@
         </script>
       </li>
 
+      <li>
+        <strong>window.fetch(url) text</strong>
+        <code>
+          <span id="testFetchText"></span>
+        </code>
+        <script type="text/partytown">
+          (async function () {
+            const elm = document.getElementById('testFetchText');
+            const rsp = await window.fetch('text.txt');
+            const text = await rsp.text();
+            elm.textContent = text;
+            elm.className = 'testFetchText';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>fetch(URL) json</strong>
+        <code>
+          <span id="testFetchJson"></span>
+        </code>
+        <script type="text/partytown">
+          (async function () {
+            const url = new URL('data.json', location);
+            const elm = document.getElementById('testFetchJson');
+            const rsp = await fetch(url);
+            const data = await rsp.json();
+            elm.textContent = JSON.stringify(data);
+            elm.className = 'testFetchJson';
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');
