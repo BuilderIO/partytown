@@ -356,11 +356,14 @@ export const SCRIPT_TYPE = `text/partytown`;
 
 export const SCRIPT_TYPE_EXEC = `-x`;
 
+export const defineProperty = (obj: any, memberName: string, descriptor: PropertyDescriptor) =>
+  Object.defineProperty(obj, memberName, { ...descriptor, configurable: true });
+
 export const definePrototypeProperty = (
   Cstr: any,
   memberName: string,
   descriptor: PropertyDescriptor
-) => Object.defineProperty(Cstr.prototype, memberName, { ...descriptor, configurable: true });
+) => defineProperty(Cstr.prototype, memberName, descriptor);
 
 export const definePrototypePropertyDescriptor = (Cstr: any, propertyDescriptorMap: any) =>
   Object.defineProperties(Cstr.prototype, propertyDescriptorMap);

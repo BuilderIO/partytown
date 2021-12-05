@@ -6,14 +6,15 @@ import { createNodeInstance, getOrCreateNodeInstance } from './worker-constructo
 import {
   debug,
   defineConstructorName,
+  defineProperty,
   logWorkerGlobalConstructor,
   normalizedWinId,
   randomId,
 } from '../utils';
 import { envGlobalConstructors, environments, WinIdKey } from './worker-constants';
 import { getEnv } from './worker-environment';
+import { getter, queue } from './worker-proxy';
 import { Location } from './worker-location';
-import { queue } from './worker-proxy';
 import { resolveUrl } from './worker-exec';
 import { serializeInstanceForMain } from './worker-serialization';
 import { WorkerProxy } from './worker-proxy-constructor';
@@ -102,6 +103,18 @@ export class Window extends WorkerProxy {
     (this as any).requestAnimationFrame = (cb: (ts: number) => void) =>
       setTimeout(() => cb(performance.now()), 9);
     (this as any).cancelAnimationFrame = (id: number) => clearTimeout(id);
+
+    defineProperty((this as any).performance, 'timing', {
+      get: () => {
+        const timing = getter(this, ['performance', 'timing']);
+        return timing
+          ? {
+              ...timing,
+              toJSON: () => timing,
+            }
+          : undefined;
+      },
+    });
 
     return win;
   }

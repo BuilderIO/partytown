@@ -70,6 +70,10 @@ test('window', async ({ page }) => {
   const now = await testPerformance.textContent();
   expect(!isNaN(now as any)).toBe(true);
 
+  await page.waitForSelector('.testPerformanceTiming');
+  const testPerformanceTiming = page.locator('#testPerformanceTiming');
+  await expect(testPerformanceTiming).toHaveText('true');
+
   const testFrameElement = page.locator('#testFrameElement');
   await expect(testFrameElement).toHaveText('null');
 

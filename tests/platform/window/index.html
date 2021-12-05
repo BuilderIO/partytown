@@ -330,6 +330,22 @@
       </li>
 
       <li>
+        <strong>window.performance.timing</strong>
+        <code>
+          <span id="testPerformanceTiming"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testPerformanceTiming');
+            const timing = window.performance.timing.toJSON();
+            const keys = Object.keys(timing);
+            elm.textContent = String(keys.length > 0);
+            elm.className = 'testPerformanceTiming';
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>window.frameElement</strong>
         <code>
           <span id="testFrameElement"></span>
