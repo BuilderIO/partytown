@@ -512,6 +512,19 @@
         </script>
       </li>
 
+      <li>
+        <strong>opener</strong>
+        <code>
+          <span id="testOpener"></span>
+        </code>
+        <script type="text/partytown">
+          (async function () {
+            const elm = document.getElementById('testOpener');
+            elm.textContent = String(window.opener);
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');
