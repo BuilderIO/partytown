@@ -1,12 +1,12 @@
+import type { WebWorkerEnvironment } from '../types';
 import { debug, logWorker } from '../utils';
-import { environments, webWorkerCtx } from './worker-constants';
 import { resolveUrl } from './worker-exec';
+import { webWorkerCtx } from './worker-constants';
 
-export const createNavigator = (winId: number) => {
-  const navigator = self.navigator as any;
+export const createNavigator = (env: WebWorkerEnvironment) => {
+  const navigator = { ...self.navigator } as any;
 
   navigator.sendBeacon = (url: string, body?: any) => {
-    const env = environments[winId];
     if (debug && webWorkerCtx.$config$.logSendBeaconRequests) {
       try {
         logWorker(

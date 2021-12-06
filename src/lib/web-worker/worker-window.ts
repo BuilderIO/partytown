@@ -180,7 +180,7 @@ export class Window extends WorkerProxy {
   }
 
   get navigator() {
-    return createNavigator(this[WinIdKey]);
+    return createNavigator(getEnv(this));
   }
 
   get origin() {
