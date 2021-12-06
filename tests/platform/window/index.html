@@ -541,6 +541,39 @@
         </script>
       </li>
 
+      <li>
+        <strong>user object</strong>
+        <code>
+          <span id="testUserObject"></span>
+        </code>
+        <script>
+          userObject = {};
+        </script>
+        <script type="text/partytown">
+          (async function () {
+            const elm = document.getElementById('testUserObject');
+            elm.textContent = String(window.userObject);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>user constructor</strong>
+        <code>
+          <span id="testUserConstructor"></span>
+        </code>
+        <script>
+          class UserConstructor {}
+          userCstr = new UserConstructor();
+        </script>
+        <script type="text/partytown">
+          (async function () {
+            const elm = document.getElementById('testUserConstructor');
+            elm.textContent = String(window.userCstr);
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

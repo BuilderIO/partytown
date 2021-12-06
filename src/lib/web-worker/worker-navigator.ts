@@ -4,7 +4,7 @@ import { resolveUrl } from './worker-exec';
 import { webWorkerCtx } from './worker-constants';
 
 export const createNavigator = (env: WebWorkerEnvironment) => {
-  const navigator = { ...self.navigator } as any;
+  const navigator = self.navigator as any;
 
   navigator.sendBeacon = (url: string, body?: any) => {
     if (debug && webWorkerCtx.$config$.logSendBeaconRequests) {

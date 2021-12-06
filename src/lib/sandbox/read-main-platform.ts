@@ -157,12 +157,9 @@ const readImplementationMember = (
         if (String(value).includes(`[native`)) {
           interfaceMembers.push([memberName, InterfaceType.Function]);
         }
-      } else if (
-        memberType === 'object' &&
-        value != null &&
-        (cstrName = getConstructorName(value)) !== 'Object'
-      ) {
-        if (cstrName !== '') {
+      } else if (memberType === 'object' && value != null) {
+        cstrName = getConstructorName(value);
+        if (cstrName !== 'Object' && (window as any)[cstrName]) {
           if (value.nodeType) {
             interfaceMembers.push([memberName, value.nodeType]);
           } else {
