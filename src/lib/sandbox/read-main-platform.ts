@@ -160,11 +160,7 @@ const readImplementationMember = (
       } else if (memberType === 'object' && value != null) {
         cstrName = getConstructorName(value);
         if (cstrName !== 'Object' && (window as any)[cstrName]) {
-          if (value.nodeType) {
-            interfaceMembers.push([memberName, value.nodeType]);
-          } else {
-            interfaceMembers.push([memberName, cstrName]);
-          }
+          interfaceMembers.push([memberName, value.nodeType || cstrName]);
         }
       } else if (memberType !== 'symbol') {
         // everything else that's not a symbol
