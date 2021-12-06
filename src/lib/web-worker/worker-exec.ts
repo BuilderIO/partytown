@@ -11,6 +11,7 @@ import { environments, InstanceIdKey, webWorkerCtx } from './worker-constants';
 import { getEnv } from './worker-environment';
 import { getOrCreateNodeInstance } from './worker-constructors';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
+import { setter } from './worker-proxy';
 import type { WorkerProxy } from './worker-proxy-constructor';
 
 export const initNextScriptsInWebWorker = async (initScript: InitializeScriptData) => {
@@ -120,6 +121,10 @@ export const insertIframe = (iframe: WorkerProxy) => {
   let i = 0;
   const winId = iframe[InstanceIdKey];
 
+  if (debug) {
+    setter(iframe, ['dataset', 'ptwindow'], winId);
+  }
+
   const callback = () => {
     if (environments[winId] && environments[winId].$isInitialized$) {
       let type = getInstanceStateValue<StateProp>(iframe, StateProp.loadErrorStatus)
@@ -135,7 +140,11 @@ export const insertIframe = (iframe: WorkerProxy) => {
       if (errorHandlers) {
         errorHandlers.map((handler) => handler({ type: StateProp.errorHandlers }));
       }
-      console.error(`Timeout`);
+      if (debug) {
+        console.error(`Iframe timeout: ${winId}`);
+      } else {
+        console.error(`Timeout`);
+      }
     } else {
       setTimeout(callback, 9);
     }
