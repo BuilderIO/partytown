@@ -1,5 +1,5 @@
 import { instanceIds, instances, winCtxs } from './main-constants';
-import { NodeName, PlatformInstanceId } from '../types';
+import { MainWindow, MainWindowContext, NodeName, PlatformInstanceId } from '../types';
 import { randomId } from '../utils';
 
 export const getAndSetInstanceId = (instance: any, instanceId?: number, nodeName?: string) => {
@@ -34,27 +34,33 @@ export const getAndSetInstanceId = (instance: any, instanceId?: number, nodeName
 export const getInstance = <T = any>(
   winId: number,
   instanceId: number,
-  instanceItem?: any
+  winCtx?: MainWindowContext,
+  win?: MainWindow,
+  doc?: Document
 ): T | undefined => {
-  const winCtx = winCtxs[winId]!;
-  const win = winCtx.$window$;
-  const doc = win.document;
-  if (instanceId === PlatformInstanceId.window) {
-    return win as any;
+  winCtx = winCtxs[winId]!;
+  if (winCtx) {
+    win = winCtx.$window$;
+    if (win) {
+      doc = win.document;
+      if (instanceId === PlatformInstanceId.window) {
+        return win as any;
+      }
+      if (instanceId === PlatformInstanceId.document) {
+        return doc as any;
+      }
+      if (instanceId === PlatformInstanceId.documentElement) {
+        return doc.documentElement as any;
+      }
+      if (instanceId === PlatformInstanceId.head) {
+        return doc.head as any;
+      }
+      if (instanceId === PlatformInstanceId.body) {
+        return doc.body as any;
+      }
+      return instances.get(instanceId);
+    }
   }
-  if (instanceId === PlatformInstanceId.document) {
-    return doc as any;
-  }
-  if (instanceId === PlatformInstanceId.documentElement) {
-    return doc.documentElement as any;
-  }
-  if (instanceId === PlatformInstanceId.head) {
-    return doc.head as any;
-  }
-  if (instanceId === PlatformInstanceId.body) {
-    return doc.body as any;
-  }
-  return instances.get(instanceId);
 };
 
 export const setInstanceId = (instance: any, instanceId: number) => {
