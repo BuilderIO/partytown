@@ -1,4 +1,4 @@
-import { callMethod, setter, sync } from './worker-proxy';
+import { callMethod, setter, sendToMain } from './worker-proxy';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue } from './worker-state';
 import { insertIframe, runScriptContent } from './worker-exec';
@@ -48,7 +48,7 @@ export class Node extends WorkerProxy {
       insertIframe(newNode);
     }
     if (isScript) {
-      sync();
+      sendToMain(true);
       webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextScript, winId]);
     }
 

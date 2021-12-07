@@ -4,6 +4,7 @@ import {
   MainAccessRequest,
   MainAccessResponse,
   MainAccessTask,
+  WorkerMessageType,
 } from '../types';
 import {
   ApplyPathKey,
@@ -28,6 +29,8 @@ import type { WorkerProxy } from './worker-proxy-constructor';
 
 const taskQueue: MainAccessTask[] = [];
 
+let asyncMsgTimer: any = 0;
+
 export const queue = (
   instance: WorkerProxy,
   $applyPath$: ApplyPath,
@@ -45,13 +48,15 @@ export const queue = (
   });
 
   if (!isSetter) {
-    return sync();
+    return sendToMain(true);
   }
 
-  setTimeout(sync, 40);
+  asyncMsgTimer = setTimeout(sendToMain, 30);
 };
 
-export const sync = () => {
+export const sendToMain = (isBlocking?: boolean) => {
+  clearTimeout(asyncMsgTimer);
+
   if (len(taskQueue)) {
     if (debug && webWorkerCtx.$config$.logMainAccess) {
       logWorker(`Main access, tasks sent: ${taskQueue.length}`);
@@ -64,27 +69,30 @@ export const sync = () => {
     };
     taskQueue.length = 0;
 
-    const accessRsp: MainAccessResponse = syncSendMessage(webWorkerCtx, accessReq);
+    if (isBlocking) {
+      // blocking call, returns response value from main
+      const accessRsp: MainAccessResponse = syncSendMessage(webWorkerCtx, accessReq);
 
-    const isPromise = accessRsp.$isPromise$;
+      const isPromise = accessRsp.$isPromise$;
 
-    const rtnValue = deserializeFromMain(
-      endTask.$instanceId$,
-      endTask.$applyPath$,
-      accessRsp.$rtnValue$!
-    );
+      const rtnValue = deserializeFromMain(
+        endTask.$instanceId$,
+        endTask.$applyPath$,
+        accessRsp.$rtnValue$!
+      );
 
-    if (accessRsp.$error$) {
-      if (isPromise) {
-        return Promise.reject(accessRsp.$error$);
+      if (accessRsp.$error$) {
+        if (isPromise) {
+          return Promise.reject(accessRsp.$error$);
+        }
+        throw new Error(accessRsp.$error$);
       }
-      throw new Error(accessRsp.$error$);
+
+      return isPromise ? Promise.resolve(rtnValue) : rtnValue;
     }
 
-    if (isPromise) {
-      return Promise.resolve(rtnValue);
-    }
-    return rtnValue;
+    // async call, fire and forget, returns undefined
+    webWorkerCtx.$postMessage$([WorkerMessageType.AsyncAccessRequest, accessReq]);
   }
 };
 

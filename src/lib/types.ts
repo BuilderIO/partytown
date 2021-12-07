@@ -25,7 +25,8 @@ export type MessageFromWorkerToSandbox =
   | [WorkerMessageType.InitializedWebWorker]
   | [WorkerMessageType.InitializedEnvironmentScript, WinId, number, string]
   | [WorkerMessageType.InitializeNextScript, WinId]
-  | [WorkerMessageType.ForwardWorkerAccessRequest, MainAccessRequest];
+  | [WorkerMessageType.ForwardWorkerAccessRequest, MainAccessRequest]
+  | [WorkerMessageType.AsyncAccessRequest, MainAccessRequest];
 
 export type MessageFromSandboxToWorker =
   | [WorkerMessageType.MainDataResponseToWorker, InitWebWorkerData]
@@ -46,6 +47,7 @@ export const enum WorkerMessageType {
   RefHandlerCallback,
   ForwardMainTrigger,
   ForwardWorkerAccessRequest,
+  AsyncAccessRequest,
 }
 
 export interface ForwardMainTriggerData {

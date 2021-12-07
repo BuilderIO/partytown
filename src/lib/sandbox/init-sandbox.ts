@@ -1,11 +1,12 @@
 import { debug, logMain, PT_IFRAME_APPENDED } from '../utils';
 import { getAndSetInstanceId } from './main-instances';
 import { mainAccessHandler } from './main-access-handler';
-import type {
+import {
   MainWindow,
   MessageFromWorkerToSandbox,
   MessengerRequestCallback,
   PartytownWebWorker,
+  WorkerMessageType,
 } from '../types';
 import { registerWindow } from './main-register-window';
 import syncCreateMessenger from '@sync-create-messenger';
@@ -33,8 +34,16 @@ export const initSandbox = async (sandboxWindow: any) => {
       { name: `Partytown 🎉` }
     );
 
-    worker.onmessage = (ev: MessageEvent<MessageFromWorkerToSandbox>) =>
-      onMessageHandler(worker, mainWindow, ev.data);
+    worker.onmessage = (ev: MessageEvent<MessageFromWorkerToSandbox>) => {
+      const msg: MessageFromWorkerToSandbox = ev.data;
+      if (msg[0] === WorkerMessageType.AsyncAccessRequest) {
+        // fire and forget async call within web worker
+        mainAccessHandler(worker, msg[1]);
+      } else {
+        // blocking call within web worker
+        onMessageHandler(worker, mainWindow, msg);
+      }
+    };
 
     if (debug) {
       logMain(`Created web worker`);
