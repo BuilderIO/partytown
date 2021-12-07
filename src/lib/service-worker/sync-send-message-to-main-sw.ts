@@ -1,4 +1,4 @@
-import type { MainAccessRequest, MainAccessResponse, WebWorkerContext } from '../../types';
+import type { MainAccessRequest, MainAccessResponse, WebWorkerContext } from '../types';
 
 const syncSendMessageToMainServiceWorker = (
   webWorkerCtx: WebWorkerContext,

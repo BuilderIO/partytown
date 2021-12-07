@@ -1,5 +1,5 @@
-import { onMessageFromWebWorker } from '../../sandbox/on-messenge-from-worker';
-import { readMainPlatform } from '../../sandbox/read-main-platform';
+import { onMessageFromWebWorker } from '../sandbox/on-messenge-from-worker';
+import { readMainPlatform } from '../sandbox/read-main-platform';
 import {
   MainAccessRequest,
   MainWindow,
@@ -7,7 +7,7 @@ import {
   Messenger,
   PartytownWebWorker,
   WorkerMessageType,
-} from '../../types';
+} from '../types';
 
 const createMessengerAtomics: Messenger = async (sandboxWindow, receiveMessage) => {
   const size = 1024 * 1024 * 1024;

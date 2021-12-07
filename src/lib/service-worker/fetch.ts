@@ -1,5 +1,5 @@
-import { debug } from '../../utils';
-import type { MainAccessRequest, MainAccessResponse } from '../../types';
+import { debug } from '../utils';
+import type { MainAccessRequest, MainAccessResponse } from '../types';
 import Sandbox from '@sandbox';
 import SandboxDebug from '@sandbox-debug';
 
