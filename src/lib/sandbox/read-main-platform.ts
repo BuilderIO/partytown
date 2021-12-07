@@ -154,7 +154,10 @@ const readImplementationMember = (
       memberType = typeof value;
 
       if (memberType === 'function') {
-        if (String(value).includes(`[native`)) {
+        if (
+          String(value).includes(`[native`) ||
+          Object.getPrototypeOf(implementation)[memberName]
+        ) {
           interfaceMembers.push([memberName, InterfaceType.Function]);
         }
       } else if (memberType === 'object' && value != null) {
