@@ -3,7 +3,7 @@ import {
   MainAccessResponse,
   WebWorkerContext,
   WorkerMessageType,
-} from '../types';
+} from '../../types';
 
 const syncSendMessageToMainAtomics = (
   webWorkerCtx: WebWorkerContext,
