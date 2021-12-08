@@ -77,13 +77,64 @@
       </li>
 
       <li>
-        <strong>pushState({ mph: 88 }, '')</strong>
+        <strong>pushState({ mph: 88 })</strong>
+        <button id="buttonPushState">/history/</button>
         <code id="testPushStateObj"></code>
+        <code id="testPushStateUrl"></code>
         <script type="text/partytown">
           (function () {
-            history.pushState({ mph: 88 }, '');
-            const elm = document.getElementById('testPushStateObj');
-            elm.textContent = JSON.stringify(history.state);
+            const buttonPushState = document.getElementById('buttonPushState');
+            buttonPushState.addEventListener('click', () => {
+              history.pushState({ mph: 88 }, '', '/platform/history/push-state');
+              const elm = document.getElementById('testPushStateObj');
+              elm.textContent = JSON.stringify(history.state);
+
+              setTimeout(() => {
+                const url = document.getElementById('testPushStateUrl');
+                url.textContent = location.pathname;
+                url.className = 'testPushStateUrl';
+              }, 30);
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>back()</strong>
+        <button id="buttonGoBack">Go Back</button>
+        <code id="testGoBack"></code>
+        <script type="text/javascript">
+          (function () {
+            const buttonGoBack = document.getElementById('buttonGoBack');
+            buttonGoBack.addEventListener('click', () => {
+              history.back();
+
+              setTimeout(() => {
+                const elm = document.getElementById('testGoBack');
+                elm.textContent = location.pathname;
+                elm.className = 'testGoBack';
+              }, 30);
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>forward()</strong>
+        <button id="buttonGoForward">Go Forward</button>
+        <code id="testGoForward"></code>
+        <script type="text/javascript">
+          (function () {
+            const buttonGoForward = document.getElementById('buttonGoForward');
+            buttonGoForward.addEventListener('click', () => {
+              history.forward();
+
+              setTimeout(() => {
+                const elm = document.getElementById('testGoForward');
+                elm.textContent = location.pathname;
+                elm.className = 'testGoForward';
+              }, 30);
+            });
           })();
         </script>
       </li>
@@ -93,17 +144,24 @@
         <button id="buttonReplaceState121">/history/1.21gw</button>
         <button id="buttonReplaceState">/history/</button>
         <code id="testReplaceState"></code>
+        <code id="testReplaceStateUrl"></code>
         <script type="text/partytown">
           (function () {
             const buttonReplaceState121 = document.getElementById('buttonReplaceState121');
             buttonReplaceState121.addEventListener('click', () => {
-              history.pushState({ year: 1955 }, '', '/history/1.21gw');
+              history.pushState({ year: 1955 }, '', '/platform/history/1.21gw');
               document.getElementById('testReplaceState').textContent = history.state.year;
+
+              setTimeout(() => {
+                const url = document.getElementById('testReplaceStateUrl');
+                url.textContent = location.pathname;
+                url.className = 'testReplaceStateUrl';
+              }, 30);
             });
 
             const buttonReplaceState = document.getElementById('buttonReplaceState');
             buttonReplaceState.addEventListener('click', () => {
-              history.replaceState({ year: 1985 }, '', '/history/');
+              history.replaceState({ year: 1985 }, '', '/platform/history/');
               document.getElementById('testReplaceState').textContent = history.state.year;
             });
           })();
@@ -135,6 +193,7 @@
     </ul>
 
     <hr />
+    <p><a href="/platform/history/">Reset</a></p>
     <p><a href="/">All Tests</a></p>
 
     <script>

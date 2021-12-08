@@ -36,6 +36,8 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
           winId
         );
       }
+    } else if (msgType === WorkerMessageType.LocationUpdate) {
+      environments[msg[1]].$location$.href = msg[2];
     }
   } else if (msgType === WorkerMessageType.MainDataResponseToWorker) {
     // received initial main data

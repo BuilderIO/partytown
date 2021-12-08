@@ -34,7 +34,8 @@ export type MessageFromSandboxToWorker =
   | [WorkerMessageType.InitializedEnvironment, WinId]
   | [WorkerMessageType.InitializeNextScript, InitializeScriptData]
   | [WorkerMessageType.RefHandlerCallback, RefHandlerCallbackData]
-  | [WorkerMessageType.ForwardMainTrigger, ForwardMainTriggerData];
+  | [WorkerMessageType.ForwardMainTrigger, ForwardMainTriggerData]
+  | [WorkerMessageType.LocationUpdate, number, string];
 
 export const enum WorkerMessageType {
   MainDataRequestFromWorker,
@@ -48,6 +49,7 @@ export const enum WorkerMessageType {
   ForwardMainTrigger,
   ForwardWorkerAccessRequest,
   AsyncAccessRequest,
+  LocationUpdate,
 }
 
 export interface ForwardMainTriggerData {
@@ -70,7 +72,6 @@ export interface MainWindowContext {
   $winId$: number;
   $isInitialized$?: number;
   $startTime$?: number;
-  $url$: string;
   $window$: MainWindow;
 }
 

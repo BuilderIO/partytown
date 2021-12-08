@@ -16,22 +16,43 @@ export const registerWindow = (
     windowIds.set($window$, $winId$);
 
     const doc = $window$.document;
-    const $url$ = doc.baseURI;
+    const history = $window$.history;
 
     const envData: InitializeEnvironmentData = {
       $winId$,
       $parentWinId$: windowIds.get($window$.parent)!,
-      $url$,
+      $url$: doc.baseURI,
     };
 
     const sendInitEnvData = () =>
       worker.postMessage([WorkerMessageType.InitializeEnvironment, envData]);
 
+    const pushState = history.pushState.bind(history);
+    const replaceState = history.replaceState.bind(history);
+
+    const onLocationChange = () =>
+      setTimeout(() =>
+        worker.postMessage([WorkerMessageType.LocationUpdate, $winId$, doc.baseURI])
+      );
+
+    history.pushState = (data, _, url) => {
+      pushState(data, _, url);
+      onLocationChange();
+    };
+
+    history.replaceState = (data, _, url) => {
+      replaceState(data, _, url);
+      onLocationChange();
+    };
+
+    $window$.addEventListener('popstate', onLocationChange);
+    $window$.addEventListener('hashchange', onLocationChange);
+
     winCtxs[$winId$] = {
       $winId$,
       $window$,
-      $url$,
     };
+
     if (debug) {
       winCtxs[$winId$]!.$startTime$ = performance.now();
     }
