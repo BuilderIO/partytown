@@ -152,6 +152,23 @@
       </li>
 
       <li>
+        <strong>requestIdleCallback()</strong>
+        <code id="testWindowRic"></code>
+        <script type="text/partytown">
+          (function () {
+            requestIdleCallback(
+              () => {
+                const elm = document.getElementById('testWindowRic');
+                elm.textContent = true;
+                elm.classList.add('testWindowRic');
+              },
+              { timeout: 500 }
+            );
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>btoa</strong>
         <code id="testBtoa"></code>
       </li>

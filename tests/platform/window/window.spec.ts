@@ -30,6 +30,8 @@ test('window', async ({ page }) => {
 
   await page.waitForSelector('.testWindowRaf');
 
+  await page.waitForSelector('.testWindowRic');
+
   const testBtoa = page.locator('#testBtoa');
   await expect(testBtoa).toHaveText('ODg=');
   const testAtob = page.locator('#testAtob');

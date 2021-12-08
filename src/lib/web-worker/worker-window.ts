@@ -104,6 +104,23 @@ export class Window extends WorkerProxy {
       setTimeout(() => cb(performance.now()), 9);
     (this as any).cancelAnimationFrame = (id: number) => clearTimeout(id);
 
+    // ensure requestIdleCallback() happens in the worker and doesn't call to main
+    // it's also not provided by Safari
+    (this as any).requestIdleCallback = (
+      cb: (opts: { didTimeout: boolean; timeRemaining: () => number }) => void
+    ) => {
+      const start = Date.now();
+      return setTimeout(
+        () =>
+          cb({
+            didTimeout: false,
+            timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
+          }),
+        1
+      );
+    };
+    (this as any).cancelIdleCallback = (id: number) => clearTimeout(id);
+
     defineProperty((this as any).performance, 'timing', {
       get: () => {
         const timing = getter(this, ['performance', 'timing']);
