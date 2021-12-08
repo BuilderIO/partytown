@@ -8,6 +8,9 @@ test('storage', async ({ page }) => {
   const testWinEquals = page.locator('#testWinEquals');
   await expect(testWinEquals).toHaveText('true');
 
+  const testLocalStorageGet = page.locator('#testLocalStorageGet');
+  await expect(testLocalStorageGet).toHaveText('12');
+
   const testLocalStorageSetGet = page.locator('#testLocalStorageSetGet');
   await expect(testLocalStorageSetGet).toHaveText('88');
 
@@ -16,6 +19,15 @@ test('storage', async ({ page }) => {
 
   const testLocalStorageClear = page.locator('#testLocalStorageClear');
   await expect(testLocalStorageClear).toHaveText('0');
+
+  const testLocalStorageKey = page.locator('#testLocalStorageKey');
+  await expect(testLocalStorageKey).toHaveText('gw');
+
+  const testLocalStorageKeyGet = page.locator('#testLocalStorageKeyGet');
+  await expect(testLocalStorageKeyGet).toHaveText('1.21');
+
+  const testLocalStorageRemove = page.locator('#testLocalStorageRemove');
+  await expect(testLocalStorageRemove).toHaveText('0');
 
   const testSessionStorageSetGet = page.locator('#testSessionStorageSetGet');
   await expect(testSessionStorageSetGet).toHaveText('88');

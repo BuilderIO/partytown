@@ -51,6 +51,8 @@
     <script>
       localStorage.clear();
       sessionStorage.clear();
+
+      localStorage.setItem('dmc', '12');
     </script>
   </head>
   <body>
@@ -69,7 +71,19 @@
       </li>
 
       <li>
-        <strong>localStorage set/get</strong>
+        <strong>getItem() / removeItem()</strong>
+        <code id="testLocalStorageGet"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testLocalStorageGet');
+            elm.textContent = localStorage.getItem('dmc');
+            localStorage.removeItem('dmc');
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>setItem() / getItem()</strong>
         <code id="testLocalStorageSetGet"></code>
         <script type="text/partytown">
           (function () {
@@ -81,7 +95,7 @@
       </li>
 
       <li>
-        <strong>localStorage length</strong>
+        <strong>length</strong>
         <code id="testLocalStorageLen"></code>
         <script type="text/partytown">
           (function () {
@@ -92,13 +106,35 @@
       </li>
 
       <li>
-        <strong>localStorage clear</strong>
+        <strong>clear()</strong>
         <code id="testLocalStorageClear"></code>
         <script type="text/partytown">
           (function () {
             localStorage.clear();
             const elm = document.getElementById('testLocalStorageClear');
             elm.textContent = localStorage.length;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>setItem() / key() / removeItem()</strong>
+        <code id="testLocalStorageKey"></code>
+        <code id="testLocalStorageKeyGet"></code>
+        <code id="testLocalStorageRemove"></code>
+        <script type="text/partytown">
+          (function () {
+            localStorage.clear();
+            localStorage.setItem('gw', '1.21');
+            const elm1 = document.getElementById('testLocalStorageKey');
+            const key = localStorage.key(0);
+            elm1.textContent = key;
+            const elm2 = document.getElementById('testLocalStorageKeyGet');
+            elm2.textContent = localStorage.getItem(key);
+            localStorage.removeItem(key);
+            const elm3 = document.getElementById('testLocalStorageRemove');
+            localStorage.clear();
+            elm3.textContent = localStorage.length;
           })();
         </script>
       </li>

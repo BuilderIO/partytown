@@ -80,10 +80,12 @@ export interface PartytownWebWorker extends Worker {
 }
 
 export interface InitWebWorkerData {
-  $config$: PartytownConfig;
+  $config$: string;
   $interfaces$: InterfaceInfo[];
   $libPath$: string;
   $sharedDataBuffer$?: SharedArrayBuffer;
+  $localStorage$: StorageItem[];
+  $sessionStorage$: StorageItem[];
 }
 
 /**
@@ -107,14 +109,16 @@ export type InterfaceMember =
   | [string, InterfaceType.Property]
   | [string, InterfaceType.Property, string | number | boolean];
 
-export interface InitWebWorkerContext {
-  $isInitialized$?: number;
-  $postMessage$: (msg: MessageFromWorkerToSandbox) => void;
-}
-
-export interface WebWorkerContext extends InitWebWorkerData, InitWebWorkerContext {
+export interface WebWorkerContext {
+  $config$: PartytownConfig;
   $forwardedTriggers$: string[];
   $htmlConstructors$: InterfaceInfo[];
+  $isInitialized$?: number;
+  $libPath$: string;
+  $localStorage$: StorageItem[];
+  $postMessage$: (msg: MessageFromWorkerToSandbox) => void;
+  $sessionStorage$: StorageItem[];
+  $sharedDataBuffer$?: SharedArrayBuffer;
   $windowMembers$: MembersInterfaceTypeInfo;
   $windowMemberNames$: string[];
   lastLog?: string;
@@ -458,3 +462,5 @@ export type RefHandler = (...args: any[]) => void;
 export type StateMap = Record<number, StateRecord>;
 
 export type StateRecord = Record<string | number, any>;
+
+export type StorageItem = [/*key*/ string, /*value*/ string];

@@ -1,10 +1,11 @@
-import { debug, getConstructorName, isValidMemberName, logMain, noop } from '../utils';
+import { debug, getConstructorName, isValidMemberName, len, logMain, noop } from '../utils';
 import {
   InterfaceType,
   InterfaceInfo,
   InterfaceMember,
   InitWebWorkerData,
   PartytownConfig,
+  StorageItem,
 } from '../types';
 
 export const readMainPlatform = (win: any) => {
@@ -33,7 +34,6 @@ export const readMainPlatform = (win: any) => {
 
   const impls: any[] = [
     // window implementations
-    [win.localStorage],
     [win.history],
     [win.screen],
     [win.screen.orientation],
@@ -88,6 +88,8 @@ export const readMainPlatform = (win: any) => {
     $config$: configStr as any,
     $libPath$: new URL(libPath, win.location) + '',
     $interfaces$,
+    $localStorage$: readStorage(win, 'localStorage'),
+    $sessionStorage$: readStorage(win, 'sessionStorage'),
   };
 
   impls.map(([cstrName, CstrPrototype, impl, intefaceType]) =>
@@ -197,4 +199,16 @@ const htmlConstructorToTagMap: { [key: string]: string } = {
 const getHtmlTagNameFromConstructor = (t: string) => {
   t = t.substr(4).replace('Element', '');
   return htmlConstructorToTagMap[t] || t;
+};
+
+const readStorage = (win: Window, storageName: 'localStorage' | 'sessionStorage') => {
+  let items: StorageItem[] = [];
+  let i = 0;
+  let l = len(win[storageName]);
+  let key: string;
+  for (; i < l; i++) {
+    key = win[storageName].key(i)!;
+    items.push([key, win[storageName].getItem(key)!]);
+  }
+  return items;
 };

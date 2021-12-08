@@ -1,3 +1,4 @@
+import { addStorageApi } from './worker-storage';
 import { ApplyPathType, NodeName, PlatformInstanceId } from '../types';
 import { createAudioConstructor } from './worker-audio';
 import { createNavigator } from './worker-navigator';
@@ -11,7 +12,7 @@ import {
   normalizedWinId,
   randomId,
 } from '../utils';
-import { envGlobalConstructors, environments, WinIdKey } from './worker-constants';
+import { envGlobalConstructors, environments, webWorkerCtx, WinIdKey } from './worker-constants';
 import { getEnv } from './worker-environment';
 import { getter, queue } from './worker-proxy';
 import { Location } from './worker-location';
@@ -121,6 +122,11 @@ export class Window extends WorkerProxy {
     };
     (this as any).cancelIdleCallback = (id: number) => clearTimeout(id);
 
+    // add storage APIs to the window
+    addStorageApi(this, 'localStorage', webWorkerCtx.$localStorage$);
+    addStorageApi(this, 'sessionStorage', webWorkerCtx.$sessionStorage$);
+
+    // performance.time is not available in a worker
     defineProperty((this as any).performance, 'timing', {
       get: () => {
         const timing = getter(this, ['performance', 'timing']);

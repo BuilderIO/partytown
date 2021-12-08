@@ -8,22 +8,19 @@ import { webWorkerCtx } from './worker-constants';
 import { Window } from './worker-window';
 
 export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
-  // merge it into the web worker context object
-  Object.assign(webWorkerCtx, initWebWorkerData);
-
-  const config: PartytownConfig = (webWorkerCtx.$config$ = JSON.parse(
-    webWorkerCtx.$config$ as any
-  ));
-
+  const config: PartytownConfig = (webWorkerCtx.$config$ = JSON.parse(initWebWorkerData.$config$));
   if (config.resolveUrl) {
     Object.assign(config, {
       resolveUrl: new Function('return ' + config.resolveUrl)(),
     });
   }
 
+  webWorkerCtx.$libPath$ = initWebWorkerData.$libPath$;
+  webWorkerCtx.$localStorage$ = initWebWorkerData.$localStorage$;
+  webWorkerCtx.$sessionStorage$ = initWebWorkerData.$sessionStorage$;
   webWorkerCtx.$forwardedTriggers$ = (config.forward || EMPTY_ARRAY).map((f) => f[0]);
-
   webWorkerCtx.$postMessage$ = postMessage.bind(self);
+  webWorkerCtx.$sharedDataBuffer$ = initWebWorkerData.$sharedDataBuffer$;
 
   (self as any).postMessage = (self as any).importScripts = undefined;
 
@@ -31,7 +28,7 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   (self as any).Window = Window;
   (self as any).CSSStyleSheet = CSSStyleSheet;
 
-  webWorkerCtx.$interfaces$.map(defineWorkerInterface);
+  initWebWorkerData.$interfaces$.map(defineWorkerInterface);
 
   patchPrototypes();
 
