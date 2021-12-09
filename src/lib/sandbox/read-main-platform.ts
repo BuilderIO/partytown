@@ -74,7 +74,7 @@ export const readMainPlatform = (win: any) => {
   const config: PartytownConfig = win.partytown || {};
   const libPath = (config.lib || '/~partytown/') + (debug ? 'debug/' : '');
 
-  const configStr = JSON.stringify(config, (k, v) => {
+  const $config$ = JSON.stringify(config, (k, v) => {
     if (typeof v === 'function') {
       v = String(v);
       if (v.startsWith(k + '(')) {
@@ -85,7 +85,7 @@ export const readMainPlatform = (win: any) => {
   });
 
   const initWebWorkerData: InitWebWorkerData = {
-    $config$: configStr as any,
+    $config$,
     $libPath$: new URL(libPath, win.location) + '',
     $interfaces$,
     $localStorage$: readStorage(win, 'localStorage'),

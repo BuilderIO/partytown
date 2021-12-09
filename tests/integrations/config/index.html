@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>Integration Config</title>
+
+    <link
+      rel="icon"
+      id="favicon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎉</text></svg>"
+    />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        font-size: 12px;
+      }
+      h1 {
+        margin: 0 0 15px 0;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        display: block;
+        padding: 16px 8px;
+      }
+      a:link,
+      a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover {
+        background-color: #eee;
+      }
+      li {
+        display: flex;
+        margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button {
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Integration Config</h1>
+
+    <script>
+      partytown = {
+        debug: true,
+        get(opts) {
+          if (opts.name === 'dir') {
+            return 'hooked-getter';
+          }
+          return opts.continue;
+        },
+        set: (opts) => {
+          if (opts.name === 'innerHTML' && opts.nodeName === 'BODY') {
+            return opts.prevent;
+          }
+          if (opts.name === 'innerText' && opts.nodeName === 'SPAN') {
+            return 'hooked-' + opts.nodeName + '-' + opts.name + '-' + opts.value;
+          }
+          return opts.continue;
+        },
+        apply(opts) {
+          if (opts.nodeName === '#document' && opts.name === 'write') {
+            return undefined;
+          }
+          if (opts.args[0] === 'gw') {
+            opts.args[1] = '1.21';
+          }
+          return opts.continue;
+        },
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+      };
+    </script>
+    <script src="/~partytown/debug/partytown-snippet.js"></script>
+
+    <ul>
+      <li>
+        <strong>get() continue</strong>
+        <code id="testGetContinue"></code>
+        <script type="text/partytown">
+          (function () {
+            document.getElementById('testGetContinue').textContent = document.title;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>get() hook</strong>
+        <code id="testGetHook"></code>
+        <script type="text/partytown">
+          (function () {
+            document.getElementById('testGetHook').textContent = document.dir;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set() continue</strong>
+        <code id="testSetContinue"></code>
+        <script type="text/partytown">
+          (function () {
+            document.title = 'Continue Title Update';
+            document.getElementById('testSetContinue').textContent = document.title;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set() prevent</strong>
+        <code id="testSetPrevent"></code>
+        <script type="text/partytown">
+          (function () {
+            document.body.innerHTML = 'smash!';
+            document.getElementById('testSetPrevent').textContent = 'prevented body.innerHTML';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set() hook</strong>
+        <code><span id="testSetHook"></span></code>
+        <script type="text/partytown">
+          (function () {
+            document.getElementById('testSetHook').innerText = 'value';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>apply() continue</strong>
+        <code id="testApplyContinue"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testApplyContinue');
+            elm.setAttribute('mph', 88);
+            document.getElementById('testApplyContinue').textContent = elm.getAttribute('mph');
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>apply() hook</strong>
+        <code id="testApplyHook"></code>
+        <script type="text/partytown">
+          (function () {
+            document.write('smash!');
+            document.getElementById('testApplyHook').textContent = 'prevented document.write()';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>apply() change args</strong>
+        <code id="testApplyArgs"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testApplyArgs');
+            elm.setAttribute('gw', '9.99');
+            elm.textContent = elm.getAttribute('gw');
+          })();
+        </script>
+      </li>
+    </ul>
+
+    <script type="text/partytown">
+      document.body.classList.add('completed');
+    </script>
+
+    <hr />
+    <p><a href="/">All Tests</a></p>
+  </body>
+</html>

@@ -337,6 +337,9 @@ export interface PartytownConfig {
    * ```
    */
   forward?: PartytownForwardProperty[];
+  get?: GetHook;
+  set?: SetHook;
+  apply?: ApplyHook;
   /**
    * An absolute path to the root directory which Partytown library files
    * can be found. The library path must start and end with a `/`.
@@ -421,6 +424,47 @@ export type PartytownForwardProperty = [
   PartytownForwardPropertyName,
   PartytownForwardPropertyFunctionType?
 ];
+
+/**
+ * @public
+ */
+export type GetHook = (opts: GetHookOptions) => any;
+
+/**
+ * @public
+ */
+export type SetHook = (opts: SetHookOptions) => any;
+
+/**
+ * @public
+ */
+export type ApplyHook = (opts: ApplyHookOptions) => any;
+
+export interface HookOptions {
+  name: string;
+  continue: Symbol;
+  nodeName: string | undefined;
+}
+
+/**
+ * @public
+ */
+export interface GetHookOptions extends HookOptions {}
+
+/**
+ * @public
+ */
+export interface SetHookOptions extends HookOptions {
+  value: any;
+  prevent: Symbol;
+}
+
+/**
+ * @public
+ */
+export interface ApplyHookOptions extends HookOptions {
+  args: any[];
+}
 
 export interface MainWindow extends Window {
   partytown?: PartytownConfig;

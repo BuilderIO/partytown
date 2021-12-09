@@ -9,11 +9,15 @@ import { Window } from './worker-window';
 
 export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   const config: PartytownConfig = (webWorkerCtx.$config$ = JSON.parse(initWebWorkerData.$config$));
-  if (config.resolveUrl) {
-    Object.assign(config, {
-      resolveUrl: new Function('return ' + config.resolveUrl)(),
-    });
-  }
+
+  const functionify = (configName: keyof PartytownConfig) => {
+    if (config[configName]) {
+      config[configName] = new Function('return ' + config[configName])();
+    }
+  };
+
+  const fnConfigs: (keyof PartytownConfig)[] = ['resolveUrl', 'get', 'set', 'apply'];
+  fnConfigs.map(functionify);
 
   webWorkerCtx.$libPath$ = initWebWorkerData.$libPath$;
   webWorkerCtx.$localStorage$ = initWebWorkerData.$localStorage$;

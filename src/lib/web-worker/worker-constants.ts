@@ -8,6 +8,8 @@ export const NodeNameKey = Symbol();
 export const NamespaceKey = Symbol();
 export const ApplyPathKey = Symbol();
 export const InstanceStateKey = Symbol();
+export const HookContinue = Symbol();
+export const HookPrevent = Symbol();
 
 export const webWorkerInstances = new Map<number, Node>();
 export const webWorkerRefsByRefId: { [refId: number]: RefHandler } = {};

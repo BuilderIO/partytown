@@ -9,9 +9,17 @@ export const appendForwardProperty: (propertyName: PartytownForwardPropertyName,
 
 // @public (undocumented)
 export interface PartytownConfig {
+    // Warning: (ae-forgotten-export) The symbol "ApplyHook" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    apply?: ApplyHook;
     debug?: boolean;
     // Warning: (ae-forgotten-export) The symbol "PartytownForwardProperty" needs to be exported by the entry point index.d.ts
     forward?: PartytownForwardProperty[];
+    // Warning: (ae-forgotten-export) The symbol "GetHook" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    get?: GetHook;
     lib?: string;
     logCalls?: boolean;
     logGetters?: boolean;
@@ -22,6 +30,10 @@ export interface PartytownConfig {
     logSetters?: boolean;
     logStackTraces?: boolean;
     resolveUrl?(url: URL, location: Location): URL | undefined | null;
+    // Warning: (ae-forgotten-export) The symbol "SetHook" needs to be exported by the entry point index.d.ts
+    //
+    // (undocumented)
+    set?: SetHook;
 }
 
 // @public

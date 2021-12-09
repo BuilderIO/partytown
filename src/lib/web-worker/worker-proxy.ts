@@ -1,6 +1,7 @@
 import {
   ApplyPath,
   ApplyPathType,
+  HookOptions,
   MainAccessRequest,
   MainAccessResponse,
   MainAccessTask,
@@ -10,7 +11,10 @@ import {
   ApplyPathKey,
   cachedDimensions,
   dimensionMethodNames,
+  HookContinue,
+  HookPrevent,
   InstanceIdKey,
+  NodeNameKey,
   webWorkerCtx,
   WinIdKey,
 } from './worker-constants';
@@ -24,6 +28,7 @@ import {
   randomId,
 } from '../utils';
 import { deserializeFromMain, serializeInstanceForMain } from './worker-serialization';
+import type { Node } from './worker-node';
 import syncSendMessage from '@sync-send-message-to-main';
 import type { WorkerProxy } from './worker-proxy-constructor';
 
@@ -97,7 +102,15 @@ export const sendToMain = (isBlocking?: boolean) => {
 };
 
 export const getter = (instance: WorkerProxy, applyPath: ApplyPath, groupedGetters?: string[]) => {
-  const rtnValue = queue(instance, applyPath, false, undefined, groupedGetters);
+  let rtnValue: any;
+  if (webWorkerCtx.$config$.get) {
+    rtnValue = webWorkerCtx.$config$.get(createHookOptions(instance, applyPath));
+    if (rtnValue !== HookContinue) {
+      return rtnValue;
+    }
+  }
+
+  rtnValue = queue(instance, applyPath, false, undefined, groupedGetters);
 
   logWorkerGetter(instance, applyPath, rtnValue, false, !!groupedGetters);
 
@@ -105,6 +118,20 @@ export const getter = (instance: WorkerProxy, applyPath: ApplyPath, groupedGette
 };
 
 export const setter = (instance: WorkerProxy, applyPath: ApplyPath, value: any) => {
+  if (webWorkerCtx.$config$.set) {
+    const hookSetterValue = webWorkerCtx.$config$.set({
+      value,
+      prevent: HookPrevent,
+      ...createHookOptions(instance, applyPath),
+    });
+    if (hookSetterValue === HookPrevent) {
+      return;
+    }
+    if (hookSetterValue !== HookContinue) {
+      value = hookSetterValue;
+    }
+  }
+
   const serializedValue = serializeInstanceForMain(instance, value);
 
   const setterApplyPath = [...applyPath, serializedValue, ApplyPathType.SetValue];
@@ -120,12 +147,20 @@ export const callMethod = (
   args: any[],
   assignInstanceId?: number
 ) => {
+  let rtnValue: any;
+  if (webWorkerCtx.$config$.apply) {
+    rtnValue = webWorkerCtx.$config$.apply({ args, ...createHookOptions(instance, applyPath) });
+    if (rtnValue !== HookContinue) {
+      return rtnValue;
+    }
+  }
+
   const methodName = applyPath[len(applyPath) - 1];
   const isSetter = setterMethods.includes(methodName);
 
   const callApplyPath = [...applyPath, serializeInstanceForMain(instance, args)];
 
-  const rtnValue = queue(instance, callApplyPath, isSetter, assignInstanceId);
+  rtnValue = queue(instance, callApplyPath, isSetter, assignInstanceId);
 
   logWorkerCall(instance, callApplyPath, args, rtnValue);
 
@@ -135,6 +170,12 @@ export const callMethod = (
 
   return rtnValue;
 };
+
+const createHookOptions = (instance: WorkerProxy, applyPath: ApplyPath): HookOptions => ({
+  name: applyPath.join('.'),
+  continue: HookContinue,
+  nodeName: (instance as any as Node)[NodeNameKey],
+});
 
 const setterMethods =
   'addEventListener,removeEventListener,createElement,createTextNode,insertBefore,insertRule,deleteRule,setAttribute,setItem,removeItem,classList.add,classList.remove,classList.toggle'.split(
