@@ -175,6 +175,7 @@ const createHookOptions = (instance: WorkerProxy, applyPath: ApplyPath): HookOpt
   name: applyPath.join('.'),
   continue: HookContinue,
   nodeName: (instance as any as Node)[NodeNameKey],
+  constructor: (instance as any).constructor && (instance as any).constructor.name,
 });
 
 const setterMethods =

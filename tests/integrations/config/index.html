@@ -60,18 +60,21 @@
           if (opts.name === 'dir') {
             return 'hooked-getter';
           }
+          if (opts.constructor === 'Window' && opts.name === 'innerWidth') {
+            return 999;
+          }
           return opts.continue;
         },
         set: (opts) => {
           if (opts.name === 'innerHTML' && opts.nodeName === 'BODY') {
             return opts.prevent;
           }
-          if (opts.name === 'innerText' && opts.nodeName === 'SPAN') {
+          if (opts.name === 'innerText' && opts.constructor === 'HTMLSpanElement') {
             return 'hooked-' + opts.nodeName + '-' + opts.name + '-' + opts.value;
           }
           return opts.continue;
         },
-        apply(opts) {
+        apply: function (opts) {
           if (opts.nodeName === '#document' && opts.name === 'write') {
             return undefined;
           }
@@ -106,6 +109,16 @@
         <script type="text/partytown">
           (function () {
             document.getElementById('testGetHook').textContent = document.dir;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>get() window.innerWidth</strong>
+        <code id="testGetWindowHook"></code>
+        <script type="text/partytown">
+          (function () {
+            document.getElementById('testGetWindowHook').textContent = window.innerWidth;
           })();
         </script>
       </li>

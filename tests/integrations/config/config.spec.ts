@@ -10,6 +10,9 @@ test('integration config', async ({ page }) => {
   const testGetHook = page.locator('#testGetHook');
   await expect(testGetHook).toHaveText('hooked-getter');
 
+  const testGetWindowHook = page.locator('#testGetWindowHook');
+  await expect(testGetWindowHook).toHaveText('999');
+
   const testSetContinue = page.locator('#testSetContinue');
   await expect(testSetContinue).toHaveText('Continue Title Update');
 

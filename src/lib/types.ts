@@ -444,6 +444,7 @@ export interface HookOptions {
   name: string;
   continue: Symbol;
   nodeName: string | undefined;
+  constructor: string | undefined;
 }
 
 /**

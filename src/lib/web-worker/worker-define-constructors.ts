@@ -236,11 +236,14 @@ const cachedDimensionProps = (Cstr: any) =>
           dimensionPropNames
         );
 
-        Object.entries(groupedDimensions).map(([dimensionPropName, value]) => {
-          cachedDimensions.set(getDimensionCacheKey(this, dimensionPropName), value);
-        });
+        if (groupedDimensions && typeof groupedDimensions === 'object') {
+          Object.entries(groupedDimensions).map(([dimensionPropName, value]) => {
+            cachedDimensions.set(getDimensionCacheKey(this, dimensionPropName), value);
+          });
 
-        return groupedDimensions[propName];
+          return groupedDimensions[propName];
+        }
+        return groupedDimensions;
       },
     })
   );
