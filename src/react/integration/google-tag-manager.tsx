@@ -1,7 +1,11 @@
 import React, { Fragment } from 'react';
-import { googleTagManager } from '../../integration/services/gtm';
-import { appendForwardProperty, SCRIPT_TYPE } from '@builder.io/partytown/intergration';
+import {
+  googleTagManager,
+  googleTagManagerForward,
+  SCRIPT_TYPE,
+} from '@builder.io/partytown/intergration';
 import { PartytownScript } from '../script';
+import { PartytownForward } from '../forward';
 
 /**
  * https://developers.google.com/tag-manager/quickstart
@@ -44,7 +48,7 @@ export const GoogleTagManager = ({ containerId, dataLayerName }: GoogleTagManage
 
   return (
     <Fragment>
-      <PartytownScript id="gtm-fw" innerHTML={appendForwardProperty(dataLayerName, 1)} />
+      <PartytownForward id="gtm-fw" forward={googleTagManagerForward()} />
       <script async src={src} type={SCRIPT_TYPE} />
       <PartytownScript id="gtm-pt" innerHTML={googleTagManager(dataLayerName)} type={SCRIPT_TYPE} />
     </Fragment>

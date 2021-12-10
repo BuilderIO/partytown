@@ -396,7 +396,9 @@ export type PartytownForwardPropertyName = string;
  *
  * @public
  */
-export type PartytownForwardPropertyType = PartytownForwardPropertyArrayType | undefined;
+export type PartytownForwardPropertyType =
+  | PartytownForwardPropertyArrayType
+  | PartytownForwardPropertyFunctionType;
 
 /**
  * Default foward property type, which sets the property as a function.
@@ -422,7 +424,7 @@ export type PartytownForwardPropertyArrayType = 1;
  */
 export type PartytownForwardProperty = [
   PartytownForwardPropertyName,
-  PartytownForwardPropertyFunctionType?
+  PartytownForwardPropertyType?
 ];
 
 /**

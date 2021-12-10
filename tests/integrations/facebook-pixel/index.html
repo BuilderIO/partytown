@@ -5,19 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Partytown Test Page" />
 
-    <title>Google Tag Manager (GTM) 🎉</title>
+    <title>Partytown Facebook Pixel</title>
 
     <script>
       partytown = {
         resolveUrl(url, location) {
-          if (url.hostname.includes('google-analytics')) {
+          if (url.hostname.includes('connect.facebook.net')) {
             const proxyUrl = new URL('https://cdn.builder.io/api/v1/proxy-api');
             proxyUrl.searchParams.append('url', url);
             return proxyUrl;
           }
         },
         debug: true,
-        forward: [['dataLayer', 1]],
+        forward: [['fbq']],
         logCalls: true,
         logGetters: true,
         logSetters: true,
@@ -30,34 +30,33 @@
     </script>
     <script src="/~partytown/debug/partytown-snippet.js"></script>
 
-    <!-- Google Tag Manager -->
+    <!-- Facebook Pixel Code -->
     <script type="text/partytown">
-      (function (window, document, i) {
-        window['dataLayer'] = window[dataLayer] || [];
-
-        window['dataLayer'].push({ 'gtm.start': new Date().getTime(), 'event': 'gtm.js' });
-
-        var firstScript = document.getElementsByTagName('script')[0];
-        var gtmScript = document.createElement('script');
-        var dataLayer = 'dataLayer' != 'dataLayer' ? '&l=' + 'dataLayer' : '';
-
-        gtmScript.async = true;
-
-        // ORIGINAL
-        gtmScript.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dataLayer;
-
-        // HACK
-        // gtmScript.src = './gtm.js?id=' + i + dataLayer;
-
-        firstScript.parentNode.insertBefore(gtmScript, firstScript);
-      })(window, document, 'GTM-W275NLW');
+      !(function (f, b, e, v, n, t, s) {
+        if (f.fbq) return;
+        n = f.fbq = function () {
+          n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+        };
+        if (!f._fbq) f._fbq = n;
+        n.push = n;
+        n.loaded = !0;
+        n.version = '2.0';
+        n.queue = [];
+        t = b.createElement(e);
+        t.async = !0;
+        t.src = v;
+        s = b.getElementsByTagName(e)[0];
+        s.parentNode.insertBefore(t, s);
+      })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+      fbq('init', '166730740625110');
+      fbq('track', 'PageView');
     </script>
-    <!-- End Google Tag Manager -->
+    <!-- End Facebook Pixel Code -->
 
     <link
       rel="icon"
       id="favicon"
-      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎉</text></svg>"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌎</text></svg>"
     />
     <style>
       body {
@@ -99,24 +98,20 @@
     </style>
   </head>
   <body>
-    <h1>Google Tag Manager (GTM) 🎉</h1>
+    <h1>Partytown Facebook Pixel</h1>
 
     <p>
-      <strong>dataLayer.push</strong>
-      <span id="testDataLayer"></span>
+      <strong>fbq()</strong>
+      <span id="testFbq"></span>
     </p>
 
     <script>
-      function gtmPush() {
-        const data = { event: 'button-click', from: 'partytown' };
-        console.log(`GTM dataLayer.push(${JSON.stringify(data)})`);
-        dataLayer.push({ event: 'button-click', from: 'partytown' });
-
-        const testDataLayer = document.getElementById('testDataLayer');
-        testDataLayer.textContent = 'pushed';
+      function sendEvent() {
+        fbq('track', 'PageView');
+        document.getElementById('testFbq').textContent = 'called';
       }
     </script>
-    <button id="buttonDataLayerPush" onclick="gtmPush()">Partytown dataLayer.push()</button>
+    <button onclick="sendEvent()" id="buttonSendEvent">fbq('track', 'PageView')</button>
 
     <script type="text/partytown">
       (function () {
@@ -124,7 +119,7 @@
       })();
     </script>
 
-    <p><a href="/integrations/gtm/standard.html">Standard GTM</a></p>
+    <p><a href="/integrations/facebook-pixel/standard.html">Standard Facebook Pixel</a></p>
     <p><a href="/">All Tests</a></p>
   </body>
 </html>

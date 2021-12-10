@@ -1,6 +1,7 @@
 import PartytownSnippet from '@snippet';
 import type {
   PartytownConfig,
+  PartytownForwardProperty,
   PartytownForwardPropertyName,
   PartytownForwardPropertyType,
 } from '../lib/types';
@@ -41,7 +42,14 @@ export const partytownSnippet = (config: PartytownConfig) => {
  *
  * @public
  */
-export const appendForwardProperty = (
+export const appendForward = (forward: PartytownForwardProperty) => {
+  if (Array.isArray(forward)) {
+    return appendForwardProperty(forward[0], forward[1]);
+  }
+  return ``;
+};
+
+const appendForwardProperty = (
   propertyName: PartytownForwardPropertyName,
   propertyType?: PartytownForwardPropertyType
 ) =>
@@ -52,3 +60,6 @@ export const appendForwardProperty = (
 export { SCRIPT_TYPE } from '../lib/utils';
 
 export type { PartytownConfig, PartytownForwardPropertyName, PartytownForwardPropertyType };
+
+export * from './services/facebook-pixel';
+export * from './services/google-tag-manager';

@@ -5,6 +5,17 @@
 ```ts
 
 // @public
+export const FacebookPixel: ({ pixelId }: FacebookPixelProps) => any;
+
+// @public (undocumented)
+export const FacebookPixelNoScript: ({ pixelId }: FacebookPixelProps) => any;
+
+// @public
+export interface FacebookPixelProps {
+    pixelId: string;
+}
+
+// @public
 export const GoogleTagManager: ({ containerId, dataLayerName }: GoogleTagManagerProps) => any;
 
 // @public

@@ -4,8 +4,22 @@
 
 ```ts
 
+// Warning: (ae-forgotten-export) The symbol "PartytownForwardProperty" needs to be exported by the entry point index.d.ts
+//
 // @public
-export const appendForwardProperty: (propertyName: PartytownForwardPropertyName, propertyType?: PartytownForwardPropertyType) => string;
+export const appendForward: (forward: PartytownForwardProperty) => string;
+
+// @public
+export const facebookPixel: (pixelId: string) => string;
+
+// @public
+export const facebookPixelForward: () => PartytownForwardProperty;
+
+// @public
+export const googleTagManager: (dataLayerName: string) => string;
+
+// @public
+export const googleTagManagerForward: () => PartytownForwardProperty;
 
 // @public (undocumented)
 export interface PartytownConfig {
@@ -14,7 +28,6 @@ export interface PartytownConfig {
     // (undocumented)
     apply?: ApplyHook;
     debug?: boolean;
-    // Warning: (ae-forgotten-export) The symbol "PartytownForwardProperty" needs to be exported by the entry point index.d.ts
     forward?: PartytownForwardProperty[];
     // Warning: (ae-forgotten-export) The symbol "GetHook" needs to be exported by the entry point index.d.ts
     //
@@ -40,9 +53,10 @@ export interface PartytownConfig {
 export type PartytownForwardPropertyName = string;
 
 // Warning: (ae-forgotten-export) The symbol "PartytownForwardPropertyArrayType" needs to be exported by the entry point index.d.ts
+// Warning: (ae-forgotten-export) The symbol "PartytownForwardPropertyFunctionType" needs to be exported by the entry point index.d.ts
 //
 // @public
-export type PartytownForwardPropertyType = PartytownForwardPropertyArrayType | undefined;
+export type PartytownForwardPropertyType = PartytownForwardPropertyArrayType | PartytownForwardPropertyFunctionType;
 
 // @public (undocumented)
 export const partytownSnippet: (config: PartytownConfig) => string;
