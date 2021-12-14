@@ -45,24 +45,21 @@ export function webWorkerBlobUrlPlugin(
   return {
     name: 'webWorkerBlobUrlPlugin',
     resolveId(id) {
-      if (id === '@web-worker-blob') {
-        return id;
-      }
-      if (id === '@web-worker-url') {
+      if (id.endsWith('web-worker-blob') || id.endsWith('web-worker-url')) {
         return id;
       }
       return null;
     },
     async load(id) {
-      if (id === '@web-worker-blob') {
+      if (id.endsWith('web-worker-blob')) {
         let code = `""`;
         if (!opts.isDev) {
           code = JSON.stringify(await buildWebWorker(opts, msgType, debug));
         }
-        return `const WebWorkerBlob = ${code}; export default WebWorkerBlob;`;
+        return `const WEB_WORKER_BLOB = ${code}; export default WEB_WORKER_BLOB;`;
       }
-      if (id === '@web-worker-url') {
-        return `const WebWorkerUrl = "./partytown-ww-${msgType}.js"; export default WebWorkerUrl;`;
+      if (id.endsWith('web-worker-url')) {
+        return `const WEB_WORKER_URL = "./partytown-ww-${msgType}.js"; export default WEB_WORKER_URL;`;
       }
       return null;
     },

@@ -1,11 +1,5 @@
 import { len } from '../utils';
-import {
-  MainWindow,
-  PartytownForwardProperty,
-  PartytownWebWorker,
-  PlatformInstanceId,
-  WorkerMessageType,
-} from '../types';
+import { MainWindow, PartytownWebWorker, WorkerMessageType } from '../types';
 import { serializeForWorker } from './main-serialization';
 
 export const mainForwardTrigger = (
@@ -13,25 +7,36 @@ export const mainForwardTrigger = (
   $winId$: number,
   win: MainWindow
 ) => {
-  let existingTriggers = win._ptf;
-  let forwardTriggers: any = (win._ptf = []);
-  let i = 0;
+  let queuedForwardCalls = win._ptf;
+  let forwards = (win.partytown || {}).forward || [];
+  let i: number;
+  let mainForwardFn: any;
 
-  // see src/lib/main/snippet.ts and src/lib/web-worker/worker-forwarded-trigger.ts
-  (forwardTriggers as any).push = ($forward$: PartytownForwardProperty, $args$: any[]) =>
+  let forwardCall = ($forward$: string[], args: any) =>
     worker.postMessage([
       WorkerMessageType.ForwardMainTrigger,
       {
         $winId$,
-        $instanceId$: PlatformInstanceId.window,
         $forward$,
-        $args$: serializeForWorker($winId$, Array.from($args$)),
+        $args$: serializeForWorker($winId$, Array.from(args)),
       },
     ]);
 
-  if (existingTriggers) {
-    for (; i < len(existingTriggers); i += 2) {
-      forwardTriggers.push(existingTriggers[i], existingTriggers[i + 1]);
+  win._ptf = undefined;
+
+  forwards.map((forwardProps) => {
+    mainForwardFn = win;
+    forwardProps.split('.').map((_, i, arr) => {
+      mainForwardFn = mainForwardFn[arr[i]] =
+        i + 1 < len(arr)
+          ? mainForwardFn[arr[i]] || (arr[i + 1] === 'push' ? [] : {})
+          : (...args: any) => forwardCall(arr, args);
+    });
+  });
+
+  if (queuedForwardCalls) {
+    for (i = 0; i < len(queuedForwardCalls); i += 2) {
+      forwardCall(queuedForwardCalls[i], queuedForwardCalls[i + 1]);
     }
   }
 };

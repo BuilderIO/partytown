@@ -1,10 +1,5 @@
 import PartytownSnippet from '@snippet';
-import type {
-  PartytownConfig,
-  PartytownForwardProperty,
-  PartytownForwardPropertyName,
-  PartytownForwardPropertyType,
-} from '../lib/types';
+import type { PartytownConfig, PartytownForwardPropertyName } from '../lib/types';
 
 /**
  * @public
@@ -35,31 +30,10 @@ export const partytownSnippet = (config: PartytownConfig) => {
   ].join('');
 };
 
-/**
- * Gracefully adds a forward property to the global Partytown config. This
- * first ensures the `window.partytown.foward` exists, then adds the forward
- * property.
- *
- * @public
- */
-export const appendForward = (forward: PartytownForwardProperty) => {
-  if (Array.isArray(forward)) {
-    return appendForwardProperty(forward[0], forward[1]);
-  }
-  return ``;
-};
-
-const appendForwardProperty = (
-  propertyName: PartytownForwardPropertyName,
-  propertyType?: PartytownForwardPropertyType
-) =>
-  `!(function(w,p,f,c){c=w[p]=w[p]||{};(c[f]=c[f]||[]).push(${JSON.stringify(
-    propertyType ? [propertyName, propertyType] : [propertyName]
-  )})})(window,'partytown','forward');`;
-
 export { SCRIPT_TYPE } from '../lib/utils';
 
-export type { PartytownConfig, PartytownForwardPropertyName, PartytownForwardPropertyType };
+export type { PartytownConfig, PartytownForwardPropertyName };
 
+export { appendForwardConfig } from './forward';
 export * from './services/facebook-pixel';
 export * from './services/google-tag-manager';

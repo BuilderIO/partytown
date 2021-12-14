@@ -19,5 +19,5 @@
       "react": ["node_modules/react"]
     }
   },
-  "include": ["src", "scripts"]
+  "include": ["src", "scripts", "tests/unit"]
 }

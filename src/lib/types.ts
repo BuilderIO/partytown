@@ -54,8 +54,7 @@ export const enum WorkerMessageType {
 
 export interface ForwardMainTriggerData {
   $winId$: number;
-  $instanceId$: number;
-  $forward$: PartytownForwardProperty;
+  $forward$: string[];
   $args$: SerializedTransfer | undefined;
 }
 
@@ -383,36 +382,12 @@ export interface PartytownConfig {
 }
 
 /**
- * The property to patch on `window`, such as `dataLayer` for Google Tag Manager.
+ * The property to patch on `window`, such as `dataLayer` for Google Tag Manager,
+ * or `fbq` for Facebook Pixel.
  *
  * @public
  */
 export type PartytownForwardPropertyName = string;
-
-/**
- * The type of property which is patched on `window`. For example, Google Tag Manager's
- * `dataLayer` is an array, so it's type should be `1`. The default, which is `undefined`,
- * treats the property as a function.
- *
- * @public
- */
-export type PartytownForwardPropertyType =
-  | PartytownForwardPropertyArrayType
-  | PartytownForwardPropertyFunctionType;
-
-/**
- * Default foward property type, which sets the property as a function.
- *
- * @public
- */
-export type PartytownForwardPropertyFunctionType = undefined;
-
-/**
- * Sets the forward property as an array.
- *
- * @public
- */
-export type PartytownForwardPropertyArrayType = 1;
 
 /**
  * A foward property to patch on the global. The foward config property is an array,
@@ -422,10 +397,7 @@ export type PartytownForwardPropertyArrayType = 1;
  *
  * @public
  */
-export type PartytownForwardProperty = [
-  PartytownForwardPropertyName,
-  PartytownForwardPropertyType?
-];
+export type PartytownForwardProperty = string;
 
 /**
  * @public

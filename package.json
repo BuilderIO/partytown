@@ -45,9 +45,11 @@
     "serve.test": "node scripts/serve.cjs 4001",
     "serve.atomics": "node scripts/serve.cjs 4002 --atomics",
     "serve.atomics.test": "node scripts/serve.cjs 4003 --atomics",
-    "test": "playwright test tests --browser=chromium",
-    "test.atomics": "playwright test tests --config playwright.atomics.config.ts --browser=chromium",
-    "test.webkit": "playwright test tests --browser=webkit",
+    "test": "npm run test.unit && npm run test.chromium",
+    "test.atomics": "playwright test tests/integrations tests/platform --config playwright.atomics.config.ts --browser=chromium",
+    "test.chromium": "playwright test tests/integrations tests/platform --browser=chromium",
+    "test.webkit": "playwright test tests/integrations tests/platform --browser=webkit",
+    "test.unit": "uvu -r tsm tests/unit",
     "tsc.watch": "tsc -w",
     "version": "npm run build.prod",
     "fmt": "prettier --config package.json --write src"
@@ -66,7 +68,9 @@
     "rollup": "^2.60.1",
     "rollup-plugin-terser": "^7.0.2",
     "tslib": "^2.3.1",
-    "typescript": "^4.5.2"
+    "tsm": "^2.2.1",
+    "typescript": "^4.5.2",
+    "uvu": "^0.5.2"
   },
   "prettier": {
     "trailingComma": "es5",

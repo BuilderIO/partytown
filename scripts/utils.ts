@@ -7,7 +7,7 @@ export function syncCommunicationModulesPlugin(opts: BuildOptions, msgType: Mess
   return {
     name: 'syncCommunicationModulesPlugin',
     resolveId(id) {
-      if (id === '@sync-send-message-to-main') {
+      if (id.endsWith('sync-send-message-to-main')) {
         if (msgType === 'sw') {
           return join(opts.tscLibDir, 'service-worker', `sync-send-message-to-main-sw.js`);
         }
@@ -15,7 +15,7 @@ export function syncCommunicationModulesPlugin(opts: BuildOptions, msgType: Mess
           return join(opts.tscLibDir, 'atomics', `sync-send-message-to-main-atomics.js`);
         }
       }
-      if (id === '@sync-create-messenger') {
+      if (id.endsWith('sync-create-messenger')) {
         if (msgType === 'sw') {
           return join(opts.tscLibDir, 'service-worker', `sync-create-messenger-sw.js`);
         }
