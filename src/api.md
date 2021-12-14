@@ -7,7 +7,7 @@
 // Warning: (ae-forgotten-export) The symbol "PartytownForwardProperty" needs to be exported by the entry point index.d.ts
 //
 // @public
-export const appendForward: (forward: PartytownForwardProperty) => string;
+export const appendForwardConfig: (forward: PartytownForwardProperty) => string;
 
 // @public
 export const facebookPixel: (pixelId: string) => string;
@@ -51,12 +51,6 @@ export interface PartytownConfig {
 
 // @public
 export type PartytownForwardPropertyName = string;
-
-// Warning: (ae-forgotten-export) The symbol "PartytownForwardPropertyArrayType" needs to be exported by the entry point index.d.ts
-// Warning: (ae-forgotten-export) The symbol "PartytownForwardPropertyFunctionType" needs to be exported by the entry point index.d.ts
-//
-// @public
-export type PartytownForwardPropertyType = PartytownForwardPropertyArrayType | PartytownForwardPropertyFunctionType;
 
 // @public (undocumented)
 export const partytownSnippet: (config: PartytownConfig) => string;
