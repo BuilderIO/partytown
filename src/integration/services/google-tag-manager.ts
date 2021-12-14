@@ -15,6 +15,4 @@ export const googleTagManager = (dataLayerName: string) =>
  *
  * @public
  */
-export const googleTagManagerForward = (): PartytownForwardProperty => {
-  return ['dataLayer', 1];
-};
+export const googleTagManagerForward = (): PartytownForwardProperty => 'dataLayer.push';

@@ -33,11 +33,14 @@ jobs:
       - name: Install Chromium Playwright
         run: npx playwright install chromium && npx playwright install-deps chromium
 
-      - name: Run Chromium Tests (Service Worker)
-        run: npm test
+      - name: Run Chromium E2E Tests (Service Worker)
+        run: npm run test.chromium
 
-      - name: Run Chromium Tests (Atomics)
+      - name: Run Chromium E2E Tests (Atomics)
         run: npm run test.atomics
+
+      - name: Run Unit Tests
+        run: npm run test.unit
 
       - name: Upload Videos
         uses: actions/upload-artifact@v1
@@ -77,7 +80,7 @@ jobs:
       - name: Install WebKit Playwright
         run: npx playwright install webkit && npx playwright install-deps webkit
 
-      - name: Run WebKit Tests
+      - name: Run WebKit E2E Tests
         run: npm run test.webkit
 
       - name: Upload Videos

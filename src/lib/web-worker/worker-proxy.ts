@@ -29,7 +29,7 @@ import {
 } from '../utils';
 import { deserializeFromMain, serializeInstanceForMain } from './worker-serialization';
 import type { Node } from './worker-node';
-import syncSendMessage from '@sync-send-message-to-main';
+import syncSendMessageToMain from '../build-modules/sync-send-message-to-main';
 import type { WorkerProxy } from './worker-proxy-constructor';
 
 const taskQueue: MainAccessTask[] = [];
@@ -76,7 +76,7 @@ export const sendToMain = (isBlocking?: boolean) => {
 
     if (isBlocking) {
       // blocking call, returns response value from main
-      const accessRsp: MainAccessResponse = syncSendMessage(webWorkerCtx, accessReq);
+      const accessRsp: MainAccessResponse = syncSendMessageToMain(webWorkerCtx, accessReq);
 
       const isPromise = accessRsp.$isPromise$;
 

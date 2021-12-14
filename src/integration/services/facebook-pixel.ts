@@ -16,6 +16,4 @@ fbq('init',${JSON.stringify(pixelId)});fbq('track','PageView');`;
  *
  * @public
  */
-export const facebookPixelForward = (): PartytownForwardProperty => {
-  return ['fbq'];
-};
+export const facebookPixelForward = (): PartytownForwardProperty => 'fbq';

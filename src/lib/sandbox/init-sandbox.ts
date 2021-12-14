@@ -9,9 +9,9 @@ import {
   WorkerMessageType,
 } from '../types';
 import { registerWindow } from './main-register-window';
-import syncCreateMessenger from '@sync-create-messenger';
-import WebWorkerBlob from '@web-worker-blob';
-import WebWorkerUrl from '@web-worker-url';
+import syncCreateMessenger from '../build-modules/sync-create-messenger';
+import WebWorkerBlob from '../build-modules/web-worker-blob';
+import WebWorkerUrl from '../build-modules/web-worker-url';
 
 export const initSandbox = async (sandboxWindow: any) => {
   let worker: PartytownWebWorker;
