@@ -4,7 +4,7 @@ import { suite } from './utils';
 
 const test = suite();
 
-test('service worker iframe, lib and debug config', ({ win, document, navigator }) => {
+test('service worker iframe, lib and debug config', ({ win, document, navigator, top }) => {
   win.partytown = {
     lib: '/my-custom-location/',
     debug: true,
@@ -14,7 +14,7 @@ test('service worker iframe, lib and debug config', ({ win, document, navigator 
   script.type = 'text/partytown';
   document.body.appendChild(script);
 
-  snippet(win, document, navigator, false);
+  snippet(win, document, navigator, top, false);
 
   assert.equal(navigator.$serviceWorkerUrl, '/my-custom-location/debug/partytown-sw.js');
   assert.equal(navigator.$serviceWorkerOptions, { scope: '/my-custom-location/debug/' });
@@ -24,12 +24,12 @@ test('service worker iframe, lib and debug config', ({ win, document, navigator 
   assert.equal(iframeUrl.pathname, '/my-custom-location/debug/partytown-sandbox-sw.html');
 });
 
-test('service worker iframe, defaults', ({ win, document, navigator }) => {
+test('service worker iframe, defaults', ({ win, document, navigator, top }) => {
   const script = document.createElement('script');
   script.type = 'text/partytown';
   document.body.appendChild(script);
 
-  snippet(win, document, navigator, false);
+  snippet(win, document, navigator, top, false);
 
   assert.equal(navigator.$serviceWorkerUrl, '/~partytown/partytown-sw.js');
   assert.equal(navigator.$serviceWorkerOptions, { scope: '/~partytown/' });

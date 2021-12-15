@@ -9,6 +9,7 @@ export const suite = (title?: string) => {
   s.before.each((ctx) => {
     ctx.winId = Math.round(Math.random() * 10000);
     ctx.win = ctx.window = getWindow();
+    ctx.top = ctx.win;
     ctx.doc = ctx.document = ctx.window.document;
     ctx.nav = ctx.navigator = getNavigator();
     ctx.worker = getWorker();
@@ -30,6 +31,7 @@ export interface TestContext {
    * Same as "window", but NOT typed
    */
   win: any;
+  top: any;
   /**
    * Same as "doc", but IS typed
    */
