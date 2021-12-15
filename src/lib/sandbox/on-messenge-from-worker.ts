@@ -30,7 +30,7 @@ export const onMessageFromWebWorker = (
       } else if (msgType === WorkerMessageType.InitializedEnvironmentScript) {
         // web worker has finished initializing the script, and has another one to do
         // doing this postMessage back-and-forth so we don't have long running tasks
-        initializedWorkerScript(worker, winCtx, msg[2] as number, msg[3] as string);
+        initializedWorkerScript(worker, winCtx, msg[2], msg[3]);
       }
     }
   }
