@@ -55,8 +55,8 @@
     "fmt": "prettier --config package.json --write src"
   },
   "devDependencies": {
-    "@microsoft/api-extractor": "^7.18.19",
-    "@playwright/test": "^1.17.0-rc1",
+    "@microsoft/api-extractor": "^7.19.2",
+    "@playwright/test": "^1.17.1",
     "@types/fs-extra": "^9.0.13",
     "@types/react": "^17.0.37",
     "concurrently": "^6.4.0",
@@ -65,12 +65,12 @@
     "gzip-size": "^6.0.0",
     "node-fetch": "^3.1.0",
     "np": "^7.6.0",
-    "prettier": "^2.4.1",
-    "rollup": "^2.60.1",
+    "prettier": "^2.5.1",
+    "rollup": "^2.61.1",
     "rollup-plugin-terser": "^7.0.2",
     "tslib": "^2.3.1",
     "tsm": "^2.2.1",
-    "typescript": "^4.5.2",
+    "typescript": "^4.5.4",
     "uvu": "^0.5.2"
   },
   "prettier": {
