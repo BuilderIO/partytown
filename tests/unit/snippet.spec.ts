@@ -1,51 +1,44 @@
-import { test } from 'uvu';
 import * as assert from 'uvu/assert';
 import { snippet } from '../../src/lib/main/snippet';
-import { getDocument, getWindow } from './units';
+import { suite } from './utils';
 
-test('add script', () => {
-  const win = getWindow();
-  const doc = getDocument();
-  snippet(win, doc);
-  const script = doc.head.childNodes[0];
-  assert.equal(script.async, 1);
-  assert.equal(script.src, '/~partytown/partytown.js');
-});
+const test = suite();
 
-test('add debug script', () => {
-  const win = getWindow();
-  const doc = getDocument();
-  win.partytown = {
-    debug: true,
-  };
-  snippet(win, doc);
-  const script = doc.head.childNodes[0];
-  assert.equal(script.src, '/~partytown/debug/partytown.js');
-});
-
-test('config lib', () => {
-  const win = getWindow();
-  const doc = getDocument();
-  win.partytown = {
-    lib: '/my-custom-location/',
-  };
-  snippet(win, doc);
-  const script = doc.head.childNodes[0];
-  assert.equal(script.async, 1);
-  assert.equal(script.src, '/my-custom-location/partytown.js');
-});
-
-test('config lib and debug', () => {
-  const win = getWindow();
-  const doc = getDocument();
+test('service worker iframe, lib and debug config', ({ win, document, navigator }) => {
   win.partytown = {
     lib: '/my-custom-location/',
     debug: true,
   };
-  snippet(win, doc);
-  const script = doc.head.childNodes[0];
-  assert.equal(script.async, 1);
-  assert.equal(script.src, '/my-custom-location/debug/partytown.js');
+
+  const script = document.createElement('script');
+  script.type = 'text/partytown';
+  document.body.appendChild(script);
+
+  snippet(win, document, navigator, false);
+
+  assert.equal(navigator.$serviceWorkerUrl, '/my-custom-location/debug/partytown-sw.js');
+  assert.equal(navigator.$serviceWorkerOptions, { scope: '/my-custom-location/debug/' });
+
+  const iframe = document.body.querySelector('iframe')!;
+  const iframeUrl = new URL(iframe.src, 'http://builder.io/');
+  assert.equal(iframeUrl.pathname, '/my-custom-location/debug/partytown-sandbox-sw.html');
+});
+
+test('service worker iframe, defaults', ({ win, document, navigator }) => {
+  const script = document.createElement('script');
+  script.type = 'text/partytown';
+  document.body.appendChild(script);
+
+  snippet(win, document, navigator, false);
+
+  assert.equal(navigator.$serviceWorkerUrl, '/~partytown/partytown-sw.js');
+  assert.equal(navigator.$serviceWorkerOptions, { scope: '/~partytown/' });
+
+  const iframe = document.body.querySelector('iframe')!;
+  const iframeUrl = new URL(iframe.src, 'http://builder.io/');
+  assert.equal(iframeUrl.pathname, '/~partytown/partytown-sandbox-sw.html');
+  assert.not.equal(iframeUrl.search, '');
+  assert.equal(iframe.getAttribute('aria-hidden'), 'true');
 });
 
 test.run();

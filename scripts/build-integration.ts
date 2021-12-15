@@ -28,7 +28,7 @@ export function buildIntegration(opts: BuildOptions): RollupOptions {
         },
         async load(id) {
           if (id === '@snippet') {
-            const codeFileName = 'partytown-snippet.js';
+            const codeFileName = 'partytown.js';
 
             let codeFilePath: string;
             if (opts.isDev) {
