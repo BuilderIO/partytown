@@ -71,14 +71,12 @@ Partytown's philosophy is that the main thread should be dedicated to your code,
 - [Distribution](https://github.com/BuilderIO/partytown/wiki/Distribution)
 - [Browser Support](https://github.com/BuilderIO/partytown/wiki/Browser-Support)
 
----
-
 ## Community
 
 - [Partytown Discord](https://discord.gg/hbuEtxdEZ3)
 - [@QwikDev](https://twitter.com/QwikDev)
 - [@builderio](https://twitter.com/builderio)
-- [Development](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#local-development)
+- [Local Development](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#local-development)
 
 ## Related Projects
 

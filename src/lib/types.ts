@@ -304,12 +304,16 @@ export interface SerializedInstance {
 }
 
 /**
+ * https://github.com/BuilderIO/partytown/wiki/Configuration
+ *
  * @public
  */
 export interface PartytownConfig {
   /**
    * The `resolveUrl()` hook can be used to modify the URL about to be
    * requested, which could be used to rewrite urls so they go through a proxy.
+   *
+   * https://github.com/BuilderIO/partytown/wiki/Proxying-Requests
    *
    * @param url - The URL to be resolved. This is a URL https://developer.mozilla.org/en-US/docs/Web/API/URL, not a string.
    * @param location - The current window location.
@@ -318,6 +322,8 @@ export interface PartytownConfig {
   resolveUrl?(url: URL, location: Location): URL | undefined | null;
   /**
    * When set to `true`, Partytown scripts are not inlined and not minified.
+   *
+   * https://github.com/BuilderIO/partytown/wiki/Debugging
    */
   debug?: boolean;
   /**
@@ -329,11 +335,13 @@ export interface PartytownConfig {
    * know which variables to patch first, and when Partytown loads, it can then
    * forward the event data on to the service.
    *
-   * Below is an example of Google Tag Manager, Hubspot and Intercom forward configs:
+   * Below is an example of Google Tag Manager and Facebook Pixel:
    *
    * ```js
-   * [['dataLayer', 1], ['_hsq', 1], ['Intercom']]
+   * ['dataLayer.push', 'fbq']
    * ```
+   *
+   * https://github.com/BuilderIO/partytown/wiki/Forwarding-Events-and-Triggers
    */
   forward?: PartytownForwardProperty[];
   get?: GetHook;
@@ -385,15 +393,15 @@ export interface PartytownConfig {
  * The property to patch on `window`, such as `dataLayer` for Google Tag Manager,
  * or `fbq` for Facebook Pixel.
  *
+ * https://github.com/BuilderIO/partytown/wiki/Forwarding-Events-and-Triggers
+ *
  * @public
  */
 export type PartytownForwardPropertyName = string;
 
 /**
- * A foward property to patch on the global. The foward config property is an array,
- * with the value at index 0 being the property name to patch. Optionally, the value
- * at index 1 can set what type of property it is. By default it is patched as a
- * function, and when set to `1`, it is patched as an array.
+ * A foward property to patch on `window`. The foward config property is an string,
+ * representing the call to forward, such as `dataLayer.push` or `fbq`.
  *
  * @public
  */
