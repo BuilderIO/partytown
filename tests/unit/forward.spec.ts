@@ -1,25 +1,30 @@
-import { test } from 'uvu';
 import * as assert from 'uvu/assert';
 import { snippet } from '../../src/lib/main/snippet';
-import { getDocument, getWindow, getWorker, createWorkerWindownEnvironment } from './units';
+import { suite } from './utils';
 import { mainForwardTrigger } from '../../src/lib/sandbox/main-forward-trigger';
 import { SerializedType, WorkerMessageType } from '../../src/lib/types';
 import { workerForwardedTriggerHandle } from '../../src/lib/web-worker/worker-forwarded-trigger';
 
-test('run window.arr.push() in the web worker', () => {
-  const win = getWindow();
-  const winId = 88;
+const test = suite();
+
+test('run window.arr.push() in the web worker', ({
+  winId,
+  win,
+  env,
+  worker,
+  document,
+  navigator,
+  top,
+}) => {
   win.partytown = {
     forward: ['arr.push'],
   };
-  snippet(win, getDocument());
+  snippet(win, document, navigator, top, false);
 
-  const worker = getWorker();
   mainForwardTrigger(worker, winId, win);
 
   win.arr.push('a', 'b');
 
-  const env = createWorkerWindownEnvironment(winId);
   const wwArray = ((env.$window$ as any).arr = []);
 
   const msg = worker.$messages[0][0][1];
@@ -28,20 +33,23 @@ test('run window.arr.push() in the web worker', () => {
   assert.equal(wwArray[1], 'b');
 });
 
-test('run window.fn() in the web worker', () => {
-  const win = getWindow();
-  const winId = 88;
+test('run window.fn() in the web worker', ({
+  winId,
+  win,
+  env,
+  worker,
+  document,
+  navigator,
+  top,
+}) => {
   win.partytown = {
     forward: ['fn'],
   };
-  snippet(win, getDocument());
+  snippet(win, document, navigator, top, false);
 
-  const worker = getWorker();
   mainForwardTrigger(worker, winId, win);
 
   win.fn('a', 'b');
-
-  const env = createWorkerWindownEnvironment(winId);
 
   let fnCallArgs: any;
   (env.$window$ as any).fn = function () {
@@ -54,15 +62,19 @@ test('run window.fn() in the web worker', () => {
   assert.equal(fnCallArgs[1], 'b');
 });
 
-test('run window.arr.push() call after initialized', () => {
-  const win = getWindow();
-  const winId = 88;
+test('run window.arr.push() call after initialized', ({
+  winId,
+  win,
+  worker,
+  document,
+  navigator,
+  top,
+}) => {
   win.partytown = {
     forward: ['arr.push'],
   };
-  snippet(win, getDocument());
+  snippet(win, document, navigator, top, false);
 
-  const worker = getWorker();
   mainForwardTrigger(worker, winId, win);
 
   win.arr.push('a', 'b');
@@ -74,16 +86,13 @@ test('run window.arr.push() call after initialized', () => {
   assert.equal(msg[1].$args$[0], SerializedType.Array);
 });
 
-test('run queued window.arr.push() call', () => {
-  const win = getWindow();
-  const winId = 88;
+test('run queued window.arr.push() call', ({ winId, win, worker, document, navigator, top }) => {
   win.partytown = {
     forward: ['arr.push'],
   };
-  snippet(win, getDocument());
+  snippet(win, document, navigator, top, false);
   win.arr.push('a', 'b');
 
-  const worker = getWorker();
   mainForwardTrigger(worker, winId, win);
   assert.equal(worker.$messages.length, 1);
   const msg = worker.$messages[0][0];
@@ -93,16 +102,13 @@ test('run queued window.arr.push() call', () => {
   assert.equal(msg[1].$args$[0], SerializedType.Array);
 });
 
-test('run queued window.fn() call', () => {
-  const win = getWindow();
-  const winId = 88;
+test('run queued window.fn() call', ({ winId, win, worker, document, navigator, top }) => {
   win.partytown = {
     forward: ['fn'],
   };
-  snippet(win, getDocument());
+  snippet(win, document, navigator, win, false);
   win.fn('a', 'b');
 
-  const worker = getWorker();
   mainForwardTrigger(worker, winId, win);
   assert.equal(worker.$messages.length, 1);
   const msg = worker.$messages[0][0];
@@ -112,12 +118,11 @@ test('run queued window.fn() call', () => {
   assert.equal(msg[1].$args$[0], SerializedType.Array);
 });
 
-test('patch window.obj.arr.push(), queue calls', () => {
-  const win = getWindow();
+test('patch window.obj.arr.push(), queue calls', ({ win, document, navigator }) => {
   win.partytown = {
     forward: ['obj.arr.push', 'a.b.c'],
   };
-  snippet(win, getDocument());
+  snippet(win, document, navigator, win, false);
   assert.type(win.obj, 'object');
   assert.equal(Array.isArray(win.obj.arr), true);
   assert.equal(win._ptf, undefined);
@@ -130,12 +135,11 @@ test('patch window.obj.arr.push(), queue calls', () => {
   );
 });
 
-test('patch window.arr.push(), queue calls', () => {
-  const win = getWindow();
+test('patch window.arr.push(), queue calls', ({ win, document, navigator }) => {
   win.partytown = {
     forward: ['arr.push'],
   };
-  snippet(win, getDocument());
+  snippet(win, document, navigator, win, false);
   assert.equal(Array.isArray(win.arr), true);
   assert.type(win.arr.push, 'function');
   assert.equal(win._ptf, undefined);
@@ -144,12 +148,11 @@ test('patch window.arr.push(), queue calls', () => {
   assert.equal(JSON.stringify(win._ptf), `[["arr","push"],{"0":"a","1":"b"}]`);
 });
 
-test('patch window.obj.fn(), queue calls', () => {
-  const win = getWindow();
+test('patch window.obj.fn(), queue calls', ({ win, document, navigator }) => {
   win.partytown = {
     forward: ['obj.fn'],
   };
-  snippet(win, getDocument());
+  snippet(win, document, navigator, win, false);
   assert.type(win.fn, 'undefined');
   assert.type(win.obj, 'object');
   assert.type(win.obj.fn, 'function');
@@ -159,12 +162,11 @@ test('patch window.obj.fn(), queue calls', () => {
   assert.equal(JSON.stringify(win._ptf), `[["obj","fn"],{"0":"a","1":"b"}]`);
 });
 
-test('patch window.fn(), queue calls', () => {
-  const win = getWindow();
+test('patch window.fn(), queue calls', ({ win, document, navigator }) => {
   win.partytown = {
     forward: ['fn'],
   };
-  snippet(win, getDocument());
+  snippet(win, document, navigator, win, false);
   assert.type(win.fn, 'function');
   assert.equal(win._ptf, undefined);
 
@@ -175,15 +177,17 @@ test('patch window.fn(), queue calls', () => {
   assert.equal(JSON.stringify(win._ptf), `[["fn"],{"0":"a","1":"b"},["fn"],{"0":"c"}]`);
 });
 
-test('no window._ptf if no forward config', () => {
-  const win = getWindow();
-  win.partytown = {};
-  snippet(win, getDocument());
-  assert.equal(win._ptf, undefined);
+test('no window._ptf if no forward config', ({ window, document, navigator }) => {
+  snippet(window, document, navigator, window, false);
+  assert.equal(window._ptf, undefined);
 
-  win.partytown = { forward: [] };
-  snippet(win, getDocument());
-  assert.equal(win._ptf, undefined);
+  window.partytown = {};
+  snippet(window, document, navigator, window, false);
+  assert.equal(window._ptf, undefined);
+
+  window.partytown = { forward: [] };
+  snippet(window, document, navigator, window, false);
+  assert.equal(window._ptf, undefined);
 });
 
 test.run();

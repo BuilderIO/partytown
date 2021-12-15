@@ -1,7 +1,6 @@
 import type { BuildOptions } from './utils';
 import { buildApi } from './build-api';
 import { buildAtomics } from './build-atomics';
-import { buildMainLoader } from './build-main-loader';
 import { buildMainSnippet } from './build-main-snippet';
 import { buildIntegration } from './build-integration';
 import { buildReact } from './build-react';
@@ -20,7 +19,6 @@ export async function runBuild(rootDir: string, isDev: boolean, generateApi: boo
   }
 
   return [
-    buildMainLoader(opts),
     buildMainSnippet(opts),
     buildServiceWorker(opts),
     ...buildAtomics(opts),

@@ -1,18 +1,18 @@
-import { BuildOptions, copyOutputToTests, fileSize } from './utils';
+import { BuildOptions, copyOutputToTests, fileSize, jsBannerPlugin } from './utils';
 import { join } from 'path';
 import { minifyPlugin } from './minify';
 import type { OutputOptions, RollupOptions } from 'rollup';
 
 export function buildMainSnippet(opts: BuildOptions): RollupOptions {
   const partytownDebug: OutputOptions = {
-    file: join(opts.distLibDebugDir, 'partytown-snippet.js'),
+    file: join(opts.distLibDebugDir, 'partytown.js'),
     format: 'es',
     exports: 'none',
     plugins: [...minifyPlugin(true)],
   };
 
   const partytownMin: OutputOptions = {
-    file: join(opts.distLibDir, 'partytown-snippet.js'),
+    file: join(opts.distLibDir, 'partytown.js'),
     format: 'es',
     exports: 'none',
     plugins: [
@@ -40,6 +40,6 @@ export function buildMainSnippet(opts: BuildOptions): RollupOptions {
   return {
     input: join(opts.tscLibDir, 'main', 'snippet-entry.js'),
     output,
-    plugins: [copyOutputToTests(opts)],
+    plugins: [jsBannerPlugin(opts), copyOutputToTests(opts)],
   };
 }
