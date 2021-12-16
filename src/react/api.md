@@ -5,13 +5,14 @@
 ```ts
 
 // @public
-export const FacebookPixel: ({ pixelId }: FacebookPixelProps) => any;
+export const FacebookPixel: ({ pixelId, enablePartytown }: FacebookPixelProps) => any;
 
 // @public (undocumented)
 export const FacebookPixelNoScript: ({ pixelId }: FacebookPixelProps) => any;
 
 // @public
 export interface FacebookPixelProps {
+    enablePartytown?: boolean;
     pixelId: string;
 }
 
