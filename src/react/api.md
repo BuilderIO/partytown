@@ -16,7 +16,7 @@ export interface FacebookPixelProps {
 }
 
 // @public
-export const GoogleTagManager: ({ containerId, dataLayerName }: GoogleTagManagerProps) => any;
+export const GoogleTagManager: ({ containerId, dataLayerName, enablePartytown, }: GoogleTagManagerProps) => any;
 
 // @public
 export const GoogleTagManagerNoScript: ({ containerId }: GoogleTagManagerProps) => any;
@@ -25,6 +25,7 @@ export const GoogleTagManagerNoScript: ({ containerId }: GoogleTagManagerProps) 
 export interface GoogleTagManagerProps {
     containerId: string;
     dataLayerName?: string;
+    enablePartytown?: boolean;
 }
 
 // @public

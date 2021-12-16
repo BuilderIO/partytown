@@ -21,7 +21,7 @@ export const googleTagManager: (dataLayerName: string) => string;
 // @public
 export const googleTagManagerForward: () => PartytownForwardProperty;
 
-// @public (undocumented)
+// @public
 export interface PartytownConfig {
     // Warning: (ae-forgotten-export) The symbol "ApplyHook" needs to be exported by the entry point index.d.ts
     //

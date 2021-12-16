@@ -23,6 +23,11 @@ export interface GoogleTagManagerProps {
    * Use this prop to use a different name for your data layer.
    */
   dataLayerName?: string;
+
+  /**
+   * Setting to `false` will disable using Partytown and instead execute this script the traditional way.
+   */
+  enablePartytown?: boolean;
 }
 
 /**
@@ -36,7 +41,11 @@ export interface GoogleTagManagerProps {
  *
  * @public
  */
-export const GoogleTagManager = ({ containerId, dataLayerName }: GoogleTagManagerProps): any => {
+export const GoogleTagManager = ({
+  containerId,
+  dataLayerName,
+  enablePartytown,
+}: GoogleTagManagerProps): any => {
   let src = `https://www.googletagmanager.com/gtm.js?id=` + containerId;
 
   if (typeof dataLayerName !== 'string') {
@@ -45,12 +54,17 @@ export const GoogleTagManager = ({ containerId, dataLayerName }: GoogleTagManage
   if (dataLayerName !== 'dataLayer') {
     src += '&l=' + dataLayerName;
   }
+  const usePartytown = enablePartytown !== false;
 
   return (
     <Fragment>
-      <PartytownForward id="gtm-fw" forward={googleTagManagerForward()} />
+      {usePartytown ? <PartytownForward id="gtm-fw" forward={googleTagManagerForward()} /> : null}
       <script async src={src} type={SCRIPT_TYPE} />
-      <PartytownScript id="gtm-pt" innerHTML={googleTagManager(dataLayerName)} type={SCRIPT_TYPE} />
+      <PartytownScript
+        id="gtm-pt"
+        innerHTML={googleTagManager(dataLayerName)}
+        type={usePartytown ? SCRIPT_TYPE : 'text/javascript'}
+      />
     </Fragment>
   );
 };

@@ -17,6 +17,11 @@ export interface FacebookPixelProps {
    * Facebook Pixel Id
    */
   pixelId: string;
+
+  /**
+   * Setting to `false` will disable using Partytown and instead execute this script the traditional way.
+   */
+  enablePartytown?: boolean;
 }
 
 /**
@@ -30,11 +35,16 @@ export interface FacebookPixelProps {
  *
  * @public
  */
-export const FacebookPixel = ({ pixelId }: FacebookPixelProps): any => {
+export const FacebookPixel = ({ pixelId, enablePartytown }: FacebookPixelProps): any => {
+  const usePartytown = enablePartytown !== false;
   return (
     <Fragment>
-      <PartytownForward id="fbq-fw" forward={facebookPixelForward()} />
-      <PartytownScript id="fbq-pt" innerHTML={facebookPixel(pixelId)} type={SCRIPT_TYPE} />
+      {usePartytown ? <PartytownForward id="fbq-fw" forward={facebookPixelForward()} /> : null}
+      <PartytownScript
+        id="fbq-pt"
+        innerHTML={facebookPixel(pixelId)}
+        type={usePartytown ? SCRIPT_TYPE : 'text/javascript'}
+      />
     </Fragment>
   );
 };
