@@ -12,14 +12,20 @@
       "import": "./integration/index.mjs",
       "require": "./integration/index.cjs"
     },
+    "./integration/index.mjs": "./integration/index.mjs",
+    "./integration/index.cjs": "./integration/index.cjs",
     "./react": {
       "import": "./react/index.mjs",
       "require": "./react/index.cjs"
     },
+    "./react/index.mjs": "./react/index.mjs",
+    "./react/index.cjs": "./react/index.cjs",
     "./utils": {
       "import": "./utils/index.mjs",
       "require": "./utils/index.cjs"
     },
+    "./utils/index.mjs": "./utils/index.mjs",
+    "./utils/index.cjs": "./utils/index.cjs",
     "./package.json": "./package.json",
     ".": {
       "import": "./index.mjs",
