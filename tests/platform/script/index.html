@@ -48,6 +48,17 @@
         margin: 0 5px;
       }
     </style>
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+        logMainAccess: true,
+      };
+    </script>
+    <script src="/~partytown/debug/partytown.js"></script>
   </head>
   <body>
     <h1 class="title">Script</h1>
@@ -278,17 +289,5 @@
 
     <hr />
     <p><a href="/">All Tests</a></p>
-
-    <script>
-      partytown = {
-        logCalls: true,
-        logGetters: true,
-        logSetters: true,
-        logStackTraces: false,
-        logScriptExecution: true,
-        logMainAccess: true,
-      };
-    </script>
-    <script src="/~partytown/debug/partytown.js" async defer></script>
   </body>
 </html>

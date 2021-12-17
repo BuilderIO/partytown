@@ -17,7 +17,13 @@ export function snippet(
 ) {
   // ES5 just so IE11 doesn't choke on arrow fns
   function ready() {
-    libPath = (config!.lib || '/~partytown/') + (config!.debug ? 'debug/' : '');
+    if (debug) {
+      // default to use debug files
+      libPath = (config!.lib || '/~partytown/') + (config!.debug !== false ? 'debug/' : '');
+    } else {
+      // default to use production, non-debug files
+      libPath = (config!.lib || '/~partytown/') + (config!.debug ? 'debug/' : '');
+    }
 
     // grab all the partytown scripts
     scripts = doc.querySelectorAll(`script[type="${SCRIPT_TYPE}"]`);
