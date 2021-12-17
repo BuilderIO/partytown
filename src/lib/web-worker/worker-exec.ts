@@ -153,7 +153,12 @@ export const insertIframe = (iframe: WorkerProxy) => {
   callback();
 };
 
-const resolveToUrl = (env: WebWorkerEnvironment, url?: string, baseLocation?: Location) => {
+const resolveToUrl = (
+  env: WebWorkerEnvironment,
+  url: string,
+  noUserHook?: boolean,
+  baseLocation?: Location
+) => {
   baseLocation = env.$location$;
   while (!baseLocation.host) {
     env = environments[env.$parentWinId$];
@@ -164,7 +169,7 @@ const resolveToUrl = (env: WebWorkerEnvironment, url?: string, baseLocation?: Lo
   }
 
   const resolvedUrl = new URL(url || '', baseLocation as any);
-  if (webWorkerCtx.$config$.resolveUrl) {
+  if (!noUserHook && webWorkerCtx.$config$.resolveUrl) {
     const configResolvedUrl = webWorkerCtx.$config$.resolveUrl!(resolvedUrl, baseLocation);
     if (configResolvedUrl) {
       return configResolvedUrl;
@@ -173,7 +178,8 @@ const resolveToUrl = (env: WebWorkerEnvironment, url?: string, baseLocation?: Lo
   return resolvedUrl;
 };
 
-export const resolveUrl = (env: WebWorkerEnvironment, url: string) => resolveToUrl(env, url) + '';
+export const resolveUrl = (env: WebWorkerEnvironment, url: string, noUserHook?: boolean) =>
+  resolveToUrl(env, url, noUserHook) + '';
 
 export const getUrl = (elm: WorkerProxy) =>
   resolveToUrl(getEnv(elm), getInstanceStateValue(elm, StateProp.url));

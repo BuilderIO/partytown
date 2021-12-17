@@ -10,14 +10,16 @@ export const createNavigator = (env: WebWorkerEnvironment) => {
     if (debug && webWorkerCtx.$config$.logSendBeaconRequests) {
       try {
         logWorker(
-          `sendBeacon: ${resolveUrl(env, url)}${body ? ', data: ' + JSON.stringify(body) : ''}`
+          `sendBeacon: ${resolveUrl(env, url, true)}${
+            body ? ', data: ' + JSON.stringify(body) : ''
+          }`
         );
       } catch (e) {
         console.error(e);
       }
     }
     try {
-      fetch(resolveUrl(env, url), {
+      fetch(resolveUrl(env, url, true), {
         method: 'POST',
         body,
         mode: 'no-cors',
