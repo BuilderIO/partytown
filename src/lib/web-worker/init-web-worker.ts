@@ -22,7 +22,6 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   webWorkerCtx.$libPath$ = initWebWorkerData.$libPath$;
   webWorkerCtx.$localStorage$ = initWebWorkerData.$localStorage$;
   webWorkerCtx.$sessionStorage$ = initWebWorkerData.$sessionStorage$;
-  webWorkerCtx.$forwardedTriggers$ = (config.forward || EMPTY_ARRAY).map((f) => f[0]);
   webWorkerCtx.$postMessage$ = postMessage.bind(self);
   webWorkerCtx.$sharedDataBuffer$ = initWebWorkerData.$sharedDataBuffer$;
 

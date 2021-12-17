@@ -24,9 +24,14 @@ export const HTMLScriptDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
       return getInstanceStateValue<string>(this, StateProp.url) || '';
     },
     set(url: string) {
-      url = resolveUrl(getEnv(this), url);
+      const env = getEnv(this);
+      const orgUrl = resolveUrl(env, url, true);
+      url = resolveUrl(env, url);
       setInstanceStateValue(this, StateProp.url, url);
       setter(this, ['src'], url);
+      if (orgUrl !== url) {
+        setter(this, ['dataset', 'ptsrc'], orgUrl);
+      }
     },
   },
 

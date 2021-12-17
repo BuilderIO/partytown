@@ -115,16 +115,12 @@ export type InterfaceMember =
 
 export interface WebWorkerContext {
   $config$: PartytownConfig;
-  $forwardedTriggers$: string[];
-  $htmlConstructors$: InterfaceInfo[];
   $isInitialized$?: number;
   $libPath$: string;
   $localStorage$: StorageItem[];
   $postMessage$: (msg: MessageFromWorkerToSandbox) => void;
   $sessionStorage$: StorageItem[];
   $sharedDataBuffer$?: SharedArrayBuffer;
-  $windowMembers$: MembersInterfaceTypeInfo;
-  $windowMemberNames$: string[];
   lastLog?: string;
 }
 
@@ -143,12 +139,6 @@ export interface WebWorkerEnvironment extends Omit<InitializeEnvironmentData, '$
   $location$: Location;
   $currentScriptId$?: number;
   $isInitialized$?: number;
-}
-
-export interface WebWorkerGlobal {
-  $memberName$: string;
-  $interfaceType$: InterfaceType;
-  $implementation$: any;
 }
 
 export interface MembersInterfaceTypeInfo {
@@ -192,6 +182,7 @@ export interface InitializeScriptData {
   $instanceId$: number;
   $content$?: string;
   $url$?: string;
+  $orgUrl$?: string;
 }
 
 export interface MainAccessRequest {

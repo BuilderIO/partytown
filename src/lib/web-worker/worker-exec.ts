@@ -20,19 +20,19 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
   let instance = getOrCreateNodeInstance(winId, instanceId, NodeName.Script);
   let scriptContent = initScript.$content$;
   let scriptSrc = initScript.$url$;
+  let scriptOrgSrc = initScript.$orgUrl$;
   let errorMsg = '';
   let env = environments[winId];
   let rsp: Response;
-  let scriptUrl: URL;
 
   if (scriptSrc) {
     try {
-      scriptUrl = resolveToUrl(env, scriptSrc);
-      scriptSrc = scriptUrl + '';
+      scriptSrc = resolveToUrl(env, scriptSrc) + '';
+
       setInstanceStateValue(instance!, StateProp.url, scriptSrc);
 
       if (debug && webWorkerCtx.$config$.logScriptExecution) {
-        logWorker(`Execute script (${instanceId}) src: ${scriptSrc}`, winId);
+        logWorker(`Execute script (${instanceId}) src: ${scriptOrgSrc}`, winId);
       }
 
       rsp = await self.fetch(scriptSrc);
@@ -40,15 +40,13 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
         scriptContent = await rsp.text();
 
         env.$currentScriptId$ = instanceId;
-        run(env, scriptContent);
+        run(env, scriptContent, scriptOrgSrc || scriptSrc);
         runStateLoadHandlers(instance!, StateProp.loadHandlers);
       } else {
-        console.error(rsp.status, 'url:', scriptSrc);
         errorMsg = rsp.statusText;
         runStateLoadHandlers(instance!, StateProp.errorHandlers);
       }
     } catch (urlError: any) {
-      console.error('url:', scriptSrc, urlError);
       errorMsg = String(urlError.stack || urlError) + '';
       runStateLoadHandlers(instance!, StateProp.errorHandlers);
     }
@@ -88,7 +86,7 @@ export const runScriptContent = (
     }
 
     env.$currentScriptId$ = instanceId;
-    run(env, scriptContent);
+    run(env, scriptContent, env.$location$ + '');
   } catch (contentError: any) {
     console.error(scriptContent, contentError);
     errorMsg = String(contentError.stack || contentError) + '';
@@ -99,10 +97,8 @@ export const runScriptContent = (
   return errorMsg;
 };
 
-const run = (env: WebWorkerEnvironment, script: string) => {
-  const runInEnv = new Function(`with(this){${script}}`);
-  runInEnv.apply(env.$window$);
-};
+const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl: string) =>
+  new Function(`with(this){${scriptContent}}\n//# sourceURL=${scriptUrl}`).apply(env.$window$);
 
 const runStateLoadHandlers = (
   instance: WorkerProxy,

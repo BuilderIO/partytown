@@ -44,6 +44,7 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
 
     if (scriptElm.src) {
       scriptData.$url$ = scriptElm.src;
+      scriptData.$orgUrl$ = scriptElm.dataset.ptsrc || scriptElm.src;
     } else {
       scriptData.$content$ = scriptElm.innerHTML;
     }
