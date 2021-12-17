@@ -93,7 +93,6 @@ export function snippet(
   }
 
   config = win.partytown || {};
-  crossOriginIsolated = win.crossOriginIsolated;
 
   if (top == win) {
     // this is the top window

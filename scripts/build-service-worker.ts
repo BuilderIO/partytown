@@ -7,6 +7,7 @@ import {
   MessageType,
   onwarn,
   syncCommunicationModulesPlugin,
+  versionPlugin,
   watchDir,
 } from './utils';
 import { join } from 'path';
@@ -19,7 +20,7 @@ export function buildServiceWorker(opts: BuildOptions): RollupOptions {
     file: join(opts.distLibDebugDir, 'partytown-sw.js'),
     format: 'es',
     exports: 'none',
-    plugins: [...minifyPlugin(true)],
+    plugins: [...minifyPlugin(true), versionPlugin(opts)],
   };
 
   const output: OutputOptions[] = [swDebug];
@@ -51,6 +52,7 @@ async function buildSandboxServiceWorker(opts: BuildOptions, msgType: MessageTyp
     plugins: [
       syncCommunicationModulesPlugin(opts, msgType),
       webWorkerBlobUrlPlugin(opts, msgType, debug),
+      versionPlugin(opts),
     ],
     onwarn,
   });

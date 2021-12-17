@@ -23,7 +23,12 @@ export type WinId = number;
 export type MessageFromWorkerToSandbox =
   | [type: WorkerMessageType.MainDataRequestFromWorker]
   | [type: WorkerMessageType.InitializedWebWorker]
-  | [type: WorkerMessageType.InitializedEnvironmentScript, winid: WinId, instanceId: number, errorMsg: string]
+  | [
+      type: WorkerMessageType.InitializedEnvironmentScript,
+      winid: WinId,
+      instanceId: number,
+      errorMsg: string
+    ]
   | [type: WorkerMessageType.InitializeNextScript, winid: WinId]
   | [type: WorkerMessageType.ForwardWorkerAccessRequest, accessReq: MainAccessRequest]
   | [type: WorkerMessageType.AsyncAccessRequest, accessReq: MainAccessRequest];

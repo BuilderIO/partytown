@@ -5,6 +5,7 @@ import {
   MessageType,
   onwarn,
   syncCommunicationModulesPlugin,
+  versionPlugin,
 } from './utils';
 import { join } from 'path';
 import { writeFile } from 'fs-extra';
@@ -13,7 +14,7 @@ import { minifyPlugin } from './minify';
 export async function buildWebWorker(opts: BuildOptions, msgType: MessageType, debug: boolean) {
   const build = await rollup({
     input: join(opts.tscLibDir, 'web-worker', 'index.js'),
-    plugins: [syncCommunicationModulesPlugin(opts, msgType)],
+    plugins: [syncCommunicationModulesPlugin(opts, msgType), versionPlugin(opts)],
     onwarn,
   });
 

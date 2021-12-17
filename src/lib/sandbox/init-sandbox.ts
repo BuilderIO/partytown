@@ -12,6 +12,7 @@ import { registerWindow } from './main-register-window';
 import syncCreateMessenger from '../build-modules/sync-create-messenger';
 import WebWorkerBlob from '../build-modules/web-worker-blob';
 import WebWorkerUrl from '../build-modules/web-worker-url';
+import { VERSION } from '../build-modules/version';
 
 export const initSandbox = async (sandboxWindow: any) => {
   let worker: PartytownWebWorker;
@@ -46,7 +47,7 @@ export const initSandbox = async (sandboxWindow: any) => {
     };
 
     if (debug) {
-      logMain(`Created web worker`);
+      logMain(`Created Partytown web worker (${VERSION})`);
       worker.onerror = (ev) => console.error(`Web Worker Error`, ev);
     }
 

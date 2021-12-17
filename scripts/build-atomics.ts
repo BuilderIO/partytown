@@ -5,6 +5,7 @@ import {
   fileSize,
   getJsBanner,
   syncCommunicationModulesPlugin,
+  versionPlugin,
   watchDir,
 } from './utils';
 import { join } from 'path';
@@ -31,6 +32,7 @@ function buildAtomicsDebug(opts: BuildOptions): RollupOptions {
       format: 'es',
       exports: 'none',
       plugins: [
+        versionPlugin(opts),
         {
           name: 'debugHtmlWrap',
           async generateBundle(_, bundle) {
@@ -50,6 +52,7 @@ function buildAtomicsDebug(opts: BuildOptions): RollupOptions {
       ],
     },
     plugins: [
+      versionPlugin(opts),
       syncCommunicationModulesPlugin(opts, 'atomics'),
       webWorkerBlobUrlPlugin(opts, 'atomics', true),
       watchDir(opts, join(opts.tscLibDir, 'atomics')),
@@ -98,6 +101,7 @@ function buildAtomicsMin(opts: BuildOptions): RollupOptions {
       watchDir(opts, join(opts.tscLibDir, 'atomics')),
       watchDir(opts, join(opts.tscLibDir, 'web-worker')),
       copyOutputToTests(opts),
+      versionPlugin(opts),
     ],
   };
 }

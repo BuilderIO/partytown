@@ -139,6 +139,20 @@ export function jsBannerPlugin(opts: BuildOptions): Plugin {
   };
 }
 
+export function versionPlugin(opts: BuildOptions): Plugin {
+  return {
+    name: 'versionPlugin',
+    generateBundle(_, bundles) {
+      for (const f in bundles) {
+        const bundle = bundles[f];
+        if (bundle.type === 'chunk') {
+          bundle.code = bundle.code.replace(/_VERSION_/g, opts.packageJson.version);
+        }
+      }
+    },
+  };
+}
+
 export interface BuildOptions {
   isDev: boolean;
   generateApi: boolean;

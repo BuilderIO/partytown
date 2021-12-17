@@ -1,4 +1,4 @@
-import { BuildOptions, copyOutputToTests, fileSize, jsBannerPlugin } from './utils';
+import { BuildOptions, copyOutputToTests, fileSize, jsBannerPlugin, versionPlugin } from './utils';
 import { join } from 'path';
 import { minifyPlugin } from './minify';
 import type { OutputOptions, RollupOptions } from 'rollup';
@@ -8,7 +8,7 @@ export function buildMainSnippet(opts: BuildOptions): RollupOptions {
     file: join(opts.distLibDebugDir, 'partytown.js'),
     format: 'es',
     exports: 'none',
-    plugins: [...minifyPlugin(true)],
+    plugins: [versionPlugin(opts), ...minifyPlugin(true)],
   };
 
   const partytownMin: OutputOptions = {
