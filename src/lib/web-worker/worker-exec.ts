@@ -97,8 +97,10 @@ export const runScriptContent = (
   return errorMsg;
 };
 
-const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl: string) =>
+const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl: string) => {
+  scriptContent = scriptContent.replace(/\/\/# source/g, '//Xsource');
   new Function(`with(this){${scriptContent}}\n//# sourceURL=${scriptUrl}`).apply(env.$window$);
+};
 
 const runStateLoadHandlers = (
   instance: WorkerProxy,
