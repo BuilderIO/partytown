@@ -27,7 +27,16 @@ export const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
       if (tagName === NodeName.IFrame) {
         // an iframe element's instanceId is the same as its contentWindow's winId
         // and the contentWindow's parentWinId is the iframe element's winId
-        createEnvironment({ $winId$: instanceId, $parentWinId$: winId, $url$: 'about:blank' });
+        const env = createEnvironment({
+          $winId$: instanceId,
+          $parentWinId$: winId,
+          $url$: 'about:blank',
+        });
+
+        // iframe's get the native fetch
+        // common for analytics to use "const fetch = iframe.contentWindow.fetch"
+        // so they don't go through a patched fetch()
+        env.$window$.fetch = fetch;
 
         setter(elm, ['srcdoc'], getPartytownScript());
       } else if (tagName === NodeName.Script) {

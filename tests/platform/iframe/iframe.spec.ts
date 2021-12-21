@@ -90,4 +90,8 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testSyncSetAttr');
   const testSyncSetAttr = page.locator('#testSyncSetAttr');
   await expect(testSyncSetAttr).toHaveText('88');
+
+  await page.waitForSelector('.testNativeFetch');
+  const testNativeFetch = page.locator('#testNativeFetch');
+  await expect(testNativeFetch).toHaveText('true');
 });

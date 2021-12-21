@@ -650,6 +650,21 @@
           })();
         </script>
       </li>
+
+      <li>
+        <strong>native fetch()</strong>
+        <code id="testNativeFetch"></code>
+        <script type="text/partytown">
+          const elm = document.getElementById('testNativeFetch');
+          const iframe = document.createElement('iframe');
+          document.head.appendChild(iframe);
+
+          const fetch = iframe.contentWindow.fetch;
+
+          elm.textContent = String(fetch).includes(`[native code]`);
+          elm.className = 'testNativeFetch';
+        </script>
+      </li>
     </ul>
 
     <hr />

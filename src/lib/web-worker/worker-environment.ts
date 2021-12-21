@@ -21,6 +21,8 @@ export const createEnvironment = ({ $winId$, $parentWinId$, $url$ }: InitializeE
   }
 
   webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextScript, $winId$]);
+
+  return environments[$winId$];
 };
 
 export const getEnv = (instance: { [WinIdKey]: number }) => environments[instance[WinIdKey]];
