@@ -660,6 +660,7 @@
           document.head.appendChild(iframe);
 
           const fetch = iframe.contentWindow.fetch;
+          document.head.removeChild(iframe);
 
           elm.textContent = String(fetch).includes(`[native code]`);
           elm.className = 'testNativeFetch';

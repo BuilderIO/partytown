@@ -113,11 +113,12 @@ const runStateLoadHandlers = (
   }
 };
 
-export const insertIframe = (iframe: WorkerProxy) => {
+export const insertIframe = (winId: number, iframe: WorkerProxy) => {
   // an iframe element's instanceId is also
-  // the winId of it's contentWindow
+  // the winId of its contentWindow
   let i = 0;
-  const winId = iframe[InstanceIdKey];
+  let type: string;
+  let handlers: EventHandler[];
 
   if (debug) {
     setter(iframe, ['dataset', 'ptwindow'], winId);
@@ -125,28 +126,18 @@ export const insertIframe = (iframe: WorkerProxy) => {
 
   const callback = () => {
     if (environments[winId] && environments[winId].$isInitialized$) {
-      let type = getInstanceStateValue<StateProp>(iframe, StateProp.loadErrorStatus)
+      type = getInstanceStateValue<StateProp>(iframe, StateProp.loadErrorStatus)
         ? StateProp.errorHandlers
         : StateProp.loadHandlers;
 
-      let handlers = getInstanceStateValue<EventHandler[]>(iframe, type);
+      handlers = getInstanceStateValue<EventHandler[]>(iframe, type);
       if (handlers) {
         handlers.map((handler) => handler({ type }));
       }
     } else if (i++ > 2000) {
-      let errorHandlers = getInstanceStateValue<EventHandler[]>(iframe, StateProp.errorHandlers);
-      if (errorHandlers) {
-        errorHandlers.map((handler) => handler({ type: StateProp.errorHandlers }));
-      }
-      if (debug) {
-        const iframeSrc = getInstanceStateValue<string>(iframe, StateProp.url);
-        console.error(
-          `Iframe timeout, window ${normalizedWinId(winId)} (${winId})${
-            iframeSrc ? `, url: ${iframeSrc}` : ``
-          }`
-        );
-      } else {
-        console.error(`Timeout`);
+      handlers = getInstanceStateValue<EventHandler[]>(iframe, StateProp.errorHandlers);
+      if (handlers) {
+        handlers.map((handler) => handler({ type: StateProp.errorHandlers }));
       }
     } else {
       setTimeout(callback, 9);

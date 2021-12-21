@@ -45,7 +45,9 @@ export class Node extends WorkerProxy {
     callMethod(this, ['insertBefore'], [newNode, referenceNode]);
 
     if (isIFrame) {
-      insertIframe(newNode);
+      // an iframe element's instanceId is also
+      // the winId of its contentWindow
+      insertIframe(instanceId, newNode);
     }
     if (isScript) {
       sendToMain(true);
