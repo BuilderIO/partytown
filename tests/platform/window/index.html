@@ -344,31 +344,65 @@
       </li>
 
       <li>
-        <strong>window.performance</strong>
+        <strong>performance.now()</strong>
         <code>
-          <span id="testPerformance"></span>
+          <span id="testPerformanceNow"></span>
         </code>
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('testPerformance');
-            elm.textContent = window.performance.now() + performance.now();
-            elm.className = 'testPerformance';
+            const elm = document.getElementById('testPerformanceNow');
+            elm.textContent = performance.now();
+            elm.className = 'testPerformanceNow';
           })();
         </script>
       </li>
 
       <li>
-        <strong>window.performance.timing</strong>
+        <strong>performance.timing.navigationStart</strong>
         <code>
-          <span id="testPerformanceTiming"></span>
+          <span id="testPerformanceTimingNavigationStart"></span>
         </code>
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('testPerformanceTiming');
-            const timing = window.performance.timing.toJSON();
-            const keys = Object.keys(timing);
-            elm.textContent = String(keys.length > 0);
-            elm.className = 'testPerformanceTiming';
+            const iframe1 = document.createElement('iframe');
+            document.head.appendChild(iframe1);
+            const iframe2 = document.createElement('iframe');
+            document.head.appendChild(iframe2);
+            document.head.removeChild(iframe1);
+            document.head.removeChild(iframe2);
+            const elm = document.getElementById('testPerformanceTimingNavigationStart');
+            elm.textContent = window.performance.timing.navigationStart;
+            elm.className = 'testPerformanceTimingNavigationStart';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>performance.mark()/getEntries()</strong>
+        <code>
+          <span id="testPerformanceEntries"></span>
+        </code>
+        <script type="text/partytown">
+          (async function () {
+            const elm = document.getElementById('testPerformanceEntries');
+
+            performance.mark('start');
+            await new Promise((resolve) => setTimeout(resolve, 30));
+            performance.mark('end');
+
+            let start = 0;
+            let end = 0;
+            const entries = performance.getEntries();
+            for (let i = 0; i < entries.length; i++) {
+              const entry = entries[i];
+              if (entry.name === 'start') {
+                start = entry.startTime;
+              } else if (entry.name === 'end') {
+                end = entry.startTime;
+              }
+            }
+            elm.textContent = String(end - start > 20);
+            elm.className = 'testPerformanceEntries';
           })();
         </script>
       </li>

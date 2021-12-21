@@ -22,6 +22,8 @@ export const readMainPlatform = (win: any) => {
   const canvasRenderingContext2D = canvas.getContext('2d');
   const mutationObserver = new MutationObserver(noop);
   const resizeObserver = new ResizeObserver(noop);
+  const perf = win.performance;
+  const screen = win.screen;
 
   // get all HTML*Element constructors on window
   // and create each element to get their implementation
@@ -35,8 +37,11 @@ export const readMainPlatform = (win: any) => {
   const impls: any[] = [
     // window implementations
     [win.history],
-    [win.screen],
-    [win.screen.orientation],
+    [perf],
+    [perf.navigation],
+    [perf.timing],
+    [screen],
+    [screen.orientation],
 
     // global constructors
     [mutationObserver, InterfaceType.EnvGlobalConstructor],

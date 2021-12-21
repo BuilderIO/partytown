@@ -67,14 +67,21 @@ test('window', async ({ page }) => {
   const testPromisePolyfilled = page.locator('#testPromisePolyfilled');
   await expect(testPromisePolyfilled).toHaveText('polyfill resolved');
 
-  await page.waitForSelector('.testPerformance');
-  const testPerformance = page.locator('#testPerformance');
-  const now = await testPerformance.textContent();
+  await page.waitForSelector('.testPerformanceNow');
+  const testPerformanceNow = page.locator('#testPerformanceNow');
+  const now = await testPerformanceNow.textContent();
   expect(!isNaN(now as any)).toBe(true);
 
-  await page.waitForSelector('.testPerformanceTiming');
-  const testPerformanceTiming = page.locator('#testPerformanceTiming');
-  await expect(testPerformanceTiming).toHaveText('true');
+  await page.waitForSelector('.testPerformanceTimingNavigationStart');
+  const testPerformanceTimingNavigationStart = page.locator(
+    '#testPerformanceTimingNavigationStart'
+  );
+  const navigationStart = await testPerformanceTimingNavigationStart.textContent();
+  expect(!isNaN(navigationStart as any)).toBe(true);
+
+  await page.waitForSelector('.testPerformanceEntries');
+  const testPerformanceEntries = page.locator('#testPerformanceEntries');
+  await expect(testPerformanceEntries).toHaveText('true');
 
   const testFrameElement = page.locator('#testFrameElement');
   await expect(testFrameElement).toHaveText('null');

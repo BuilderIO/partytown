@@ -1,9 +1,10 @@
 import { CSSStyleSheet } from './worker-style';
 import { defineWorkerInterface, patchPrototypes } from './worker-define-constructors';
-import { EMPTY_ARRAY, logWorker } from '../utils';
+import { logWorker } from '../utils';
 import type { InitWebWorkerData } from '../types';
 import { Node } from './worker-node';
 import type { PartytownConfig } from '@builder.io/partytown/intergration';
+import { Performance } from './worker-performance';
 import { webWorkerCtx } from './worker-constants';
 import { Window } from './worker-window';
 
@@ -30,6 +31,7 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   (self as any).Node = Node;
   (self as any).Window = Window;
   (self as any).CSSStyleSheet = CSSStyleSheet;
+  (self as any).Performance = Performance;
 
   initWebWorkerData.$interfaces$.map(defineWorkerInterface);
 

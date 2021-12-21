@@ -7,7 +7,6 @@ import { createNodeInstance, getOrCreateNodeInstance } from './worker-constructo
 import {
   debug,
   defineConstructorName,
-  defineProperty,
   logWorkerGlobalConstructor,
   normalizedWinId,
   randomId,
@@ -32,7 +31,7 @@ export class Window extends WorkerProxy {
         const value = self[globalName] as any;
         if (value != null) {
           // function examples: atob(), fetch()
-          // object examples: crypto, performance, indexedDB
+          // object examples: crypto, indexedDB
           // boolean examples: isSecureContext, crossOriginIsolated
           const isFunction = typeof value === 'function' && !value.toString().startsWith('class');
           (this as any)[globalName] = isFunction ? value.bind(self) : value;
@@ -125,19 +124,6 @@ export class Window extends WorkerProxy {
     // add storage APIs to the window
     addStorageApi(this, 'localStorage', webWorkerCtx.$localStorage$);
     addStorageApi(this, 'sessionStorage', webWorkerCtx.$sessionStorage$);
-
-    // performance.time is not available in a worker
-    defineProperty((this as any).performance, 'timing', {
-      get: () => {
-        const timing = getter(this, ['performance', 'timing']);
-        return timing
-          ? {
-              ...timing,
-              toJSON: () => timing,
-            }
-          : undefined;
-      },
-    });
 
     return win;
   }
@@ -239,8 +225,6 @@ export const patchWebWorkerWindowPrototype = () => {
   // These same window properties will be assigned to the window instance
   // when Window is constructed, and these won't make calls to the main thread.
   const webWorkerGlobals =
-    'atob,btoa,crypto,indexedDB,performance,setTimeout,setInterval,clearTimeout,clearInterval'.split(
-      ','
-    );
+    'atob,btoa,crypto,indexedDB,setTimeout,setInterval,clearTimeout,clearInterval'.split(',');
   webWorkerGlobals.map((memberName) => delete (Window as any).prototype[memberName]);
 };
