@@ -45,6 +45,7 @@
     "build": "tsc && rollup -c scripts/rollup.config.js",
     "build.prod": "tsc && rollup -c scripts/rollup.config.js --configApi",
     "build.watch": "rollup -c scripts/rollup.config.js -w --configDev",
+    "start": "npm run dev",
     "dev": "tsc && concurrently \"npm:build.watch\" \"npm:tsc.watch\" -n build,tsc -c magenta,yellow",
     "release": "npm run build && npm test && np --no-tests",
     "serve": "node scripts/serve.cjs 4000",
