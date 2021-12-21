@@ -159,7 +159,7 @@ const logTargetProp = (target: any, accessType: 'Get' | 'Set' | 'Call', applyPat
       } else if (nodeName === NodeName.DocumentTypeNode) {
         n = 'doctype.';
       } else {
-        n = target.nodeName.toLowerCase() + 'Element.';
+        n = nodeName.toLowerCase() + 'Element.';
       }
     } else if (target.nodeType === InterfaceType.AttributeNode) {
       n = 'attributes.';

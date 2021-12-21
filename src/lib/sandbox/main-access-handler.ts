@@ -5,9 +5,9 @@ import {
   MainAccessResponse,
   PartytownWebWorker,
 } from '../types';
+import { debug, isPromise, len, normalizedWinId } from '../utils';
 import { deserializeFromWorker, serializeForWorker } from './main-serialization';
 import { getInstance, setInstanceId } from './main-instances';
-import { isPromise, len } from '../utils';
 import { winCtxs } from './main-constants';
 
 export const mainAccessHandler = async (
@@ -68,7 +68,14 @@ export const mainAccessHandler = async (
           }
           accessRsp.$rtnValue$ = serializeForWorker(winId, rtnValue);
         } else {
-          accessRsp.$error$ = instanceId + ' not found';
+          if (debug) {
+            accessRsp.$error$ = `Error finding instance "${instanceId}" on window ${normalizedWinId(
+              winId
+            )} (${winId})`;
+            console.error(accessRsp.$error$);
+          } else {
+            accessRsp.$error$ = instanceId + ' not found';
+          }
         }
       }
     } catch (e: any) {

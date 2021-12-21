@@ -1,4 +1,4 @@
-import { debug, logWorker, nextTick, SCRIPT_TYPE } from '../utils';
+import { debug, logWorker, nextTick, normalizedWinId, SCRIPT_TYPE } from '../utils';
 import {
   EventHandler,
   InitializeScriptData,
@@ -139,7 +139,12 @@ export const insertIframe = (iframe: WorkerProxy) => {
         errorHandlers.map((handler) => handler({ type: StateProp.errorHandlers }));
       }
       if (debug) {
-        console.error(`Iframe timeout: ${winId}`);
+        const iframeSrc = getInstanceStateValue<string>(iframe, StateProp.url);
+        console.error(
+          `Iframe timeout, window ${normalizedWinId(winId)} (${winId})${
+            iframeSrc ? `, url: ${iframeSrc}` : ``
+          }`
+        );
       } else {
         console.error(`Timeout`);
       }
