@@ -187,4 +187,4 @@ export const updateIframeContent = (url: string, html: string) =>
   getPartytownScript();
 
 export const getPartytownScript = () =>
-  `<script src=${JSON.stringify(webWorkerCtx.$libPath$ + 'partytown.js')} async defer></script>`;
+  `<script src=${JSON.stringify(webWorkerCtx.$libPath$ + 'partytown.js')} async></script>`;
