@@ -71,6 +71,11 @@ export class Window extends WorkerProxy {
       );
     }
 
+    if ('trustedTypes' in (self as any)) {
+      // https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API
+      (this as any).trustedTypes = (self as any).trustedTypes;
+    }
+
     const win = new Proxy(this, {
       has() {
         // window "has" any and all props, this is especially true for global variables

@@ -112,6 +112,17 @@
       </li>
 
       <li>
+        <strong>this === window</strong>
+        <code id="testThisWindow"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testThisWindow');
+            elm.textContent = String(window === this);
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>window.HTMLBodyElement.name</strong>
         <code id="testHTMLBodyElementName"></code>
         <script type="text/partytown">
@@ -632,6 +643,30 @@
           (async function () {
             const elm = document.getElementById('testUserConstructor');
             elm.textContent = String(window.userCstr);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>trustedTypes</strong>
+        <code id="testTrustedTypes"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testTrustedTypes');
+            if (typeof TrustedHTML === 'undefined') {
+              // not supported by Safari
+              elm.textContent = 'true';
+              return;
+            }
+
+            const escapeHTMLPolicy = trustedTypes.createPolicy('myEscapePolicy', {
+              createHTML: (string) => string.replace(/\>/g, '<'),
+            });
+
+            const escaped = escapeHTMLPolicy.createHTML('<img src=x onerror=alert(1)>');
+            elm.innerHTML = escaped;
+
+            elm.textContent = String(escaped instanceof TrustedHTML);
           })();
         </script>
       </li>

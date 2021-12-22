@@ -17,6 +17,9 @@ test('window', async ({ page }) => {
   const testParent = page.locator('#testParent');
   await expect(testParent).toHaveText('true');
 
+  const testThisWindow = page.locator('#testThisWindow');
+  await expect(testThisWindow).toHaveText('true');
+
   const testHTMLBodyElementName = page.locator('#testHTMLBodyElementName');
   await expect(testHTMLBodyElementName).toHaveText('HTMLBodyElement HTMLBodyElement');
 
@@ -120,4 +123,13 @@ test('window', async ({ page }) => {
 
   const testOpener = page.locator('#testOpener');
   await expect(testOpener).toHaveText('null');
+
+  const testUserObject = page.locator('#testUserObject');
+  await expect(testUserObject).toHaveText('undefined');
+
+  const testUserConstructor = page.locator('#testUserConstructor');
+  await expect(testUserConstructor).toHaveText('undefined');
+
+  const testTrustedTypes = page.locator('#testTrustedTypes');
+  await expect(testTrustedTypes).toHaveText('true');
 });

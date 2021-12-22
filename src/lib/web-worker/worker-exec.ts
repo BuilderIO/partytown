@@ -1,4 +1,4 @@
-import { debug, logWorker, nextTick, normalizedWinId, SCRIPT_TYPE } from '../utils';
+import { debug, logWorker, nextTick, SCRIPT_TYPE } from '../utils';
 import {
   EventHandler,
   InitializeScriptData,
@@ -7,7 +7,7 @@ import {
   WebWorkerEnvironment,
   WorkerMessageType,
 } from '../types';
-import { environments, InstanceIdKey, webWorkerCtx } from './worker-constants';
+import { environments, webWorkerCtx } from './worker-constants';
 import { getEnv } from './worker-environment';
 import { getOrCreateNodeInstance } from './worker-constructors';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
@@ -97,12 +97,13 @@ export const runScriptContent = (
   return errorMsg;
 };
 
-const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) => {
-  scriptContent = scriptContent.replace(/\/\/# source/g, '//Xsource');
+const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) =>
   new Function(
-    `with(this){${scriptContent}}` + (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '')
-  ).apply(env.$window$);
-};
+    `with(this){${scriptContent
+      .replace(/\bthis\b/g, '_ptthis(this)')
+      .replace(/\/\/# so/g, '//Xso')};function _ptthis(t){return t===this?window:t}}` +
+      (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '')
+  ).call(env.$window$);
 
 const runStateLoadHandlers = (
   instance: WorkerProxy,

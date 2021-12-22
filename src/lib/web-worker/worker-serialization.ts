@@ -63,7 +63,6 @@ export const serializeForMain = (
           {
             $winId$: value[WinIdKey],
             $instanceId$: value[InstanceIdKey],
-            // $nodeName$: value[NodeNameKey],
           },
         ];
       }
@@ -73,6 +72,11 @@ export const serializeForMain = (
           SerializedType.Event,
           serializeObjectForMain($winId$, $instanceId$, value, false, added),
         ];
+      }
+
+      if (typeof TrustedHTML !== 'undefined' && value instanceof TrustedHTML) {
+        // https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API
+        return [SerializedType.Primitive, value.toString()];
       }
 
       return [
@@ -235,3 +239,5 @@ const deserializeRefFromMain = (
 
   return webWorkerRefsByRefId[$refId$];
 };
+
+declare const TrustedHTML: any;
