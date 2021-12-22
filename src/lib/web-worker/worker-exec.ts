@@ -86,7 +86,7 @@ export const runScriptContent = (
     }
 
     env.$currentScriptId$ = instanceId;
-    run(env, scriptContent, env.$location$ + '');
+    run(env, scriptContent);
   } catch (contentError: any) {
     console.error(scriptContent, contentError);
     errorMsg = String(contentError.stack || contentError) + '';
@@ -97,9 +97,11 @@ export const runScriptContent = (
   return errorMsg;
 };
 
-const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl: string) => {
+const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) => {
   scriptContent = scriptContent.replace(/\/\/# source/g, '//Xsource');
-  new Function(`with(this){${scriptContent}}\n//# sourceURL=${scriptUrl}`).apply(env.$window$);
+  new Function(
+    `with(this){${scriptContent}}` + (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '')
+  ).apply(env.$window$);
 };
 
 const runStateLoadHandlers = (
