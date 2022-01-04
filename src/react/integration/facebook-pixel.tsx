@@ -25,13 +25,10 @@ export interface FacebookPixelProps {
 }
 
 /**
- * The Google Tag Manager Partytown component should be added after the opening `<head>`
- * tag, but before the `<Partytown/>` component. This component will add the
- * [Data Layer](https://developers.google.com/tag-manager/devguide) to the main thread
- * window, and will load GTM within the web worker. Any updates to `dataLayer.push(...)`
- * will be forwarded to the Partytown web worker.
+ * The Facebook Pixel Partytown component should be added after the opening `<head>`
+ * tag, but before the `<Partytown/>` component.
  *
- * https://developers.google.com/tag-manager/quickstart
+ * https://www.facebook.com/business/help/952192354843755?id=1205376682832142
  *
  * @public
  */
