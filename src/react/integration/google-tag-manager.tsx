@@ -58,7 +58,7 @@ export const GoogleTagManager = ({
 
   return (
     <Fragment>
-      {usePartytown ? <PartytownForward id="gtm-fw" forwards={googleTagManagerForward()} /> : null}
+      {usePartytown ? <PartytownForward id="gtm-fw" forward={googleTagManagerForward()} /> : null}
       <script async src={src} type={SCRIPT_TYPE} />
       <PartytownScript
         id="gtm-pt"
