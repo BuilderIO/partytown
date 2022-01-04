@@ -2,9 +2,16 @@ import { suite as uvuSuite } from 'uvu';
 import type { MainWindow, PartytownWebWorker, WebWorkerEnvironment } from '../../src/lib/types';
 import { environments } from '../../src/lib/web-worker/worker-constants';
 import { createWindow } from 'domino';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 
 export const suite = (title?: string) => {
   const s = uvuSuite<TestContext>(title);
+
+  if (_partytownSnippet == null) {
+    const snippetPath = join(__dirname, '..', '..', 'lib', 'partytown.js');
+    _partytownSnippet = readFileSync(snippetPath, 'utf-8');
+  }
 
   s.before.each((ctx) => {
     ctx.winId = Math.round(Math.random() * 10000);
@@ -14,12 +21,18 @@ export const suite = (title?: string) => {
     ctx.nav = ctx.navigator = getNavigator();
     ctx.worker = getWorker();
     ctx.env = createWorkerWindownEnvironment(ctx.winId);
-
+    ctx.snippetCode = _partytownSnippet!;
     ctx.doc.addEventListener = (_: any, cb: any) => cb();
+    ctx.run = (code) => {
+      const fn = new Function('window', 'top', 'document', 'navigator', code);
+      return fn(ctx.win, ctx.top, ctx.doc, ctx.nav);
+    };
   });
 
   return s;
 };
+
+let _partytownSnippet: string | null = null;
 
 export interface TestContext {
   winId: number;
@@ -50,6 +63,8 @@ export interface TestContext {
   nav: any;
   worker: TestWorker;
   env: WebWorkerEnvironment;
+  snippetCode: string;
+  run: (code: string) => any;
 }
 
 function getWindow(): any {

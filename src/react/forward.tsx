@@ -5,11 +5,11 @@ import type { PartytownForwardProperty } from '../lib/types';
 
 export interface PartytownForwardProps {
   id: string;
-  forward: PartytownForwardProperty;
+  forwards: PartytownForwardProperty[];
 }
 
-export const PartytownForward = ({ id, forward }: PartytownForwardProps) => {
-  const forwardScript = appendForwardConfig(forward);
+export const PartytownForward = ({ id, forwards }: PartytownForwardProps) => {
+  const forwardScript = appendForwardConfig(...forwards);
   if (forwardScript) {
     return <PartytownScript id={id} innerHTML={forwardScript} />;
   }

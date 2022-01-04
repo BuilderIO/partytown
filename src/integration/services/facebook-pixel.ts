@@ -12,8 +12,10 @@ export const facebookPixel = (pixelId: string) =>
 fbq('init',${JSON.stringify(pixelId)});fbq('track','PageView');`;
 
 /**
- * Forwards `fbq()` calls to Partytown's worker thread.
+ * Forwards Facebool Pixels main window calls to Partytown's worker thread.
+ *
+ * https://developers.facebook.com/docs/facebook-pixel/get-started
  *
  * @public
  */
-export const facebookPixelForward = (): PartytownForwardProperty => 'fbq';
+export const facebookPixelForward = (): PartytownForwardProperty[] => ['fbq'];

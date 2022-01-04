@@ -1,39 +1,26 @@
 import PartytownSnippet from '@snippet';
-import type { PartytownConfig, PartytownForwardPropertyName } from '../lib/types';
+import { createSnippet } from './snippet';
+import type { PartytownConfig } from '../lib/types';
 
 /**
+ * Function that returns the Partytown snippet as a string, which can be
+ * used as the innerHTML of the inlined Partytown script in the head.
+ *
  * @public
  */
-export const partytownSnippet = (config: PartytownConfig) => {
-  const forward = config.forward || [];
-  delete config.forward;
-
-  const configStr = JSON.stringify(config, (k, v) => {
-    if (typeof v === 'function') {
-      v = String(v);
-      if (v.startsWith(k + '(')) {
-        v = 'function ' + v;
-      }
-    }
-    return v;
-  });
-
-  return [
-    `!(function(w,p,f,c){`,
-    config && Object.keys(config).length > 0
-      ? `c=w[p]=Object.assign(w[p]||{},${configStr});`
-      : `c=w[p]=w[p]||{};`,
-    `c[f]=(c[f]||[])`,
-    forward.length > 0 ? `.concat(${JSON.stringify(forward)})` : ``,
-    `})(window,'partytown','forward');`,
-    PartytownSnippet,
-  ].join('');
-};
-
-export { SCRIPT_TYPE } from '../lib/utils';
-
-export type { PartytownConfig, PartytownForwardPropertyName };
+export const partytownSnippet = (config: PartytownConfig) =>
+  createSnippet(config, PartytownSnippet);
 
 export { appendForwardConfig } from './forward';
+export { SCRIPT_TYPE } from '../lib/utils';
+
 export * from './services/facebook-pixel';
 export * from './services/google-tag-manager';
+
+export type {
+  PartytownConfig,
+  PartytownForwardProperty,
+  ApplyHook,
+  GetHook,
+  SetHook,
+} from '../lib/types';

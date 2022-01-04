@@ -7,11 +7,10 @@ import type { PartytownForwardProperty } from '../lib/types';
  *
  * @public
  */
-export const appendForwardConfig = (forward: PartytownForwardProperty) => {
-  if (forward) {
-    return `!(function(w,p,f,c){c=w[p]=w[p]||{};(c[f]=c[f]||[]).push(${JSON.stringify(
-      forward
-    )})})(window,'partytown','forward');`;
+export const appendForwardConfig = (...forwards: PartytownForwardProperty[]) => {
+  if (forwards.length > 0) {
+    const str = forwards.map((f) => JSON.stringify(f)).join(',');
+    return `!(function(w,p,f,c){c=w[p]=w[p]||{};(c[f]=c[f]||[]).push(${str})})(window,'partytown','forward');`;
   }
   return ``;
 };

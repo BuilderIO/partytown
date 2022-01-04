@@ -386,18 +386,10 @@ export interface PartytownConfig {
 }
 
 /**
- * The property to patch on `window`, such as `dataLayer` for Google Tag Manager,
- * or `fbq` for Facebook Pixel.
- *
- * https://github.com/BuilderIO/partytown/wiki/Forwarding-Events-and-Triggers
- *
- * @public
- */
-export type PartytownForwardPropertyName = string;
-
-/**
  * A foward property to patch on `window`. The foward config property is an string,
  * representing the call to forward, such as `dataLayer.push` or `fbq`.
+ *
+ * https://github.com/BuilderIO/partytown/wiki/Forwarding-Events-and-Triggers
  *
  * @public
  */

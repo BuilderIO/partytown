@@ -4,33 +4,37 @@
 
 ```ts
 
-// Warning: (ae-forgotten-export) The symbol "PartytownForwardProperty" needs to be exported by the entry point index.d.ts
-//
 // @public
-export const appendForwardConfig: (forward: PartytownForwardProperty) => string;
+export const appendForwardConfig: (...forwards: PartytownForwardProperty[]) => string;
+
+// Warning: (ae-forgotten-export) The symbol "ApplyHookOptions" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export type ApplyHook = (opts: ApplyHookOptions) => any;
 
 // @public
 export const facebookPixel: (pixelId: string) => string;
 
 // @public
-export const facebookPixelForward: () => PartytownForwardProperty;
+export const facebookPixelForward: () => PartytownForwardProperty[];
+
+// Warning: (ae-forgotten-export) The symbol "GetHookOptions" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export type GetHook = (opts: GetHookOptions) => any;
 
 // @public
 export const googleTagManager: (dataLayerName: string) => string;
 
 // @public
-export const googleTagManagerForward: () => PartytownForwardProperty;
+export const googleTagManagerForward: () => PartytownForwardProperty[];
 
 // @public
 export interface PartytownConfig {
-    // Warning: (ae-forgotten-export) The symbol "ApplyHook" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
     apply?: ApplyHook;
     debug?: boolean;
     forward?: PartytownForwardProperty[];
-    // Warning: (ae-forgotten-export) The symbol "GetHook" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
     get?: GetHook;
     lib?: string;
@@ -43,20 +47,23 @@ export interface PartytownConfig {
     logSetters?: boolean;
     logStackTraces?: boolean;
     resolveUrl?(url: URL, location: Location): URL | undefined | null;
-    // Warning: (ae-forgotten-export) The symbol "SetHook" needs to be exported by the entry point index.d.ts
-    //
     // (undocumented)
     set?: SetHook;
 }
 
 // @public
-export type PartytownForwardPropertyName = string;
+export type PartytownForwardProperty = string;
 
-// @public (undocumented)
+// @public
 export const partytownSnippet: (config: PartytownConfig) => string;
 
 // @public
 export const SCRIPT_TYPE = "text/partytown";
+
+// Warning: (ae-forgotten-export) The symbol "SetHookOptions" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export type SetHook = (opts: SetHookOptions) => any;
 
 // (No @packageDocumentation comment for this package)
 
