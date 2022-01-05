@@ -12,6 +12,8 @@
 
 Partytown is a lazy-loaded library to help relocate resource intensive scripts into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), and off of the [main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread). Its goal is to help speed up sites by dedicating the main thread to your code, and offloading third-party scripts to a web worker.
 
+[Getting Started](https://github.com/BuilderIO/partytown/wiki/Getting-Started)
+
 ---
 
 ### Negative Impacts From Third-Party Scripts
@@ -58,7 +60,7 @@ Partytown's philosophy is that the main thread should be dedicated to your code,
   - [Trade-Offs](https://github.com/BuilderIO/partytown/wiki#trade-offs)
   - [Use-Cases](https://github.com/BuilderIO/partytown/wiki#use-cases)
 - [How Does It Work?](https://github.com/BuilderIO/partytown/wiki/How-Does-It-Work%3F)
-- [Installation](https://github.com/BuilderIO/partytown/wiki/Installation)
+- [Getting Started](https://github.com/BuilderIO/partytown/wiki/Getting-Started)
   - [React](https://github.com/BuilderIO/partytown/wiki/Installation#react)
   - [Webpack](https://github.com/BuilderIO/partytown/wiki/Installation#webpack)
 - [Configuration](https://github.com/BuilderIO/partytown/wiki/Configuration)
