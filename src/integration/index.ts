@@ -15,6 +15,7 @@ export { appendForwardConfig } from './forward';
 export { SCRIPT_TYPE } from '../lib/utils';
 
 export * from './services/facebook-pixel';
+export * from './services/freshpaint';
 export * from './services/google-tag-manager';
 
 export type {

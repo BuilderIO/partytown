@@ -18,6 +18,9 @@ export const facebookPixel: (pixelId: string) => string;
 // @public
 export const facebookPixelForward: () => PartytownForwardProperty[];
 
+// @public
+export const freshpaintForward: () => PartytownForwardProperty[];
+
 // Warning: (ae-forgotten-export) The symbol "GetHookOptions" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
