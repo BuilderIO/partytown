@@ -110,7 +110,7 @@ export function snippet(
           i + 1 < forwardPropsArr.length
             ? forwardPropsArr[i + 1] == 'push'
               ? []
-              : {}
+              : mainForwardFn[forwardPropsArr[i]] || {}
             : function () {
                 // queue these calls to be forwarded on later, after Partytown is ready
                 (win._ptf = win._ptf || []).push(forwardPropsArr, arguments);

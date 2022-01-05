@@ -7,6 +7,32 @@ import { workerForwardedTriggerHandle } from '../../src/lib/web-worker/worker-fo
 
 const test = suite();
 
+test('patch multiple functions on same object window.obj, queue calls', ({
+  win,
+  document,
+  navigator,
+}) => {
+  win.partytown = {
+    forward: ['objA.fn0', 'objA.fn1', 'objA.fn2', 'objA.objB.fn3', 'objA.objC.fn4'],
+  };
+  snippet(win, document, navigator, win, false);
+  assert.type(win.objA, 'object');
+  assert.type(win.objA.fn0, 'function');
+  assert.type(win.objA.fn1, 'function');
+  assert.type(win.objA.fn2, 'function');
+  assert.type(win.objA.objB.fn3, 'function');
+  assert.type(win.objA.objC.fn4, 'function');
+  assert.equal(win._ptf, undefined);
+
+  win.objA.fn0('a');
+  win.objA.objB.fn3('b');
+  win.objA.objC.fn4('c');
+  assert.equal(
+    JSON.stringify(win._ptf),
+    `[["objA","fn0"],{"0":"a"},["objA","objB","fn3"],{"0":"b"},["objA","objC","fn4"],{"0":"c"}]`
+  );
+});
+
 test('run window.arr.push() in the web worker', ({
   winId,
   win,
