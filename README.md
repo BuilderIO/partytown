@@ -5,7 +5,7 @@
 - [Introducing Partytown: Run Third-Party Scripts From a Web Worker](https://dev.to/adamdbradley/introducing-partytown-run-third-party-scripts-from-a-web-worker-2cnp)
 - [How Partytown's Sync Communication Works](https://dev.to/adamdbradley/how-partytown-s-sync-communication-works-4244)
 - [How we cut 99% of our JavaScript with Qwik + Partytown](https://www.builder.io/blog/how-we-cut-99-percent-js-with-qwik-and-partytown)
-- [Partytown is now in Beta](https://www.builder.io/blog/partytown-beta-release)
+- [Partytown is now in Beta](https://www.builder.io/blog/partytown-is-now-in-beta)
 
 > A fun location for your third-party scripts to hang out
 
