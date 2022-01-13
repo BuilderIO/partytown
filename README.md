@@ -48,6 +48,8 @@ We set out to solve this situation, so that apps of all sizes will be able to co
 
 Partytown's philosophy is that the main thread should be dedicated to your code, and any scripts that are not required to be in the [critical path](https://developers.google.com/web/fundamentals/performance/critical-rendering-path) should be moved to a web worker. Main thread performance is, without question, more important than web worker thread performance. See the [example page](https://partytown.builder.io/example/) and [test pages](https://partytown.builder.io/) for some live demos.
 
+![FI6hOG3XEAwuh95](https://user-images.githubusercontent.com/452425/149344822-53154491-fd70-47ad-8c92-3ff5e4ccb4ec.jpeg)
+
 > If you're looking to run _your_ app within a web worker, we recommend the [WorkerDom](https://github.com/ampproject/worker-dom) project.
 
 ## Docs
