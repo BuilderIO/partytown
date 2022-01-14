@@ -39,7 +39,7 @@ export const FacebookPixel = ({ pixelId, enablePartytown }: FacebookPixelProps):
       {usePartytown ? <PartytownForward id="fbq-fw" forward={facebookPixelForward()} /> : null}
       <PartytownScript
         id="fbq-pt"
-        innerHTML={facebookPixel(pixelId)}
+        innerHTML={facebookPixel({ pixelId })}
         type={usePartytown ? SCRIPT_TYPE : 'text/javascript'}
       />
     </Fragment>

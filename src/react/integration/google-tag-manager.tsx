@@ -46,23 +46,13 @@ export const GoogleTagManager = ({
   dataLayerName,
   enablePartytown,
 }: GoogleTagManagerProps): any => {
-  let src = `https://www.googletagmanager.com/gtm.js?id=` + containerId;
-
-  if (typeof dataLayerName !== 'string') {
-    dataLayerName = 'dataLayer';
-  }
-  if (dataLayerName !== 'dataLayer') {
-    src += '&l=' + dataLayerName;
-  }
   const usePartytown = enablePartytown !== false;
-
   return (
     <Fragment>
       {usePartytown ? <PartytownForward id="gtm-fw" forward={googleTagManagerForward()} /> : null}
-      <script async src={src} type={SCRIPT_TYPE} />
       <PartytownScript
         id="gtm-pt"
-        innerHTML={googleTagManager(dataLayerName)}
+        innerHTML={googleTagManager({ containerId, dataLayerName })}
         type={usePartytown ? SCRIPT_TYPE : 'text/javascript'}
       />
     </Fragment>
