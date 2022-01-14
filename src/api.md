@@ -13,7 +13,9 @@ export const appendForwardConfig: (...forwards: PartytownForwardProperty[]) => s
 export type ApplyHook = (opts: ApplyHookOptions) => any;
 
 // @public
-export const facebookPixel: (pixelId: string) => string;
+export const facebookPixel: (opts: {
+    pixelId: string;
+}) => string;
 
 // @public
 export const facebookPixelForward: () => PartytownForwardProperty[];
@@ -27,7 +29,10 @@ export const freshpaintForward: () => PartytownForwardProperty[];
 export type GetHook = (opts: GetHookOptions) => any;
 
 // @public
-export const googleTagManager: (dataLayerName: string) => string;
+export const googleTagManager: (opts: {
+    containerId: string;
+    dataLayerName?: string;
+}) => string;
 
 // @public
 export const googleTagManagerForward: () => PartytownForwardProperty[];
