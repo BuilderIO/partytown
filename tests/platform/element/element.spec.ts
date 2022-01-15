@@ -13,6 +13,9 @@ test('element', async ({ page }) => {
   const yInt = parseFloat(y);
   expect(yInt).toBeGreaterThan(4);
 
+  const testGetBoundingClientRectCached = page.locator('#testGetBoundingClientRectCached');
+  await expect(testGetBoundingClientRectCached).toHaveText('true');
+
   const testQSH1 = page.locator('#testQSH1');
   await expect(testQSH1).toHaveText('H1');
 
@@ -82,4 +85,7 @@ test('element', async ({ page }) => {
 
   const testElementEquality = page.locator('#testElementEquality');
   await expect(testElementEquality).toHaveText('true');
+
+  const testElementId = page.locator('#testElementId');
+  await expect(testElementId).toHaveText('attrId true');
 });

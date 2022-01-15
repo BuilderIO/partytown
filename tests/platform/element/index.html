@@ -79,20 +79,23 @@
       <li>
         <strong>getBoundingClientRect()</strong>
         <code id="testGetBoundingClientRectY"></code>
+        <code id="testGetBoundingClientRectCached"></code>
         <code id="testGetBoundingClientRect"></code>
         <script type="text/partytown">
           (function () {
             const elm = document.getElementsByTagName('h1')[0];
             const t = document.getElementById('testGetBoundingClientRect');
             const y = document.getElementById('testGetBoundingClientRectY');
+            const cached = document.getElementById('testGetBoundingClientRectCached');
             // should only be one main access
+            const r1 = elm.getBoundingClientRect();
             elm.getBoundingClientRect();
             elm.getBoundingClientRect();
             elm.getBoundingClientRect();
-            elm.getBoundingClientRect();
-            const r = elm.getBoundingClientRect();
-            t.textContent = JSON.stringify(r);
-            y.textContent = r.y;
+            const r2 = elm.getBoundingClientRect();
+            t.textContent = JSON.stringify(r1);
+            y.textContent = r1.y;
+            cached.textContent = (JSON.stringify(r1) === JSON.stringify(r2));
           })();
         </script>
       </li>
@@ -389,6 +392,22 @@
 
             const elm = document.getElementById('testElementEquality');
             elm.textContent = div1 === div2;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong id="propId">element, id</strong>
+        <code id="testElementId"></code>
+        <script type="text/partytown">
+          (function () {
+            const label = document.getElementById('propId');
+            const elm = document.getElementById('testElementId');
+            const id1 = label.id;
+            label.setAttribute('id', 'attrId')
+            const id2 = label.id;
+            const id3 = label.id;
+            elm.textContent = id2 + ' ' + (id2 === id3);
           })();
         </script>
       </li>
