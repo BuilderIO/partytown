@@ -1,6 +1,7 @@
-import { debug, logWorker, normalizedWinId } from '../utils';
+import { debug } from '../utils';
 import { environments, webWorkerCtx, WinIdKey } from './worker-constants';
 import { InitializeEnvironmentData, WorkerMessageType } from '../types';
+import { logWorker, normalizedWinId } from '../log';
 import { Window } from './worker-window';
 
 export const createEnvironment = ({ $winId$, $parentWinId$, $url$ }: InitializeEnvironmentData) => {

@@ -1,5 +1,6 @@
 import type { WebWorkerEnvironment } from '../types';
-import { debug, logWorker } from '../utils';
+import { debug } from '../utils';
+import { logWorker } from '../log';
 import { resolveUrl } from './worker-exec';
 import { webWorkerCtx } from './worker-constants';
 

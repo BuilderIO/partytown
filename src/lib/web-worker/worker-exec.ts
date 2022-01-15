@@ -1,4 +1,4 @@
-import { debug, logWorker, nextTick, SCRIPT_TYPE } from '../utils';
+import { debug, SCRIPT_TYPE } from '../utils';
 import {
   EventHandler,
   InitializeScriptData,
@@ -9,8 +9,9 @@ import {
 } from '../types';
 import { environments, webWorkerCtx } from './worker-constants';
 import { getEnv } from './worker-environment';
-import { getOrCreateNodeInstance } from './worker-constructors';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
+import { getOrCreateNodeInstance } from './worker-constructors';
+import { logWorker } from '../log';
 import { setter } from './worker-proxy';
 import type { WorkerProxy } from './worker-proxy-constructor';
 
@@ -47,11 +48,12 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
         runStateLoadHandlers(instance!, StateProp.errorHandlers);
       }
     } catch (urlError: any) {
-      errorMsg = String(urlError.stack || urlError) + '';
+      console.error(urlError);
+      errorMsg = String(urlError.stack || urlError);
       runStateLoadHandlers(instance!, StateProp.errorHandlers);
     }
   } else if (scriptContent) {
-    errorMsg = runScriptContent(env, instanceId, scriptContent, winId);
+    errorMsg = runScriptContent(env, instanceId, scriptContent, winId, errorMsg);
   }
 
   env.$currentScriptId$ = -1;
@@ -68,9 +70,9 @@ export const runScriptContent = (
   env: WebWorkerEnvironment,
   instanceId: number,
   scriptContent: string,
-  winId: number
+  winId: number,
+  errorMsg: string
 ) => {
-  let errorMsg = '';
   try {
     if (debug && webWorkerCtx.$config$.logScriptExecution) {
       logWorker(
@@ -89,7 +91,7 @@ export const runScriptContent = (
     run(env, scriptContent);
   } catch (contentError: any) {
     console.error(scriptContent, contentError);
-    errorMsg = String(contentError.stack || contentError) + '';
+    errorMsg = String(contentError.stack || contentError);
   }
 
   env.$currentScriptId$ = -1;
@@ -100,8 +102,8 @@ export const runScriptContent = (
 const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) =>
   new Function(
     `with(this){${scriptContent
-      .replace(/\bthis\b/g, '_ptthis(this)')
-      .replace(/\/\/# so/g, '//Xso')};function _ptthis(t){return t===this?window:t}}` +
+      .replace(/\bthis\b/g, 'thi$(this)')
+      .replace(/\/\/# so/g, '//Xso')};function thi$(t){return t===this?window:t}}` +
       (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '')
   ).call(env.$window$);
 
@@ -112,7 +114,7 @@ const runStateLoadHandlers = (
 ) => {
   handlers = getInstanceStateValue(instance, type);
   if (handlers) {
-    nextTick(() => handlers!.map((cb) => cb({ type })));
+    setTimeout(() => handlers!.map((cb) => cb({ type })));
   }
 };
 

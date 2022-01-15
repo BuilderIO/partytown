@@ -1,10 +1,11 @@
-import { debug, logWorker } from '../utils';
+import { debug } from '../utils';
 import type { EventHandler, WebWorkerEnvironment } from '../types';
+import { logWorker } from '../log';
 import { resolveUrl } from './worker-exec';
 import { webWorkerCtx } from './worker-constants';
 
-export const createImageConstructor = (env: WebWorkerEnvironment) => {
-  return class HTMLImageElement {
+export const createImageConstructor = (env: WebWorkerEnvironment) =>
+  class HTMLImageElement {
     s: string;
     l: EventHandler[];
     e: EventHandler[];
@@ -61,4 +62,3 @@ export const createImageConstructor = (env: WebWorkerEnvironment) => {
       this.e = [cb];
     }
   };
-};

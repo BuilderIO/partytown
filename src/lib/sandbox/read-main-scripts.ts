@@ -1,11 +1,4 @@
-import {
-  debug,
-  logMain,
-  normalizedWinId,
-  PT_INITIALIZED_EVENT,
-  SCRIPT_TYPE,
-  SCRIPT_TYPE_EXEC,
-} from '../utils';
+import { debug, PT_INITIALIZED_EVENT, SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
 import { getAndSetInstanceId } from './main-instances';
 import {
   InitializeScriptData,
@@ -14,6 +7,7 @@ import {
   WorkerMessageType,
 } from '../types';
 import { mainForwardTrigger } from './main-forward-trigger';
+import { logMain, normalizedWinId } from '../log';
 
 export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowContext) => {
   let $winId$ = winCtx.$winId$;

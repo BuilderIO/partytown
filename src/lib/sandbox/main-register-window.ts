@@ -1,10 +1,11 @@
-import { debug, logMain, normalizedWinId } from '../utils';
+import { debug } from '../utils';
 import {
   InitializeEnvironmentData,
   MainWindow,
   PartytownWebWorker,
   WorkerMessageType,
 } from '../types';
+import { logMain, normalizedWinId } from '../log';
 import { winCtxs, windowIds } from './main-constants';
 
 export const registerWindow = (

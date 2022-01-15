@@ -1,10 +1,11 @@
 import { callWorkerRefHandler } from './worker-serialization';
 import { createEnvironment } from './worker-environment';
-import { debug, logWorker, normalizedWinId } from '../utils';
+import { debug } from '../utils';
 import { environments, webWorkerCtx } from './worker-constants';
 import { ForwardMainTriggerData, MessageFromSandboxToWorker, WorkerMessageType } from '../types';
 import { initNextScriptsInWebWorker } from './worker-exec';
 import { initWebWorker } from './init-web-worker';
+import { logWorker, normalizedWinId } from '../log';
 import { workerForwardedTriggerHandle } from './worker-forwarded-trigger';
 
 const queuedEvents: MessageEvent<MessageFromSandboxToWorker>[] = [];
