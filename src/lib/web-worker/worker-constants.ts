@@ -2,37 +2,67 @@ import type { InterfaceInfo, RefHandler, WebWorkerContext, WebWorkerEnvironment 
 import type { Node } from './worker-node';
 import type { WorkerProxy } from './worker-proxy-constructor';
 
-export const WinIdKey = Symbol();
-export const InstanceIdKey = Symbol();
-export const NodeNameKey = Symbol();
-export const NamespaceKey = Symbol();
-export const ApplyPathKey = Symbol();
-export const InstanceStateKey = Symbol();
-export const HookContinue = Symbol();
-export const HookPrevent = Symbol();
+export const WinIdKey = /*#__PURE__*/ Symbol();
+export const InstanceIdKey = /*#__PURE__*/ Symbol();
+export const NodeNameKey = /*#__PURE__*/ Symbol();
+export const NamespaceKey = /*#__PURE__*/ Symbol();
+export const ApplyPathKey = /*#__PURE__*/ Symbol();
+export const InstanceStateKey = /*#__PURE__*/ Symbol();
+export const HookContinue = /*#__PURE__*/ Symbol();
+export const HookPrevent = /*#__PURE__*/ Symbol();
 
-export const webWorkerInstances = new Map<number, Node>();
+export const webWorkerInstances = /*#__PURE__*/ new Map<number, Node>();
 export const webWorkerRefsByRefId: { [refId: number]: RefHandler } = {};
-export const webWorkerRefIdsByRef = new WeakMap<RefHandler, number>();
+export const webWorkerRefIdsByRef = /*#__PURE__*/ new WeakMap<RefHandler, number>();
 export const nodeConstructors: { [nodeName: string]: typeof Node } = {};
-export const envGlobalConstructors: { [cstrName: string]: typeof WorkerProxy } = {};
+export const envGlobalConstructors: Map<string, typeof WorkerProxy> = /*#__PURE__*/ new Map();
 
 export const webWorkerCtx: WebWorkerContext = {} as any;
 export const webWorkerInterfaces: InterfaceInfo[] = [];
 
 export const environments: { [winId: number]: WebWorkerEnvironment } = {};
 
-export const cachedDimensions = new Map<string, any>();
-export const cachedTree = new Map<string, any>();
+export const cachedDimensions = /*#__PURE__*/ new Map<string, any>();
+export const cachedStructure = /*#__PURE__*/ new Map<string, any>();
 
-export const dimensionMethodNames = 'getClientRects,getBoundingClientRect'.split(',');
-export const dimensionPropNames =
-  'innerHeight,innerWidth,outerHeight,outerWidth,clientHeight,clientWidth,clientTop,clientLeft,scrollHeight,scrollWidth,scrollTop,scrollLeft,offsetHeight,offsetWidth,offsetTop,offsetLeft'.split(
-    ','
-  );
+export const commaSplit = (str: string) => str.split(',');
 
-export const nodeTreePropNames =
-  'childNodes,firstChild,isConnected,lastChild,nextSibling,parentElement,parentNode,previousSibling';
+/** property getters for dimensions */
+export const getterDimensionPropNames = /*#__PURE__*/ commaSplit(
+  'clientWidth,clientHeight,clientTop,clientLeft,innerWidth,innerHeight,offsetWidth,offsetHeight,offsetTop,offsetLeft,outerWidth,outerHeight,pageXOffset,pageYOffset,scrollWidth,scrollHeight,scrollTop,scrollLeft'
+);
 
-export const elementTreePropNames =
-  'childElementCount,children,firstElementChild,lastElementChild,nextElementSibling,previousElementSibling';
+/** node properties in regards to the DOM structure */
+export const nodeStructurePropNames = /*#__PURE__*/ commaSplit(
+  'childNodes,firstChild,isConnected,lastChild,nextSibling,parentElement,parentNode,previousSibling'
+);
+
+/** element properties in regards to the DOM structure */
+export const elementStructurePropNames = /*#__PURE__*/ commaSplit(
+  'childElementCount,children,firstElementChild,lastElementChild,nextElementSibling,previousElementSibling'
+);
+
+/** methods that could change the DOM structure */
+export const structureChangingMethodNames = /*#__PURE__*/ commaSplit(
+  'insertBefore,remove,removeChild,replaceChild'
+);
+
+/** setters that could change dimensions of elements */
+export const dimensionChangingSetterNames = /*#__PURE__*/ commaSplit(
+  'className,width,height,hidden,innerHTML,innerText,textContent'
+);
+
+/** method calls that could change dimensions of elements */
+export const dimensionChangingMethodNames = commaSplit('setAttribute,setProperty');
+
+/** element methods that only read the DOM */
+export const elementGetterDimensionMethodNames = /*#__PURE__*/ commaSplit(
+  'getClientRects,getBoundingClientRect'
+);
+
+/** window methods that only read the DOM */
+export const windowGetterDimensionMethodNames = ['getComputedStyle'];
+
+export const eventTargetMethods = /*#__PURE__*/ commaSplit(
+  'addEventListener,dispatchEvent,removeEventListener'
+);

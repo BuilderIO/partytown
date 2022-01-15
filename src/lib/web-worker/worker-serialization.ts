@@ -11,6 +11,7 @@ import {
 import { Attr } from './worker-node';
 import { callMethod } from './worker-proxy';
 import { constructEvent, getOrCreateNodeInstance } from './worker-constructors';
+import { CSSStyleDeclaration } from './worker-css-style-declaration';
 import {
   environments,
   InstanceIdKey,
@@ -19,22 +20,20 @@ import {
   WinIdKey,
 } from './worker-constants';
 import { NodeList } from './worker-node-list';
+import { getConstructorName, noop } from '../utils';
 import { setWorkerRef } from './worker-state';
 
 export const serializeForMain = (
   $winId$: number,
   $instanceId$: number,
   value: any,
-  added?: Set<any>
+  added?: Set<any>,
+  type?: string
 ): SerializedTransfer | undefined => {
-  if (value !== undefined) {
-    let type = typeof value;
-
+  if (value !== undefined && (type = typeof value)) {
     if (type === 'string' || type === 'boolean' || type === 'number' || value == null) {
       return [SerializedType.Primitive, value];
-    }
-
-    if (type === 'function') {
+    } else if (type === 'function') {
       return [
         SerializedType.Ref,
         {
@@ -43,20 +42,18 @@ export const serializeForMain = (
           $refId$: setWorkerRef(value),
         },
       ];
-    }
-
-    added = added || new Set();
-    if (Array.isArray(value)) {
-      if (!added.has(value)) {
-        return [
-          SerializedType.Array,
-          value.map((v) => serializeForMain($winId$, $instanceId$, v, added)),
-        ];
+    } else if ((added = added || new Set()) && Array.isArray(value)) {
+      if (added.has(value)) {
+        return [SerializedType.Array, []];
+      } else {
+        return (
+          added.add(value) && [
+            SerializedType.Array,
+            value.map((v) => serializeForMain($winId$, $instanceId$, v, added)),
+          ]
+        );
       }
-      return [SerializedType.Array, []];
-    }
-
-    if (type === 'object') {
+    } else if (type === 'object') {
       if (typeof value[InstanceIdKey] === 'number') {
         return [
           SerializedType.Instance,
@@ -65,27 +62,33 @@ export const serializeForMain = (
             $instanceId$: value[InstanceIdKey],
           },
         ];
-      }
-
-      if (value instanceof Event) {
+      } else if (value instanceof Event) {
         return [
           SerializedType.Event,
           serializeObjectForMain($winId$, $instanceId$, value, false, added),
         ];
-      }
-
-      if (typeof TrustedHTML !== 'undefined' && value instanceof TrustedHTML) {
+      } else if (supportsTrustedHTML && value instanceof TrustedHTML) {
         // https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API
         return [SerializedType.Primitive, value.toString()];
+      } else if (value instanceof ArrayBuffer) {
+        return [SerializedType.ArrayBuffer, value];
+      } else if (ArrayBuffer.isView(value)) {
+        return [SerializedType.ArrayBufferView, value.buffer, getConstructorName(value)];
+      } else {
+        return [
+          SerializedType.Object,
+          serializeObjectForMain($winId$, $instanceId$, value, true, added),
+        ];
       }
-
-      return [
-        SerializedType.Object,
-        serializeObjectForMain($winId$, $instanceId$, value, true, added),
-      ];
+    } else {
+      return;
     }
+  } else {
+    return value;
   }
 };
+
+const supportsTrustedHTML = typeof TrustedHTML !== 'undefined';
 
 const serializeObjectForMain = (
   winId: number,
@@ -119,11 +122,14 @@ export const serializeInstanceForMain = (
     : [SerializedType.Primitive, value];
 
 export const deserializeFromMain = (
+  winId: number | undefined | null,
   instanceId: number | undefined | null,
   applyPath: ApplyPath,
   serializedValueTransfer?: SerializedTransfer,
   serializedType?: SerializedType,
-  serializedValue?: any
+  serializedValue?: any,
+  obj?: any,
+  key?: string
 ): any => {
   if (serializedValueTransfer) {
     serializedType = serializedValueTransfer[0];
@@ -141,6 +147,10 @@ export const deserializeFromMain = (
       return deserializeRefFromMain(applyPath, serializedValue);
     }
 
+    if (serializedType === SerializedType.Function) {
+      return noop;
+    }
+
     if (serializedType === SerializedType.Instance) {
       return getOrCreateSerializedInstance(serializedValue);
     }
@@ -155,32 +165,27 @@ export const deserializeFromMain = (
 
     if (serializedType === SerializedType.Array) {
       return (serializedValue as SerializedTransfer[]).map((v) =>
-        deserializeFromMain(instanceId, applyPath, v)
+        deserializeFromMain(winId, instanceId, applyPath, v)
       );
     }
 
+    obj = {};
+    for (key in serializedValue) {
+      obj[key] = deserializeFromMain(winId!, instanceId, [...applyPath, key], serializedValue[key]);
+    }
+
+    if (serializedType === SerializedType.CSSStyleDeclaration) {
+      return new CSSStyleDeclaration(winId!, instanceId!, applyPath, obj);
+    }
+
     if (serializedType === SerializedType.Event) {
-      return constructEvent(deserializeObjectFromMain(instanceId!, applyPath, serializedValue));
+      return constructEvent(obj);
     }
 
     if (serializedType === SerializedType.Object) {
-      return deserializeObjectFromMain(instanceId!, applyPath, serializedValue);
+      return obj;
     }
   }
-};
-
-const deserializeObjectFromMain = (
-  instanceId: number,
-  applyPath: ApplyPath,
-  serializedValue: any,
-  obj?: any,
-  key?: string
-) => {
-  obj = {};
-  for (key in serializedValue) {
-    obj[key] = deserializeFromMain(instanceId, [...applyPath, key], serializedValue[key]);
-  }
-  return obj;
 };
 
 export const getOrCreateSerializedInstance = ({
@@ -214,8 +219,8 @@ export const callWorkerRefHandler = ({
 }: RefHandlerCallbackData) => {
   if (webWorkerRefsByRefId[$refId$]) {
     try {
-      const thisArg = deserializeFromMain($instanceId$, [], $thisArg$);
-      const args = deserializeFromMain($instanceId$, [], $args$);
+      const thisArg = deserializeFromMain(null, $instanceId$, [], $thisArg$);
+      const args = deserializeFromMain(null, $instanceId$, [], $args$);
       webWorkerRefsByRefId[$refId$].apply(thisArg, args);
     } catch (e) {
       console.error(e);

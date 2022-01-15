@@ -1,4 +1,4 @@
-import type { ApplyPath } from '../types';
+import { ApplyPath, CallType } from '../types';
 import {
   ApplyPathKey,
   InstanceIdKey,
@@ -6,8 +6,9 @@ import {
   InstanceStateKey,
   WinIdKey,
   NamespaceKey,
+  eventTargetMethods,
 } from './worker-constants';
-import { getter, setter } from './worker-proxy';
+import { callMethod, getter, setter } from './worker-proxy';
 
 export class WorkerProxy {
   [WinIdKey]: number;
@@ -34,6 +35,14 @@ export class WorkerProxy {
     }
   }
 }
+
+export class WorkerEventTargetProxy extends WorkerProxy {}
+eventTargetMethods.map(
+  (methodName) =>
+    ((WorkerEventTargetProxy as any).prototype[methodName] = function (...args: any[]) {
+      return callMethod(this, [methodName], args, CallType.NonBlocking);
+    })
+);
 
 export class WorkerTrapProxy extends WorkerProxy {
   constructor(winId: number, instanceId: number, applyPath?: ApplyPath, nodeName?: string) {

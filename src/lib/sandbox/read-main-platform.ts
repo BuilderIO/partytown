@@ -1,4 +1,4 @@
-import { debug, getConstructorName, isValidMemberName, len, logMain, noop } from '../utils';
+import { debug, getConstructorName, isValidMemberName, len, noop } from '../utils';
 import {
   InterfaceType,
   InterfaceInfo,
@@ -7,6 +7,7 @@ import {
   PartytownConfig,
   StorageItem,
 } from '../types';
+import { logMain } from '../log';
 
 export const readMainPlatform = (win: any) => {
   const startTime = debug ? performance.now() : 0;
@@ -16,10 +17,7 @@ export const readMainPlatform = (win: any) => {
   const textNode = docImpl.createTextNode('');
   const comment = docImpl.createComment('');
   const frag = docImpl.createDocumentFragment();
-  const elm = docImpl.createElement('i');
   const svg = docImpl.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  const canvas = docImpl.createElement('canvas');
-  const canvasRenderingContext2D = canvas.getContext('2d');
   const mutationObserver = new MutationObserver(noop);
   const resizeObserver = new ResizeObserver(noop);
   const perf = win.performance;
@@ -29,10 +27,10 @@ export const readMainPlatform = (win: any) => {
   // and create each element to get their implementation
   const elms = Object.getOwnPropertyNames(win)
     .filter((c) => /^HTML.+Element$/.test(c))
-    .map((htmlCstrName) => {
-      const htmlTagName = getHtmlTagNameFromConstructor(htmlCstrName);
-      return [docImpl.createElement(htmlTagName)];
-    });
+    .map((htmlCstrName) => [docImpl.createElement(getHtmlTagNameFromConstructor(htmlCstrName))]);
+
+  // get the first HTMLElement to read its properties
+  const elm = elms[0][0];
 
   const impls: any[] = [
     // window implementations
@@ -59,14 +57,13 @@ export const readMainPlatform = (win: any) => {
     [svg],
     [docImpl],
     [docImpl.doctype!],
-    [canvasRenderingContext2D!],
     ...elms,
   ]
     .filter((implData) => implData[0])
     .map((implData) => {
       const impl = implData[0];
       const interfaceType: InterfaceType = implData[1];
-      const cstrName: string = impl.constructor.name;
+      const cstrName = getConstructorName(impl);
       const CstrPrototype = win[cstrName].prototype;
       return [cstrName, CstrPrototype, impl, interfaceType];
     });
@@ -110,10 +107,10 @@ export const readMainPlatform = (win: any) => {
   return initWebWorkerData;
 };
 
-const readImplementation = (cstrName: string, impl: any) => {
-  const interfaceMembers: InterfaceMember[] = [];
-  const interfaceInfo: InterfaceInfo = [cstrName, 'Object', interfaceMembers];
-  for (const memberName in impl) {
+const readImplementation = (cstrName: string, impl: any, memberName?: string) => {
+  let interfaceMembers: InterfaceMember[] = [];
+  let interfaceInfo: InterfaceInfo = [cstrName, 'Object', interfaceMembers];
+  for (memberName in impl) {
     readImplementationMember(interfaceMembers, impl, memberName);
   }
   return interfaceInfo;
@@ -128,7 +125,7 @@ const readOwnImplementation = (
 ) => {
   if (cstrName !== 'Object' && !interfaces.some((i) => i[0] === cstrName)) {
     const SuperCstr = Object.getPrototypeOf(CstrPrototype);
-    const superCstrName = SuperCstr.constructor.name;
+    const superCstrName = getConstructorName(SuperCstr);
     const interfaceMembers: InterfaceMember[] = [];
 
     readOwnImplementation(interfaces, superCstrName, SuperCstr, impl, interfaceType);
@@ -156,7 +153,7 @@ const readImplementationMember = (
   cstrName?: string
 ) => {
   try {
-    if (isValidMemberName(memberName) && isNaN((memberName as any)[0])) {
+    if (isValidMemberName(memberName) && isNaN((memberName as any)[0]) && memberName !== 'all') {
       value = implementation[memberName];
       memberType = typeof value;
 
@@ -169,7 +166,7 @@ const readImplementationMember = (
         }
       } else if (memberType === 'object' && value != null) {
         cstrName = getConstructorName(value);
-        if (cstrName !== 'Object' && (window as any)[cstrName]) {
+        if (cstrName !== 'Object' && (self as any)[cstrName]) {
           interfaceMembers.push([memberName, value.nodeType || cstrName]);
         }
       } else if (memberType !== 'symbol') {
@@ -202,7 +199,7 @@ const htmlConstructorToTagMap: { [key: string]: string } = {
 };
 
 const getHtmlTagNameFromConstructor = (t: string) => {
-  t = t.substr(4).replace('Element', '');
+  t = t.slice(4).replace('Element', '');
   return htmlConstructorToTagMap[t] || t;
 };
 

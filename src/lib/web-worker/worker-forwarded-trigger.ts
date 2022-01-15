@@ -20,7 +20,7 @@ export const workerForwardedTriggerHandle = ({
       } else {
         target[$forward$[i]].apply(
           target,
-          deserializeFromMain(PlatformInstanceId.window, [], $args$)
+          deserializeFromMain(null, PlatformInstanceId.window, [], $args$)
         );
       }
     }

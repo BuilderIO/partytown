@@ -1,6 +1,6 @@
 import { CSSStyleSheet } from './worker-style';
 import { defineWorkerInterface, patchPrototypes } from './worker-define-constructors';
-import { logWorker } from '../utils';
+import { logWorker } from '../log';
 import type { InitWebWorkerData } from '../types';
 import { Node } from './worker-node';
 import type { PartytownConfig } from '@builder.io/partytown/intergration';
@@ -20,10 +20,11 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   const fnConfigs: (keyof PartytownConfig)[] = ['resolveUrl', 'get', 'set', 'apply'];
   fnConfigs.map(functionify);
 
+  webWorkerCtx.$importScripts$ = importScripts.bind(self);
   webWorkerCtx.$libPath$ = initWebWorkerData.$libPath$;
   webWorkerCtx.$localStorage$ = initWebWorkerData.$localStorage$;
   webWorkerCtx.$sessionStorage$ = initWebWorkerData.$sessionStorage$;
-  webWorkerCtx.$postMessage$ = postMessage.bind(self);
+  webWorkerCtx.$postMessage$ = (postMessage as any).bind(self);
   webWorkerCtx.$sharedDataBuffer$ = initWebWorkerData.$sharedDataBuffer$;
 
   (self as any).postMessage = (self as any).importScripts = undefined;

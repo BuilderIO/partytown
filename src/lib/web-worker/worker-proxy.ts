@@ -1,33 +1,45 @@
 import {
   ApplyPath,
   ApplyPathType,
+  CallMethod,
+  CallType,
+  ConstructGlobal,
+  Getter,
   HookOptions,
   MainAccessRequest,
   MainAccessResponse,
   MainAccessTask,
+  Setter,
   WorkerMessageType,
 } from '../types';
 import {
   ApplyPathKey,
   cachedDimensions,
-  dimensionMethodNames,
+  cachedStructure,
+  dimensionChangingMethodNames,
+  dimensionChangingSetterNames,
   HookContinue,
   HookPrevent,
   InstanceIdKey,
   NodeNameKey,
+  structureChangingMethodNames,
   webWorkerCtx,
   WinIdKey,
 } from './worker-constants';
+import { debug, getConstructorName, len, randomId } from '../utils';
+import { deserializeFromMain, serializeInstanceForMain } from './worker-serialization';
+import { hasInstanceStateValue, setInstanceStateValue } from './worker-state';
 import {
-  debug,
-  len,
+  logCacheClearMethod,
+  logDimensionCacheClearMethod,
+  logDimensionCacheClearSetter,
   logWorker,
   logWorkerCall,
   logWorkerGetter,
+  logWorkerGlobalConstructor,
   logWorkerSetter,
-  randomId,
-} from '../utils';
-import { deserializeFromMain, serializeInstanceForMain } from './worker-serialization';
+  taskDebugInfo,
+} from '../log';
 import type { Node } from './worker-node';
 import syncSendMessageToMain from '../build-modules/sync-send-message-to-main';
 import type { WorkerProxy } from './worker-proxy-constructor';
@@ -36,27 +48,53 @@ const taskQueue: MainAccessTask[] = [];
 
 let asyncMsgTimer: any = 0;
 
-export const queue = (
+const queue = (
   instance: WorkerProxy,
   $applyPath$: ApplyPath,
-  isSetter?: boolean,
+  callType: CallType,
   $assignInstanceId$?: number,
-  $groupedGetters$?: string[]
+  $groupedGetters$?: string[],
+  buffer?: ArrayBuffer | ArrayBufferView,
+  task?: MainAccessTask
 ) => {
-  const $instanceId$ = instance[InstanceIdKey];
-  taskQueue.push({
+  task = {
     $winId$: instance[WinIdKey],
-    $instanceId$,
+    $instanceId$: instance[InstanceIdKey],
     $applyPath$: [...instance[ApplyPathKey], ...$applyPath$],
     $assignInstanceId$,
     $groupedGetters$,
-  });
-
-  if (!isSetter) {
-    return sendToMain(true);
+  };
+  if (debug) {
+    task.$debug$ = taskDebugInfo(instance, $applyPath$, callType);
   }
 
-  asyncMsgTimer = setTimeout(sendToMain, 30);
+  if (callType === CallType.NonBlockingNoSideEffect) {
+    // non-blocking and has no side effects (like an event)
+    webWorkerCtx.$postMessage$(
+      [
+        WorkerMessageType.AsyncAccessRequest,
+        {
+          $msgId$: randomId(),
+          $tasks$: [task],
+        },
+      ],
+      buffer ? [buffer instanceof ArrayBuffer ? buffer : buffer.buffer] : undefined
+    );
+  } else {
+    // queue up the task
+    taskQueue.push(task);
+    if (debug && buffer) {
+      console.error('buffer must be sent NonBlockingNoSideEffect');
+    }
+
+    if (callType === CallType.Blocking) {
+      // this task is blocking, so let's send to the main and return the result
+      return sendToMain(true);
+    }
+
+    // task is not blocking, so just update the async timer
+    asyncMsgTimer = setTimeout(sendToMain, 20);
+  }
 };
 
 export const sendToMain = (isBlocking?: boolean) => {
@@ -81,6 +119,7 @@ export const sendToMain = (isBlocking?: boolean) => {
       const isPromise = accessRsp.$isPromise$;
 
       const rtnValue = deserializeFromMain(
+        endTask.$winId$,
         endTask.$instanceId$,
         endTask.$applyPath$,
         accessRsp.$rtnValue$!
@@ -101,8 +140,12 @@ export const sendToMain = (isBlocking?: boolean) => {
   }
 };
 
-export const getter = (instance: WorkerProxy, applyPath: ApplyPath, groupedGetters?: string[]) => {
-  let rtnValue: any;
+export const getter: Getter = (
+  instance: WorkerProxy,
+  applyPath: ApplyPath,
+  groupedGetters?: string[],
+  rtnValue?: any
+) => {
   if (webWorkerCtx.$config$.get) {
     rtnValue = webWorkerCtx.$config$.get(createHookOptions(instance, applyPath));
     if (rtnValue !== HookContinue) {
@@ -110,16 +153,21 @@ export const getter = (instance: WorkerProxy, applyPath: ApplyPath, groupedGette
     }
   }
 
-  rtnValue = queue(instance, applyPath, false, undefined, groupedGetters);
+  rtnValue = queue(instance, applyPath, CallType.Blocking, undefined, groupedGetters);
 
   logWorkerGetter(instance, applyPath, rtnValue, false, !!groupedGetters);
 
   return rtnValue;
 };
 
-export const setter = (instance: WorkerProxy, applyPath: ApplyPath, value: any) => {
+export const setter: Setter = (
+  instance: WorkerProxy,
+  applyPath: ApplyPath,
+  value: any,
+  hookSetterValue?: any
+) => {
   if (webWorkerCtx.$config$.set) {
-    const hookSetterValue = webWorkerCtx.$config$.set({
+    hookSetterValue = webWorkerCtx.$config$.set({
       value,
       prevent: HookPrevent,
       ...createHookOptions(instance, applyPath),
@@ -132,22 +180,29 @@ export const setter = (instance: WorkerProxy, applyPath: ApplyPath, value: any) 
     }
   }
 
-  const serializedValue = serializeInstanceForMain(instance, value);
+  if (dimensionChangingSetterNames.some((s) => applyPath.includes(s))) {
+    // style setter was called, let's clear the dimension cache
+    cachedDimensions.clear();
+    logDimensionCacheClearSetter(instance, applyPath[applyPath.length - 1]);
+  }
 
-  const setterApplyPath = [...applyPath, serializedValue, ApplyPathType.SetValue];
+  applyPath = [...applyPath, serializeInstanceForMain(instance, value), ApplyPathType.SetValue];
 
-  logWorkerSetter(instance, setterApplyPath, value);
+  logWorkerSetter(instance, applyPath, value);
 
-  queue(instance, setterApplyPath, true);
+  queue(instance, applyPath, CallType.NonBlocking);
 };
 
-export const callMethod = (
+export const callMethod: CallMethod = (
   instance: WorkerProxy,
   applyPath: ApplyPath,
   args: any[],
-  assignInstanceId?: number
+  callType?: CallType,
+  assignInstanceId?: number,
+  buffer?: ArrayBuffer | ArrayBufferView,
+  rtnValue?: any,
+  methodName?: string
 ) => {
-  let rtnValue: any;
   if (webWorkerCtx.$config$.apply) {
     rtnValue = webWorkerCtx.$config$.apply({ args, ...createHookOptions(instance, applyPath) });
     if (rtnValue !== HookContinue) {
@@ -155,30 +210,47 @@ export const callMethod = (
     }
   }
 
-  const methodName = applyPath[len(applyPath) - 1];
-  const isSetter = setterMethods.includes(methodName);
+  methodName = applyPath[len(applyPath) - 1];
+  applyPath = [...applyPath, serializeInstanceForMain(instance, args)];
 
-  const callApplyPath = [...applyPath, serializeInstanceForMain(instance, args)];
+  callType = callType || CallType.Blocking;
 
-  rtnValue = queue(instance, callApplyPath, isSetter, assignInstanceId);
-
-  logWorkerCall(instance, callApplyPath, args, rtnValue);
-
-  if (!isSetter && !dimensionMethodNames.includes(methodName)) {
+  if (methodName === 'setAttribute' && hasInstanceStateValue(instance, args[0])) {
+    setInstanceStateValue(instance, args[0], args[1]);
+  } else if (structureChangingMethodNames.includes(methodName!)) {
     cachedDimensions.clear();
+    cachedStructure.clear();
+    logCacheClearMethod(instance, methodName);
+  } else if (dimensionChangingMethodNames.includes(methodName!)) {
+    callType = CallType.NonBlocking;
+    cachedDimensions.clear();
+    logDimensionCacheClearMethod(instance, methodName);
   }
 
+  rtnValue = queue(instance, applyPath, callType, assignInstanceId, undefined, buffer);
+
+  logWorkerCall(instance, applyPath, args, rtnValue);
+
   return rtnValue;
+};
+
+export const constructGlobal: ConstructGlobal = (
+  instance: WorkerProxy,
+  cstrName: string,
+  args: any[]
+) => {
+  logWorkerGlobalConstructor(instance, cstrName, args);
+
+  queue(
+    instance,
+    [ApplyPathType.GlobalConstructor, cstrName, serializeInstanceForMain(instance, args)],
+    CallType.Blocking
+  );
 };
 
 const createHookOptions = (instance: WorkerProxy, applyPath: ApplyPath): HookOptions => ({
   name: applyPath.join('.'),
   continue: HookContinue,
   nodeName: (instance as any as Node)[NodeNameKey],
-  constructor: (instance as any).constructor && (instance as any).constructor.name,
+  constructor: getConstructorName(instance),
 });
-
-const setterMethods =
-  'addEventListener,removeEventListener,createElement,createTextNode,insertBefore,insertRule,deleteRule,setAttribute,setItem,removeItem,classList.add,classList.remove,classList.toggle'.split(
-    ','
-  );

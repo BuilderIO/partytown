@@ -1,15 +1,17 @@
 import {
   ApplyPathKey,
   cachedDimensions,
-  cachedTree,
-  dimensionMethodNames,
-  dimensionPropNames,
-  elementTreePropNames,
+  cachedStructure,
+  commaSplit,
+  elementGetterDimensionMethodNames,
+  elementStructurePropNames,
   envGlobalConstructors,
+  getterDimensionPropNames,
   InstanceIdKey,
   nodeConstructors,
   NodeNameKey,
-  nodeTreePropNames,
+  nodeStructurePropNames,
+  windowGetterDimensionMethodNames,
   WinIdKey,
 } from './worker-constants';
 import { callMethod, getter, setter } from './worker-proxy';
@@ -33,13 +35,12 @@ import {
   setInstanceStateValue,
 } from './worker-state';
 import { HTMLAnchorDescriptorMap } from './worker-anchor';
-import { HTMLCanvasDescriptorMap } from './worker-canvas';
 import { HTMLIFrameDescriptorMap } from './worker-iframe';
 import { HTMLScriptDescriptorMap } from './worker-script';
 import { InterfaceInfo, InterfaceType } from '../types';
 import { Node } from './worker-node';
-import { patchWebWorkerWindowPrototype, Window } from './worker-window';
-import { WorkerProxy, WorkerTrapProxy } from './worker-proxy-constructor';
+import { Window } from './worker-window';
+import { WorkerEventTargetProxy, WorkerProxy, WorkerTrapProxy } from './worker-proxy-constructor';
 
 export const defineWorkerInterface = ([
   cstrName,
@@ -50,7 +51,9 @@ export const defineWorkerInterface = ([
 ]: InterfaceInfo) => {
   const SuperCstr = TrapConstructors[cstrName]
     ? WorkerTrapProxy
-    : superCstrName === 'Object' || superCstrName === 'EventTarget'
+    : superCstrName === 'EventTarget'
+    ? WorkerEventTargetProxy
+    : superCstrName === 'Object'
     ? WorkerProxy
     : (self as any)[superCstrName];
 
@@ -60,7 +63,7 @@ export const defineWorkerInterface = ([
   ));
 
   if (interfaceType === InterfaceType.EnvGlobalConstructor) {
-    envGlobalConstructors[cstrName] = Cstr;
+    envGlobalConstructors.set(cstrName, Cstr);
   }
 
   if (nodeName) {
@@ -136,12 +139,19 @@ export const patchPrototypes = () => {
   const DocumentFragment = self.DocumentFragment;
   const Element = self.Element;
 
-  patchWebWorkerWindowPrototype();
+  // we already assigned the same prototypes found on the main thread's Window
+  // to the worker's Window, but actually it assigned a few that are already on
+  // the web worker's global we can use instead. So manually set which web worker
+  // globals we can reuse, instead of calling the main access.
+  // These same window properties will be assigned to the window instance
+  // when Window is constructed, and these won't make calls to the main thread.
+  commaSplit('atob,btoa,crypto,indexedDB,setTimeout,setInterval,clearTimeout,clearInterval').map(
+    (memberName) => delete (Window as any).prototype[memberName]
+  );
 
   definePrototypePropertyDescriptor(Element, ElementDescriptorMap);
   definePrototypePropertyDescriptor(Document, DocumentDescriptorMap);
   definePrototypePropertyDescriptor(self.HTMLAnchorElement, HTMLAnchorDescriptorMap);
-  definePrototypePropertyDescriptor(self.HTMLCanvasElement, HTMLCanvasDescriptorMap);
   definePrototypePropertyDescriptor(self.HTMLIFrameElement, HTMLIFrameDescriptorMap);
   definePrototypePropertyDescriptor(self.HTMLScriptElement, HTMLScriptDescriptorMap);
   definePrototypePropertyDescriptor(self.HTMLStyleElement, HTMLStyleDescriptorMap);
@@ -155,45 +165,55 @@ export const patchPrototypes = () => {
   definePrototypeNodeType(self.DocumentType, 10);
   definePrototypeNodeType(DocumentFragment, 11);
 
-  cachedTreeProps(Node, nodeTreePropNames);
-  cachedTreeProps(Element, elementTreePropNames);
-  cachedTreeProps(DocumentFragment, elementTreePropNames);
+  cachedTreeProps(Node, nodeStructurePropNames);
+  cachedTreeProps(Element, elementStructurePropNames);
+  cachedTreeProps(DocumentFragment, elementStructurePropNames);
 
   cachedDimensionProps(Element);
-  cachedDimensionProps(Window);
-  cachedDimensionMethods(Element);
+  cachedDimensionMethods(Element, elementGetterDimensionMethodNames);
 
-  cachedReadonlyProps(Document, 'compatMode,referrer');
+  cachedDimensionProps(Window);
+  cachedDimensionMethods(Window, windowGetterDimensionMethodNames);
+
+  cachedProps(Window, 'devicePixelRatio');
+  cachedProps(Document, 'compatMode,referrer');
+  cachedProps(Element, 'id');
 };
 
 const definePrototypeNodeType = (Cstr: any, nodeType: number) =>
   definePrototypeValue(Cstr, 'nodeType', nodeType);
 
-const cachedTreeProps = (Cstr: any, treeProps: string) =>
-  treeProps.split(',').map((propName) =>
+const cachedTreeProps = (Cstr: any, treeProps: string[]) =>
+  treeProps.map((propName) =>
     definePrototypeProperty(Cstr, propName, {
       get(this: WorkerProxy) {
-        let cacheKey = getDimensionCacheKey(this, propName);
-        let result = cachedTree.get(cacheKey);
+        let cacheKey = getInstanceCacheKey(this, propName);
+        let result = cachedStructure.get(cacheKey);
         if (!result) {
           result = getter(this, [propName]);
-          cachedTree.set(cacheKey, result);
+          cachedStructure.set(cacheKey, result);
         }
         return result;
       },
     })
   );
 
-const getDimensionCacheKey = (instance: WorkerProxy, memberName: string) =>
-  instance[WinIdKey] + '.' + instance[InstanceIdKey] + '.' + memberName;
+const getInstanceCacheKey = (instance: WorkerProxy, memberName: string, args?: any[]) =>
+  [
+    instance[WinIdKey],
+    instance[InstanceIdKey],
+    memberName,
+    ...(args || EMPTY_ARRAY).map((arg) => String(arg && arg[WinIdKey] ? arg[InstanceIdKey] : arg)),
+  ].join('.');
 
 /**
  * Properties to add to the Constructor's prototype
  * that should only do a main read once, cache the value, and
- * returned the cached value after in subsequent reads after that
+ * returned the cached value after in subsequent reads after that.
+ * A setter will update the cache.
  */
-const cachedReadonlyProps = (Cstr: any, propNames: string) =>
-  propNames.split(',').map((propName) =>
+const cachedProps = (Cstr: any, propNames: string) =>
+  commaSplit(propNames).map((propName) =>
     definePrototypeProperty(Cstr, propName, {
       get(this: WorkerProxy) {
         if (!hasInstanceStateValue(this, propName)) {
@@ -202,6 +222,9 @@ const cachedReadonlyProps = (Cstr: any, propNames: string) =>
         return getInstanceStateValue(this, propName);
       },
       set(this: WorkerProxy, val) {
+        if (getInstanceStateValue(this, propName) !== val) {
+          setter(this, [propName], val);
+        }
         setInstanceStateValue(this, propName, val);
       },
     })
@@ -222,10 +245,10 @@ export const constantProps = (Cstr: any, props: { [propName: string]: any }) =>
  * set its cache. The dimension cache is cleared when another method is called.
  */
 const cachedDimensionProps = (Cstr: any) =>
-  dimensionPropNames.map((propName) =>
+  getterDimensionPropNames.map((propName) =>
     definePrototypeProperty(Cstr, propName, {
       get(this: Node) {
-        const dimension = cachedDimensions.get(getDimensionCacheKey(this, propName));
+        const dimension = cachedDimensions.get(getInstanceCacheKey(this, propName));
         if (typeof dimension === 'number') {
           return dimension;
         }
@@ -233,13 +256,13 @@ const cachedDimensionProps = (Cstr: any) =>
         const groupedDimensions: { [key: string]: number } = getter(
           this,
           [propName],
-          dimensionPropNames
+          getterDimensionPropNames
         );
 
         if (groupedDimensions && typeof groupedDimensions === 'object') {
-          Object.entries(groupedDimensions).map(([dimensionPropName, value]) => {
-            cachedDimensions.set(getDimensionCacheKey(this, dimensionPropName), value);
-          });
+          Object.entries(groupedDimensions).map(([dimensionPropName, value]) =>
+            cachedDimensions.set(getInstanceCacheKey(this, dimensionPropName), value)
+          );
 
           return groupedDimensions[propName];
         }
@@ -251,13 +274,13 @@ const cachedDimensionProps = (Cstr: any) =>
 /**
  * Methods that return dimensions that can be cached, similar to cachedDimensionProps()
  */
-const cachedDimensionMethods = (Cstr: any) =>
+const cachedDimensionMethods = (Cstr: any, dimensionMethodNames: string[]) =>
   dimensionMethodNames.map((methodName) => {
-    Cstr.prototype[methodName] = function () {
-      let cacheKey = getDimensionCacheKey(this, methodName);
+    Cstr.prototype[methodName] = function (...args: any[]) {
+      let cacheKey = getInstanceCacheKey(this, methodName, args);
       let dimensions = cachedDimensions.get(cacheKey);
       if (!dimensions) {
-        dimensions = callMethod(this, [methodName], EMPTY_ARRAY);
+        dimensions = callMethod(this, [methodName], args);
         cachedDimensions.set(cacheKey, dimensions);
       }
       return dimensions;

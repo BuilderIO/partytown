@@ -1,8 +1,9 @@
+import { InstanceIdKey, NodeNameKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { callMethod, setter, sendToMain } from './worker-proxy';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue } from './worker-state';
 import { insertIframe, runScriptContent } from './worker-exec';
-import { InstanceIdKey, NodeNameKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import { isScriptJsType } from './worker-script';
 import { NodeName, SerializedAttr, StateProp, WorkerMessageType } from '../types';
 import { SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
 import { WorkerProxy } from './worker-proxy-constructor';
@@ -30,14 +31,16 @@ export class Node extends WorkerProxy {
 
     if (isScript) {
       const scriptContent = getInstanceStateValue<string>(newNode, StateProp.innerHTML);
+      const scriptType = getInstanceStateValue<string>(newNode, StateProp.type);
 
       if (scriptContent) {
-        const errorMsg = runScriptContent(getEnv(newNode), instanceId, scriptContent, winId);
-        const datasetType = errorMsg ? 'pterror' : 'ptid';
-        const datasetValue = errorMsg || instanceId;
-
-        setter(newNode, ['type'], SCRIPT_TYPE + SCRIPT_TYPE_EXEC);
-        setter(newNode, ['dataset', datasetType], datasetValue);
+        if (isScriptJsType(scriptType)) {
+          const errorMsg = runScriptContent(getEnv(newNode), instanceId, scriptContent, winId, '');
+          const datasetType = errorMsg ? 'pterror' : 'ptid';
+          const datasetValue = errorMsg || instanceId;
+          setter(newNode, ['type'], SCRIPT_TYPE + SCRIPT_TYPE_EXEC);
+          setter(newNode, ['dataset', datasetType], datasetValue);
+        }
         setter(newNode, ['innerHTML'], scriptContent);
       }
     }

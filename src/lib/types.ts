@@ -115,10 +115,11 @@ export type InterfaceMember =
 
 export interface WebWorkerContext {
   $config$: PartytownConfig;
+  $importScripts$: (...urls: string[]) => void;
   $isInitialized$?: number;
   $libPath$: string;
   $localStorage$: StorageItem[];
-  $postMessage$: (msg: MessageFromWorkerToSandbox) => void;
+  $postMessage$: (msg: MessageFromWorkerToSandbox, arr?: any[]) => void;
   $sessionStorage$: StorageItem[];
   $sharedDataBuffer$?: SharedArrayBuffer;
   lastLog?: string;
@@ -196,6 +197,7 @@ export interface MainAccessTask {
   $applyPath$: ApplyPath;
   $groupedGetters$?: string[];
   $assignInstanceId$?: number;
+  $debug$?: string;
 }
 
 export interface MainAccessResponse {
@@ -213,26 +215,38 @@ export const enum ApplyPathType {
 export type ApplyPath = any[];
 
 export const enum SerializedType {
+  Primitive,
   Array,
+  Object,
+  Instance,
+  Ref,
+  Event,
+  Function,
+  NodeList,
+  ArrayBuffer,
+  ArrayBufferView,
   Attr,
   CSSRule,
   CSSRuleList,
-  Event,
-  Function,
-  Instance,
-  NodeList,
-  Object,
-  Primitive,
-  Ref,
+  CSSStyleDeclaration,
 }
 
 export type SerializedArrayTransfer = [SerializedType.Array, (SerializedTransfer | undefined)[]];
+
+export type SerializedArrayBufferTransfer = [SerializedType.ArrayBuffer, any];
+
+export type SerializedArrayBufferViewTransfer = [SerializedType.ArrayBufferView, any, string];
 
 export type SerializedAttrTransfer = [SerializedType.Attr, SerializedAttr];
 
 export type SerializedCSSRuleTransfer = [SerializedType.CSSRule, SerializedCSSRule];
 
 export type SerializedCSSRuleListTransfer = [SerializedType.CSSRuleList, SerializedCSSRule[]];
+
+export type SerializedCSSStyleDeclarationTransfer = [
+  SerializedType.CSSStyleDeclaration,
+  { [key: string]: SerializedTransfer | undefined }
+];
 
 export type SerializedEventTransfer = [SerializedType.Event, SerializedObject];
 
@@ -269,9 +283,12 @@ export interface SerializedRefTransferData {
 
 export type SerializedTransfer =
   | SerializedArrayTransfer
+  | SerializedArrayBufferTransfer
+  | SerializedArrayBufferViewTransfer
   | SerializedAttrTransfer
   | SerializedCSSRuleTransfer
   | SerializedCSSRuleListTransfer
+  | SerializedCSSStyleDeclarationTransfer
   | SerializedEventTransfer
   | SerializedFunctionTransfer
   | SerializedInstanceTransfer
@@ -468,6 +485,7 @@ export const enum StateProp {
   cssRules = 2,
   innerHTML = 3,
   url = 4,
+  type = 5,
 }
 
 export type EventHandler = (ev: any) => void;
@@ -479,3 +497,59 @@ export type StateMap = Record<number, StateRecord>;
 export type StateRecord = Record<string | number, any>;
 
 export type StorageItem = [/*key*/ string, /*value*/ string];
+
+export const enum CallType {
+  Blocking = 1,
+  NonBlocking = 2,
+  NonBlockingNoSideEffect = 3,
+}
+
+export type Getter = (instance: any, applyPath: ApplyPath, groupedGetters?: string[]) => any;
+
+export type Setter = (instance: any, applyPath: ApplyPath, value: any) => void;
+
+export type CallMethod = (
+  instance: any,
+  applyPath: ApplyPath,
+  args: any[],
+  callType?: CallType,
+  assignInstanceId?: number,
+  buffer?: ArrayBuffer | ArrayBufferView
+) => any;
+
+export type ConstructGlobal = (instance: any, cstrName: string, args: any[]) => void;
+
+export type DefinePrototypePropertyDescriptor = (Cstr: any, propertyDescriptorMap: any) => void;
+
+export type RandomId = () => number;
+
+import type { ApplyPathKey, InstanceIdKey, WinIdKey } from './web-worker/worker-constants';
+import type { WorkerEventTargetProxy, WorkerProxy } from './web-worker/worker-proxy-constructor';
+
+export type LazyBridge = [
+  Getter,
+  Setter,
+  CallMethod,
+  ConstructGlobal,
+  DefinePrototypePropertyDescriptor,
+  RandomId,
+  typeof WorkerProxy,
+  typeof WorkerEventTargetProxy,
+  typeof WinIdKey,
+  typeof InstanceIdKey,
+  typeof ApplyPathKey
+];
+
+export type InitLazyMediaConstructor = (
+  env: WebWorkerEnvironment,
+  winInstance: any,
+  CstrName: string
+) => any;
+
+export interface InitLazyMediaConstructors {
+  [CstrName: string]: InitLazyMediaConstructor;
+}
+
+export interface MediaSelf {
+  ptm?: LazyBridge;
+}

@@ -1,40 +1,39 @@
 import { addStorageApi } from './worker-storage';
-import { ApplyPathType, NodeName, PlatformInstanceId } from '../types';
-import { createAudioConstructor } from './worker-audio';
+import { NodeName, PlatformInstanceId } from '../types';
+import { constructGlobal } from './worker-proxy';
 import { createNavigator } from './worker-navigator';
 import { createImageConstructor } from './worker-image';
 import { createNodeInstance, getOrCreateNodeInstance } from './worker-constructors';
-import {
-  debug,
-  defineConstructorName,
-  logWorkerGlobalConstructor,
-  normalizedWinId,
-  randomId,
-} from '../utils';
+import { debug, defineConstructorName, defineProperty, randomId } from '../utils';
 import { envGlobalConstructors, environments, webWorkerCtx, WinIdKey } from './worker-constants';
 import { getEnv } from './worker-environment';
-import { getter, queue } from './worker-proxy';
+import { lazyLoadMedia, windowMediaConstructors } from './worker-media';
 import { Location } from './worker-location';
+import { normalizedWinId } from '../log';
 import { resolveUrl } from './worker-exec';
-import { serializeInstanceForMain } from './worker-serialization';
 import { WorkerProxy } from './worker-proxy-constructor';
 
 export class Window extends WorkerProxy {
   constructor($winId$: number, $parentWinId$: number, url: string) {
     super($winId$, PlatformInstanceId.window);
 
+    let _this: any = this;
+    let globalName: string;
+    let value: any;
+    let win: any;
+
     // assign global properties already in the web worker global
     // that we can put onto the environment window
-    for (const globalName in self) {
-      if (!(globalName in this) && globalName !== 'onmessage') {
+    for (globalName in self) {
+      if (!(globalName in _this) && globalName !== 'onmessage') {
         // global properties already in the web worker global
-        const value = self[globalName] as any;
+        value = self[globalName] as any;
         if (value != null) {
           // function examples: atob(), fetch()
           // object examples: crypto, indexedDB
           // boolean examples: isSecureContext, crossOriginIsolated
           const isFunction = typeof value === 'function' && !value.toString().startsWith('class');
-          (this as any)[globalName] = isFunction ? value.bind(self) : value;
+          _this[globalName] = isFunction ? value.bind(self) : value;
         }
       }
     }
@@ -42,41 +41,43 @@ export class Window extends WorkerProxy {
     // assign web worker global properties to the environment window
     // window.Promise = self.Promise
     Object.getOwnPropertyNames(self).map((globalName) => {
-      if (!(globalName in this)) {
-        (this as any)[globalName] = (self as any)[globalName];
+      if (!(globalName in _this)) {
+        _this[globalName] = (self as any)[globalName];
       }
     });
 
-    for (const envCstrName in envGlobalConstructors) {
-      (this as any)[envCstrName] = defineConstructorName(
+    envGlobalConstructors.forEach((GlobalCstr, cstrName) => {
+      // create the constructor and set as a prop
+      _this[cstrName] = defineConstructorName(
         class {
-          constructor(...cstrArgs: any[]) {
-            const GlobalCstr = envGlobalConstructors[envCstrName];
+          constructor(...args: any[]) {
             const instance = new GlobalCstr($winId$, randomId());
-
-            const serializedCstrArgs = serializeInstanceForMain(instance, cstrArgs);
-            const newInstanceApplyPath = [
-              ApplyPathType.GlobalConstructor,
-              envCstrName,
-              serializedCstrArgs,
-            ];
-            queue(instance, newInstanceApplyPath);
-
-            logWorkerGlobalConstructor($winId$, envCstrName, cstrArgs);
-
+            constructGlobal(instance, cstrName, args);
             return instance;
           }
         },
-        envCstrName
+        cstrName
       );
-    }
+    });
+
+    windowMediaConstructors.map((cstrName) =>
+      defineProperty(_this, cstrName, {
+        get() {
+          // lazy load media constructors if called, remove the getter
+          delete _this[cstrName];
+          const initMediaConstructors = lazyLoadMedia();
+          const initMediaConstructor = initMediaConstructors[cstrName];
+          return (_this[cstrName] = initMediaConstructor(getEnv(_this), _this, cstrName));
+        },
+      })
+    );
 
     if ('trustedTypes' in (self as any)) {
       // https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API
-      (this as any).trustedTypes = (self as any).trustedTypes;
+      _this.trustedTypes = (self as any).trustedTypes;
     }
 
-    const win = new Proxy(this, {
+    win = new Proxy(_this, {
       has() {
         // window "has" any and all props, this is especially true for global variables
         // that are meant to be assigned to window, but without "window." prefix,
@@ -105,36 +106,35 @@ export class Window extends WorkerProxy {
     };
 
     // requestAnimationFrame() is provided by Chrome in a web worker, but not Safari
-    (this as any).requestAnimationFrame = (cb: (ts: number) => void) =>
+    _this.requestAnimationFrame = (cb: (ts: number) => void) =>
       setTimeout(() => cb(performance.now()), 9);
-    (this as any).cancelAnimationFrame = (id: number) => clearTimeout(id);
+    _this.cancelAnimationFrame = (id: number) => clearTimeout(id);
 
     // ensure requestIdleCallback() happens in the worker and doesn't call to main
     // it's also not provided by Safari
-    (this as any).requestIdleCallback = (
-      cb: (opts: { didTimeout: boolean; timeRemaining: () => number }) => void
+    _this.requestIdleCallback = (
+      cb: (opts: { didTimeout: boolean; timeRemaining: () => number }) => void,
+      start?: number
     ) => {
-      const start = Date.now();
+      start = Date.now();
       return setTimeout(
         () =>
           cb({
             didTimeout: false,
-            timeRemaining: () => Math.max(0, 50 - (Date.now() - start)),
+            timeRemaining: () => Math.max(0, 50 - (Date.now() - start!)),
           }),
         1
       );
     };
-    (this as any).cancelIdleCallback = (id: number) => clearTimeout(id);
+    _this.cancelIdleCallback = (id: number) => clearTimeout(id);
 
     // add storage APIs to the window
-    addStorageApi(this, 'localStorage', webWorkerCtx.$localStorage$);
-    addStorageApi(this, 'sessionStorage', webWorkerCtx.$sessionStorage$);
+    addStorageApi(_this, 'localStorage', webWorkerCtx.$localStorage$);
+    addStorageApi(_this, 'sessionStorage', webWorkerCtx.$sessionStorage$);
+
+    _this.Worker = undefined;
 
     return win;
-  }
-
-  get Audio() {
-    return createAudioConstructor(getEnv(this));
   }
 
   get body() {
@@ -189,8 +189,10 @@ export class Window extends WorkerProxy {
   }
 
   get name() {
-    const winId = this[WinIdKey];
-    return name + (debug ? `${normalizedWinId(winId)} (${winId})` : (winId as any));
+    return (
+      name +
+      (debug ? `${normalizedWinId(this[WinIdKey])} (${this[WinIdKey]})` : (this[WinIdKey] as any))
+    );
   }
 
   get navigator() {
@@ -210,7 +212,7 @@ export class Window extends WorkerProxy {
   }
 
   get top(): any {
-    for (const envWinId in environments) {
+    for (let envWinId in environments) {
       if (environments[envWinId].$winId$ === environments[envWinId].$parentWinId$) {
         return environments[envWinId].$window$;
       }
@@ -221,15 +223,3 @@ export class Window extends WorkerProxy {
     return this;
   }
 }
-
-export const patchWebWorkerWindowPrototype = () => {
-  // we already assigned the same prototypes found on the main thread's Window
-  // to the worker's Window, but actually it assigned a few that are already on
-  // the web worker's global we can use instead. So manually set which web worker
-  // globals we can reuse, instead of calling the main access.
-  // These same window properties will be assigned to the window instance
-  // when Window is constructed, and these won't make calls to the main thread.
-  const webWorkerGlobals =
-    'atob,btoa,crypto,indexedDB,setTimeout,setInterval,clearTimeout,clearInterval'.split(',');
-  webWorkerGlobals.map((memberName) => delete (Window as any).prototype[memberName]);
-};

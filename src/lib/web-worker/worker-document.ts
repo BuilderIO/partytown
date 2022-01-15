@@ -1,8 +1,10 @@
 import { callMethod, setter } from './worker-proxy';
+import { CallType, NodeName, StateProp } from '../types';
 import { createEnvironment, getEnv, getEnvWindow } from './worker-environment';
+import { getInstanceStateValue } from './worker-state';
 import { getOrCreateNodeInstance } from './worker-constructors';
 import { getPartytownScript } from './worker-exec';
-import { NodeName } from '../types';
+import { isScriptJsType } from './worker-script';
 import type { Node } from './worker-node';
 import { noop, randomId, SCRIPT_TYPE } from '../utils';
 import { WinIdKey } from './worker-constants';
@@ -22,7 +24,7 @@ export const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
       const instanceId = randomId();
       const elm = getOrCreateNodeInstance(winId, instanceId, tagName);
 
-      callMethod(this, ['createElement'], [tagName], instanceId);
+      callMethod(this, ['createElement'], [tagName], CallType.NonBlocking, instanceId);
 
       if (tagName === NodeName.IFrame) {
         // an iframe element's instanceId is the same as its contentWindow's winId
@@ -40,7 +42,10 @@ export const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
 
         setter(elm, ['srcdoc'], getPartytownScript());
       } else if (tagName === NodeName.Script) {
-        setter(elm, ['type'], SCRIPT_TYPE);
+        const scriptType = getInstanceStateValue(elm, StateProp.type);
+        if (isScriptJsType(scriptType)) {
+          setter(elm, ['type'], SCRIPT_TYPE);
+        }
       }
 
       return elm;
@@ -55,7 +60,7 @@ export const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
       const instanceId = randomId();
       const nsElm = getOrCreateNodeInstance(winId, instanceId, tagName, namespace);
 
-      callMethod(this, ['createElementNS'], [namespace, tagName], instanceId);
+      callMethod(this, ['createElementNS'], [namespace, tagName], CallType.NonBlocking, instanceId);
 
       return nsElm;
     },
@@ -67,7 +72,7 @@ export const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
       const instanceId = randomId();
       const textNode = getOrCreateNodeInstance(winId, instanceId, NodeName.Text);
 
-      callMethod(this, ['createTextNode'], [text], instanceId);
+      callMethod(this, ['createTextNode'], [text], CallType.NonBlocking, instanceId);
 
       return textNode;
     },

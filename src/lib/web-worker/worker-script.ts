@@ -1,4 +1,5 @@
 import { callMethod, getter, setter } from './worker-proxy';
+import { commaSplit } from './worker-constants';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { HTMLSrcElementDescriptorMap } from './worker-src-element';
@@ -46,8 +47,8 @@ export const HTMLScriptDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
 
   setAttribute: {
     value(attrName: string, attrValue: any) {
-      if (attrName === 'src') {
-        (this as any).src = attrValue;
+      if (scriptAttrPropNames.includes(attrName)) {
+        (this as any)[attrName] = attrValue;
       } else {
         callMethod(this, ['setAttribute'], [attrName, attrValue]);
       }
@@ -61,7 +62,8 @@ export const HTMLScriptDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
       return getter(this, ['type']);
     },
     set(type: string) {
-      if (type !== 'text/javascript') {
+      if (!isScriptJsType(type)) {
+        setInstanceStateValue(this, StateProp.type, type);
         setter(this, ['type'], type);
       }
     },
@@ -69,3 +71,8 @@ export const HTMLScriptDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
 
   ...HTMLSrcElementDescriptorMap,
 };
+
+export const isScriptJsType = (scriptType: string) =>
+  !scriptType || scriptType === 'text/javascript';
+
+const scriptAttrPropNames = commaSplit('src,type');

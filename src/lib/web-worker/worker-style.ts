@@ -1,5 +1,7 @@
+import { cachedDimensions } from './worker-constants';
 import { callMethod, getter } from './worker-proxy';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
+import { logDimensionCacheClearMethod } from '../log';
 import type { Node } from './worker-node';
 import { StateProp } from '../types';
 
@@ -50,18 +52,21 @@ export class CSSStyleSheet {
       // we do a real lookup to get the dom correct data
       cssRules.splice(index, 0, 0);
     }
+    logDimensionCacheClearMethod(this.ownerNode, 'insertRule');
+    cachedDimensions.clear();
     return index;
   }
 
   deleteRule(index: number) {
     callMethod(this.ownerNode, ['sheet', 'deleteRule'], [index]);
-    const cssRules = getCssRules(this.ownerNode);
-    cssRules.splice(index, 1);
+    getCssRules(this.ownerNode).splice(index, 1);
+    logDimensionCacheClearMethod(this.ownerNode, 'deleteRule');
+    cachedDimensions.clear();
   }
 }
 
-const getCssRules = (ownerNode: Node): any[] => {
-  let cssRules = getInstanceStateValue(ownerNode, StateProp.cssRules);
+const getCssRules = (ownerNode: Node, cssRules?: any): any[] => {
+  cssRules = getInstanceStateValue(ownerNode, StateProp.cssRules);
   if (!cssRules) {
     cssRules = getter(ownerNode, ['sheet', 'cssRules']);
     setInstanceStateValue(ownerNode, StateProp.cssRules, cssRules);
@@ -69,8 +74,8 @@ const getCssRules = (ownerNode: Node): any[] => {
   return cssRules;
 };
 
-const getCssRule = (ownerNode: Node, index: any) => {
-  let cssRules = getCssRules(ownerNode);
+const getCssRule = (ownerNode: Node, index: any, cssRules?: any) => {
+  cssRules = getCssRules(ownerNode);
   if (cssRules[index] === 0) {
     cssRules[index] = getter(ownerNode, ['sheet', 'cssRules', parseInt(index, 10)]);
   }

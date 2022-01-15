@@ -1,8 +1,9 @@
 import type { BuildOptions } from './utils';
 import { buildApi } from './build-api';
 import { buildAtomics } from './build-atomics';
-import { buildMainSnippet } from './build-main-snippet';
 import { buildIntegration } from './build-integration';
+import { buildMediaImplementation } from './build-media-implementations';
+import { buildMainSnippet } from './build-main-snippet';
 import { buildReact } from './build-react';
 import { buildServiceWorker } from './build-service-worker';
 import { buildUtils } from './build-utils';
@@ -22,6 +23,7 @@ export async function runBuild(rootDir: string, isDev: boolean, generateApi: boo
     buildMainSnippet(opts),
     buildServiceWorker(opts),
     ...buildAtomics(opts),
+    buildMediaImplementation(opts),
     buildIntegration(opts),
     buildReact(opts),
     buildUtils(opts),
