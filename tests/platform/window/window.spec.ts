@@ -27,7 +27,12 @@ test('window', async ({ page }) => {
   await expect(testNameEquals).toHaveText('true');
 
   const testComputedStyle = page.locator('#testGetComputedStyle');
-  await expect(testComputedStyle).toHaveText('rgb(128, 0, 128)');
+  await expect(testComputedStyle).toHaveText('rgb(128, 0, 128) true');
+
+  const testGetComputedStyleGetPropertyValue = page.locator(
+    '#testGetComputedStyleGetPropertyValue'
+  );
+  await expect(testGetComputedStyleGetPropertyValue).toHaveText('rgb(50, 205, 50)');
 
   await page.waitForSelector('.testRaf');
 
@@ -132,4 +137,8 @@ test('window', async ({ page }) => {
 
   const testTrustedTypes = page.locator('#testTrustedTypes');
   await expect(testTrustedTypes).toHaveText('true');
+
+  // TODO: test in CI
+  // const testIsTypeSupported = page.locator('#testIsTypeSupported');
+  // await expect(testIsTypeSupported).toHaveText('true');
 });

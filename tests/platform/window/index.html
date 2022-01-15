@@ -139,8 +139,21 @@
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testGetComputedStyle');
-            const style = getComputedStyle(elm);
-            elm.textContent = style.color;
+            const style1 = getComputedStyle(elm);
+            const style2 = getComputedStyle(elm);
+            elm.textContent = style1.color + ' ' + (JSON.stringify(style1) === JSON.stringify(style2));
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>getComputedStyle().getPropertyValue('color')</strong>
+        <code id="testGetComputedStyleGetPropertyValue" style="color: limegreen"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testGetComputedStyleGetPropertyValue');
+            const cs = getComputedStyle(elm);
+            elm.textContent = cs.getPropertyValue('color');
           })();
         </script>
       </li>
@@ -667,6 +680,20 @@
             elm.innerHTML = escaped;
 
             elm.textContent = String(escaped instanceof TrustedHTML);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>MediaSource.isTypeSupported()</strong>
+        <code id="testIsTypeSupported"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testIsTypeSupported');
+            const isTypeSupported = MediaSource.isTypeSupported(
+              'video/mp4; codecs="avc1.42E01E, mp4a.40.2"'
+            );
+            elm.textContent = String(isTypeSupported);
           })();
         </script>
       </li>
