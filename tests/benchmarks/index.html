@@ -26,19 +26,41 @@
         text-align: left;
         width: 30px;
       }
+      p a {
+        display: inline-block;
+        padding: 6px 18px;
+        margin: 10px;
+        border: 0.5px solid gray;
+        background-color: #eee;
+        text-decoration: none;
+        border-radius: 4px;
+        color: gray;
+        opacity: 0.8;
+      }
+      p a.active {
+        opacity: 1;
+        color: blue;
+        border-color: blue;
+        background-color: white;
+      }
     </style>
   </head>
   <body>
+    <p>
+      <a id="partytown" href="/benchmarks/">Partytown</a>
+      <a id="mainthread" href="/benchmarks/?mainthread">Main Thread</a>
+    </p>
+
     <h1 id="h1">
-      <span id="title"></span>:
-      <span id="ave">running...</span>
+      <span id="title"></span>
+      <span id="ave" hidden>running...</span>
     </h1>
 
     <table id="results"></table>
 
     <div id="output"></div>
 
-    <script src="/~partytown/debug/partytown.js"></script>
+    <script src="/~partytown/partytown.js"></script>
     <script>
       (() => {
         const script = document.createElement('script');
@@ -46,14 +68,19 @@
 
         if (location.search.includes('mainthread')) {
           window.ptType = 'Main Thread';
+          document.getElementById('mainthread').classList.add('active');
         } else {
           if (window.crossOriginIsolated) {
             window.ptType = 'Atomics';
           } else {
             window.ptType = 'Service Worker';
           }
+          document.getElementById('partytown').classList.add('active');
           script.setAttribute('type', 'text/partytown');
         }
+
+        const h1Title = document.getElementById('title');
+        h1Title.textContent = `${window.ptType} Benchmark: `;
 
         document.body.appendChild(script);
       })();

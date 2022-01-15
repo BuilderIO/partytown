@@ -1,16 +1,15 @@
 (() => {
   const h1 = document.getElementById('h1');
-  const h1Title = document.getElementById('title');
-  h1Title.textContent = `${window.ptType} Benchmark`;
   document.title = h1.textContent;
 
   const h1Average = document.getElementById('ave');
+  h1Average.hidden = false;
   const output = document.getElementById('output');
   const results = document.getElementById('results');
 
   const timeBetween = 20;
   const iterateCount = 1000;
-  const runCount = 10;
+  const runCount = 20;
   const runs = [];
 
   const test = (i) => {
@@ -20,14 +19,15 @@
     outer.className = 'c' + i;
     output.appendChild(outer);
 
-    const inner = document.createElement('div');
+    const inner = document.createElement('span');
     inner.textContent = i;
     inner.id = 'i' + i;
     inner.classList.add('a');
     inner.style.color = 'red';
+    inner.tabIndex = i;
     outer.appendChild(inner);
 
-    console.log(inner.style.color);
+    inner.style.color;
   };
 
   const run = () => {
@@ -61,6 +61,7 @@
       const ave = total / runCount;
       h1Average.textContent = `${ave.toFixed(1)}ms`;
       document.title = h1.textContent;
+      h1Average.classList.add('completed');
     }
   };
 
