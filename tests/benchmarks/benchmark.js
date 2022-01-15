@@ -24,7 +24,10 @@
     inner.textContent = i;
     inner.id = 'i' + i;
     inner.classList.add('a');
+    inner.style.color = 'red';
     outer.appendChild(inner);
+
+    console.log(inner.style.color);
   };
 
   const run = () => {
