@@ -8,10 +8,10 @@ export const onFetchServiceWorkerRequest = (ev: FetchEvent) => {
   const url = new URL(req.url);
   const pathname = url.pathname;
   const isolated = false;
-  if (debug && pathname.endsWith('debug/partytown-sandbox-sw.html')) {
+  if (debug && pathname.endsWith('sw.html')) {
     // debug version (sandbox and web worker are not inlined)
     ev.respondWith(response(SandboxDebug, isolated));
-  } else if (!debug && pathname.endsWith('partytown-sandbox-sw.html')) {
+  } else if (!debug && pathname.endsWith('sw.html')) {
     // sandbox and webworker, minified and inlined
     ev.respondWith(response(Sandbox, isolated));
   } else if (pathname.endsWith('proxytown')) {
@@ -54,7 +54,7 @@ const sendMessageToSandboxFromServiceWorker = (accessReq: MainAccessRequest) =>
       resolves.set(accessReq.$msgId$, msgResolve);
       client.postMessage(accessReq);
     } else {
-      resolve(swMessageError(accessReq, `No Party`));
+      resolve(swMessageError(accessReq, `NoParty`));
     }
   });
 
@@ -84,8 +84,3 @@ const response = (body: string, isolated: boolean, contentType?: string) => {
     headers,
   });
 };
-
-const enum ContentType {
-  HTML,
-  JSON,
-}

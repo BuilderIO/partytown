@@ -3,37 +3,42 @@ import {
   ApplyPathType,
   MainAccessRequest,
   MainAccessResponse,
+  MainAccessTask,
   PartytownWebWorker,
 } from '../types';
-import { debug, isPromise, len, normalizedWinId } from '../utils';
+import { debug, isPromise, len } from '../utils';
 import { deserializeFromWorker, serializeForWorker } from './main-serialization';
 import { getInstance, setInstanceId } from './main-instances';
+import { normalizedWinId } from '../log';
 import { winCtxs } from './main-constants';
 
 export const mainAccessHandler = async (
   worker: PartytownWebWorker,
   accessReq: MainAccessRequest
 ) => {
-  const accessRsp: MainAccessResponse = {
+  let accessRsp: MainAccessResponse = {
     $msgId$: accessReq.$msgId$,
   };
-  const totalTasks = len(accessReq.$tasks$);
+  let totalTasks = len(accessReq.$tasks$);
+  let i = 0;
+  let task: MainAccessTask;
+  let winId: number;
+  let applyPath: ApplyPath;
+  let instance: any;
+  let rtnValue: any;
 
-  for (let i = 0; i < totalTasks; i++) {
+  for (; i < totalTasks; i++) {
     try {
-      let task = accessReq.$tasks$[i];
-      let winId = task.$winId$;
-      let instanceId = task.$instanceId$;
-      let applyPath = task.$applyPath$;
-      let instance: any;
-      let rtnValue: any;
+      task = accessReq.$tasks$[i];
+      winId = task.$winId$;
+      applyPath = task.$applyPath$;
 
       if (!winCtxs[winId]) {
         // window (iframe) hasn't finished loading yet
         await new Promise<void>((resolve) => {
-          let i = 0;
+          let check = 0;
           let callback = () => {
-            if (winCtxs[winId] || i++ > 999) {
+            if (winCtxs[winId] || check++ > 999) {
               resolve();
             } else {
               setTimeout(callback, 9);
@@ -47,14 +52,15 @@ export const mainAccessHandler = async (
         applyPath[0] === ApplyPathType.GlobalConstructor &&
         applyPath[1] in winCtxs[winId]!.$window$
       ) {
-        // create a new instance of a global constructor
-        const constructedInstance = new (winCtxs[winId]!.$window$ as any)[applyPath[1]](
-          ...deserializeFromWorker(worker, applyPath[2])
+        setInstanceId(
+          new (winCtxs[winId]!.$window$ as any)[applyPath[1]](
+            ...deserializeFromWorker(worker, applyPath[2])
+          ),
+          task.$instanceId$
         );
-        setInstanceId(constructedInstance, instanceId);
       } else {
         // get the existing instance
-        instance = getInstance(winId, instanceId);
+        instance = getInstance(winId, task.$instanceId$);
         if (instance) {
           rtnValue = applyToInstance(worker, instance, applyPath, task.$groupedGetters$);
 
@@ -69,12 +75,12 @@ export const mainAccessHandler = async (
           accessRsp.$rtnValue$ = serializeForWorker(winId, rtnValue);
         } else {
           if (debug) {
-            accessRsp.$error$ = `Error finding instance "${instanceId}" on window ${normalizedWinId(
-              winId
-            )} (${winId})`;
-            console.error(accessRsp.$error$);
+            accessRsp.$error$ = `Error finding instance "${
+              task.$instanceId$
+            }" on window ${normalizedWinId(winId)} (${winId})`;
+            console.error(accessRsp.$error$, task);
           } else {
-            accessRsp.$error$ = instanceId + ' not found';
+            accessRsp.$error$ = task.$instanceId$ + ' not found';
           }
         }
       }
@@ -105,6 +111,7 @@ const applyToInstance = (
   let current: any;
   let previous: any;
   let args: any[];
+  let groupedRtnValues: any;
 
   for (; i < l; i++) {
     current = applyPath[i];
@@ -118,7 +125,7 @@ const applyToInstance = (
           if (i + 1 === l && groupedGetters) {
             // instead of getting one property, we actually want to get many properties
             // This is useful for getting all dimensions of an element in one call
-            const groupedRtnValues: any = {};
+            groupedRtnValues = {};
             groupedGetters.map((propName) => (groupedRtnValues[propName] = instance[propName]));
             return groupedRtnValues;
           }
@@ -147,11 +154,19 @@ const applyToInstance = (
               args[1] = len(instance.cssRules);
             }
           }
+
           instance = instance[previous].apply(instance, args);
+          if (previous === 'play') {
+            return Promise.resolve();
+          }
         }
       }
     } catch (err) {
-      console.warn(err);
+      if (debug) {
+        console.debug(`Non-blocking setter error:`, err);
+      } else {
+        console.debug(err);
+      }
     }
   }
 

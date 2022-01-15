@@ -26,8 +26,7 @@ const createMessengerServiceWorker: Messenger = async (sandboxWindow, receiveMes
     mainWindow: MainWindow,
     msg: MessageFromWorkerToSandbox
   ) => {
-    const msgType = msg[0];
-    if (msgType === WorkerMessageType.MainDataRequestFromWorker) {
+    if (msg[0] === WorkerMessageType.MainDataRequestFromWorker) {
       // web worker has requested data from the main thread
       // collect up all the info about the main thread interfaces
       // send the main thread interface data to the web worker

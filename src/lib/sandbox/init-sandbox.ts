@@ -1,5 +1,6 @@
-import { debug, logMain, PT_IFRAME_APPENDED } from '../utils';
+import { debug, PT_IFRAME_APPENDED } from '../utils';
 import { getAndSetInstanceId } from './main-instances';
+import { logMain } from '../log';
 import { mainAccessHandler } from './main-access-handler';
 import {
   MainWindow,
@@ -51,10 +52,8 @@ export const initSandbox = async (sandboxWindow: any) => {
       worker.onerror = (ev) => console.error(`Web Worker Error`, ev);
     }
 
-    mainWindow.addEventListener<any>(PT_IFRAME_APPENDED, (ev: CustomEvent) => {
-      const win: MainWindow = ev.detail;
-      const winId = getAndSetInstanceId(win.frameElement);
-      registerWindow(worker, winId, win);
-    });
+    mainWindow.addEventListener<any>(PT_IFRAME_APPENDED, (ev: CustomEvent) =>
+      registerWindow(worker, getAndSetInstanceId(ev.detail.frameElement), ev.detail)
+    );
   }
 };
