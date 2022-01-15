@@ -48,7 +48,7 @@ function buildAtomicsDebug(opts: BuildOptions): RollupOptions {
             }
           },
         },
-        ...minifyPlugin(true),
+        ...minifyPlugin(opts, true),
       ],
     },
     plugins: [
@@ -91,7 +91,7 @@ function buildAtomicsMin(opts: BuildOptions): RollupOptions {
             }
           },
         },
-        ...minifyPlugin(false),
+        ...minifyPlugin(opts, false),
         fileSize(),
       ],
     },

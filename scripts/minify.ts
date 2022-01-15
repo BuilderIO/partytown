@@ -1,28 +1,35 @@
+import type { BuildOptions } from './utils';
 import type { Plugin } from 'rollup';
 import { terser } from 'rollup-plugin-terser';
 import type { MinifyOptions } from 'terser';
 
-export function minifyPlugin(debug: boolean) {
+export function minifyPlugin(opts: BuildOptions, debug: boolean) {
   if (debug) {
-    return [terser(minifyOptions(true))];
+    return [terser(minifyOptions(opts, true))];
   }
-  return [managlePropsPlugin(), terser(minifyOptions(false))];
+  return [managlePropsPlugin(), terser(minifyOptions(opts, false))];
 }
 
-function minifyOptions(debug: boolean): MinifyOptions {
+function minifyOptions(opts: BuildOptions, debug: boolean): MinifyOptions {
   if (debug) {
+    const moreCompression = !opts.isDev;
     return {
       compress: {
         global_defs: {
           'globalThis.partytownDebug': true,
         },
-        keep_classnames: true,
+        booleans: false,
+        collapse_vars: false,
+        conditionals: moreCompression,
+        evaluate: moreCompression,
+        if_return: moreCompression,
         inline: false,
         join_vars: false,
+        keep_classnames: true,
         loops: false,
         sequences: false,
         passes: 1,
-        drop_debugger: false,
+        drop_debugger: moreCompression,
       },
       format: {
         comments: false,
@@ -40,7 +47,7 @@ function minifyOptions(debug: boolean): MinifyOptions {
       },
       keep_classnames: keepConstructorNames(),
       ecma: 2018,
-      passes: 2,
+      passes: 3,
       unsafe_symbols: true,
     },
     format: {
@@ -65,6 +72,7 @@ function managlePropsPlugin(): Plugin {
     $args$: '',
     $assignInstanceId$: '',
     $body$: '',
+    $buf$: '',
     $config$: '',
     $content$: '',
     $currentScriptId$: '',

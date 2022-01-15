@@ -20,7 +20,7 @@ export function buildServiceWorker(opts: BuildOptions): RollupOptions {
     file: join(opts.distLibDebugDir, 'partytown-sw.js'),
     format: 'es',
     exports: 'none',
-    plugins: [...minifyPlugin(true), versionPlugin(opts)],
+    plugins: [...minifyPlugin(opts, true), versionPlugin(opts)],
   };
 
   const output: OutputOptions[] = [swDebug];
@@ -29,7 +29,7 @@ export function buildServiceWorker(opts: BuildOptions): RollupOptions {
       file: join(opts.distLibDir, 'partytown-sw.js'),
       format: 'es',
       exports: 'none',
-      plugins: [...minifyPlugin(false), fileSize()],
+      plugins: [...minifyPlugin(opts, false), fileSize()],
     });
   }
 
@@ -62,7 +62,7 @@ async function buildSandboxServiceWorker(opts: BuildOptions, msgType: MessageTyp
     exports: 'none',
     intro: `((window)=>{`,
     outro: `})(window);`,
-    plugins: [...minifyPlugin(debug), jsBannerPlugin(opts)],
+    plugins: [...minifyPlugin(opts, debug), jsBannerPlugin(opts)],
   });
 
   const sandboxJsCode = generated.output[0].code;

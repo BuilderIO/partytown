@@ -23,7 +23,7 @@ export async function buildWebWorker(opts: BuildOptions, msgType: MessageType, d
     exports: 'none',
     intro: `((self)=>{`,
     outro: `})(self);`,
-    plugins: [...minifyPlugin(debug)],
+    plugins: [...minifyPlugin(opts, debug)],
   };
 
   const generated = await build.generate(output);
