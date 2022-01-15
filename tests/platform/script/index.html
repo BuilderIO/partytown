@@ -285,6 +285,82 @@
           })();
         </script>
       </li>
+
+      <li>
+        <strong>type="text/javascript"</strong>
+        <code id="testSetPropType"></code>
+        <script type="text/partytown">
+          (function () {
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            document.head.appendChild(script);
+            const elm = document.getElementById('testSetPropType');
+            elm.textContent = script.type;
+            elm.className = 'testSetPropType';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>type=""</strong>
+        <code id="testSetPropTypeEmpty"></code>
+        <script type="text/partytown">
+          (function () {
+            const script = document.createElement('script');
+            script.type = '';
+            document.head.appendChild(script);
+            const elm = document.getElementById('testSetPropTypeEmpty');
+            elm.textContent = script.type;
+            elm.className = 'testSetPropTypeEmpty';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>setAttribute("type", "text/javascript")</strong>
+        <code id="testSetAttrType"></code>
+        <script type="text/partytown">
+          (function () {
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            document.head.appendChild(script);
+            const elm = document.getElementById('testSetAttrType');
+            elm.textContent = script.type;
+            elm.className = 'testSetAttrType';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>setAttribute("type", "")</strong>
+        <code id="testSetAttrTypeEmpty"></code>
+        <script type="text/partytown">
+          (function () {
+            const script = document.createElement('script');
+            script.type = '';
+            document.head.appendChild(script);
+            const elm = document.getElementById('testSetAttrTypeEmpty');
+            elm.textContent = script.type;
+            elm.className = 'testSetAttrTypeEmpty';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set non-javascript type</strong>
+        <code id="testNonJsType"></code>
+        <script type="text/partytown">
+          (function () {
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.innerHTML = JSON.stringify({ mph: 88 });
+            document.head.appendChild(script);
+            const elm = document.getElementById('testNonJsType');
+            elm.textContent = script.type;
+            elm.className = 'testNonJsType';
+          })();
+        </script>
+      </li>
     </ul>
 
     <hr />

@@ -55,4 +55,24 @@ test('script', async ({ page }) => {
   const srcAttr = await testSrcAttr.textContent();
   const srcUrl = new URL(srcAttr);
   expect(srcUrl.pathname).toBe('/platform/script/set-get-attr.js');
+
+  await page.waitForSelector('.testSetPropType');
+  const testSetPropType = page.locator('#testSetPropType');
+  await expect(testSetPropType).toHaveText('text/partytown');
+
+  await page.waitForSelector('.testSetPropTypeEmpty');
+  const testSetPropTypeEmpty = page.locator('#testSetPropTypeEmpty');
+  await expect(testSetPropTypeEmpty).toHaveText('text/partytown');
+
+  await page.waitForSelector('.testSetAttrType');
+  const testSetAttrType = page.locator('#testSetAttrType');
+  await expect(testSetAttrType).toHaveText('text/partytown');
+
+  await page.waitForSelector('.testSetAttrTypeEmpty');
+  const testSetAttrTypeEmpty = page.locator('#testSetAttrTypeEmpty');
+  await expect(testSetAttrTypeEmpty).toHaveText('text/partytown');
+
+  await page.waitForSelector('.testNonJsType');
+  const testNonJsType = page.locator('#testNonJsType');
+  await expect(testNonJsType).toHaveText('application/ld+json');
 });
