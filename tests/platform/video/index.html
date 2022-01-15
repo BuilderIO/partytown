@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>Video</title>
+    <link
+      rel="icon"
+      id="favicon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎉</text></svg>"
+    />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        font-size: 12px;
+      }
+      h1 {
+        margin: 0 0 15px 0;
+      }
+      a {
+        display: block;
+        padding: 16px 8px;
+      }
+      a:link,
+      a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover {
+        background-color: #eee;
+      }
+      video {
+        background-color: black;
+      }
+      div {
+        margin-bottom: 30px;
+      }
+    </style>
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+      };
+    </script>
+    <script src="/~partytown/debug/partytown.js"></script>
+  </head>
+  <body>
+    <h1>Video</h1>
+
+    <div>
+      <video id="stream-video" style="width: 200px; height: 115px" width="200" height="115"></video>
+      <div>
+        <button id="btnStreamPlay">stream play</button>
+        <code id="testStreamPlay"></code>
+      </div>
+      <script type="text/partytown">
+        (function () {
+          const testPlay = document.getElementById('testStreamPlay');
+          const btn = document.getElementById('btnStreamPlay');
+          const video = document.getElementById('stream-video');
+          const mimeCodec = 'video/mp4; codecs="avc1.4D401F"';
+          console.log('MediaSource.isTypeSupported:', MediaSource.isTypeSupported(mimeCodec));
+
+          function start() {
+            console.log('stream start');
+            const queue = [];
+
+            const mediaSource = new MediaSource(); // mediaSource.readyState === 'closed'
+
+            // Attach media source to video element
+            video.src = URL.createObjectURL(mediaSource);
+
+            // Wait for media source to be open
+            mediaSource.addEventListener('sourceopen', handleSourceOpen.bind(mediaSource));
+
+            function handleSourceOpen() {
+              console.log('handleSourceOpen');
+              const mediaSource = this; // mediaSource.readyState === 'open'
+
+              const sourceBuffer = mediaSource.addSourceBuffer(mimeCodec);
+
+              queue.push(
+                'https://testcontent.eyevinn.technology/mse-tutorial/vinn-video=1660000-0.dash'
+              );
+              queue.push(
+                'https://testcontent.eyevinn.technology/mse-tutorial/vinn-video=1660000-25600.dash'
+              );
+              queue.push(
+                'https://testcontent.eyevinn.technology/mse-tutorial/vinn-video=1660000-51200.dash'
+              );
+
+              mediaSource.duration = 6; // (51200 + 25600) / 12800
+
+              // Fetch init segment (contains mp4 header)
+              fetchSegmentAndAppend(
+                'https://testcontent.eyevinn.technology/mse-tutorial/vinn-video=1660000.dash',
+                sourceBuffer,
+                function () {
+                  function iter() {
+                    // Pop segment from queue
+                    url = queue.shift();
+                    if (url === undefined) {
+                      return;
+                    }
+
+                    // Download segment and append to source buffer
+                    fetchSegmentAndAppend(url, sourceBuffer, function (err) {
+                      if (err) {
+                        console.error(err);
+                      } else {
+                        setTimeout(iter, 200);
+                      }
+                    });
+                  }
+                  iter();
+                  video.play();
+                }
+              );
+            }
+
+            function fetchSegmentAndAppend(segmentUrl, sourceBuffer, callback) {
+              console.log('fetchSegmentAndAppend');
+
+              fetchArrayBuffer(segmentUrl, function (buf) {
+                sourceBuffer.addEventListener('updateend', function (ev) {
+                  console.log('updateend');
+                  callback();
+                });
+
+                sourceBuffer.addEventListener('error', function (ev) {
+                  console.error(ev);
+                  callback(ev);
+                });
+
+                console.log('sourceBuffer.appendBuffer(buf), length', buf.byteLength);
+
+                const view = new Uint8Array(buf);
+                sourceBuffer.appendBuffer(view);
+              });
+            }
+
+            function fetchArrayBuffer(url, callback) {
+              var xhr = new XMLHttpRequest();
+              xhr.open('get', url);
+              xhr.responseType = 'arraybuffer';
+              xhr.onload = function () {
+                console.log('xhr.onload', url);
+                callback(xhr.response);
+              };
+              xhr.send();
+            }
+          }
+
+          btn.addEventListener('click', () => {
+            start();
+          });
+        })();
+      </script>
+    </div>
+
+    <script type="text/partytown">
+      (function () {
+        document.body.classList.add('completed');
+      })();
+    </script>
+
+    <hr />
+    <p><a href="/">All Tests</a></p>
+  </body>
+</html>

@@ -1,0 +1,16 @@
+import { test, expect } from '@playwright/test';
+
+test('video', async ({ page, context }) => {
+  // TODO: figure out why playwright crashes
+
+  await page.goto('/platform/video/', { waitUntil: 'networkidle' });
+
+  const btnPlay = page.locator('#btnPlay');
+  await btnPlay.click();
+  await page.waitForSelector('.testPlay');
+  const testPlay = page.locator('#testPlay');
+  await expect(testPlay).toHaveText('played');
+  const testBufferedLength = page.locator('#testBufferedLength');
+  const bufLen = await testBufferedLength.textContent();
+  expect(!isNaN(bufLen as any)).toBe(true);
+});
