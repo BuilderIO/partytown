@@ -1,4 +1,4 @@
-import { instanceIds, instances, winCtxs } from './main-constants';
+import { CreatedKey, InstanceIdKey, instances, winCtxs } from './main-constants';
 import { MainWindow, MainWindowContext, NodeName, PlatformInstanceId } from '../types';
 import { randomId } from '../utils';
 
@@ -22,7 +22,7 @@ export const getAndSetInstanceId = (instance: any, instanceId?: number, nodeName
       return PlatformInstanceId.body;
     }
 
-    instanceId = instanceIds.get(instance);
+    instanceId = instance[InstanceIdKey];
     if (typeof instanceId !== 'number') {
       setInstanceId(instance, (instanceId = randomId()));
     }
@@ -63,21 +63,23 @@ export const getInstance = <T = any>(
   }
 };
 
-export const setInstanceId = (instance: any, instanceId: number) => {
+export const setInstanceId = (instance: any, instanceId: number, now?: number) => {
   if (instance) {
     instances.set(instanceId, instance);
-    instanceIds.set(instance, instanceId);
-    setInc++;
+    instance[InstanceIdKey] = instanceId;
+    instance[CreatedKey] = now = Date.now();
 
-    if (setInc > 99999) {
-      instances.forEach((instance: Node, instanceId) => {
-        if (instance.nodeType && !instance.isConnected) {
-          instances.delete(instanceId);
+    if (now > lastCleanup + 5000) {
+      instances.forEach((storedInstance: any, instanceId) => {
+        if (storedInstance[CreatedKey] < lastCleanup && storedInstance instanceof Node) {
+          if (!storedInstance.isConnected) {
+            instances.delete(instanceId);
+          }
         }
       });
-      setInc = 0;
+      lastCleanup = now;
     }
   }
 };
 
-let setInc = 0;
+let lastCleanup = 0;
