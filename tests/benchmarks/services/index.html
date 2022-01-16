@@ -26,14 +26,25 @@
         border-spacing: 0;
         margin-bottom: 30px;
       }
-      th {
-        text-align: left;
-      }
       td,
       th {
         white-space: nowrap;
         padding: 8px 12px;
         text-align: center;
+      }
+      th {
+        padding: 4px 10px;
+        text-align: left;
+      }
+      th button {
+        font-size: 9px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      th button:hover {
+        color: blue;
+        border-color: blue;
       }
       th {
         background: #eee;
@@ -157,9 +168,15 @@
     <table id="services">
       <tr>
         <th>Service</th>
-        <th>Partytown</th>
-        <th>Standard</th>
-        <th>Excluded</th>
+        <th>
+          <button data-type="partytown">Partytown</button>
+        </th>
+        <th>
+          <button data-type="standard">Standard</button>
+        </th>
+        <th>
+          <button data-type="excluded">Excluded</button>
+        </th>
       </tr>
     </table>
 
@@ -195,6 +212,18 @@
           pageSpeed.href = pageSpeedUrl.href;
           pageSpeed.hidden = false;
         }
+
+        Array.from(document.querySelectorAll('button[data-type]')).forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const url = new URL(location.pathname, location.origin);
+            if (btn.dataset.type !== 'excluded') {
+              services.forEach((s) => {
+                url.searchParams.set(s.id, btn.dataset.type);
+              });
+            }
+            location = url.href;
+          });
+        });
 
         function serviceChange() {
           const url = new URL(location.pathname, location.origin);
