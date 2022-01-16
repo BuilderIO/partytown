@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>Services Benchmark</title>
+    <link
+      rel="icon"
+      id="favicon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⏱</text></svg>"
+    />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        font-size: 12px;
+      }
+      h1 {
+        margin: 0 0 10px 0;
+      }
+      #output {
+        font-size: 8px;
+      }
+      table {
+        border-spacing: 0;
+        margin-bottom: 30px;
+      }
+      th {
+        text-align: left;
+      }
+      td,
+      th {
+        white-space: nowrap;
+        padding: 8px 12px;
+        text-align: center;
+      }
+      th {
+        background: #eee;
+        font-size: 9px;
+      }
+      td:first-child,
+      th:first-child {
+        text-align: left;
+      }
+      label {
+        display: block;
+        padding: 2px 4px;
+        cursor: pointer;
+      }
+      input {
+        cursor: pointer;
+      }
+      #pagespeed {
+        padding: 4px 14px;
+        background: #eee;
+        border: 1px solid gray;
+        border-radius: 4px;
+        font-size: 14px;
+        text-decoration: none;
+        color: black;
+      }
+      #pagespeed:hover {
+        color: blue;
+        border-color: blue;
+      }
+    </style>
+
+    <script>
+      partytown = {
+        resolveUrl(url, location) {
+          if (
+            url.hostname.includes('google-analytics') ||
+            url.hostname.includes('www.googletagmanager.com') ||
+            url.hostname.includes('connect.facebook.net')
+          ) {
+            const proxyUrl = new URL('https://cdn.builder.io/api/v1/proxy-api');
+            proxyUrl.searchParams.append('url', url);
+            return proxyUrl;
+          }
+        },
+        forward: ['fbq', 'dataLayer.push', '_wq.push'],
+      };
+    </script>
+    <!-- prettier-ignore -->
+    <script>
+    /* Partytown 0.2.0 - MIT builder.io */
+    !function(t,e,n,i,o,r,a,s,d,c,l,p){function u(){a=(r.lib||"/~partytown/")+(r.debug?"debug/":""),d=e.querySelectorAll('script[type="text/partytown"]'),i!=t?i.dispatchEvent(new CustomEvent("pt1",{detail:t})):d.length&&(s=setTimeout(f,9999),e.addEventListener("pt0",w),o?h("atomics"):n.serviceWorker?n.serviceWorker.register(a+"partytown-sw.js"+(o?"?isolated":""),{scope:a}).then((function(t){t.active?h("sw"):t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"==t.target.state&&h("sw")}))}),console.error):f())}function h(t){(c=e.createElement("iframe")).setAttribute("style","display:block;width:0;height:0;border:0;visibility:hidden"),c.setAttribute("aria-hidden",!0),c.src=a+"partytown-sandbox-"+t+".html?"+Date.now(),e.body.appendChild(c)}function f(t,n){for(w(),t=0;t<d.length;t++)(n=e.createElement("script")).innerHTML=d[t].innerHTML,e.head.appendChild(n)}function w(){clearTimeout(s)}r=t.partytown||{},i==t&&(r.forward||[]).map((function(e){l=t,e.split(".").map((function(e,n,i){l=l[i[n]]=n+1<i.length?"push"==i[n+1]?[]:l[i[n]]||{}:function(){(t._ptf=t._ptf||[]).push(i,arguments)}}))})),"complete"==e.readyState?u():t.addEventListener("load",u)}(window,document,navigator,top,top.crossOriginIsolated);
+    </script>
+  </head>
+  <body>
+    <h1>Services Benchmark</h1>
+
+    <p>Combine various services together on this page so it can be page speed tested.</p>
+
+    <template id="fbp">
+      <script>
+        !(function (f, b, e, v, n, t, s) {
+          console.log('Facebook Pixel');
+          n = f.fbq = function () {
+            n.callMethod ? n.callMethod.apply(n, arguments) : n.queue.push(arguments);
+          };
+          if (!f._fbq) f._fbq = n;
+          n.push = n;
+          n.loaded = !0;
+          n.version = '2.0';
+          n.queue = [];
+          t = b.createElement(e);
+          t.async = !0;
+          t.src = v;
+          s = b.getElementsByTagName(e)[0];
+          s.parentNode.insertBefore(t, s);
+        })(window, document, 'script', 'https://connect.facebook.net/en_US/fbevents.js');
+        fbq('init', '166730740625110');
+        fbq('track', 'PageView');
+      </script>
+    </template>
+
+    <template id="gtm">
+      <script>
+        (function (window, document, i) {
+          console.log('Google Tag Manager');
+          window['dataLayer'] = window[dataLayer] || [];
+          window['dataLayer'].push({ 'gtm.start': new Date().getTime(), 'event': 'gtm.js' });
+          var firstScript = document.getElementsByTagName('script')[0];
+          var gtmScript = document.createElement('script');
+          var dataLayer = 'dataLayer' != 'dataLayer' ? '&l=' + 'dataLayer' : '';
+          gtmScript.async = true;
+          gtmScript.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dataLayer;
+          firstScript.parentNode.insertBefore(gtmScript, firstScript);
+        })(window, document, 'GTM-W275NLW');
+      </script>
+    </template>
+
+    <template id="wistia">
+      <script>
+        (function () {
+          console.log('Wistia');
+          var output = document.getElementById('output');
+
+          var wistiaVideo = document.createElement('div');
+          wistiaVideo.className = 'wistia_embed wistia_async_varrf62cw4 videoFoam=true';
+          wistiaVideo.style.width = '320px';
+          wistiaVideo.style.height = '180px';
+          output.appendChild(wistiaVideo);
+
+          window._wq = window._wq || [];
+
+          var wistiaScript = document.createElement('script');
+          wistiaScript.async = true;
+          wistiaScript.src = '//fast.wistia.com/assets/external/E-v1.js';
+          output.appendChild(wistiaScript);
+        })();
+      </script>
+    </template>
+
+    <table id="services">
+      <tr>
+        <th>Service</th>
+        <th>Partytown</th>
+        <th>Standard</th>
+        <th>Excluded</th>
+      </tr>
+    </table>
+
+    <p>
+      <a
+        id="pagespeed"
+        href="https://pagespeed.web.dev/"
+        target="_blank"
+        rel="noopener noreferrer"
+        hidden
+        >⏱ PageSpeed Insights</a
+      >
+    </p>
+
+    <div id="output"></div>
+
+    <script>
+      (() => {
+        const services = [
+          { name: 'Facebook Pixel', id: 'fbp' },
+          { name: 'Google Tag Manager', id: 'gtm' },
+          { name: 'Wistia', id: 'wistia' },
+        ];
+
+        const url = new URL(location.href);
+        const table = document.getElementById('services');
+
+        if (location.hostname !== 'localhost') {
+          const pageSpeed = document.getElementById('pagespeed');
+          const pageSpeedUrl = new URL('https://pagespeed.web.dev/report');
+          pageSpeedUrl.searchParams.set('url', location.href);
+          pageSpeed.href = pageSpeedUrl.href;
+          pageSpeed.hidden = false;
+        }
+
+        function serviceChange() {
+          const url = new URL(location.pathname, location.origin);
+          const radios = document.querySelectorAll('input[type="radio"]');
+          Array.from(radios)
+            .filter((r) => r.checked && r.value !== '')
+            .forEach((radio) => {
+              url.searchParams.set(radio.name, radio.value);
+            });
+          location = url.href;
+        }
+
+        services.forEach((service) => {
+          const tr = document.createElement('tr');
+
+          const tdName = document.createElement('td');
+          tdName.textContent = service.name;
+          tr.appendChild(tdName);
+
+          function addInput(value) {
+            const td = document.createElement('td');
+            const label = document.createElement('label');
+            const radio = document.createElement('input');
+            radio.type = 'radio';
+            radio.name = service.id;
+            radio.value = value;
+            radio.setAttribute('aria-label', service.name);
+
+            if (url.searchParams.get(service.id) === value) {
+              radio.checked = true;
+            } else if (value === '' && !url.searchParams.has(service.id)) {
+              radio.checked = true;
+            }
+
+            if (radio.checked && value !== '') {
+              const script = document.createElement('script');
+              script.dataset.id = service.id;
+              const template = document.getElementById(service.id);
+              script.innerHTML = template.content.querySelector('script').innerHTML;
+              if (radio.value === 'partytown') {
+                script.type = 'text/partytown';
+              }
+              document.body.appendChild(script);
+            }
+
+            radio.addEventListener('change', serviceChange);
+            label.appendChild(radio);
+            td.appendChild(label);
+            tr.appendChild(td);
+          }
+
+          addInput('partytown');
+          addInput('standard');
+          addInput('');
+
+          table.appendChild(tr);
+        });
+      })();
+    </script>
+  </body>
+</html>
