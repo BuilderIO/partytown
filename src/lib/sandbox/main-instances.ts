@@ -71,8 +71,8 @@ export const setInstanceId = (instance: any, instanceId: number, now?: number) =
 
     if (now > lastCleanup + 5000) {
       instances.forEach((storedInstance: any, instanceId) => {
-        if (storedInstance[CreatedKey] < lastCleanup && storedInstance instanceof Node) {
-          if (!storedInstance.isConnected) {
+        if (storedInstance[CreatedKey] < lastCleanup) {
+          if (storedInstance.nodeType && !storedInstance.isConnected) {
             instances.delete(instanceId);
           }
         }
