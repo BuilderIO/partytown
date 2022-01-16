@@ -169,13 +169,13 @@
       <tr>
         <th>Service</th>
         <th>
-          <button data-type="partytown">Partytown</button>
+          <button data-type="p">Partytown</button>
         </th>
         <th>
-          <button data-type="standard">Standard</button>
+          <button data-type="s">Standard</button>
         </th>
         <th>
-          <button data-type="excluded">Excluded</button>
+          <button data-type="">Excluded</button>
         </th>
       </tr>
     </table>
@@ -216,7 +216,7 @@
         Array.from(document.querySelectorAll('button[data-type]')).forEach((btn) => {
           btn.addEventListener('click', () => {
             const url = new URL(location.pathname, location.origin);
-            if (btn.dataset.type !== 'excluded') {
+            if (btn.dataset.type !== '') {
               services.forEach((s) => {
                 url.searchParams.set(s.id, btn.dataset.type);
               });
@@ -263,7 +263,7 @@
               script.dataset.id = service.id;
               const template = document.getElementById(service.id);
               script.innerHTML = template.content.querySelector('script').innerHTML;
-              if (radio.value === 'partytown') {
+              if (radio.value === 'p') {
                 script.type = 'text/partytown';
                 includePartytownScript = true;
               }
@@ -276,8 +276,8 @@
             tr.appendChild(td);
           }
 
-          addInput('partytown');
-          addInput('standard');
+          addInput('p');
+          addInput('s');
           addInput('');
 
           table.appendChild(tr);
