@@ -20,13 +20,12 @@ const syncSendMessageToMainAtomics = (
 
   // Syncronously wait for response
   Atomics.wait(sharedData, 0, 0);
-  let dataLength = Atomics.load(sharedData, 0);
-  if (dataLength === 0) {
-    console.error('Atomics failed', sharedDataBuffer);
-  }
 
+  let dataLength = Atomics.load(sharedData, 0);
   let accessRespStr = '';
-  for (let i = 0; i < dataLength; i++) {
+  let i = 0;
+
+  for (; i < dataLength; i++) {
     accessRespStr += String.fromCharCode(sharedData[i + 1]);
   }
 

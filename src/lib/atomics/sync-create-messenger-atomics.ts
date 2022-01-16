@@ -16,6 +16,8 @@ const createMessengerAtomics: Messenger = async (sandboxWindow, receiveMessage) 
 
   return (worker: PartytownWebWorker, mainWindow: MainWindow, msg: MessageFromWorkerToSandbox) => {
     const msgType = msg[0];
+    const accessReq = msg[1] as MainAccessRequest;
+
     if (msgType === WorkerMessageType.MainDataRequestFromWorker) {
       // web worker has requested data from the main thread
       // collect up all the info about the main thread interfaces
@@ -24,7 +26,6 @@ const createMessengerAtomics: Messenger = async (sandboxWindow, receiveMessage) 
       initData.$sharedDataBuffer$ = sharedDataBuffer;
       worker.postMessage([WorkerMessageType.MainDataResponseToWorker, initData]);
     } else if (msgType === WorkerMessageType.ForwardWorkerAccessRequest) {
-      const accessReq = msg[1] as MainAccessRequest;
       receiveMessage(accessReq, (accessRsp) => {
         const stringifiedData = JSON.stringify(accessRsp);
         const stringifiedDataLength = stringifiedData.length;
