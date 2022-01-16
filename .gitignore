@@ -5,6 +5,7 @@ node_modules/
 /lib/
 /react/
 /tests/~partytown/
+/tests/benchmarks/screenshots/
 /tests/videos/
 /tsc/
 /utils/

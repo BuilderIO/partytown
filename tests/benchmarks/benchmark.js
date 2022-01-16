@@ -2,14 +2,14 @@
   const h1 = document.getElementById('h1');
   document.title = h1.textContent;
 
-  const h1Average = document.getElementById('ave');
-  h1Average.hidden = false;
+  const resultElm = document.getElementById('result');
+  resultElm.hidden = false;
   const output = document.getElementById('output');
   const results = document.getElementById('results');
 
   const timeBetween = 20;
   const iterateCount = 1000;
-  const runCount = 20;
+  const runCount = 10;
   const runs = [];
 
   const test = (i) => {
@@ -59,9 +59,9 @@
         return t;
       }, 0);
       const ave = total / runCount;
-      h1Average.textContent = `${ave.toFixed(1)}ms`;
+      resultElm.textContent = `${ave.toFixed(1)}ms`;
+      resultElm.classList.add('completed');
       document.title = h1.textContent;
-      h1Average.classList.add('completed');
     }
   };
 

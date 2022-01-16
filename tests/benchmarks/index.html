@@ -48,27 +48,27 @@
   <body>
     <p>
       <a id="partytown" href="/benchmarks/">Partytown</a>
-      <a id="mainthread" href="/benchmarks/?mainthread">Main Thread</a>
+      <a id="baseline" href="/benchmarks/?baseline">Baseline</a>
     </p>
 
     <h1 id="h1">
       <span id="title"></span>
-      <span id="ave" hidden>running...</span>
+      <span id="result" hidden>running...</span>
     </h1>
 
     <table id="results"></table>
 
     <div id="output"></div>
 
-    <script src="/~partytown/partytown.js"></script>
+    <script src="/~partytown/debug/partytown.js"></script>
     <script>
       (() => {
         const script = document.createElement('script');
         script.src = 'benchmark.js';
 
-        if (location.search.includes('mainthread')) {
-          window.ptType = 'Main Thread';
-          document.getElementById('mainthread').classList.add('active');
+        if (location.search.includes('baseline')) {
+          window.ptType = 'Baseline';
+          document.getElementById('baseline').classList.add('active');
         } else {
           if (window.crossOriginIsolated) {
             window.ptType = 'Atomics';
