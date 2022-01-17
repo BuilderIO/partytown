@@ -1,8 +1,7 @@
 import type { Messenger } from '../types';
 
-const syncCreateMessenger: Messenger = async (sandboxWindow, receiveMessage) => {
+const syncCreateMessenger: Messenger = async (receiveMessage) => {
   // dynamically replaced at build-time with
-  sandboxWindow;
   receiveMessage;
   return null as any;
 };

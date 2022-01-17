@@ -53,7 +53,7 @@ export const dimensionChangingSetterNames = /*#__PURE__*/ commaSplit(
 );
 
 /** method calls that could change dimensions of elements */
-export const dimensionChangingMethodNames = commaSplit('setAttribute,setProperty');
+export const dimensionChangingMethodNames = /*#__PURE__*/ commaSplit('setAttribute,setProperty');
 
 /** element methods that only read the DOM */
 export const elementGetterDimensionMethodNames = /*#__PURE__*/ commaSplit(

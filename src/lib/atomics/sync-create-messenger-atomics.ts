@@ -2,19 +2,18 @@ import { onMessageFromWebWorker } from '../sandbox/on-messenge-from-worker';
 import { readMainPlatform } from '../sandbox/read-main-platform';
 import {
   MainAccessRequest,
-  MainWindow,
   MessageFromWorkerToSandbox,
   Messenger,
   PartytownWebWorker,
   WorkerMessageType,
 } from '../types';
 
-const createMessengerAtomics: Messenger = async (sandboxWindow, receiveMessage) => {
+const createMessengerAtomics: Messenger = async (receiveMessage) => {
   const size = 1024 * 1024 * 1024;
   const sharedDataBuffer = new SharedArrayBuffer(size);
   const sharedData = new Int32Array(sharedDataBuffer);
 
-  return (worker: PartytownWebWorker, mainWindow: MainWindow, msg: MessageFromWorkerToSandbox) => {
+  return (worker: PartytownWebWorker, msg: MessageFromWorkerToSandbox) => {
     const msgType = msg[0];
     const accessReq = msg[1] as MainAccessRequest;
 
@@ -22,7 +21,7 @@ const createMessengerAtomics: Messenger = async (sandboxWindow, receiveMessage) 
       // web worker has requested data from the main thread
       // collect up all the info about the main thread interfaces
       // send the main thread interface data to the web worker
-      const initData = readMainPlatform(mainWindow);
+      const initData = readMainPlatform();
       initData.$sharedDataBuffer$ = sharedDataBuffer;
       worker.postMessage([WorkerMessageType.MainDataResponseToWorker, initData]);
     } else if (msgType === WorkerMessageType.ForwardWorkerAccessRequest) {
@@ -36,7 +35,7 @@ const createMessengerAtomics: Messenger = async (sandboxWindow, receiveMessage) 
         Atomics.notify(sharedData, 0);
       });
     } else {
-      onMessageFromWebWorker(worker, mainWindow, msg);
+      onMessageFromWebWorker(worker, msg);
     }
   };
 };

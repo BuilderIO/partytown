@@ -1,6 +1,6 @@
 import { initializedWorkerScript, readNextScript } from './read-main-scripts';
+import { mainWindow } from './main-globals';
 import {
-  MainWindow,
   MainWindowContext,
   MessageFromWorkerToSandbox,
   PartytownWebWorker,
@@ -13,7 +13,6 @@ import { winCtxs } from './main-constants';
 
 export const onMessageFromWebWorker = (
   worker: PartytownWebWorker,
-  mainWindow: MainWindow,
   msg: MessageFromWorkerToSandbox,
   winCtx?: MainWindowContext
 ) => {

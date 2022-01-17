@@ -1,7 +1,6 @@
 export type CreateWorker = (workerName: string) => Worker;
 
 export type Messenger = (
-  sandboxWindow: Window,
   receiveMessage: MessengerRequestCallback
 ) => Promise<MessengerHandler | null>;
 
@@ -12,7 +11,6 @@ export type MessengerRequestCallback = (
 
 export type MessengerHandler = (
   worker: PartytownWebWorker,
-  mainWindow: MainWindow,
   msg: MessageFromWorkerToSandbox
 ) => void;
 

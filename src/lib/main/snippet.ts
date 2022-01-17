@@ -11,7 +11,7 @@ export function snippet(
   libPath?: string,
   timeout?: any,
   scripts?: NodeListOf<HTMLScriptElement>,
-  sandbox?: HTMLIFrameElement,
+  sandbox?: HTMLIFrameElement | HTMLScriptElement,
   mainForwardFn?: any,
   useAtomics?: boolean
 ) {
@@ -33,7 +33,7 @@ export function snippet(
       top!.dispatchEvent(new CustomEvent(PT_IFRAME_APPENDED, { detail: win }));
     } else if (scripts!.length) {
       // set a timeout to fire if PT hasn't initialized in Xms
-      timeout = setTimeout(fallback, debug ? 60000 : 9999);
+      timeout = setTimeout(fallback, debug ? 60000 : 10000);
       doc.addEventListener(PT_INITIALIZED_EVENT, clearFallback);
 
       useAtomics = crossOriginIsolated;
@@ -42,7 +42,7 @@ export function snippet(
       }
       if (useAtomics) {
         // atomics support
-        loadSandbox('atomics');
+        loadSandbox(1);
       } else if (nav.serviceWorker) {
         // service worker support
         nav.serviceWorker
@@ -51,11 +51,11 @@ export function snippet(
           })
           .then(function (swRegistration) {
             if (swRegistration.active) {
-              loadSandbox('sw');
+              loadSandbox();
             } else if (swRegistration.installing) {
               swRegistration.installing.addEventListener('statechange', function (ev) {
                 if ((ev.target as any as ServiceWorker).state == 'activated') {
-                  loadSandbox('sw');
+                  loadSandbox();
                 }
               });
             } else if (debug) {
@@ -69,11 +69,14 @@ export function snippet(
     }
   }
 
-  function loadSandbox(msgType: 'sw' | 'atomics') {
-    sandbox = doc.createElement('iframe');
-    sandbox.setAttribute('style', 'display:block;width:0;height:0;border:0;visibility:hidden');
-    sandbox.setAttribute('aria-hidden', !0 as any);
-    sandbox.src = libPath + 'partytown-sandbox-' + msgType + '.html?' + Date.now();
+  function loadSandbox(isAtomics?: number) {
+    sandbox = doc.createElement(isAtomics ? 'script' : 'iframe');
+    if (isAtomics) {
+      sandbox.style.cssText = 'display:block;width:0;height:0;border:0;visibility:hidden';
+      sandbox.ariaHidden = !0 + '';
+    }
+    sandbox.src =
+      libPath + 'partytown-' + (isAtomics ? 'atomics.js' : 'sandbox-sw.html?' + Date.now());
     doc.body.appendChild(sandbox);
   }
 
@@ -126,4 +129,9 @@ export function snippet(
     // not ready yet, wait for window load
     win.addEventListener('load', ready);
   }
+}
+
+const enum SandboxType {
+  Atomics = 1,
+  ServiceWorker = 2,
 }

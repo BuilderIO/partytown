@@ -8,8 +8,7 @@ export const getAndSetInstanceId = (instance: any, instanceId?: number, nodeName
       return PlatformInstanceId.window;
     }
 
-    nodeName = (instance as any as Node).nodeName;
-    if (nodeName === NodeName.Document) {
+    if ((nodeName = (instance as any as Node).nodeName) === NodeName.Document) {
       return PlatformInstanceId.document;
     }
     if (nodeName === NodeName.DocumentElement) {
@@ -22,8 +21,7 @@ export const getAndSetInstanceId = (instance: any, instanceId?: number, nodeName
       return PlatformInstanceId.body;
     }
 
-    instanceId = instance[InstanceIdKey];
-    if (typeof instanceId !== 'number') {
+    if (typeof (instanceId = instance[InstanceIdKey]) !== 'number') {
       setInstanceId(instance, (instanceId = randomId()));
     }
     return instanceId;

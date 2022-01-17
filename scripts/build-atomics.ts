@@ -3,7 +3,7 @@ import {
   BuildOptions,
   copyOutputToTests,
   fileSize,
-  getJsBanner,
+  jsBannerPlugin,
   syncCommunicationModulesPlugin,
   versionPlugin,
   watchDir,
@@ -28,28 +28,12 @@ function buildAtomicsDebug(opts: BuildOptions): RollupOptions {
   return {
     input: join(opts.tscLibDir, 'sandbox', 'index.js'),
     output: {
-      file: join(opts.distLibDebugDir, 'partytown-sandbox-atomics.html'),
+      file: join(opts.distLibDebugDir, 'partytown-atomics.js'),
       format: 'es',
       exports: 'none',
-      plugins: [
-        versionPlugin(opts),
-        {
-          name: 'debugHtmlWrap',
-          async generateBundle(_, bundle) {
-            for (const f in bundle) {
-              const b = bundle[f];
-              if (b.type === 'chunk') {
-                const code = getJsBanner(opts, b.code);
-                const outName = `partytown-sandbox-atomics.js`;
-                await writeFile(join(opts.distLibDebugDir, outName), code);
-                await writeFile(join(opts.distTestsLibDebugDir, outName), code);
-                b.code = debugHtml;
-              }
-            }
-          },
-        },
-        ...minifyPlugin(opts, true),
-      ],
+      intro: `((window)=>{`,
+      outro: `})(window);`,
+      plugins: [versionPlugin(opts), ...minifyPlugin(opts, true)],
     },
     plugins: [
       versionPlugin(opts),
@@ -58,42 +42,21 @@ function buildAtomicsDebug(opts: BuildOptions): RollupOptions {
       watchDir(opts, join(opts.tscLibDir, 'atomics')),
       watchDir(opts, join(opts.tscLibDir, 'web-worker')),
       copyOutputToTests(opts),
+      jsBannerPlugin(opts),
     ],
   };
 }
-
-const debugHtml = `<!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <script type="module" src="./partytown-sandbox-atomics.js"></script>
-  </head>
-</html>
-`;
 
 function buildAtomicsMin(opts: BuildOptions): RollupOptions {
   return {
     input: join(opts.tscLibDir, 'sandbox', 'index.js'),
     output: {
-      file: join(opts.distLibDir, 'partytown-sandbox-atomics.html'),
+      file: join(opts.distLibDir, 'partytown-atomics.js'),
       format: 'es',
       exports: 'none',
-      plugins: [
-        {
-          name: 'minHtmlWrap',
-          async generateBundle(_, bundle) {
-            for (const f in bundle) {
-              const b = bundle[f];
-              if (b.type === 'chunk') {
-                const jsCode = getJsBanner(opts, b.code);
-                b.code = (minHtmlTop + jsCode.trim() + minHtmlBottom).trim();
-              }
-            }
-          },
-        },
-        ...minifyPlugin(opts, false),
-        fileSize(),
-      ],
+      intro: `((window)=>{`,
+      outro: `})(window);`,
+      plugins: [...minifyPlugin(opts, false), fileSize()],
     },
     plugins: [
       syncCommunicationModulesPlugin(opts, 'atomics'),
@@ -102,9 +65,7 @@ function buildAtomicsMin(opts: BuildOptions): RollupOptions {
       watchDir(opts, join(opts.tscLibDir, 'web-worker')),
       copyOutputToTests(opts),
       versionPlugin(opts),
+      jsBannerPlugin(opts),
     ],
   };
 }
-
-const minHtmlTop = `<!DOCTYPE html><html><head><meta charset="utf-8"><script type="module">`;
-const minHtmlBottom = `</script></head></html>`;

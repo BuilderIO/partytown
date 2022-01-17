@@ -4,15 +4,14 @@ import {
   InterfaceInfo,
   InterfaceMember,
   InitWebWorkerData,
-  PartytownConfig,
   StorageItem,
 } from '../types';
 import { logMain } from '../log';
+import { config, doc, libPath, mainWindow } from './main-globals';
 
-export const readMainPlatform = (win: any) => {
+export const readMainPlatform = () => {
   const startTime = debug ? performance.now() : 0;
 
-  const doc = (win as Window).document;
   const docImpl = doc.implementation.createHTMLDocument();
   const textNode = docImpl.createTextNode('');
   const comment = docImpl.createComment('');
@@ -20,12 +19,12 @@ export const readMainPlatform = (win: any) => {
   const svg = docImpl.createElementNS('http://www.w3.org/2000/svg', 'svg');
   const mutationObserver = new MutationObserver(noop);
   const resizeObserver = new ResizeObserver(noop);
-  const perf = win.performance;
-  const screen = win.screen;
+  const perf = mainWindow.performance;
+  const screen = mainWindow.screen;
 
   // get all HTML*Element constructors on window
   // and create each element to get their implementation
-  const elms = Object.getOwnPropertyNames(win)
+  const elms = Object.getOwnPropertyNames(mainWindow)
     .filter((c) => /^HTML.+Element$/.test(c))
     .map((htmlCstrName) => [docImpl.createElement(getHtmlTagNameFromConstructor(htmlCstrName))]);
 
@@ -34,7 +33,7 @@ export const readMainPlatform = (win: any) => {
 
   const impls: any[] = [
     // window implementations
-    [win.history],
+    [mainWindow.history],
     [perf],
     [perf.navigation],
     [perf.timing],
@@ -62,19 +61,16 @@ export const readMainPlatform = (win: any) => {
     .filter((implData) => implData[0])
     .map((implData) => {
       const impl = implData[0];
-      const interfaceType: InterfaceType = implData[1];
+      const interfaceType: InterfaceType = implData[1] as any;
       const cstrName = getConstructorName(impl);
-      const CstrPrototype = win[cstrName].prototype;
+      const CstrPrototype = (mainWindow as any)[cstrName].prototype;
       return [cstrName, CstrPrototype, impl, interfaceType];
     });
 
   const $interfaces$: InterfaceInfo[] = [
-    readImplementation('Window', win),
+    readImplementation('Window', mainWindow),
     readImplementation('Node', textNode),
   ];
-
-  const config: PartytownConfig = win.partytown || {};
-  const libPath = (config.lib || '/~partytown/') + (debug ? 'debug/' : '');
 
   const $config$ = JSON.stringify(config, (k, v) => {
     if (typeof v === 'function') {
@@ -88,10 +84,10 @@ export const readMainPlatform = (win: any) => {
 
   const initWebWorkerData: InitWebWorkerData = {
     $config$,
-    $libPath$: new URL(libPath, win.location) + '',
+    $libPath$: new URL(libPath, mainWindow.location as any) + '',
     $interfaces$,
-    $localStorage$: readStorage(win, 'localStorage'),
-    $sessionStorage$: readStorage(win, 'sessionStorage'),
+    $localStorage$: readStorage('localStorage'),
+    $sessionStorage$: readStorage('sessionStorage'),
   };
 
   impls.map(([cstrName, CstrPrototype, impl, intefaceType]) =>
@@ -203,14 +199,14 @@ const getHtmlTagNameFromConstructor = (t: string) => {
   return htmlConstructorToTagMap[t] || t;
 };
 
-const readStorage = (win: Window, storageName: 'localStorage' | 'sessionStorage') => {
+const readStorage = (storageName: 'localStorage' | 'sessionStorage') => {
   let items: StorageItem[] = [];
   let i = 0;
-  let l = len(win[storageName]);
+  let l = len(mainWindow[storageName]);
   let key: string;
   for (; i < l; i++) {
-    key = win[storageName].key(i)!;
-    items.push([key, win[storageName].getItem(key)!]);
+    key = mainWindow[storageName].key(i)!;
+    items.push([key, mainWindow[storageName].getItem(key)!]);
   }
   return items;
 };
