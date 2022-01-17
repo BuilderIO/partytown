@@ -38,7 +38,6 @@ test('service worker iframe, defaults', ({ win, document, navigator, top }) => {
   const iframeUrl = new URL(iframe.src, 'http://builder.io/');
   assert.equal(iframeUrl.pathname, '/~partytown/partytown-sandbox-sw.html');
   assert.not.equal(iframeUrl.search, '');
-  assert.equal(iframe.getAttribute('aria-hidden'), 'true');
 });
 
 test.run();

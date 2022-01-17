@@ -80,7 +80,10 @@
   <body>
     <h1>Services Benchmark</h1>
 
-    <p>Combine various services together on this page so it can be page speed tested.</p>
+    <p>
+      Combine various services together on this page so it can be page speed tested. "Standard" runs
+      the service as a traditional script, and "Partytown" will run it with "text/partytown".
+    </p>
 
     <template id="fbp">
       <script>
@@ -143,6 +146,22 @@
       </script>
     </template>
 
+    <template id="hs">
+      <script>
+        (function () {
+          console.log('Hubspot');
+          var output = document.getElementById('output');
+
+          var hsScript = document.createElement('script');
+          hsScript.async = true;
+          hsScript.defer = true;
+          hsScript.id = 'hs-script-loader';
+          hsScript.src = '//js.hs-scripts.com/20632911.js';
+          output.appendChild(hsScript);
+        })();
+      </script>
+    </template>
+
     <template id="partytown">
       <script>
         partytown = {
@@ -150,7 +169,9 @@
             if (
               url.hostname.includes('google-analytics') ||
               url.hostname.includes('www.googletagmanager.com') ||
-              url.hostname.includes('connect.facebook.net')
+              url.hostname.includes('connect.facebook.net') ||
+              url.hostname.includes('js.hs-scripts.com') ||
+              url.hostname.includes('js.hs-analytics.net')
             ) {
               const proxyUrl = new URL('https://cdn.builder.io/api/v1/proxy-api');
               proxyUrl.searchParams.append('url', url);
@@ -161,7 +182,7 @@
         };
         /* Partytown 0.2.0 - MIT builder.io */
         // prettier-ignore
-        !function(t,e,n,i,o,r,a,s,d,c,l,p){function u(){a=(r.lib||"/~partytown/")+(r.debug?"debug/":""),d=e.querySelectorAll('script[type="text/partytown"]'),i!=t?i.dispatchEvent(new CustomEvent("pt1",{detail:t})):d.length&&(s=setTimeout(f,9999),e.addEventListener("pt0",w),o?h("atomics"):n.serviceWorker?n.serviceWorker.register(a+"partytown-sw.js"+(o?"?isolated":""),{scope:a}).then((function(t){t.active?h("sw"):t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"==t.target.state&&h("sw")}))}),console.error):f())}function h(t){(c=e.createElement("iframe")).setAttribute("style","display:block;width:0;height:0;border:0;visibility:hidden"),c.setAttribute("aria-hidden",!0),c.src=a+"partytown-sandbox-"+t+".html?"+Date.now(),e.body.appendChild(c)}function f(t,n){for(w(),t=0;t<d.length;t++)(n=e.createElement("script")).innerHTML=d[t].innerHTML,e.head.appendChild(n)}function w(){clearTimeout(s)}r=t.partytown||{},i==t&&(r.forward||[]).map((function(e){l=t,e.split(".").map((function(e,n,i){l=l[i[n]]=n+1<i.length?"push"==i[n+1]?[]:l[i[n]]||{}:function(){(t._ptf=t._ptf||[]).push(i,arguments)}}))})),"complete"==e.readyState?u():t.addEventListener("load",u)}(window,document,navigator,top,top.crossOriginIsolated);
+        !function(t,e,n,i,o,a,r,s,c,d,l,p){function u(){r=(a.lib||"/~partytown/")+(a.debug?"debug/":""),c=e.querySelectorAll('script[type="text/partytown"]'),i!=t?i.dispatchEvent(new CustomEvent("pt1",{detail:t})):c.length&&(s=setTimeout(f,1e4),e.addEventListener("pt0",g),o?h(1):n.serviceWorker?n.serviceWorker.register(r+"partytown-sw.js"+(o?"?isolated":""),{scope:r}).then((function(t){t.active?h():t.installing&&t.installing.addEventListener("statechange",(function(t){"activated"==t.target.state&&h()}))}),console.error):f())}function h(t){d=e.createElement(t?"script":"iframe"),t&&(d.style.cssText="display:block;width:0;height:0;border:0;visibility:hidden",d.ariaHidden=!0+""),d.src=r+"partytown-"+(t?"atomics.js":"sandbox-sw.html?"+Date.now()),e.body.appendChild(d)}function f(t,n){for(g(),t=0;t<c.length;t++)(n=e.createElement("script")).innerHTML=c[t].innerHTML,e.head.appendChild(n)}function g(){clearTimeout(s)}a=t.partytown||{},i==t&&(a.forward||[]).map((function(e){l=t,e.split(".").map((function(e,n,i){l=l[i[n]]=n+1<i.length?"push"==i[n+1]?[]:l[i[n]]||{}:function(){(t._ptf=t._ptf||[]).push(i,arguments)}}))})),"complete"==e.readyState?u():t.addEventListener("load",u)}(window,document,navigator,top,top.crossOriginIsolated);
       </script>
     </template>
 
@@ -192,6 +213,8 @@
       </a>
     </p>
 
+    <div id="details"></div>
+
     <div id="output"></div>
 
     <script>
@@ -199,12 +222,18 @@
         const services = [
           { name: 'Facebook Pixel', id: 'fbp' },
           { name: 'Google Tag Manager', id: 'gtm' },
+          { name: 'Hubspot', id: 'hs' },
           { name: 'Wistia', id: 'wistia' },
         ];
 
         const url = new URL(location.href);
         const table = document.getElementById('services');
         let includePartytownScript = false;
+
+        const details = document.getElementById('details');
+        details.innerHTML = [navigator.userAgent, 'crossOriginIsolated: ' + crossOriginIsolated]
+          .map((v) => `<p>` + v)
+          .join();
 
         if (location.hostname !== 'localhost') {
           const pageSpeed = document.getElementById('pagespeed');

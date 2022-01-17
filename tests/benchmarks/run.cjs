@@ -1,12 +1,15 @@
 const { chromium, webkit } = require('playwright');
 const { createServer } = require('../../scripts/server.cjs');
 const { join } = require('path');
+const { cpus } = require('os');
 
 const screenshotPath = join(__dirname, 'screenshots');
 
 (async () => {
-  console.log(`Benchmark`);
-  console.log(`----------------------`);
+  let title = `Benchmark: node ${process.version}, ${process.platform}, ${process.arch}`;
+  title += `, ${cpus()[0].model}`;
+  console.log(title);
+  console.log(''.padStart(title.length, '-'));
 
   const baseline = await runBenchmark(chromium, true, 'Chromium Baseline');
   const atomics = await runBenchmark(chromium, false, 'Chromium Atomics');
