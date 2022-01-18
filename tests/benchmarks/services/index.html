@@ -231,8 +231,11 @@
         let includePartytownScript = false;
 
         const details = document.getElementById('details');
-        details.innerHTML = [navigator.userAgent, 'crossOriginIsolated: ' + crossOriginIsolated]
-          .map((v) => `<p>` + v)
+        details.innerHTML = [
+          navigator.userAgent,
+          'crossOriginIsolated: ' + String(window.crossOriginIsolated),
+        ]
+          .map((v) => `<p>${v}</p>`)
           .join();
 
         if (location.hostname !== 'localhost') {
