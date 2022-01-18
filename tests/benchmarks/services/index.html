@@ -24,7 +24,6 @@
       }
       table {
         border-spacing: 0;
-        margin-bottom: 30px;
       }
       td,
       th {
@@ -75,6 +74,17 @@
         color: blue;
         border-color: blue;
       }
+      label {
+        margin: 0;
+        padding: 0;
+      }
+      label span {
+        position: relative;
+      }
+      label span input {
+        position: absolute;
+        margin: 1px 0 0 6px;
+      }
     </style>
   </head>
   <body>
@@ -82,7 +92,9 @@
 
     <p>
       Combine various services together on this page so it can be page speed tested. "Standard" runs
-      the service as a traditional script, and "Partytown" will run it with "text/partytown".
+      the service as a traditional script, and "Partytown" will run it with "text/partytown". Debug
+      Mode uses Partytown's debug script, which has no minification, the web worker is not inlined,
+      and prints more console logs.
     </p>
 
     <template id="fbp">
@@ -179,6 +191,7 @@
             }
           },
           forward: ['fbq', 'dataLayer.push', '_wq.push'],
+          debug: document.getElementById('debug-mode').checked,
         };
         /* Partytown 0.2.0 - MIT builder.io */
         // prettier-ignore
@@ -213,6 +226,15 @@
       </a>
     </p>
 
+    <p>
+      <label
+        >Debug Mode:
+        <span>
+          <input type="checkbox" id="debug-mode" />
+        </span>
+      </label>
+    </p>
+
     <p id="user-agent"></p>
 
     <p>
@@ -233,6 +255,7 @@
 
         const url = new URL(location.href);
         const table = document.getElementById('services');
+        const debugMode = document.getElementById('debug-mode');
         let includePartytownScript = false;
 
         document.getElementById('user-agent').textContent = navigator.userAgent;
@@ -268,6 +291,9 @@
             .forEach((radio) => {
               url.searchParams.set(radio.name, radio.value);
             });
+          if (debugMode.checked) {
+            url.searchParams.set('debug', 'true');
+          }
           location = url.href;
         }
 
@@ -317,6 +343,9 @@
 
           table.appendChild(tr);
         });
+
+        debugMode.checked = url.searchParams.has('debug');
+        debugMode.addEventListener('change', serviceChange);
 
         if (includePartytownScript) {
           const partytownScript = document.createElement('script');
