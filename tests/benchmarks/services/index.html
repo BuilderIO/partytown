@@ -213,7 +213,12 @@
       </a>
     </p>
 
-    <div id="details"></div>
+    <p id="user-agent"></p>
+
+    <p>
+      <span>crossOriginIsolated: </span>
+      <span id="cross-origin-isolated"></span>
+    </p>
 
     <div id="output"></div>
 
@@ -230,13 +235,10 @@
         const table = document.getElementById('services');
         let includePartytownScript = false;
 
-        const details = document.getElementById('details');
-        details.innerHTML = [
-          navigator.userAgent,
-          'crossOriginIsolated: ' + String(window.crossOriginIsolated),
-        ]
-          .map((v) => `<p>${v}</p>`)
-          .join();
+        document.getElementById('user-agent').textContent = navigator.userAgent;
+        document.getElementById('cross-origin-isolated').textContent = String(
+          window.crossOriginIsolated
+        );
 
         if (location.hostname !== 'localhost') {
           const pageSpeed = document.getElementById('pagespeed');
