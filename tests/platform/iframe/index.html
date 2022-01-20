@@ -685,6 +685,24 @@
           elm.className = 'testNativeFetch';
         </script>
       </li>
+
+      <li>
+        <strong>parent.postMessage()</strong>
+        <code id="testPostMessage"></code>
+        <script type="text/partytown">
+          const elm = document.getElementById('testPostMessage');
+
+          window.addEventListener('message', (ev) => {
+            console.log(ev);
+            elm.textContent = `${ev.type} ${ev.data}`;
+            elm.className = 'testPostMessage';
+          });
+
+          const iframe = document.createElement('iframe');
+          iframe.setAttribute('src', 'post-message.html');
+          document.head.appendChild(iframe);
+        </script>
+      </li>
     </ul>
 
     <hr />

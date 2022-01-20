@@ -98,4 +98,8 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testNativeFetch');
   const testNativeFetch = page.locator('#testNativeFetch');
   await expect(testNativeFetch).toHaveText('true');
+
+  await page.waitForSelector('.testPostMessage');
+  const testPostMessage = page.locator('#testPostMessage');
+  await expect(testPostMessage).toHaveText('message 88');
 });
