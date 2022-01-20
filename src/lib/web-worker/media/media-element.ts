@@ -1,8 +1,9 @@
+import { AudioTrackList, hasAudioTracks } from './audio-track';
 import { definePrototypePropertyDescriptor, getter, InstanceIdKey, WinIdKey } from './bridge';
 import { ReadyStateKey, TimeRangesKey } from './utils';
 import { TimeRanges } from './time-ranges';
 
-export const HTMLMediaDescriptorMap: PropertyDescriptorMap & ThisType<any> = {
+const HTMLMediaDescriptorMap: PropertyDescriptorMap & ThisType<any> = {
   buffered: {
     get() {
       if (!this[TimeRangesKey]) {
@@ -15,6 +16,7 @@ export const HTMLMediaDescriptorMap: PropertyDescriptorMap & ThisType<any> = {
       return this[TimeRangesKey];
     },
   },
+
   readyState: {
     get() {
       if (this[ReadyStateKey] === 4) {
@@ -31,5 +33,13 @@ export const HTMLMediaDescriptorMap: PropertyDescriptorMap & ThisType<any> = {
     },
   },
 };
+
+if (hasAudioTracks) {
+  HTMLMediaDescriptorMap.audioTracks = {
+    get(this: any) {
+      return new AudioTrackList(this);
+    },
+  };
+}
 
 definePrototypePropertyDescriptor(self.HTMLMediaElement, HTMLMediaDescriptorMap);
