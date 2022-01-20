@@ -7,16 +7,16 @@ export const onFetchServiceWorkerRequest = (ev: FetchEvent) => {
   const req = ev.request;
   const url = new URL(req.url);
   const pathname = url.pathname;
-  const isolated = false;
+
   if (debug && pathname.endsWith('sw.html')) {
     // debug version (sandbox and web worker are not inlined)
-    ev.respondWith(response(SandboxDebug, isolated));
+    ev.respondWith(response(SandboxDebug));
   } else if (!debug && pathname.endsWith('sw.html')) {
     // sandbox and webworker, minified and inlined
-    ev.respondWith(response(Sandbox, isolated));
+    ev.respondWith(response(Sandbox));
   } else if (pathname.endsWith('proxytown')) {
     // proxy request
-    ev.respondWith(httpRequestFromWebWorker(req, isolated));
+    ev.respondWith(httpRequestFromWebWorker(req));
   }
 };
 
@@ -65,22 +65,17 @@ const swMessageError = (accessReq: MainAccessRequest, $error$: string): MainAcce
 
 type MessageResolve = [(data?: any) => void, any];
 
-const httpRequestFromWebWorker = (req: Request, isolated: boolean) =>
+const httpRequestFromWebWorker = (req: Request) =>
   new Promise<Response>(async (resolve) => {
     const accessReq: MainAccessRequest = await req.clone().json();
     const responseData = await sendMessageToSandboxFromServiceWorker(accessReq);
-    resolve(response(JSON.stringify(responseData), isolated, 'application/json'));
+    resolve(response(JSON.stringify(responseData), 'application/json'));
   });
 
-const response = (body: string, isolated: boolean, contentType?: string) => {
-  const headers: HeadersInit = {
-    'content-type': contentType || 'text/html',
-    'Cache-Control': 'no-store',
-  };
-  if (isolated) {
-    headers['Cross-Origin-Embedder-Policy'] = 'require-corp';
-  }
-  return new Response(body, {
-    headers,
+const response = (body: string, contentType?: string) =>
+  new Response(body, {
+    headers: {
+      'content-type': contentType || 'text/html',
+      'Cache-Control': 'no-store',
+    },
   });
-};

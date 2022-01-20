@@ -6,65 +6,67 @@ export function snippet(
   doc: Document,
   nav: Navigator,
   top: Window,
-  crossOriginIsolated: boolean,
+  useAtomics: boolean,
   config?: PartytownConfig,
   libPath?: string,
   timeout?: any,
   scripts?: NodeListOf<HTMLScriptElement>,
   sandbox?: HTMLIFrameElement | HTMLScriptElement,
   mainForwardFn?: any,
-  useAtomics?: boolean
+  isReady?: number
 ) {
   // ES5 just so IE11 doesn't choke on arrow fns
   function ready() {
-    if (debug) {
-      // default to use debug files
-      libPath = (config!.lib || '/~partytown/') + (config!.debug !== false ? 'debug/' : '');
-    } else {
-      // default to use production, non-debug files
-      libPath = (config!.lib || '/~partytown/') + (config!.debug ? 'debug/' : '');
-    }
-
-    // grab all the partytown scripts
-    scripts = doc.querySelectorAll(`script[type="${SCRIPT_TYPE}"]`);
-
-    if (top != win) {
-      // this is an iframe
-      top!.dispatchEvent(new CustomEvent(PT_IFRAME_APPENDED, { detail: win }));
-    } else if (scripts!.length) {
-      // set a timeout to fire if PT hasn't initialized in Xms
-      timeout = setTimeout(fallback, debug ? 60000 : 10000);
-      doc.addEventListener(PT_INITIALIZED_EVENT, clearFallback);
-
-      useAtomics = crossOriginIsolated;
-      if (debug && useAtomics) {
-        useAtomics = !win.location.search.includes('forceServiceWorker');
-      }
-      if (useAtomics) {
-        // atomics support
-        loadSandbox(1);
-      } else if (nav.serviceWorker) {
-        // service worker support
-        nav.serviceWorker
-          .register(libPath + 'partytown-sw.js' + (crossOriginIsolated ? '?isolated' : ''), {
-            scope: libPath,
-          })
-          .then(function (swRegistration) {
-            if (swRegistration.active) {
-              loadSandbox();
-            } else if (swRegistration.installing) {
-              swRegistration.installing.addEventListener('statechange', function (ev) {
-                if ((ev.target as any as ServiceWorker).state == 'activated') {
-                  loadSandbox();
-                }
-              });
-            } else if (debug) {
-              console.warn(swRegistration);
-            }
-          }, console.error);
+    if (!isReady) {
+      isReady = 1;
+      if (debug) {
+        // default to use debug files
+        libPath = (config!.lib || '/~partytown/') + (config!.debug !== false ? 'debug/' : '');
       } else {
-        // no support for atomics or service worker
-        fallback();
+        // default to use production, non-debug files
+        libPath = (config!.lib || '/~partytown/') + (config!.debug ? 'debug/' : '');
+      }
+
+      // grab all the partytown scripts
+      scripts = doc.querySelectorAll(`script[type="${SCRIPT_TYPE}"]`);
+
+      if (top != win) {
+        // this is an iframe
+        top!.dispatchEvent(new CustomEvent(PT_IFRAME_APPENDED, { detail: win }));
+      } else if (scripts!.length) {
+        // set a timeout to fire if PT hasn't initialized in Xms
+        timeout = setTimeout(fallback, debug ? 60000 : 10000);
+        doc.addEventListener(PT_INITIALIZED_EVENT, clearFallback);
+
+        if (debug && useAtomics) {
+          useAtomics = !win.location.search.includes('forceServiceWorker');
+        }
+        if (useAtomics) {
+          // atomics support
+          loadSandbox(1);
+        } else if (nav.serviceWorker) {
+          // service worker support
+          nav.serviceWorker
+            .register(libPath + 'partytown-sw.js' + (debug && useAtomics ? '?isolated' : ''), {
+              scope: libPath,
+            })
+            .then(function (swRegistration) {
+              if (swRegistration.active) {
+                loadSandbox();
+              } else if (swRegistration.installing) {
+                swRegistration.installing.addEventListener('statechange', function (ev) {
+                  if ((ev.target as any as ServiceWorker).state == 'activated') {
+                    loadSandbox();
+                  }
+                });
+              } else if (debug) {
+                console.warn(swRegistration);
+              }
+            }, console.error);
+        } else {
+          // no support for atomics or service worker
+          fallback();
+        }
       }
     }
   }
@@ -123,15 +125,8 @@ export function snippet(
   }
 
   if (doc.readyState == 'complete') {
-    // document is ready, kick it off
     ready();
   } else {
-    // not ready yet, wait for window load
     win.addEventListener('load', ready);
   }
-}
-
-const enum SandboxType {
-  Atomics = 1,
-  ServiceWorker = 2,
 }
