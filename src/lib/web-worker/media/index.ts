@@ -1,7 +1,6 @@
 import { createAudioConstructor } from './audio';
 import './media-element';
 import { createMediaSourceConstructor } from './media-source';
-import './video';
 import './canvas/index';
 import type { InitLazyMediaConstructors } from '../../types';
 
