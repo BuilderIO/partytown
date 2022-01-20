@@ -57,11 +57,13 @@
       <div>
         <button id="btnStreamPlay">stream play</button>
         <code id="testStreamPlay"></code>
+        <button id="btnAudioTracks">audioTracks</button>
       </div>
       <script type="text/partytown">
         (function () {
           const testPlay = document.getElementById('testStreamPlay');
           const btn = document.getElementById('btnStreamPlay');
+          const btnAudioTracks = document.getElementById('btnAudioTracks');
           const video = document.getElementById('stream-video');
           const mimeCodec = 'video/mp4; codecs="avc1.4D401F"';
           console.log('MediaSource.isTypeSupported:', MediaSource.isTypeSupported(mimeCodec));
@@ -158,6 +160,14 @@
 
           btn.addEventListener('click', () => {
             start();
+          });
+
+          btnAudioTracks.addEventListener('click', () => {
+            if (video.audioTracks) {
+              console.log('video.audioTracks.length', video.audioTracks.length);
+            } else {
+              console.warn('video.audioTracks not supported');
+            }
           });
         })();
       </script>
