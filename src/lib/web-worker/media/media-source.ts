@@ -128,7 +128,6 @@ class SourceBuffer extends WorkerEventTargetProxy {
   constructor(mediaSource: any) {
     super(mediaSource[WinIdKey], mediaSource[InstanceIdKey], ['sourceBuffers']);
     this[MediaSourceKey] = mediaSource;
-    debugger;
   }
 
   abort() {
@@ -137,8 +136,6 @@ class SourceBuffer extends WorkerEventTargetProxy {
   }
 
   addEventListener(...args: any[]) {
-    debugger;
-    console.log('addEventListener');
     const sbIndex = getSourceBufferIndex(this);
     callMethod(this, [sbIndex, 'addEventListener'], args, CallType.NonBlockingNoSideEffect);
   }

@@ -9358,7 +9358,6 @@
                       }),
                       (T.onTickEnd = function () {
                         var t = this.media;
-                        console.warn('onTickEnd, readyState', t.readyState);
                         if (t && t.readyState) {
                           var mediaBuffer = this.mediaBuffer;
                           var bufferThing = mediaBuffer ? mediaBuffer : t;
@@ -13236,27 +13235,26 @@
                         ) {
                           if (((e = h.start(v)), d + r.maxBufferHole >= f && d < e)) {
                             var g = Math.max(e + c, l.currentTime + u);
-                            return (
-                              s.logger.warn(
-                                'skipping hole, adjusting currentTime from ' + d + ' to ' + g
-                              ),
-                              (this.moved = !0),
-                              (this.stalled = null),
-                              (l.currentTime = g),
-                              t &&
-                                o.trigger(a.Events.ERROR, {
-                                  type: i.ErrorTypes.MEDIA_ERROR,
-                                  details: i.ErrorDetails.BUFFER_SEEK_OVER_HOLE,
-                                  fatal: !1,
-                                  reason:
-                                    'fragment loaded with buffer holes, seeking from ' +
-                                    d +
-                                    ' to ' +
-                                    g,
-                                  frag: t,
-                                }),
-                              g
+                            s.logger.warn(
+                              'skipping hole, adjusting currentTime from ' + d + ' to ' + g
                             );
+                            this.moved = !0;
+                            this.stalled = null;
+                            l.currentTime = g;
+                            if (t) {
+                              o.trigger(a.Events.ERROR, {
+                                type: i.ErrorTypes.MEDIA_ERROR,
+                                details: i.ErrorDetails.BUFFER_SEEK_OVER_HOLE,
+                                fatal: !1,
+                                reason:
+                                  'fragment loaded with buffer holes, seeking from ' +
+                                  d +
+                                  ' to ' +
+                                  g,
+                                frag: t,
+                              });
+                            }
+                            return g;
                           }
                           f = h.end(v);
                         }
