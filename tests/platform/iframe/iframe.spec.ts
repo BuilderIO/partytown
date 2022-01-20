@@ -7,6 +7,10 @@ test('iframe', async ({ page }) => {
   const testSrc = page.locator('#testSrc');
   await expect(testSrc).toHaveText('/platform/iframe/content.html');
 
+  await page.waitForSelector('.testSrcAttr');
+  const testSrcAttr = page.locator('#testSrcAttr');
+  await expect(testSrcAttr).toHaveText('/platform/iframe/content.html');
+
   await page.waitForSelector('.testOnload');
   const testOnload = page.locator('#testOnload');
   await expect(testOnload).toHaveText('load');

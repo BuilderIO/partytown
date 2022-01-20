@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+
+    <title>Partytown Twitter Embed</title>
+
+    <link
+      rel="icon"
+      id="favicon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌎</text></svg>"
+    />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        font-size: 12px;
+      }
+      h1 {
+        margin: 0 0 15px 0;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      nav a {
+        display: block;
+        padding: 16px 8px;
+      }
+      nav a:link,
+      nav a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      nav a:hover {
+        background-color: #eee;
+      }
+      li {
+        display: flex;
+        margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button {
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
+      }
+    </style>
+    <script>
+      partytown = {
+        resolveUrl(url, location) {
+          if (url.hostname.includes('platform.twitter.com')) {
+            const proxyUrl = new URL('https://cdn.builder.io/api/v1/proxy-api');
+            proxyUrl.searchParams.append('url', url);
+            return proxyUrl;
+          }
+        },
+        forward: [],
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logImageRequests: true,
+        logMainAccess: true,
+        logSendBeaconRequests: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+      };
+    </script>
+    <script src="/~partytown/debug/partytown.js"></script>
+  </head>
+  <body>
+    <h1>Partytown Twitter Embed 🎉</h1>
+
+    <!-- prettier-ignore -->
+    <blockquote class="twitter-tweet"><p lang="en" dir="ltr">How <a href="https://twitter.com/builderio?ref_src=twsrc%5Etfw">@builderio</a> cut 99% of their JavaScript with <a href="https://twitter.com/QwikDev?ref_src=twsrc%5Etfw">@QwikDev</a> + Partytown<a href="https://t.co/VhdljVdqrZ">https://t.co/VhdljVdqrZ</a> <a href="https://t.co/vb9VLu7vbJ">https://t.co/vb9VLu7vbJ</a></p>&mdash; Qwik WebDev Framework (@QwikDev) <a href="https://twitter.com/QwikDev/status/1468672275775950854?ref_src=twsrc%5Etfw">December 8, 2021</a></blockquote>
+    <script type="text/partytown" async src="./widgets.js" charset="utf-8"></script>
+
+    <hr />
+    <nav>
+      <p><a href="/integrations/twitter/standard.html">Standard Twitter Embed</a></p>
+      <p><a href="/">All Tests</a></p>
+    </nav>
+  </body>
+</html>

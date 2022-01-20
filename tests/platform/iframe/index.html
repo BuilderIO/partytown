@@ -92,6 +92,25 @@
       </li>
 
       <li>
+        <strong>createElement('iframe'), setAttribute('src')</strong>
+        <code id="testSrcAttr"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testSrcAttr');
+            const iframe = document.createElement('iframe');
+            iframe.addEventListener('load', function (ev) {
+              const iframeDocument = iframe.contentDocument;
+              const iframeOutput = iframeDocument.getElementById('output');
+              elm.textContent = iframe.contentDocument.getElementById('output').textContent;
+              elm.className = 'testSrcAttr';
+            });
+            iframe.setAttribute('src', 'content.html');
+            elm.parentNode.insertBefore(iframe, null);
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>iframe.onload</strong>
         <code id="testOnload"></code>
         <script type="text/partytown">

@@ -1,3 +1,5 @@
+import { callMethod } from './worker-proxy';
+import { commaSplit } from './worker-constants';
 import { EventHandler, StateProp } from '../types';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import type { Node } from './worker-node';
@@ -38,4 +40,25 @@ export const HTMLSrcElementDescriptorMap: PropertyDescriptorMap & ThisType<Node>
       setInstanceStateValue(this, StateProp.errorHandlers, cb ? [cb] : null);
     },
   },
+
+  getAttribute: {
+    value(attrName: string) {
+      if (attrName === 'src') {
+        return (this as any).src;
+      }
+      return callMethod(this, ['getAttribute'], [attrName]);
+    },
+  },
+
+  setAttribute: {
+    value(attrName: string, attrValue: any) {
+      if (scriptAttrPropNames.includes(attrName)) {
+        (this as any)[attrName] = attrValue;
+      } else {
+        callMethod(this, ['setAttribute'], [attrName, attrValue]);
+      }
+    },
+  },
 };
+
+const scriptAttrPropNames = commaSplit('src,type');
