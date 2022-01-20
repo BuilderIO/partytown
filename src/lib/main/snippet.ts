@@ -127,6 +127,7 @@ export function snippet(
   if (doc.readyState == 'complete') {
     ready();
   } else {
+    win.addEventListener('DOMContentLoaded', ready);
     win.addEventListener('load', ready);
   }
 }
