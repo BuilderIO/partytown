@@ -7,10 +7,22 @@
     </style>
   </head>
   <body>
-    <span>origin:</span>
-    <span id="origin"></span>
+    <p>
+      <span>iframe origin:</span>
+      <span id="iframe-origin"></span>
+    </p>
+    <p>
+      <span>parent origin:</span>
+      <span id="parent-origin"></span>
+    </p>
     <script>
-      document.getElementById('origin').textContent = window.origin;
+      document.getElementById('iframe-origin').textContent = window.origin;
+
+      const url = new URL(location.href);
+      const parentOrigin = url.searchParams.get('parentorigin');
+      document.getElementById('parent-origin').textContent = parentOrigin;
+
+      parent.postMessage('88', parentOrigin);
     </script>
   </body>
 </html>
