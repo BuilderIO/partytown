@@ -75,11 +75,12 @@ const queue = (
         WorkerMessageType.AsyncAccessRequest,
         {
           $msgId$: randomId(),
-          $tasks$: [task],
+          $tasks$: [...taskQueue, task],
         },
       ],
       buffer ? [buffer instanceof ArrayBuffer ? buffer : buffer.buffer] : undefined
     );
+    taskQueue.length = 0;
   } else {
     // queue up the task
     taskQueue.push(task);
