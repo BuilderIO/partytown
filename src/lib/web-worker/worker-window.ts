@@ -1,6 +1,7 @@
 import { addStorageApi } from './worker-storage';
-import { NodeName, PlatformInstanceId } from '../types';
-import { constructGlobal } from './worker-proxy';
+import { callMethod, constructGlobal } from './worker-proxy';
+import { CallType, NodeName, PlatformInstanceId } from '../types';
+
 import { createNavigator } from './worker-navigator';
 import { createImageConstructor } from './worker-image';
 import { createNodeInstance, getOrCreateNodeInstance } from './worker-constructors';
@@ -205,6 +206,10 @@ export class Window extends WorkerProxy {
 
   get parent() {
     return environments[getEnv(this).$parentWinId$].$window$;
+  }
+
+  postMessage(...args: any[]) {
+    callMethod(this, ['postMessage'], args, CallType.NonBlockingNoSideEffect);
   }
 
   get self() {
