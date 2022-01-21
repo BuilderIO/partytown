@@ -1,9 +1,9 @@
 import { getConstructorName, isValidMemberName, startsWith } from '../utils';
 import { getInstance, getAndSetInstanceId } from './main-instances';
+import { mainRefs } from './main-constants';
 import {
   PartytownWebWorker,
   PlatformInstanceId,
-  RefHandlerCallbackData,
   SerializedCSSRule,
   SerializedInstance,
   SerializedObject,
@@ -12,7 +12,6 @@ import {
   SerializedType,
   WorkerMessageType,
 } from '../types';
-import { mainRefs } from './main-constants';
 
 export const serializeForWorker = (
   $winId$: number,
@@ -54,7 +53,7 @@ export const serializeForWorker = (
           SerializedType.NodeList,
           Array.from(value).map((v) => serializeForWorker($winId$, v, added)![1]) as any,
         ];
-      } else if (cstrName === 'Event') {
+      } else if (cstrName.endsWith('Event')) {
         return [SerializedType.Event, serializeObjectForWorker($winId$, value, added)];
       } else if (cstrName === 'CSSRuleList') {
         return [SerializedType.CSSRuleList, Array.from(value).map(serializeCssRuleForWorker)];
@@ -172,13 +171,16 @@ const deserializeRefFromWorker = (
 
   if (!ref) {
     ref = function (this: any, ...args: any[]) {
-      const refHandlerData: RefHandlerCallbackData = {
-        $instanceId$,
-        $refId$,
-        $thisArg$: serializeForWorker($winId$, this),
-        $args$: serializeForWorker($winId$, args),
-      };
-      worker.postMessage([WorkerMessageType.RefHandlerCallback, refHandlerData]);
+      worker.postMessage([
+        WorkerMessageType.RefHandlerCallback,
+        {
+          $winId$,
+          $instanceId$,
+          $refId$,
+          $thisArg$: serializeForWorker($winId$, this),
+          $args$: serializeForWorker($winId$, args),
+        },
+      ]);
     };
     mainRefs.set($refId$, ref);
   }

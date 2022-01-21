@@ -1,4 +1,10 @@
-import type { InterfaceInfo, RefHandler, WebWorkerContext, WebWorkerEnvironment } from '../types';
+import type {
+  InterfaceInfo,
+  PostMessageData,
+  RefHandler,
+  WebWorkerContext,
+  WebWorkerEnvironment,
+} from '../types';
 import type { Node } from './worker-node';
 import type { WorkerProxy } from './worker-proxy-constructor';
 
@@ -14,8 +20,9 @@ export const HookPrevent = /*#__PURE__*/ Symbol();
 export const webWorkerInstances = /*#__PURE__*/ new Map<number, Node>();
 export const webWorkerRefsByRefId: { [refId: number]: RefHandler } = {};
 export const webWorkerRefIdsByRef = /*#__PURE__*/ new WeakMap<RefHandler, number>();
+export const envGlobalConstructors = /*#__PURE__*/ new Map<string, typeof WorkerProxy>();
 export const nodeConstructors: { [nodeName: string]: typeof Node } = {};
-export const envGlobalConstructors: Map<string, typeof WorkerProxy> = /*#__PURE__*/ new Map();
+export const postMessages: PostMessageData[] = [];
 
 export const webWorkerCtx: WebWorkerContext = {} as any;
 export const webWorkerInterfaces: InterfaceInfo[] = [];

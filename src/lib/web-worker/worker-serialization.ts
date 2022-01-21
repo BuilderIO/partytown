@@ -7,20 +7,22 @@ import {
   SerializedRefTransferData,
   SerializedTransfer,
   SerializedType,
+  WebWorkerEnvironment,
 } from '../types';
 import { Attr } from './worker-node';
 import { callMethod } from './worker-proxy';
-import { constructEvent, getOrCreateNodeInstance } from './worker-constructors';
 import { CSSStyleDeclaration } from './worker-css-style-declaration';
 import {
   environments,
   InstanceIdKey,
+  postMessages,
   webWorkerRefIdsByRef,
   webWorkerRefsByRefId,
   WinIdKey,
 } from './worker-constants';
-import { NodeList } from './worker-node-list';
 import { getConstructorName, noop } from '../utils';
+import { getOrCreateNodeInstance } from './worker-constructors';
+import { NodeList } from './worker-node-list';
 import { setWorkerRef } from './worker-state';
 
 export const serializeForMain = (
@@ -179,7 +181,21 @@ export const deserializeFromMain = (
     }
 
     if (serializedType === SerializedType.Event) {
-      return constructEvent(obj);
+      if (obj.type === 'message' && obj.origin) {
+        let postMessageKey = JSON.stringify(obj.data);
+        let postMessageData = postMessages.find((pm) => pm.$data$ === postMessageKey);
+        let env: WebWorkerEnvironment;
+        if (postMessageData) {
+          env = environments[postMessageData.$winId$];
+          if (env) {
+            obj.origin = env.$window$.origin;
+          }
+        }
+      }
+      return new Proxy(new Event(obj.type, obj), {
+        get: (target: any, propName) =>
+          propName in obj ? obj[propName] : target[String(propName)],
+      });
     }
 
     if (serializedType === SerializedType.Object) {
@@ -196,9 +212,12 @@ export const getOrCreateSerializedInstance = ({
   getPlatformInstance($winId$, $instanceId$) ||
   getOrCreateNodeInstance($winId$, $instanceId$!, $nodeName$!);
 
-export const getPlatformInstance = (winId: number, instanceId: number | undefined) => {
-  const env = environments[winId];
-  if (instanceId === PlatformInstanceId.window) {
+export const getPlatformInstance = (
+  winId: number,
+  instanceId: number | undefined,
+  env?: WebWorkerEnvironment
+) => {
+  if ((env = environments[winId]) && instanceId === PlatformInstanceId.window) {
     return env.$window$;
   } else if (instanceId === PlatformInstanceId.document) {
     return env.$document$;
@@ -208,10 +227,13 @@ export const getPlatformInstance = (winId: number, instanceId: number | undefine
     return env.$head$;
   } else if (instanceId === PlatformInstanceId.body) {
     return env.$body$;
+  } else {
+    return;
   }
 };
 
 export const callWorkerRefHandler = ({
+  $winId$,
   $instanceId$,
   $refId$,
   $thisArg$,
@@ -219,9 +241,10 @@ export const callWorkerRefHandler = ({
 }: RefHandlerCallbackData) => {
   if (webWorkerRefsByRefId[$refId$]) {
     try {
-      const thisArg = deserializeFromMain(null, $instanceId$, [], $thisArg$);
-      const args = deserializeFromMain(null, $instanceId$, [], $args$);
-      webWorkerRefsByRefId[$refId$].apply(thisArg, args);
+      webWorkerRefsByRefId[$refId$].apply(
+        deserializeFromMain($winId$, $instanceId$, [], $thisArg$),
+        deserializeFromMain($winId$, $instanceId$, [], $args$)
+      );
     } catch (e) {
       console.error(e);
     }

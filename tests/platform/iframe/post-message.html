@@ -7,11 +7,11 @@
     </style>
   </head>
   <body>
-    <span>origin:</span>
+    <span>iframe origin:</span>
     <span id="origin"></span>
     <script>
       document.getElementById('origin').textContent = window.origin;
-      parent.postMessage('88', window.origin);
+      parent.postMessage({ mph: 99 }, window.origin);
     </script>
   </body>
 </html>

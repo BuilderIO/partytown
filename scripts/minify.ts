@@ -93,6 +93,7 @@ function managlePropsPlugin(): Plugin {
     $msgId$: '',
     $nodeName$: '',
     $orgUrl$: '',
+    $origin$: '',
     $parentWinId$: '',
     $postMessage$: '',
     $refId$: '',

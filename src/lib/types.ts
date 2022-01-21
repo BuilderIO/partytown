@@ -27,7 +27,7 @@ export type MessageFromWorkerToSandbox =
       instanceId: number,
       errorMsg: string
     ]
-  | [type: WorkerMessageType.InitializeNextScript, winid: WinId]
+  | [type: WorkerMessageType.InitializeNextScript, winId: WinId]
   | [type: WorkerMessageType.ForwardWorkerAccessRequest, accessReq: MainAccessRequest]
   | [type: WorkerMessageType.AsyncAccessRequest, accessReq: MainAccessRequest];
 
@@ -62,6 +62,7 @@ export interface ForwardMainTriggerData {
 }
 
 export interface RefHandlerCallbackData {
+  $winId$: number;
   $instanceId$: number;
   $refId$: number;
   $thisArg$: SerializedTransfer | undefined;
@@ -550,4 +551,9 @@ export interface InitLazyMediaConstructors {
 
 export interface MediaSelf {
   ptm?: LazyBridge;
+}
+
+export interface PostMessageData {
+  $winId$: number;
+  $data$: string;
 }

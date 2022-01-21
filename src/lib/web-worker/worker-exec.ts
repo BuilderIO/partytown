@@ -41,7 +41,7 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
         scriptContent = await rsp.text();
 
         env.$currentScriptId$ = instanceId;
-        run(env, scriptContent, scriptOrgSrc || scriptSrc);
+        run(env, winId, scriptContent, scriptOrgSrc || scriptSrc);
         runStateLoadHandlers(instance!, StateProp.loadHandlers);
       } else {
         errorMsg = rsp.statusText;
@@ -77,18 +77,18 @@ export const runScriptContent = (
     if (debug && webWorkerCtx.$config$.logScriptExecution) {
       logWorker(
         `Execute script (${instanceId}): ${scriptContent
-          .substr(0, 100)
+          .substring(0, 100)
           .split('\n')
           .map((l) => l.trim())
           .join(' ')
           .trim()
-          .substr(0, 60)}...`,
+          .substring(0, 60)}...`,
         winId
       );
     }
 
     env.$currentScriptId$ = instanceId;
-    run(env, scriptContent);
+    run(env, winId, scriptContent);
   } catch (contentError: any) {
     console.error(scriptContent, contentError);
     errorMsg = String(contentError.stack || contentError);
@@ -99,11 +99,11 @@ export const runScriptContent = (
   return errorMsg;
 };
 
-const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) =>
+const run = (env: WebWorkerEnvironment, winId: number, scriptContent: string, scriptUrl?: string) =>
   new Function(
-    `with(this){${scriptContent
+    `with(this){(function _${winId}_(){${scriptContent
       .replace(/\bthis\b/g, 'thi$(this)')
-      .replace(/\/\/# so/g, '//Xso')};function thi$(t){return t===this?window:t}}` +
+      .replace(/\/\/# so/g, '//Xso')};function thi$(t){return t===this?window:t}})()}` +
       (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '')
   ).call(env.$window$);
 
@@ -116,6 +116,18 @@ const runStateLoadHandlers = (
   if (handlers) {
     setTimeout(() => handlers!.map((cb) => cb({ type })));
   }
+};
+
+export const getScriptWinIdContext = () => {
+  try {
+    throw new Error();
+  } catch (e: any) {
+    const r = /_(\d+)_/gm.exec(e.stack);
+    if (r) {
+      return parseInt(r[1], 10);
+    }
+  }
+  return 0;
 };
 
 export const insertIframe = (winId: number, iframe: WorkerProxy) => {

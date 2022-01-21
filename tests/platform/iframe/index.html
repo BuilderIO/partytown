@@ -674,15 +674,17 @@
         <strong>native fetch()</strong>
         <code id="testNativeFetch"></code>
         <script type="text/partytown">
-          const elm = document.getElementById('testNativeFetch');
-          const iframe = document.createElement('iframe');
-          document.head.appendChild(iframe);
+          (function () {
+            const elm = document.getElementById('testNativeFetch');
+            const iframe = document.createElement('iframe');
+            document.head.appendChild(iframe);
 
-          const fetch = iframe.contentWindow.fetch;
-          document.head.removeChild(iframe);
+            const fetch = iframe.contentWindow.fetch;
+            document.head.removeChild(iframe);
 
-          elm.textContent = String(fetch).includes(`[native code]`);
-          elm.className = 'testNativeFetch';
+            elm.textContent = String(fetch).includes(`[native code]`);
+            elm.className = 'testNativeFetch';
+          })();
         </script>
       </li>
 
@@ -690,17 +692,47 @@
         <strong>parent.postMessage()</strong>
         <code id="testPostMessage"></code>
         <script type="text/partytown">
-          const elm = document.getElementById('testPostMessage');
+          (function () {
+            const elm = document.getElementById('testPostMessage');
 
-          window.addEventListener('message', (ev) => {
-            console.log(ev);
-            elm.textContent = `${ev.type} ${ev.data}`;
-            elm.className = 'testPostMessage';
-          });
+            window.addEventListener('message', (ev) => {
+              if (ev.data.mph === 99) {
+                elm.textContent = `${ev.type} ${ev.data.mph} ${ev.origin === origin}`;
+                elm.className = 'testPostMessage';
+              }
+            });
 
-          const iframe = document.createElement('iframe');
-          iframe.setAttribute('src', 'post-message.html');
-          document.head.appendChild(iframe);
+            const iframe = document.createElement('iframe');
+            iframe.setAttribute('src', 'post-message.html');
+            elm.parentNode.appendChild(iframe);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>cross origin</strong>
+        <code id="testCrossOrigin"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testCrossOrigin');
+
+            window.addEventListener('message', (ev) => {
+              const eventInfo = `${ev.type} ${ev.data} ${ev.origin}`;
+              console.log(eventInfo);
+              if (ev.data === '88' && ev.origin === 'https://partytown.builder.io') {
+                elm.textContent = eventInfo;
+                elm.className = 'testCrossOrigin';
+              }
+            });
+
+            const iframe = document.createElement('iframe');
+            iframe.style.height = '70px';
+
+            const url = new URL('https://partytown.builder.io/platform/iframe/cross-origin.html');
+            url.searchParams.set('parentorigin', window.origin);
+            iframe.src = url.href;
+            elm.parentNode.appendChild(iframe);
+          })();
         </script>
       </li>
     </ul>

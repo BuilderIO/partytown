@@ -101,5 +101,9 @@ test('iframe', async ({ page }) => {
 
   await page.waitForSelector('.testPostMessage');
   const testPostMessage = page.locator('#testPostMessage');
-  await expect(testPostMessage).toHaveText('message 88');
+  await expect(testPostMessage).toHaveText('message 99 true');
+
+  await page.waitForSelector('.testCrossOrigin');
+  const testCrossOrigin = page.locator('#testCrossOrigin');
+  await expect(testCrossOrigin).toHaveText('message 88 https://partytown.builder.io');
 });

@@ -53,7 +53,7 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
     if (debug && queuedEvents.length) {
       logWorker(`Queued ready messages: ${queuedEvents.length}`);
     }
-    queuedEvents.slice().forEach(receiveMessageFromSandboxToWorker);
+    [...queuedEvents].map(receiveMessageFromSandboxToWorker);
     queuedEvents.length = 0;
   } else {
     // the web worker hasn't finished initializing yet, let's store

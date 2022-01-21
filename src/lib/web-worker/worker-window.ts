@@ -1,17 +1,22 @@
 import { addStorageApi } from './worker-storage';
 import { callMethod, constructGlobal } from './worker-proxy';
 import { CallType, NodeName, PlatformInstanceId } from '../types';
-
 import { createNavigator } from './worker-navigator';
 import { createImageConstructor } from './worker-image';
 import { createNodeInstance, getOrCreateNodeInstance } from './worker-constructors';
-import { debug, defineConstructorName, defineProperty, randomId } from '../utils';
-import { envGlobalConstructors, environments, webWorkerCtx, WinIdKey } from './worker-constants';
+import { debug, defineConstructorName, defineProperty, len, randomId } from '../utils';
+import {
+  envGlobalConstructors,
+  environments,
+  postMessages,
+  webWorkerCtx,
+  WinIdKey,
+} from './worker-constants';
 import { getEnv } from './worker-environment';
+import { getScriptWinIdContext, resolveUrl } from './worker-exec';
 import { lazyLoadMedia, windowMediaConstructors } from './worker-media';
 import { Location } from './worker-location';
 import { normalizedWinId } from '../log';
-import { resolveUrl } from './worker-exec';
 import { WorkerProxy } from './worker-proxy-constructor';
 
 export class Window extends WorkerProxy {
@@ -209,6 +214,11 @@ export class Window extends WorkerProxy {
   }
 
   postMessage(...args: any[]) {
+    if (len(postMessages) > 20) {
+      postMessages.splice(0, 5);
+    }
+    postMessages.push({ $data$: JSON.stringify(args[0]), $winId$: getScriptWinIdContext() });
+
     callMethod(this, ['postMessage'], args, CallType.NonBlockingNoSideEffect);
   }
 

@@ -54,18 +54,21 @@ const queue = (
   callType: CallType,
   $assignInstanceId$?: number,
   $groupedGetters$?: string[],
-  buffer?: ArrayBuffer | ArrayBufferView,
-  task?: MainAccessTask
+  buffer?: ArrayBuffer | ArrayBufferView
 ) => {
-  task = {
+  taskQueue.push({
     $winId$: instance[WinIdKey],
     $instanceId$: instance[InstanceIdKey],
     $applyPath$: [...instance[ApplyPathKey], ...$applyPath$],
     $assignInstanceId$,
     $groupedGetters$,
-  };
+  });
   if (debug) {
-    task.$debug$ = taskDebugInfo(instance, $applyPath$, callType);
+    taskQueue[len(taskQueue) - 1].$debug$ = taskDebugInfo(instance, $applyPath$, callType);
+
+    if (buffer && callType !== CallType.NonBlockingNoSideEffect) {
+      console.error('buffer must be sent NonBlockingNoSideEffect');
+    }
   }
 
   if (callType === CallType.NonBlockingNoSideEffect) {
@@ -75,27 +78,19 @@ const queue = (
         WorkerMessageType.AsyncAccessRequest,
         {
           $msgId$: randomId(),
-          $tasks$: [...taskQueue, task],
+          $tasks$: [...taskQueue],
         },
       ],
       buffer ? [buffer instanceof ArrayBuffer ? buffer : buffer.buffer] : undefined
     );
     taskQueue.length = 0;
-  } else {
-    // queue up the task
-    taskQueue.push(task);
-    if (debug && buffer) {
-      console.error('buffer must be sent NonBlockingNoSideEffect');
-    }
-
-    if (callType === CallType.Blocking) {
-      // this task is blocking, so let's send to the main and return the result
-      return sendToMain(true);
-    }
-
-    // task is not blocking, so just update the async timer
-    asyncMsgTimer = setTimeout(sendToMain, 20);
+  } else if (callType === CallType.Blocking) {
+    // this task is blocking, so let's send to the main and return the result
+    return sendToMain(true);
   }
+
+  // task is not blocking, so just update the async timer
+  asyncMsgTimer = setTimeout(sendToMain, 20);
 };
 
 export const sendToMain = (isBlocking?: boolean) => {
@@ -109,7 +104,7 @@ export const sendToMain = (isBlocking?: boolean) => {
     const endTask = taskQueue[len(taskQueue) - 1];
     const accessReq: MainAccessRequest = {
       $msgId$: randomId(),
-      $tasks$: taskQueue.slice(),
+      $tasks$: [...taskQueue],
     };
     taskQueue.length = 0;
 

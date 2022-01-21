@@ -35,9 +35,3 @@ export const createNodeInstance = (
 
   return new NodeCstr(winId, instanceId, [], nodeName, namespace);
 };
-
-export const constructEvent = (eventProps: any) =>
-  new Proxy(new Event(eventProps.type, eventProps), {
-    get: (target: any, propName) =>
-      propName in eventProps ? eventProps[propName] : target[String(propName)],
-  });
