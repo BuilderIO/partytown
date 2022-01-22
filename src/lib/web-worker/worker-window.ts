@@ -5,15 +5,9 @@ import { createNavigator } from './worker-navigator';
 import { createImageConstructor } from './worker-image';
 import { createNodeInstance, getOrCreateNodeInstance } from './worker-constructors';
 import { debug, defineConstructorName, defineProperty, len, randomId } from '../utils';
-import {
-  envGlobalConstructors,
-  environments,
-  postMessages,
-  webWorkerCtx,
-  WinIdKey,
-} from './worker-constants';
+import { envGlobalConstructors, environments, webWorkerCtx, WinIdKey } from './worker-constants';
 import { getEnv } from './worker-environment';
-import { getScriptWinIdContext, resolveUrl } from './worker-exec';
+import { resolveUrl } from './worker-exec';
 import { lazyLoadMedia, windowMediaConstructors } from './worker-media';
 import { Location } from './worker-location';
 import { normalizedWinId } from '../log';
@@ -26,7 +20,6 @@ export class Window extends WorkerInstance {
     let _this: any = this;
     let globalName: string;
     let value: any;
-    let win: any;
 
     // assign global properties already in the web worker global
     // that we can put onto the environment window
@@ -83,19 +76,16 @@ export class Window extends WorkerInstance {
       _this.trustedTypes = (self as any).trustedTypes;
     }
 
-    win = new Proxy(_this, {
-      has() {
-        // window "has" any and all props, this is especially true for global variables
-        // that are meant to be assigned to window, but without "window." prefix,
-        // like: <script>globalProp = true</script>
-        return true;
-      },
-    });
-
     environments[$winId$] = {
       $winId$,
       $parentWinId$,
-      $window$: win as any,
+      $window$: new Proxy(_this, {
+        has: () =>
+          // window "has" any and all props, this is especially true for global variables
+          // that are meant to be assigned to window, but without "window." prefix,
+          // like: <script>globalProp = true</script>
+          true,
+      }),
       $document$: createNodeInstance(
         $winId$,
         PlatformInstanceId.document,
@@ -139,8 +129,6 @@ export class Window extends WorkerInstance {
     addStorageApi(_this, 'sessionStorage', webWorkerCtx.$sessionStorage$);
 
     _this.Worker = undefined;
-
-    return win;
   }
 
   get body() {
@@ -214,11 +202,6 @@ export class Window extends WorkerInstance {
   }
 
   postMessage(...args: any[]) {
-    if (len(postMessages) > 20) {
-      postMessages.splice(0, 5);
-    }
-    postMessages.push({ $data$: JSON.stringify(args[0]), $winId$: getScriptWinIdContext() });
-
     callMethod(this, ['postMessage'], args, CallType.NonBlockingNoSideEffect);
   }
 

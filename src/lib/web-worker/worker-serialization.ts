@@ -184,12 +184,8 @@ export const deserializeFromMain = (
       if (obj.type === 'message' && obj.origin) {
         let postMessageKey = JSON.stringify(obj.data);
         let postMessageData = postMessages.find((pm) => pm.$data$ === postMessageKey);
-        let env: WebWorkerEnvironment;
         if (postMessageData) {
-          env = environments[postMessageData.$winId$];
-          if (env) {
-            obj.origin = env.$window$.origin;
-          }
+          obj.origin = postMessageData.$origin$;
         }
       }
       return new Proxy(new Event(obj.type, obj), {
