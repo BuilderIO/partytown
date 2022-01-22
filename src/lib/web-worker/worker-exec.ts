@@ -1,4 +1,4 @@
-import { debug, SCRIPT_TYPE } from '../utils';
+import { debug, len, SCRIPT_TYPE } from '../utils';
 import {
   EventHandler,
   InitializeScriptData,
@@ -7,7 +7,7 @@ import {
   WebWorkerEnvironment,
   WorkerMessageType,
 } from '../types';
-import { environments, webWorkerCtx } from './worker-constants';
+import { environments, postMessages, webWorkerCtx } from './worker-constants';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getOrCreateNodeInstance } from './worker-constructors';
@@ -41,7 +41,7 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
         scriptContent = await rsp.text();
 
         env.$currentScriptId$ = instanceId;
-        run(env, winId, scriptContent, scriptOrgSrc || scriptSrc);
+        run(env, scriptContent, scriptOrgSrc || scriptSrc);
         runStateLoadHandlers(instance!, StateProp.loadHandlers);
       } else {
         errorMsg = rsp.statusText;
@@ -88,7 +88,7 @@ export const runScriptContent = (
     }
 
     env.$currentScriptId$ = instanceId;
-    run(env, winId, scriptContent);
+    run(env, scriptContent);
   } catch (contentError: any) {
     console.error(scriptContent, contentError);
     errorMsg = String(contentError.stack || contentError);
@@ -99,13 +99,56 @@ export const runScriptContent = (
   return errorMsg;
 };
 
-const run = (env: WebWorkerEnvironment, winId: number, scriptContent: string, scriptUrl?: string) =>
+const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) => {
+  const doc: any = new Proxy(env.$document$, {
+    get: (target: any, propName) => {
+      if (propName === 'defaultView') {
+        return win;
+      } else {
+        return target[propName];
+      }
+    },
+  });
+
+  const win: any = new Proxy(env.$window$, {
+    get: (target: any, propName) => {
+      if (propName === 'document') {
+        return doc;
+      } else if (propName === 'window' || propName === 'globalThis' || propName === 'self') {
+        return win;
+      } else if (propName === 'parent' || propName === 'top') {
+        return new Proxy(target[propName], {
+          get: (targetParent: any, parentPropName) => {
+            if (parentPropName === 'postMessage') {
+              return (...args: any[]) => {
+                if (len(postMessages) > 20) {
+                  postMessages.splice(0, 5);
+                }
+                postMessages.push({
+                  $data$: JSON.stringify(args[0]),
+                  $origin$: env.$location$.origin,
+                });
+                targetParent.postMessage(...args);
+              };
+            } else {
+              return targetParent[parentPropName];
+            }
+          },
+        });
+      } else {
+        return target[propName];
+      }
+    },
+    has: () => true,
+  });
+
   new Function(
-    `with(this){(function _${winId}_(){${scriptContent
+    `with(this){${scriptContent
       .replace(/\bthis\b/g, 'thi$(this)')
-      .replace(/\/\/# so/g, '//Xso')};function thi$(t){return t===this?window:t}})()}` +
+      .replace(/\/\/# so/g, '//Xso')};function thi$(t){return t===this?window:t}}` +
       (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '')
-  ).call(env.$window$);
+  ).call(win);
+};
 
 const runStateLoadHandlers = (
   instance: WorkerInstance,
@@ -116,18 +159,6 @@ const runStateLoadHandlers = (
   if (handlers) {
     setTimeout(() => handlers!.map((cb) => cb({ type })));
   }
-};
-
-export const getScriptWinIdContext = () => {
-  try {
-    throw new Error();
-  } catch (e: any) {
-    const r = /_(\d+)_/gm.exec(e.stack);
-    if (r) {
-      return parseInt(r[1], 10);
-    }
-  }
-  return 0;
 };
 
 export const insertIframe = (winId: number, iframe: WorkerInstance) => {
