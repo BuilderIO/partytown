@@ -1,9 +1,9 @@
 import { ApplyPathKey, callMethod, InstanceIdKey, randomId, setter, WinIdKey } from '../bridge';
 import { CallType } from '../../../types';
-import type { WorkerProxy } from '../../worker-proxy-constructor';
+import type { WorkerInstance } from '../../worker-instance';
 
 export const createContextWebGL = (
-  canvasInstance: WorkerProxy,
+  canvasInstance: WorkerInstance,
   contextType: string,
   contextAttributes: any
 ) => {

@@ -1,10 +1,10 @@
 import { ApplyPathKey, callMethod, InstanceIdKey, randomId, setter, WinIdKey } from '../bridge';
 import { CallType } from '../../../types';
 import { defineCstr, notImpl } from '../utils';
-import type { WorkerProxy } from '../../worker-proxy-constructor';
+import type { WorkerInstance } from '../../worker-instance';
 
 export const createContext2D = (
-  canvasInstance: WorkerProxy,
+  canvasInstance: WorkerInstance,
   contextType: string,
   contextAttributes: any
 ) => {

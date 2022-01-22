@@ -10,7 +10,7 @@ import {
 } from './worker-constants';
 import { callMethod, getter, setter } from './worker-proxy';
 
-export class WorkerProxy {
+export class WorkerInstance {
   [WinIdKey]: number;
   [InstanceIdKey]: number;
   [ApplyPathKey]: string[];
@@ -36,7 +36,7 @@ export class WorkerProxy {
   }
 }
 
-export class WorkerEventTargetProxy extends WorkerProxy {}
+export class WorkerEventTargetProxy extends WorkerInstance {}
 eventTargetMethods.map(
   (methodName) =>
     ((WorkerEventTargetProxy as any).prototype[methodName] = function (...args: any[]) {
@@ -44,7 +44,7 @@ eventTargetMethods.map(
     })
 );
 
-export class WorkerTrapProxy extends WorkerProxy {
+export class WorkerTrapProxy extends WorkerInstance {
   constructor(winId: number, instanceId: number, applyPath?: ApplyPath, nodeName?: string) {
     super(winId, instanceId, applyPath, nodeName);
 

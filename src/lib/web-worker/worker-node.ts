@@ -6,9 +6,9 @@ import { insertIframe, runScriptContent } from './worker-exec';
 import { isScriptJsType } from './worker-script';
 import { NodeName, SerializedAttr, StateProp, WorkerMessageType } from '../types';
 import { SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
-import { WorkerProxy } from './worker-proxy-constructor';
+import { WorkerInstance } from './worker-instance';
 
-export class Node extends WorkerProxy {
+export class Node extends WorkerInstance {
   appendChild(node: Node) {
     return this.insertBefore(node, null);
   }

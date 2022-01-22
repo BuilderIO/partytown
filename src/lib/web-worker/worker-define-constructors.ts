@@ -40,7 +40,7 @@ import { HTMLScriptDescriptorMap } from './worker-script';
 import { InterfaceInfo, InterfaceType } from '../types';
 import { Node } from './worker-node';
 import { Window } from './worker-window';
-import { WorkerEventTargetProxy, WorkerProxy, WorkerTrapProxy } from './worker-proxy-constructor';
+import { WorkerEventTargetProxy, WorkerInstance, WorkerTrapProxy } from './worker-instance';
 
 export const defineWorkerInterface = ([
   cstrName,
@@ -54,7 +54,7 @@ export const defineWorkerInterface = ([
     : superCstrName === 'EventTarget'
     ? WorkerEventTargetProxy
     : superCstrName === 'Object'
-    ? WorkerProxy
+    ? WorkerInstance
     : (self as any)[superCstrName];
 
   const Cstr = ((self as any)[cstrName] = defineConstructorName(
@@ -76,13 +76,13 @@ export const defineWorkerInterface = ([
       // member not already in the constructor's prototype
       if (typeof memberType === 'string') {
         definePrototypeProperty(Cstr, memberName, {
-          get(this: WorkerProxy) {
+          get(this: WorkerInstance) {
             if (!hasInstanceStateValue(this, memberName)) {
               const winId = this[WinIdKey];
               const instanceId = this[InstanceIdKey];
               const applyPath = [...this[ApplyPathKey], memberName];
               const nodeName = this[NodeNameKey];
-              const PropCstr: typeof WorkerProxy = (self as any)[memberType];
+              const PropCstr: typeof WorkerInstance = (self as any)[memberType];
 
               setInstanceStateValue(
                 this,
@@ -92,7 +92,7 @@ export const defineWorkerInterface = ([
             }
             return getInstanceStateValue(this, memberName);
           },
-          set(this: WorkerProxy, value) {
+          set(this: WorkerInstance, value) {
             setInstanceStateValue(this, memberName, value);
           },
         });
@@ -186,7 +186,7 @@ const definePrototypeNodeType = (Cstr: any, nodeType: number) =>
 const cachedTreeProps = (Cstr: any, treeProps: string[]) =>
   treeProps.map((propName) =>
     definePrototypeProperty(Cstr, propName, {
-      get(this: WorkerProxy) {
+      get(this: WorkerInstance) {
         let cacheKey = getInstanceCacheKey(this, propName);
         let result = cachedStructure.get(cacheKey);
         if (!result) {
@@ -198,7 +198,7 @@ const cachedTreeProps = (Cstr: any, treeProps: string[]) =>
     })
   );
 
-const getInstanceCacheKey = (instance: WorkerProxy, memberName: string, args?: any[]) =>
+const getInstanceCacheKey = (instance: WorkerInstance, memberName: string, args?: any[]) =>
   [
     instance[WinIdKey],
     instance[InstanceIdKey],
@@ -215,13 +215,13 @@ const getInstanceCacheKey = (instance: WorkerProxy, memberName: string, args?: a
 const cachedProps = (Cstr: any, propNames: string) =>
   commaSplit(propNames).map((propName) =>
     definePrototypeProperty(Cstr, propName, {
-      get(this: WorkerProxy) {
+      get(this: WorkerInstance) {
         if (!hasInstanceStateValue(this, propName)) {
           setInstanceStateValue(this, propName, getter(this, [propName]));
         }
         return getInstanceStateValue(this, propName);
       },
-      set(this: WorkerProxy, val) {
+      set(this: WorkerInstance, val) {
         if (getInstanceStateValue(this, propName) !== val) {
           setter(this, [propName], val);
         }

@@ -1,6 +1,6 @@
-import { WorkerProxy } from './worker-proxy-constructor';
+import { WorkerInstance } from './worker-instance';
 
-export class Performance extends WorkerProxy {
+export class Performance extends WorkerInstance {
   now() {
     // use the web worker's performance.now()
     // no need to go to main for this

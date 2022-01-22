@@ -523,7 +523,7 @@ export type DefinePrototypePropertyDescriptor = (Cstr: any, propertyDescriptorMa
 export type RandomId = () => number;
 
 import type { ApplyPathKey, InstanceIdKey, WinIdKey } from './web-worker/worker-constants';
-import type { WorkerEventTargetProxy, WorkerProxy } from './web-worker/worker-proxy-constructor';
+import type { WorkerEventTargetProxy, WorkerInstance } from './web-worker/worker-instance';
 
 export type LazyBridge = [
   Getter,
@@ -532,7 +532,7 @@ export type LazyBridge = [
   ConstructGlobal,
   DefinePrototypePropertyDescriptor,
   RandomId,
-  typeof WorkerProxy,
+  typeof WorkerInstance,
   typeof WorkerEventTargetProxy,
   typeof WinIdKey,
   typeof InstanceIdKey,

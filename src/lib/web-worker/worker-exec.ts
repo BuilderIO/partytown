@@ -13,7 +13,7 @@ import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getOrCreateNodeInstance } from './worker-constructors';
 import { logWorker } from '../log';
 import { setter } from './worker-proxy';
-import type { WorkerProxy } from './worker-proxy-constructor';
+import type { WorkerInstance } from './worker-instance';
 
 export const initNextScriptsInWebWorker = async (initScript: InitializeScriptData) => {
   let winId = initScript.$winId$;
@@ -108,7 +108,7 @@ const run = (env: WebWorkerEnvironment, winId: number, scriptContent: string, sc
   ).call(env.$window$);
 
 const runStateLoadHandlers = (
-  instance: WorkerProxy,
+  instance: WorkerInstance,
   type: StateProp,
   handlers?: EventHandler[]
 ) => {
@@ -130,7 +130,7 @@ export const getScriptWinIdContext = () => {
   return 0;
 };
 
-export const insertIframe = (winId: number, iframe: WorkerProxy) => {
+export const insertIframe = (winId: number, iframe: WorkerInstance) => {
   // an iframe element's instanceId is also
   // the winId of its contentWindow
   let i = 0;
@@ -192,7 +192,7 @@ const resolveToUrl = (
 export const resolveUrl = (env: WebWorkerEnvironment, url: string, noUserHook?: boolean) =>
   resolveToUrl(env, url, noUserHook) + '';
 
-export const getUrl = (elm: WorkerProxy) =>
+export const getUrl = (elm: WorkerInstance) =>
   resolveToUrl(getEnv(elm), getInstanceStateValue(elm, StateProp.url));
 
 export const updateIframeContent = (url: string, html: string) =>

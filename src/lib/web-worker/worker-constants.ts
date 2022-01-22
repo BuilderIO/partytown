@@ -6,7 +6,7 @@ import type {
   WebWorkerEnvironment,
 } from '../types';
 import type { Node } from './worker-node';
-import type { WorkerProxy } from './worker-proxy-constructor';
+import type { WorkerInstance } from './worker-instance';
 
 export const WinIdKey = /*#__PURE__*/ Symbol();
 export const InstanceIdKey = /*#__PURE__*/ Symbol();
@@ -20,7 +20,7 @@ export const HookPrevent = /*#__PURE__*/ Symbol();
 export const webWorkerInstances = /*#__PURE__*/ new Map<number, Node>();
 export const webWorkerRefsByRefId: { [refId: number]: RefHandler } = {};
 export const webWorkerRefIdsByRef = /*#__PURE__*/ new WeakMap<RefHandler, number>();
-export const envGlobalConstructors = /*#__PURE__*/ new Map<string, typeof WorkerProxy>();
+export const envGlobalConstructors = /*#__PURE__*/ new Map<string, typeof WorkerInstance>();
 export const nodeConstructors: { [nodeName: string]: typeof Node } = {};
 export const postMessages: PostMessageData[] = [];
 

@@ -2,9 +2,9 @@ import type { ApplyPath } from '../types';
 import { cachedDimensions } from './worker-constants';
 import { logDimensionCacheClearStyle } from '../log';
 import { setter } from './worker-proxy';
-import { WorkerProxy } from './worker-proxy-constructor';
+import { WorkerInstance } from './worker-instance';
 
-export class CSSStyleDeclaration extends WorkerProxy {
+export class CSSStyleDeclaration extends WorkerInstance {
   constructor(winId: number, instanceId: number, applyPath: ApplyPath, styles: any) {
     super(winId, instanceId, applyPath);
 

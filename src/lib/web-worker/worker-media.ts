@@ -8,7 +8,7 @@ import {
 import { callMethod, constructGlobal, getter, setter } from './worker-proxy';
 import { definePrototypePropertyDescriptor, randomId } from '../utils';
 import type { InitLazyMediaConstructors, MediaSelf } from '../types';
-import { WorkerEventTargetProxy, WorkerProxy } from './worker-proxy-constructor';
+import { WorkerEventTargetProxy, WorkerInstance } from './worker-instance';
 
 export const lazyLoadMedia = (): InitLazyMediaConstructors => {
   if (!self.ptm) {
@@ -20,7 +20,7 @@ export const lazyLoadMedia = (): InitLazyMediaConstructors => {
       constructGlobal,
       definePrototypePropertyDescriptor,
       randomId,
-      WorkerProxy,
+      WorkerInstance,
       WorkerEventTargetProxy,
       WinIdKey,
       InstanceIdKey,

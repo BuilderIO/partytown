@@ -17,9 +17,9 @@ import { getScriptWinIdContext, resolveUrl } from './worker-exec';
 import { lazyLoadMedia, windowMediaConstructors } from './worker-media';
 import { Location } from './worker-location';
 import { normalizedWinId } from '../log';
-import { WorkerProxy } from './worker-proxy-constructor';
+import { WorkerInstance } from './worker-instance';
 
-export class Window extends WorkerProxy {
+export class Window extends WorkerInstance {
   constructor($winId$: number, $parentWinId$: number, url: string) {
     super($winId$, PlatformInstanceId.window);
 

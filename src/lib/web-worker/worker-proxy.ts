@@ -42,14 +42,14 @@ import {
 } from '../log';
 import type { Node } from './worker-node';
 import syncSendMessageToMain from '../build-modules/sync-send-message-to-main';
-import type { WorkerProxy } from './worker-proxy-constructor';
+import type { WorkerInstance } from './worker-instance';
 
 const taskQueue: MainAccessTask[] = [];
 
 let asyncMsgTimer: any = 0;
 
 const queue = (
-  instance: WorkerProxy,
+  instance: WorkerInstance,
   $applyPath$: ApplyPath,
   callType: CallType,
   $assignInstanceId$?: number,
@@ -137,7 +137,7 @@ export const sendToMain = (isBlocking?: boolean) => {
 };
 
 export const getter: Getter = (
-  instance: WorkerProxy,
+  instance: WorkerInstance,
   applyPath: ApplyPath,
   groupedGetters?: string[],
   rtnValue?: any
@@ -157,7 +157,7 @@ export const getter: Getter = (
 };
 
 export const setter: Setter = (
-  instance: WorkerProxy,
+  instance: WorkerInstance,
   applyPath: ApplyPath,
   value: any,
   hookSetterValue?: any
@@ -190,7 +190,7 @@ export const setter: Setter = (
 };
 
 export const callMethod: CallMethod = (
-  instance: WorkerProxy,
+  instance: WorkerInstance,
   applyPath: ApplyPath,
   args: any[],
   callType?: CallType,
@@ -231,7 +231,7 @@ export const callMethod: CallMethod = (
 };
 
 export const constructGlobal: ConstructGlobal = (
-  instance: WorkerProxy,
+  instance: WorkerInstance,
   cstrName: string,
   args: any[]
 ) => {
@@ -244,7 +244,7 @@ export const constructGlobal: ConstructGlobal = (
   );
 };
 
-const createHookOptions = (instance: WorkerProxy, applyPath: ApplyPath): HookOptions => ({
+const createHookOptions = (instance: WorkerInstance, applyPath: ApplyPath): HookOptions => ({
   name: applyPath.join('.'),
   continue: HookContinue,
   nodeName: (instance as any as Node)[NodeNameKey],
