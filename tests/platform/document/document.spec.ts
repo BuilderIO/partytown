@@ -79,4 +79,7 @@ test('document', async ({ page }) => {
 
   const testReadyState = page.locator('#testReadyState');
   await expect(testReadyState).toHaveText('complete');
+
+  const testCreateElementError = page.locator('#testCreateElementError');
+  await expect(testCreateElementError).toHaveText('errored');
 });

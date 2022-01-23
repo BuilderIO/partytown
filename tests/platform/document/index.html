@@ -388,6 +388,21 @@
         </script>
       </li>
 
+      <li>
+        <strong>createElement error</strong>
+        <code id="testCreateElementError"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testCreateElementError');
+            try {
+              document.createElement('<iframe></iframe>');
+            } catch (e) {
+              elm.textContent = 'errored';
+            }
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');
