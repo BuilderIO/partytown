@@ -22,4 +22,12 @@ test('anchor', async ({ page }) => {
   await page.waitForSelector('.testInnerHtmlFirstChild');
   const testInnerHtmlFirstChild = page.locator('#testInnerHtmlFirstChild');
   await expect(testInnerHtmlFirstChild).toHaveText('#');
+
+  await page.waitForSelector('.testGetHref');
+  const testGetHref = page.locator('#testGetHref');
+  await expect(testGetHref).toHaveText('https://builder.io/');
+
+  await page.waitForSelector('.testSetHref');
+  const testSetHref = page.locator('#testSetHref');
+  await expect(testSetHref).toHaveText('/pathname');
 });

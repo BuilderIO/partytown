@@ -36,6 +36,9 @@
       a:hover {
         background-color: #eee;
       }
+      strong a {
+        display: inline-block;
+      }
       li {
         display: flex;
         margin: 15px 0;
@@ -138,11 +141,38 @@
             elm.className = 'testInnerHtmlFirstChild';
           })();
         </script>
+      </li> 
+
+      <li>
+        <strong>get <a id="getHref" href="https://builder.io/">href</a></strong>
+        <div id="testGetHref"></div>
+        <script type="text/partytown">
+          (function () {
+            const a = document.getElementById('getHref');
+            const elm = document.getElementById('testGetHref');
+            elm.textContent = a.href;
+            elm.className = 'testGetHref';
+          })();
+        </script>
       </li>
+
+      <li>
+        <strong>set <a id="setHref" href="/">href</a></strong>
+        <div id="testSetHref"></div>
+        <script type="text/partytown">
+          (function () {
+            const a = document.getElementById('setHref');
+            a.href = '/pathname';
+            const elm = document.getElementById('testSetHref');
+            elm.textContent = a.pathname;
+            elm.className = 'testSetHref';
+          })();
+        </script>
+      </li>
+ 
     </ul>
 
     <hr />
     <p><a href="/">All Tests</a></p>
-
   </body>
 </html>

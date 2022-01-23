@@ -8,7 +8,6 @@ import {
   WorkerMessageType,
 } from '../types';
 import { environments, postMessages, webWorkerCtx } from './worker-constants';
-import { getEnv } from './worker-environment';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getOrCreateNodeInstance } from './worker-constructors';
 import { logWorker } from '../log';
@@ -195,11 +194,13 @@ export const insertIframe = (winId: number, iframe: WorkerInstance) => {
   callback();
 };
 
-const resolveToUrl = (
+export const resolveToUrl = (
   env: WebWorkerEnvironment,
   url: string,
   noUserHook?: boolean,
-  baseLocation?: Location
+  baseLocation?: Location,
+  resolvedUrl?: URL,
+  configResolvedUrl?: any
 ) => {
   baseLocation = env.$location$;
   while (!baseLocation.host) {
@@ -210,9 +211,9 @@ const resolveToUrl = (
     }
   }
 
-  const resolvedUrl = new URL(url || '', baseLocation as any);
+  resolvedUrl = new URL(url || '', baseLocation as any);
   if (!noUserHook && webWorkerCtx.$config$.resolveUrl) {
-    const configResolvedUrl = webWorkerCtx.$config$.resolveUrl!(resolvedUrl, baseLocation);
+    configResolvedUrl = webWorkerCtx.$config$.resolveUrl!(resolvedUrl, baseLocation);
     if (configResolvedUrl) {
       return configResolvedUrl;
     }
@@ -222,9 +223,6 @@ const resolveToUrl = (
 
 export const resolveUrl = (env: WebWorkerEnvironment, url: string, noUserHook?: boolean) =>
   resolveToUrl(env, url, noUserHook) + '';
-
-export const getUrl = (elm: WorkerInstance) =>
-  resolveToUrl(getEnv(elm), getInstanceStateValue(elm, StateProp.url));
 
 export const updateIframeContent = (url: string, html: string) =>
   `<base href="${url}">` +
