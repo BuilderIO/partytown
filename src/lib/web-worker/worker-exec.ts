@@ -144,8 +144,8 @@ const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: strin
 
   new Function(
     `with(this){${scriptContent
-      .replace(/\bthis\b/g, 'thi$(this)')
-      .replace(/\/\/# so/g, '//Xso')};function thi$(t){return t===this?window:t}}` +
+      .replace(/\bthis\b/g, '(thi$(this)?window:this)')
+      .replace(/\/\/# so/g, '//Xso')};function thi$(t){return t===this}}` +
       (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '')
   ).call(win);
 };
