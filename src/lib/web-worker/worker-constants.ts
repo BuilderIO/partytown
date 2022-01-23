@@ -73,3 +73,5 @@ export const windowGetterDimensionMethodNames = ['getComputedStyle'];
 export const eventTargetMethods = /*#__PURE__*/ commaSplit(
   'addEventListener,dispatchEvent,removeEventListener'
 );
+
+export const IS_TAG_REG = /^[A-Z]([A-Z0-9-]*[A-Z0-9])?$/;

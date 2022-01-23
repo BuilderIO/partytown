@@ -5,9 +5,9 @@ import { getInstanceStateValue } from './worker-state';
 import { getOrCreateNodeInstance } from './worker-constructors';
 import { getPartytownScript } from './worker-exec';
 import { isScriptJsType } from './worker-script';
+import { IS_TAG_REG, WinIdKey } from './worker-constants';
 import type { Node } from './worker-node';
 import { noop, randomId, SCRIPT_TYPE } from '../utils';
-import { WinIdKey } from './worker-constants';
 
 export const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
   body: {
@@ -19,6 +19,9 @@ export const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
   createElement: {
     value(tagName: string) {
       tagName = tagName.toUpperCase();
+      if (!IS_TAG_REG.test(tagName)) {
+        throw tagName + ' not valid';
+      }
 
       const winId = this[WinIdKey];
       const instanceId = randomId();
