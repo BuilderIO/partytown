@@ -2,15 +2,22 @@ const path = require('path');
 const http = require('http');
 const fs = require('fs');
 
-exports.createServer = async function (port, enableAtomics) {
+exports.createServer = function (port, enableAtomics) {
   const testsDir = path.join(__dirname, '..', 'tests');
   const address = `http://localhost:${port}/`;
 
-  const server = http.createServer((req, rsp) => {
+  const server = http.createServer(async (req, rsp) => {
     const url = new URL(req.url, address);
     let filePath = path.join(testsDir, url.pathname.substring(1));
     if (url.pathname.endsWith('/')) {
       filePath = path.join(filePath, 'index.html');
+    }
+
+    if (url.searchParams.has('delay')) {
+      await new Promise((resolve) => {
+        setTimeout(resolve, url.searchParams.get('delay'));
+        rsp.setHeader('X-DELAY', url.searchParams.get('delay'));
+      });
     }
 
     const readStream = fs.createReadStream(filePath);
