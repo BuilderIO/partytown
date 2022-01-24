@@ -1,0 +1,17 @@
+<html>
+  <head>
+    <style>
+      body {
+        background: darkviolet;
+        color: white;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="output"></div>
+    <script type="text/javascript">
+      document.getElementById('output').textContent = location.pathname;
+      parent.document.getElementById('testLocation').textContent = location.pathname;
+    </script>
+  </body>
+</html>

@@ -3,18 +3,19 @@
     <style>
       body {
         background-color: skyblue;
+        margin: 2px;
       }
     </style>
   </head>
   <body>
-    <p>
+    <div>
       <span>iframe origin:</span>
       <span id="iframe-origin"></span>
-    </p>
-    <p>
+    </div>
+    <div>
       <span>parent origin:</span>
       <span id="parent-origin"></span>
-    </p>
+    </div>
     <script>
       document.getElementById('iframe-origin').textContent = window.origin;
 

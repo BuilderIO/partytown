@@ -379,6 +379,7 @@
       <li>
         <strong>about:blank location</strong>
         <code id="testAboutBlank"></code>
+        <code id="testAboutBlankSrc">--</code>
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testAboutBlank');
@@ -393,6 +394,9 @@
             const div = document.createElement('div');
             div.textContent = iframeLocation.href;
             iframe.contentDocument.body.appendChild(div);
+
+            const testAboutBlankSrc = document.getElementById('testAboutBlankSrc');
+            testAboutBlankSrc.textContent = iframe.src;
 
             elm.textContent = iframeLocation.href;
             elm.className = 'testAboutBlank';
@@ -718,7 +722,6 @@
 
             window.addEventListener('message', (ev) => {
               const eventInfo = `${ev.type} ${ev.data} ${ev.origin}`;
-              console.log(eventInfo);
               if (ev.data === '88' && ev.origin === 'https://partytown.builder.io') {
                 elm.textContent = eventInfo;
                 elm.className = 'testCrossOrigin';
@@ -726,12 +729,30 @@
             });
 
             const iframe = document.createElement('iframe');
-            iframe.style.height = '70px';
+            iframe.style.height = '45px';
 
             const url = new URL('https://partytown.builder.io/platform/iframe/cross-origin.html');
             url.searchParams.set('parentorigin', window.origin);
             iframe.src = url.href;
             elm.parentNode.appendChild(iframe);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>location</strong>
+        <code id="testLocation"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testLocation');
+
+            const iframe = document.createElement('iframe');
+            iframe.src = 'location1.html?delay=100';
+            elm.parentNode.appendChild(iframe);
+
+            setTimeout(() => {
+              iframe.src = 'location2.html?delay=100';
+            }, 500);
           })();
         </script>
       </li>
@@ -752,7 +773,7 @@
 
             setTimeout(() => {
               iframe.src = 'src-change2.html?delay=100';
-            }, 500)
+            }, 500);
           })();
         </script>
       </li>

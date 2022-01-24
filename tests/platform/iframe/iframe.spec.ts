@@ -58,6 +58,8 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testAboutBlank');
   const testAboutBlank = page.locator('#testAboutBlank');
   await expect(testAboutBlank).toHaveText('about:blank');
+  const testAboutBlankSrc = page.locator('#testAboutBlankSrc');
+  await expect(testAboutBlankSrc).toHaveText('');
 
   await page.waitForSelector('.testSetCallWindowParentFn');
   const testSetCallWindowParentFn = page.locator('#testSetCallWindowParentFn');
@@ -106,6 +108,10 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testCrossOrigin');
   const testCrossOrigin = page.locator('#testCrossOrigin');
   await expect(testCrossOrigin).toHaveText('message 88 https://partytown.builder.io');
+
+  await page.waitForSelector('.testLocation');
+  const testLocation = page.locator('#testLocation');
+  await expect(testLocation).toHaveText('/platform/iframe/location2.html');
 
   await page.waitForSelector('.testSrcChange');
   const testSrcChange1 = page.locator('#testSrcChange1');
