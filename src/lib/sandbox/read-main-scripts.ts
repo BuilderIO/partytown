@@ -50,24 +50,26 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
       }
 
       worker.postMessage([WorkerMessageType.InitializeNextScript, scriptData]);
-    } else if (!winCtx.$isInitialized$) {
-      // finished environment initialization
-      winCtx.$isInitialized$ = 1;
+    } else {
+      if (!winCtx.$isInitialized$) {
+        // finished environment initialization
+        winCtx.$isInitialized$ = 1;
 
-      mainForwardTrigger(worker, $winId$, win);
+        mainForwardTrigger(worker, $winId$, win);
 
-      doc.dispatchEvent(new CustomEvent(PT_INITIALIZED_EVENT));
+        doc.dispatchEvent(new CustomEvent(PT_INITIALIZED_EVENT));
 
-      if (debug) {
-        const winType = win === win.top ? 'top' : 'iframe';
-        logMain(
-          `Executed ${winType} window ${normalizedWinId($winId$)} environment scripts in ${(
-            performance.now() - winCtx.$startTime$!
-          ).toFixed(1)}ms`
-        );
+        if (debug) {
+          const winType = win === win.top ? 'top' : 'iframe';
+          logMain(
+            `Executed ${winType} window ${normalizedWinId($winId$)} environment scripts in ${(
+              performance.now() - winCtx.$startTime$!
+            ).toFixed(1)}ms`
+          );
+        }
       }
 
-      worker.postMessage([WorkerMessageType.InitializedEnvironment, $winId$]);
+      worker.postMessage([WorkerMessageType.InitializedScripts, $winId$]);
     }
   } else {
     // document not ready yet, retry a frame later

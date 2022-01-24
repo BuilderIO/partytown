@@ -34,8 +34,8 @@ export type MessageFromWorkerToSandbox =
 export type MessageFromSandboxToWorker =
   | [WorkerMessageType.MainDataResponseToWorker, InitWebWorkerData]
   | [WorkerMessageType.InitializeEnvironment, InitializeEnvironmentData]
-  | [WorkerMessageType.InitializedEnvironment, WinId]
   | [WorkerMessageType.InitializeNextScript, InitializeScriptData]
+  | [WorkerMessageType.InitializedScripts, WinId]
   | [WorkerMessageType.RefHandlerCallback, RefHandlerCallbackData]
   | [WorkerMessageType.ForwardMainTrigger, ForwardMainTriggerData]
   | [WorkerMessageType.LocationUpdate, number, string];
@@ -45,9 +45,9 @@ export const enum WorkerMessageType {
   MainDataResponseToWorker,
   InitializedWebWorker,
   InitializeEnvironment,
-  InitializedEnvironment,
   InitializedEnvironmentScript,
   InitializeNextScript,
+  InitializedScripts,
   RefHandlerCallback,
   ForwardMainTrigger,
   ForwardWorkerAccessRequest,
@@ -139,6 +139,7 @@ export interface WebWorkerEnvironment extends Omit<InitializeEnvironmentData, '$
   $location$: Location;
   $currentScriptId$?: number;
   $isInitialized$?: number;
+  $isLoading$?: number;
 }
 
 export interface MembersInterfaceTypeInfo {

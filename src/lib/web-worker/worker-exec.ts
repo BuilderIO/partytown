@@ -168,7 +168,11 @@ export const insertIframe = (winId: number, iframe: WorkerInstance) => {
   let handlers: EventHandler[];
 
   let callback = () => {
-    if (environments[winId] && environments[winId].$isInitialized$) {
+    if (
+      environments[winId] &&
+      environments[winId].$isInitialized$ &&
+      !environments[winId].$isLoading$
+    ) {
       type = getInstanceStateValue<StateProp>(iframe, StateProp.loadErrorStatus)
         ? StateProp.errorHandlers
         : StateProp.loadHandlers;

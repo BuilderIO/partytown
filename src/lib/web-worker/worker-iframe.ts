@@ -25,16 +25,22 @@ export const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
 
   src: {
     get() {
-      return getInstanceStateValue(this, StateProp.url) || '';
+      let src = environments[this[InstanceIdKey]].$location$.href;
+      if (src.startsWith('about')) {
+        src = '';
+      }
+      return src;
     },
     set(url: string) {
       let xhr = new XMLHttpRequest();
       let xhrStatus: number;
+      let winId = this[InstanceIdKey];
+      let env = environments[winId];
 
-      url = resolveUrl(getEnv(this), url);
+      env.$location$.href = url = resolveUrl(getEnv(this), url);
+      env.$isLoading$ = 1;
 
       setInstanceStateValue(this, StateProp.loadErrorStatus, undefined);
-      setInstanceStateValue(this, StateProp.url, url);
 
       xhr.open('GET', url, false);
       xhr.send();
@@ -53,9 +59,10 @@ export const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
         );
 
         sendToMain(true);
-        webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextScript, this[InstanceIdKey]]);
+        webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextScript, winId]);
       } else {
         setInstanceStateValue(this, StateProp.loadErrorStatus, xhrStatus);
+        env.$isLoading$ = 0;
       }
     },
   },

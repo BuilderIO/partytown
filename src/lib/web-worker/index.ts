@@ -13,23 +13,22 @@ const queuedEvents: MessageEvent<MessageFromSandboxToWorker>[] = [];
 const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxToWorker>) => {
   const msg = ev.data;
   const msgType = msg[0];
+  const msgValue: any = msg[1];
 
   if (webWorkerCtx.$isInitialized$) {
     if (msgType === WorkerMessageType.InitializeNextScript) {
       // message from main to web worker that it should initialize the next script
-      initNextScriptsInWebWorker(msg[1]);
+      initNextScriptsInWebWorker(msgValue);
     } else if (msgType === WorkerMessageType.RefHandlerCallback) {
       // main has called a worker ref handler
-      callWorkerRefHandler(msg[1]);
+      callWorkerRefHandler(msgValue);
     } else if (msgType === WorkerMessageType.ForwardMainTrigger) {
-      workerForwardedTriggerHandle(msg[1] as ForwardMainTriggerData);
+      workerForwardedTriggerHandle(msgValue as ForwardMainTriggerData);
     } else if (msgType === WorkerMessageType.InitializeEnvironment) {
-      createEnvironment(msg[1]);
-    } else if (msgType === WorkerMessageType.InitializedEnvironment) {
-      environments[msg[1]].$isInitialized$ = 1;
-
-      if (debug) {
-        const winId = msg[1];
+      createEnvironment(msgValue);
+    } else if (msgType === WorkerMessageType.InitializedScripts) {
+      if (debug && environments[msgValue].$isInitialized$ !== 1) {
+        const winId = msgValue;
         const env = environments[winId];
         const winType = env.$winId$ === env.$parentWinId$ ? 'top' : 'iframe';
         logWorker(
@@ -37,6 +36,9 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
           winId
         );
       }
+
+      environments[msgValue].$isInitialized$ = 1;
+      environments[msgValue].$isLoading$ = 0;
     } else if (msgType === WorkerMessageType.LocationUpdate) {
       environments[msg[1]].$location$.href = msg[2];
     }
