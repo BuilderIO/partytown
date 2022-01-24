@@ -27,46 +27,47 @@ export function snippet(
         libPath = (config!.lib || '/~partytown/') + (config!.debug ? 'debug/' : '');
       }
 
-      // grab all the partytown scripts
-      scripts = doc.querySelectorAll(`script[type="${SCRIPT_TYPE}"]`);
+      if (libPath[0] == '/') {
+        // grab all the partytown scripts
+        scripts = doc.querySelectorAll(`script[type="${SCRIPT_TYPE}"]`);
 
-      if (top != win) {
-        // this is an iframe
-        top!.dispatchEvent(new CustomEvent(PT_IFRAME_APPENDED, { detail: win }));
-      } else if (scripts!.length) {
-        // set a timeout to fire if PT hasn't initialized in Xms
-        timeout = setTimeout(fallback, debug ? 60000 : 10000);
-        doc.addEventListener(PT_INITIALIZED_EVENT, clearFallback);
+        if (top != win) {
+          // this is an iframe
+          top!.dispatchEvent(new CustomEvent(PT_IFRAME_APPENDED, { detail: win }));
+        } else if (scripts!.length) {
+          // set a timeout to fire if PT hasn't initialized in Xms
+          timeout = setTimeout(fallback, debug ? 60000 : 10000);
+          doc.addEventListener(PT_INITIALIZED_EVENT, clearFallback);
 
-        if (debug && useAtomics) {
-          useAtomics = !win.location.search.includes('forceServiceWorker');
+          if (useAtomics) {
+            // atomics support
+            loadSandbox(1);
+          } else if (nav.serviceWorker) {
+            // service worker support
+            nav.serviceWorker
+              .register(libPath + 'partytown-sw.js', {
+                scope: libPath,
+              })
+              .then(function (swRegistration) {
+                if (swRegistration.active) {
+                  loadSandbox();
+                } else if (swRegistration.installing) {
+                  swRegistration.installing.addEventListener('statechange', function (ev) {
+                    if ((ev.target as any as ServiceWorker).state == 'activated') {
+                      loadSandbox();
+                    }
+                  });
+                } else if (debug) {
+                  console.warn(swRegistration);
+                }
+              }, console.error);
+          } else {
+            // no support for atomics or service worker
+            fallback();
+          }
         }
-        if (useAtomics) {
-          // atomics support
-          loadSandbox(1);
-        } else if (nav.serviceWorker) {
-          // service worker support
-          nav.serviceWorker
-            .register(libPath + 'partytown-sw.js' + (debug && useAtomics ? '?isolated' : ''), {
-              scope: libPath,
-            })
-            .then(function (swRegistration) {
-              if (swRegistration.active) {
-                loadSandbox();
-              } else if (swRegistration.installing) {
-                swRegistration.installing.addEventListener('statechange', function (ev) {
-                  if ((ev.target as any as ServiceWorker).state == 'activated') {
-                    loadSandbox();
-                  }
-                });
-              } else if (debug) {
-                console.warn(swRegistration);
-              }
-            }, console.error);
-        } else {
-          // no support for atomics or service worker
-          fallback();
-        }
+      } else if (debug) {
+        console.warn('Partytown config.lib url must start with "/"');
       }
     }
   }

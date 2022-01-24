@@ -2,6 +2,7 @@ import {
   ApplyPathKey,
   commaSplit,
   InstanceIdKey,
+  partytownLibUrl,
   webWorkerCtx,
   WinIdKey,
 } from './worker-constants';
@@ -29,7 +30,7 @@ export const lazyLoadMedia = (): InitLazyMediaConstructors => {
 
     // sync load partytown-media, which will reset self.ptm
     // to Window media constructors, like Audio and MediaSource
-    webWorkerCtx.$importScripts$(webWorkerCtx.$libPath$ + `partytown-media.js`);
+    webWorkerCtx.$importScripts$(partytownLibUrl('partytown-media.js'));
   }
 
   // return the map of Window media constructors

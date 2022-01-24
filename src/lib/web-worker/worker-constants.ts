@@ -34,6 +34,14 @@ export const cachedStructure = /*#__PURE__*/ new Map<string, any>();
 
 export const commaSplit = (str: string) => str.split(',');
 
+export const partytownLibUrl = (url: string) => {
+  url = webWorkerCtx.$libPath$ + url;
+  if (new URL(url).origin != location.origin) {
+    throw 'Invalid ' + url;
+  }
+  return url;
+};
+
 /** property getters for dimensions */
 export const getterDimensionPropNames = /*#__PURE__*/ commaSplit(
   'clientWidth,clientHeight,clientTop,clientLeft,innerWidth,innerHeight,offsetWidth,offsetHeight,offsetTop,offsetLeft,outerWidth,outerHeight,pageXOffset,pageYOffset,scrollWidth,scrollHeight,scrollTop,scrollLeft'
