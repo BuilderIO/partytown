@@ -53,4 +53,9 @@ test('history', async ({ page }) => {
   const buttonPatchPushState = page.locator('#buttonPatchPushState');
   await buttonPatchPushState.click();
   await expect(testPatchPushState).toHaveText('Hill Valley');
+
+  const testIframeReplaceState = page.locator('#testIframeReplaceState');
+  const buttonIframeReplaceState = page.locator('#buttonIframeReplaceState');
+  await buttonIframeReplaceState.click();
+  await expect(testIframeReplaceState).toHaveText('88');
 });

@@ -47,6 +47,11 @@
         flex: 1;
         margin: 0 5px;
       }
+      iframe {
+        width: 100%;
+        height: 36px;
+        border: none;
+      }
     </style>
     <script>
       partytown = {
@@ -190,6 +195,27 @@
                 document.getElementById('testPatchPushState').textContent = data + ' Valley';
               };
               history.pushState('Hill', '');
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>iframe replaceState()</strong>
+        <button id="buttonIframeReplaceState">replaceState</button>
+        <code id="testIframeReplaceState"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testIframeReplaceState');
+
+            const iframe = document.createElement('iframe');
+            iframe.src = 'iframe-history.html';
+            elm.parentNode.appendChild(iframe);
+
+            const buttonIframeReplaceState = document.getElementById('buttonIframeReplaceState');
+            buttonIframeReplaceState.addEventListener('click', () => {
+              iframe.contentWindow.history.replaceState('88', '');
+              elm.textContent = iframe.contentWindow.history.state;
             });
           })();
         </script>
