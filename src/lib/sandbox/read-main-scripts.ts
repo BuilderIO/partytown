@@ -24,7 +24,6 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
     // it's possible for an iframe that's been appended
     // to the DOM to not be ready yet
     scriptElm = doc.querySelector<HTMLScriptElement>(blockingScriptSelector);
-    console.log('readNextScript', scriptElm);
 
     if (!scriptElm) {
       // first query for partytown scripts are blocking scripts that

@@ -26,9 +26,11 @@ export const mainAccessHandler = async (
   let applyPath: ApplyPath;
   let instance: any;
   let rtnValue: any;
+  let isLast: boolean;
 
   for (; i < totalTasks; i++) {
     try {
+      isLast = i === totalTasks - 1;
       task = accessReq.$tasks$[i];
       winId = task.$winId$;
       applyPath = task.$applyPath$;
@@ -62,7 +64,7 @@ export const mainAccessHandler = async (
         // get the existing instance
         instance = getInstance(winId, task.$instanceId$);
         if (instance) {
-          rtnValue = applyToInstance(worker, instance, applyPath, task.$groupedGetters$);
+          rtnValue = applyToInstance(worker, instance, applyPath, isLast, task.$groupedGetters$);
 
           if (task.$assignInstanceId$) {
             setInstanceId(rtnValue, task.$assignInstanceId$);
@@ -85,7 +87,7 @@ export const mainAccessHandler = async (
         }
       }
     } catch (e: any) {
-      if (i === totalTasks - 1) {
+      if (isLast!) {
         // last task is the only one we can throw a sync error
         accessRsp.$error$ = String(e.stack || e);
       } else {
@@ -103,6 +105,7 @@ const applyToInstance = (
   worker: PartytownWebWorker,
   instance: any,
   applyPath: ApplyPath,
+  isLast: boolean,
   groupedGetters?: string[]
 ) => {
   let i = 0;
@@ -162,10 +165,14 @@ const applyToInstance = (
         }
       }
     } catch (err) {
-      if (debug) {
-        console.debug(`Non-blocking setter error:`, err);
+      if (isLast) {
+        throw err;
       } else {
-        console.debug(err);
+        if (debug) {
+          console.debug(`Non-blocking setter error:`, err);
+        } else {
+          console.debug(err);
+        }
       }
     }
   }
