@@ -24,7 +24,7 @@ export const onMessageFromWebWorker = (
     if (winCtx) {
       if (msg[0] === WorkerMessageType.InitializeNextScript) {
         // web worker has been initialized with the main data
-        readNextScript(worker, winCtx);
+        requestAnimationFrame(() => readNextScript(worker, winCtx!));
       } else if (msg[0] === WorkerMessageType.InitializedEnvironmentScript) {
         // web worker has finished initializing the script, and has another one to do
         // doing this postMessage back-and-forth so we don't have long running tasks

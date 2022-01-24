@@ -15,53 +15,64 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
   let doc = win.document;
   let scriptSelector = `script[type="${SCRIPT_TYPE}"]:not([data-ptid]):not([data-pterror])`;
   let blockingScriptSelector = scriptSelector + `:not([async]):not([defer])`;
-  let scriptElm = doc.querySelector<HTMLScriptElement>(blockingScriptSelector);
+  let scriptElm: HTMLScriptElement | null;
   let $instanceId$: number;
   let scriptData: InitializeScriptData;
 
-  if (!scriptElm) {
-    // first query for partytown scripts are blocking scripts that
-    // do not include async or defer attribute that should run first
-    // if no blocking scripts are found
-    // query again for all scripts which includes async / defer
-    scriptElm = doc.querySelector<HTMLScriptElement>(scriptSelector);
-  }
+  if (doc && doc.body) {
+    // check the document and document.body exist because
+    // it's possible for an iframe that's been appended
+    // to the DOM to not be ready yet
+    scriptElm = doc.querySelector<HTMLScriptElement>(blockingScriptSelector);
+    console.log('readNextScript', scriptElm);
 
-  if (scriptElm) {
-    // read the next script found
-    scriptElm.dataset.ptid = $instanceId$ = getAndSetInstanceId(scriptElm, $winId$) as any;
-
-    scriptData = {
-      $winId$,
-      $instanceId$,
-    };
-
-    if (scriptElm.src) {
-      scriptData.$url$ = scriptElm.src;
-      scriptData.$orgUrl$ = scriptElm.dataset.ptsrc || scriptElm.src;
-    } else {
-      scriptData.$content$ = scriptElm.innerHTML;
+    if (!scriptElm) {
+      // first query for partytown scripts are blocking scripts that
+      // do not include async or defer attribute that should run first
+      // if no blocking scripts are found
+      // query again for all scripts which includes async / defer
+      scriptElm = doc.querySelector<HTMLScriptElement>(scriptSelector);
     }
 
-    worker.postMessage([WorkerMessageType.InitializeNextScript, scriptData]);
-  } else if (!winCtx.$isInitialized$) {
-    // finished environment initialization
-    winCtx.$isInitialized$ = 1;
+    if (scriptElm) {
+      // read the next script found
+      scriptElm.dataset.ptid = $instanceId$ = getAndSetInstanceId(scriptElm, $winId$) as any;
 
-    mainForwardTrigger(worker, $winId$, win);
+      scriptData = {
+        $winId$,
+        $instanceId$,
+      };
 
-    doc.dispatchEvent(new CustomEvent(PT_INITIALIZED_EVENT));
+      if (scriptElm.src) {
+        scriptData.$url$ = scriptElm.src;
+        scriptData.$orgUrl$ = scriptElm.dataset.ptsrc || scriptElm.src;
+      } else {
+        scriptData.$content$ = scriptElm.innerHTML;
+      }
 
-    if (debug) {
-      const winType = win === win.top ? 'top' : 'iframe';
-      logMain(
-        `Executed ${winType} window ${normalizedWinId($winId$)} environment scripts in ${(
-          performance.now() - winCtx.$startTime$!
-        ).toFixed(1)}ms`
-      );
+      worker.postMessage([WorkerMessageType.InitializeNextScript, scriptData]);
+    } else if (!winCtx.$isInitialized$) {
+      // finished environment initialization
+      winCtx.$isInitialized$ = 1;
+
+      mainForwardTrigger(worker, $winId$, win);
+
+      doc.dispatchEvent(new CustomEvent(PT_INITIALIZED_EVENT));
+
+      if (debug) {
+        const winType = win === win.top ? 'top' : 'iframe';
+        logMain(
+          `Executed ${winType} window ${normalizedWinId($winId$)} environment scripts in ${(
+            performance.now() - winCtx.$startTime$!
+          ).toFixed(1)}ms`
+        );
+      }
+
+      worker.postMessage([WorkerMessageType.InitializedEnvironment, $winId$]);
     }
-
-    worker.postMessage([WorkerMessageType.InitializedEnvironment, $winId$]);
+  } else {
+    // document not ready yet, retry a frame later
+    requestAnimationFrame(() => readNextScript(worker, winCtx));
   }
 };
 

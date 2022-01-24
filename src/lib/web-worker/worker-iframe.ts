@@ -1,11 +1,12 @@
-import { environments, InstanceIdKey } from './worker-constants';
+import { environments, InstanceIdKey, webWorkerCtx } from './worker-constants';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
+import { getPartytownScript, resolveUrl } from './worker-exec';
 import { HTMLSrcElementDescriptorMap } from './worker-src-element';
 import type { Node } from './worker-node';
-import { resolveUrl, updateIframeContent } from './worker-exec';
-import { setter } from './worker-proxy';
-import { StateProp } from '../types';
+import { SCRIPT_TYPE } from '../utils';
+import { sendToMain, setter } from './worker-proxy';
+import { StateProp, WorkerMessageType } from '../types';
 
 export const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
   contentDocument: {
@@ -42,7 +43,19 @@ export const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
       xhrStatus = xhr.status;
 
       if (xhrStatus > 199 && xhrStatus < 300) {
-        setter(this, ['srcdoc'], updateIframeContent(url, xhr.responseText));
+        setter(
+          this,
+          ['srcdoc'],
+          `<base href="${url}">` +
+            xhr.responseText
+              .replace(/<script>/g, `<script type="${SCRIPT_TYPE}">`)
+              .replace(/<script /g, `<script type="${SCRIPT_TYPE}" `)
+              .replace(/text\/javascript/g, SCRIPT_TYPE) +
+            getPartytownScript()
+        );
+
+        sendToMain(true);
+        webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextScript, this[InstanceIdKey]]);
       } else {
         setInstanceStateValue(this, StateProp.loadErrorStatus, xhrStatus);
       }

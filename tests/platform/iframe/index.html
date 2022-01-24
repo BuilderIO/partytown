@@ -735,6 +735,27 @@
           })();
         </script>
       </li>
+
+      <li>
+        <strong>src change</strong>
+        <code id="testSrcChange">
+          <span id="testSrcChange1"></span>
+          <span id="testSrcChange2"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testSrcChange');
+
+            const iframe = document.createElement('iframe');
+            iframe.src = 'src-change1.html?delay=100';
+            elm.parentNode.appendChild(iframe);
+
+            setTimeout(() => {
+              iframe.src = 'src-change2.html?delay=100';
+            }, 500)
+          })();
+        </script>
+      </li>
     </ul>
 
     <hr />

@@ -1,4 +1,4 @@
-import { debug, len, SCRIPT_TYPE } from '../utils';
+import { debug, len } from '../utils';
 import {
   EventHandler,
   InitializeScriptData,
@@ -7,7 +7,7 @@ import {
   WebWorkerEnvironment,
   WorkerMessageType,
 } from '../types';
-import { environments, postMessages, webWorkerCtx } from './worker-constants';
+import { environments, partytownLibUrl, postMessages, webWorkerCtx } from './worker-constants';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getOrCreateNodeInstance } from './worker-constructors';
 import { logWorker } from '../log';
@@ -167,11 +167,7 @@ export const insertIframe = (winId: number, iframe: WorkerInstance) => {
   let type: string;
   let handlers: EventHandler[];
 
-  if (debug) {
-    setter(iframe, ['dataset', 'ptwindow'], winId);
-  }
-
-  const callback = () => {
+  let callback = () => {
     if (environments[winId] && environments[winId].$isInitialized$) {
       type = getInstanceStateValue<StateProp>(iframe, StateProp.loadErrorStatus)
         ? StateProp.errorHandlers
@@ -190,6 +186,10 @@ export const insertIframe = (winId: number, iframe: WorkerInstance) => {
       setTimeout(callback, 9);
     }
   };
+
+  if (debug) {
+    setter(iframe, ['dataset', 'ptwindow'], winId);
+  }
 
   callback();
 };
@@ -224,13 +224,5 @@ export const resolveToUrl = (
 export const resolveUrl = (env: WebWorkerEnvironment, url: string, noUserHook?: boolean) =>
   resolveToUrl(env, url, noUserHook) + '';
 
-export const updateIframeContent = (url: string, html: string) =>
-  `<base href="${url}">` +
-  html
-    .replace(/<script>/g, `<script type="${SCRIPT_TYPE}">`)
-    .replace(/<script /g, `<script type="${SCRIPT_TYPE}" `)
-    .replace(/text\/javascript/g, SCRIPT_TYPE) +
-  getPartytownScript();
-
 export const getPartytownScript = () =>
-  `<script src=${JSON.stringify(webWorkerCtx.$libPath$ + 'partytown.js')} async></script>`;
+  `<script src="${partytownLibUrl('partytown.js')}"></script>`;
