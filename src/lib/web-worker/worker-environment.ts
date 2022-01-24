@@ -4,13 +4,16 @@ import { InitializeEnvironmentData, WorkerMessageType } from '../types';
 import { logWorker, normalizedWinId } from '../log';
 import { Window } from './worker-window';
 
-export const createEnvironment = ({ $winId$, $parentWinId$, $url$ }: InitializeEnvironmentData) => {
+export const createEnvironment = (
+  { $winId$, $parentWinId$, $url$ }: InitializeEnvironmentData,
+  isIframeWindow?: boolean
+) => {
   if (environments[$winId$]) {
     // this environment (iframe) is already initialized
     environments[$winId$].$location$.href = $url$;
   } else {
     // create a simulated global environment for this window
-    new Window($winId$, $parentWinId$, $url$);
+    new Window($winId$, $parentWinId$, $url$, isIframeWindow);
 
     if (debug) {
       const winType = $winId$ === $parentWinId$ ? 'top' : 'iframe';

@@ -19,9 +19,7 @@ export const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
     get() {
       // the winId of an iframe's window is the same
       // as the instanceId of the containing iframe element
-      const iframeContentWinId = this[InstanceIdKey];
-      const env = environments[iframeContentWinId];
-      return env.$window$;
+      return environments[this[InstanceIdKey]].$window$;
     },
   },
 

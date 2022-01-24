@@ -14,12 +14,13 @@ import { normalizedWinId } from '../log';
 import { WorkerInstance } from './worker-instance';
 
 export class Window extends WorkerInstance {
-  constructor($winId$: number, $parentWinId$: number, url: string) {
+  constructor($winId$: number, $parentWinId$: number, url: string, isIframeWindow?: boolean) {
     super($winId$, PlatformInstanceId.window);
 
     let _this: any = this;
     let globalName: string;
     let value: any;
+    let historyState: any;
 
     // assign global properties already in the web worker global
     // that we can put onto the environment window
@@ -127,6 +128,22 @@ export class Window extends WorkerInstance {
     // add storage APIs to the window
     addStorageApi(_this, 'localStorage', webWorkerCtx.$localStorage$);
     addStorageApi(_this, 'sessionStorage', webWorkerCtx.$sessionStorage$);
+
+    if (isIframeWindow) {
+      historyState = {};
+      _this.history = {
+        pushState(stateObj: any) {
+          historyState = stateObj;
+        },
+        replaceState(stateObj: any) {
+          historyState = stateObj;
+        },
+        get state() {
+          return historyState;
+        },
+        length: 0,
+      };
+    }
 
     _this.Worker = undefined;
   }
