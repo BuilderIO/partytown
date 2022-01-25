@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>IntersectionObserver</title>
+
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logImageRequests: true,
+        logSendBeaconRequests: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+      };
+    </script>
+    <script src="/~partytown/debug/partytown.js"></script>
+
+    <link
+      rel="icon"
+      id="favicon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎉</text></svg>"
+    />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        font-size: 12px;
+      }
+      h1 {
+        margin: 0 0 15px 0;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        display: block;
+        padding: 16px 8px;
+      }
+      a:link,
+      a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover {
+        background-color: #eee;
+      }
+      .scroll-area {
+        margin: 3000px 0 50px 0;
+        text-align: center;
+      }
+      #scrolldown {
+        border: 1px solid gray;
+        border-radius: 4px;
+        font-size: 18px;
+        background-color: #eee;
+        text-align: center;
+        font-weight: bold;
+        color: black;
+      }
+      #scrolldown:hover {
+        background-color: #ddd;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>IntersectionObserver</h1>
+
+    <a id="scrolldown" href="#testIntersectionObserver">⬇️ Scroll Down ⬇️</a>
+
+    <div class="scroll-area">
+      <span>🎉</span>
+      <span id="testIntersectionObserver"></span>
+      <span>🎉</span>
+    </div>
+
+    <script type="text/javascript">
+      (function () {
+        const elm = document.getElementById('testIntersectionObserver');
+
+        const observer = new IntersectionObserver((entries, observer) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              console.log('entry', entry);
+              elm.textContent = `intersecting #${entry.target.id}`;
+              elm.className = 'testIntersectionObserver';
+            }
+          });
+        });
+
+        observer.observe(elm);
+      })();
+    </script>
+
+    <p><a href="/">All Tests</a></p>
+  </body>
+</html>
