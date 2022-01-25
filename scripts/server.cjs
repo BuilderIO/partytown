@@ -26,8 +26,13 @@ exports.createServer = function (port, enableAtomics) {
       rsp.setHeader('Access-Control-Allow-Origin', '*');
 
       if (enableAtomics || url.searchParams.has('atomics')) {
-        rsp.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
-        rsp.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
+        if (url.searchParams.get('coep') === 'require-corp') {
+          rsp.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+          rsp.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
+        } else if (url.searchParams.get('coep') !== 'false') {
+          rsp.setHeader('Cross-Origin-Opener-Policy', 'same-origin');
+          rsp.setHeader('Cross-Origin-Embedder-Policy', 'credentialless');
+        }
       }
 
       switch (path.extname(filePath)) {
