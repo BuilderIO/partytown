@@ -17,8 +17,9 @@ export const readMainPlatform = () => {
   const comment = docImpl.createComment('');
   const frag = docImpl.createDocumentFragment();
   const svg = docImpl.createElementNS('http://www.w3.org/2000/svg', 'svg');
-  const mutationObserver = new MutationObserver(noop);
-  const resizeObserver = new ResizeObserver(noop);
+  const intersectionObserver = getGlobalConstructor(mainWindow, 'IntersectionObserver');
+  const mutationObserver = getGlobalConstructor(mainWindow, 'MutationObserver');
+  const resizeObserver = getGlobalConstructor(mainWindow, 'ResizeObserver');
   const perf = mainWindow.performance;
   const screen = mainWindow.screen;
 
@@ -41,6 +42,7 @@ export const readMainPlatform = () => {
     [screen.orientation],
 
     // global constructors
+    [intersectionObserver, InterfaceType.EnvGlobalConstructor],
     [mutationObserver, InterfaceType.EnvGlobalConstructor],
     [resizeObserver, InterfaceType.EnvGlobalConstructor],
 
@@ -210,3 +212,6 @@ const readStorage = (storageName: 'localStorage' | 'sessionStorage') => {
   }
   return items;
 };
+
+const getGlobalConstructor = (mainWindow: any, cstrName: string) =>
+  typeof mainWindow[cstrName] !== 'undefined' ? new mainWindow[cstrName](noop) : 0;
