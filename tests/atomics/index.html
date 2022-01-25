@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Atomics COEP/COOP Headers" />
+
+    <title>Atomics COEP/COOP Headers</title>
+
+    <link
+      rel="icon"
+      id="favicon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌎</text></svg>"
+    />
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        font-size: 12px;
+      }
+      h1 {
+        margin: 0 0 15px 0;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      nav a {
+        display: block;
+        padding: 16px 8px;
+      }
+      nav a:link,
+      nav a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      nav a:hover {
+        background-color: #eee;
+      }
+      li {
+        display: flex;
+        margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button {
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
+      }
+      .coep p {
+        position: relative;
+      }
+      iframe {
+        position: absolute;
+        width: 35px;
+        height: 35px;
+        top: -6px;
+        left: 110px;
+        border: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Atomics COEP/COOP Headers</h1>
+
+    <div class="coep">
+      <h2>Cross-Origin-Embedder-Policy (COEP)</h2>
+
+      <p>
+        <code>credentialless</code>
+        <iframe src="cross-origin-isolated.html"></iframe>
+      </p>
+
+      <p>
+        <code>require-corp</code>
+        <iframe src="cross-origin-isolated.html?coep=require-corp"></iframe>
+      </p>
+    </div>
+
+    <p id="ua"></p>
+    <script>
+      document.getElementById('ua').textContent = navigator.userAgent;
+    </script>
+
+    <nav>
+      <p>
+        <a href="https://github.com/BuilderIO/partytown/wiki/Enabling-Atomics">Enabling Atomics</a>
+      </p>
+      <p><a href="/">All Tests</a></p>
+    </nav>
+  </body>
+</html>
