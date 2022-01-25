@@ -8,11 +8,9 @@ export const createEnvironment = (
   { $winId$, $parentWinId$, $url$ }: InitializeEnvironmentData,
   isIframeWindow?: boolean
 ) => {
-  if (environments[$winId$]) {
-    // this environment (iframe) is already initialized
-    environments[$winId$].$location$.href = $url$;
-  } else {
+  if (!environments[$winId$]) {
     // create a simulated global environment for this window
+    // if it hasn't already been created (like an iframe)
     new Window($winId$, $parentWinId$, $url$, isIframeWindow);
 
     if (debug) {

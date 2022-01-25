@@ -31,18 +31,18 @@ export const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
       }
       return src;
     },
-    set(url: string) {
+    set(src: string) {
       let xhr = new XMLHttpRequest();
       let xhrStatus: number;
       let winId = this[InstanceIdKey];
       let env = environments[winId];
 
-      env.$location$.href = url = resolveUrl(getEnv(this), url);
+      env.$location$.href = src = resolveUrl(getEnv(this), src);
       env.$isLoading$ = 1;
 
       setInstanceStateValue(this, StateProp.loadErrorStatus, undefined);
 
-      xhr.open('GET', url, false);
+      xhr.open('GET', src, false);
       xhr.send();
       xhrStatus = xhr.status;
 
@@ -50,7 +50,7 @@ export const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
         setter(
           this,
           ['srcdoc'],
-          `<base href="${url}">` +
+          `<base href="${src}">` +
             xhr.responseText
               .replace(/<script>/g, `<script type="${SCRIPT_TYPE}">`)
               .replace(/<script /g, `<script type="${SCRIPT_TYPE}" `)

@@ -1,4 +1,4 @@
-import { debug, len } from '../utils';
+import { debug } from '../utils';
 import {
   EventHandler,
   InitializeScriptData,
@@ -7,7 +7,7 @@ import {
   WebWorkerEnvironment,
   WorkerMessageType,
 } from '../types';
-import { environments, partytownLibUrl, postMessages, webWorkerCtx } from './worker-constants';
+import { environments, partytownLibUrl, webWorkerCtx } from './worker-constants';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getOrCreateNodeInstance } from './worker-constructors';
 import { logWorker } from '../log';

@@ -18,15 +18,17 @@ export const registerWindow = (
 
     const doc = $window$.document;
     const history = $window$.history;
-
-    const envData: InitializeEnvironmentData = {
-      $winId$,
-      $parentWinId$: windowIds.get($window$.parent)!,
-      $url$: doc.baseURI,
-    };
+    const $parentWinId$ = windowIds.get($window$.parent)!;
 
     const sendInitEnvData = () =>
-      worker.postMessage([WorkerMessageType.InitializeEnvironment, envData]);
+      worker.postMessage([
+        WorkerMessageType.InitializeEnvironment,
+        {
+          $winId$,
+          $parentWinId$,
+          $url$: doc.baseURI,
+        },
+      ]);
 
     const pushState = history.pushState.bind(history);
     const replaceState = history.replaceState.bind(history);
@@ -59,7 +61,7 @@ export const registerWindow = (
     }
 
     if (debug) {
-      const winType = envData.$winId$ === envData.$parentWinId$ ? 'top' : 'iframe';
+      const winType = $winId$ === $parentWinId$ ? 'top' : 'iframe';
       logMain(`Registered ${winType} window ${normalizedWinId($winId$)} (${$winId$})`);
     }
 
