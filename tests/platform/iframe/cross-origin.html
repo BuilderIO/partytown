@@ -23,7 +23,14 @@
       const parentOrigin = url.searchParams.get('parentorigin');
       document.getElementById('parent-origin').textContent = parentOrigin;
 
-      parent.postMessage('88', parentOrigin);
+      setTimeout(async () => {
+        await new Promise((resolve) => {
+          setTimeout(() => {
+            parent.postMessage('88', parentOrigin);
+            resolve();
+          });
+        });
+      });
     </script>
   </body>
 </html>

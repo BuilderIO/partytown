@@ -5,7 +5,13 @@ import { createNavigator } from './worker-navigator';
 import { createImageConstructor } from './worker-image';
 import { createNodeInstance, getOrCreateNodeInstance } from './worker-constructors';
 import { debug, defineConstructorName, defineProperty, len, randomId } from '../utils';
-import { envGlobalConstructors, environments, webWorkerCtx, WinIdKey } from './worker-constants';
+import {
+  envGlobalConstructors,
+  environments,
+  postMessages,
+  webWorkerCtx,
+  WinIdKey,
+} from './worker-constants';
 import { getEnv } from './worker-environment';
 import { resolveUrl } from './worker-exec';
 import { lazyLoadMedia, windowMediaConstructors } from './worker-media';
@@ -215,7 +221,7 @@ export class Window extends WorkerInstance {
   }
 
   get parent() {
-    return environments[getEnv(this).$parentWinId$].$window$;
+    return proxyAncestorPostMessage(environments[getEnv(this).$parentWinId$].$window$, this.origin);
   }
 
   postMessage(...args: any[]) {
@@ -229,7 +235,7 @@ export class Window extends WorkerInstance {
   get top(): any {
     for (let envWinId in environments) {
       if (environments[envWinId].$winId$ === environments[envWinId].$parentWinId$) {
-        return environments[envWinId].$window$;
+        return proxyAncestorPostMessage(environments[envWinId].$window$, this.origin);
       }
     }
   }
@@ -238,3 +244,23 @@ export class Window extends WorkerInstance {
     return this;
   }
 }
+
+const proxyAncestorPostMessage = (parentWin: any, $origin$: string) =>
+  new Proxy<any>(parentWin, {
+    get: (targetParent, propName) => {
+      if (propName === 'postMessage') {
+        return (...args: any[]) => {
+          if (len(postMessages) > 20) {
+            postMessages.splice(0, 5);
+          }
+          postMessages.push({
+            $data$: JSON.stringify(args[0]),
+            $origin$,
+          });
+          targetParent.postMessage(...args);
+        };
+      } else {
+        return targetParent[propName];
+      }
+    },
+  });

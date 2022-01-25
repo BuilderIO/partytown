@@ -98,56 +98,13 @@ export const runScriptContent = (
   return errorMsg;
 };
 
-const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) => {
-  const doc: any = new Proxy(env.$document$, {
-    get: (target: any, propName) => {
-      if (propName === 'defaultView') {
-        return win;
-      } else {
-        return target[propName];
-      }
-    },
-  });
-
-  const win: any = new Proxy(env.$window$, {
-    get: (target: any, propName) => {
-      if (propName === 'document') {
-        return doc;
-      } else if (propName === 'window' || propName === 'globalThis' || propName === 'self') {
-        return win;
-      } else if (propName === 'parent' || propName === 'top') {
-        return new Proxy(target[propName], {
-          get: (targetParent: any, parentPropName) => {
-            if (parentPropName === 'postMessage') {
-              return (...args: any[]) => {
-                if (len(postMessages) > 20) {
-                  postMessages.splice(0, 5);
-                }
-                postMessages.push({
-                  $data$: JSON.stringify(args[0]),
-                  $origin$: env.$location$.origin,
-                });
-                targetParent.postMessage(...args);
-              };
-            } else {
-              return targetParent[parentPropName];
-            }
-          },
-        });
-      } else {
-        return target[propName];
-      }
-    },
-    has: () => true,
-  });
-
+const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) =>
   new Function(
     `with(this){${scriptContent
       .replace(/\bthis\b/g, '(thi$(this)?window:this)')
       .replace(/\/\/# so/g, '//Xso')};function thi$(t){return t===this}}` +
       (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '')
-  ).call(win);
-};
+  ).call(env.$window$);
 
 const runStateLoadHandlers = (
   instance: WorkerInstance,
