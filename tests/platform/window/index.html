@@ -615,6 +615,24 @@
       </li>
 
       <li>
+        <strong>XMLHttpRequest</strong>
+        <code id="testXMLHttpRequest"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testXMLHttpRequest');
+
+            const xhr = new XMLHttpRequest();
+            xhr.addEventListener('load', function () {
+              elm.textContent = this.responseText;
+              elm.className = 'testXMLHttpRequest';
+            });
+            xhr.open('GET', 'text.txt');
+            xhr.send();
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>opener</strong>
         <code>
           <span id="testOpener"></span>

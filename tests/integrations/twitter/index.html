@@ -53,7 +53,10 @@
     <script>
       partytown = {
         resolveUrl(url, location) {
-          if (url.hostname.includes('syndication.twitter.com')) {
+          if (
+            url.hostname.includes('syndication.twitter.com') ||
+            url.hostname.includes('cdn.syndication.twimg.com')
+          ) {
             const proxyUrl = new URL('https://cdn.builder.io/api/v1/proxy-api');
             proxyUrl.searchParams.append('url', url);
             return proxyUrl;

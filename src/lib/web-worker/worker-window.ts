@@ -243,6 +243,17 @@ export class Window extends WorkerInstance {
   get window() {
     return this;
   }
+
+  get XMLHttpRequest() {
+    const env = getEnv(this);
+    return class XMLHttpRequest_ extends (self as any).XMLHttpRequest {
+      open(...args: any[]) {
+        args[1] = resolveUrl(env, args[1]);
+        super.open(...args);
+      }
+      set withCredentials(_: any) {}
+    };
+  }
 }
 
 const proxyAncestorPostMessage = (parentWin: any, $origin$: string) =>
