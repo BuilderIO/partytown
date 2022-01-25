@@ -52,4 +52,10 @@ test('events', async ({ page }) => {
   await page.waitForSelector('.testCrossOriginMessage');
   const testCrossOriginMessage = page.locator('#testCrossOriginMessage');
   await expect(testCrossOriginMessage).toHaveText('message cross origin');
+
+  const btnPreventDefault = page.locator('#btnPreventDefault');
+  await btnPreventDefault.click();
+  await page.waitForSelector('.testPreventDefault');
+  const testPreventDefault = page.locator('#testPreventDefault');
+  await expect(testPreventDefault).toHaveText('preventDefault-noop');
 });

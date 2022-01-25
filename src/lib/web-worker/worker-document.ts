@@ -132,7 +132,7 @@ export const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
 
   implementation: {
     value: {
-      hasFeature: noop,
+      hasFeature: () => true,
     },
   },
 

@@ -189,8 +189,15 @@ export const deserializeFromMain = (
         }
       }
       return new Proxy(new Event(obj.type, obj), {
-        get: (target: any, propName) =>
-          propName in obj ? obj[propName] : target[String(propName)],
+        get: (target: any, propName) => {
+          if (propName in obj) {
+            return obj[propName];
+          } else if (typeof target[String(propName)] === 'function') {
+            return noop;
+          } else {
+            return target[String(propName)];
+          }
+        },
       });
     }
 

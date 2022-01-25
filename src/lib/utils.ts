@@ -4,7 +4,7 @@ export const debug = !!(globalThis as any).partytownDebug;
 
 export const isPromise = (v: any): v is Promise<unknown> => typeof v === 'object' && v && v.then;
 
-export const noop = () => true;
+export const noop = () => {};
 
 export const len = (obj: { length: number }) => obj.length;
 

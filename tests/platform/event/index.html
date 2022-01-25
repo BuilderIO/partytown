@@ -209,6 +209,24 @@
         </script>
       </li>
 
+      <li>
+        <strong>preventDefault()</strong>
+        <code id="testPreventDefault"></code>
+        <button id="btnPreventDefault">Click</button>
+        <script type="text/partytown">
+          (function () {
+            const btn = document.getElementById('btnPreventDefault');
+            const elm = document.getElementById('testPreventDefault');
+
+            btn.addEventListener('click', (ev) => {
+              const rtn = ev.preventDefault();
+              elm.textContent = 'preventDefault-noop';
+              elm.className = 'testPreventDefault';
+            });
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

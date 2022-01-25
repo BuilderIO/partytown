@@ -7,6 +7,13 @@
     <title>Hubspot Forms 🎉</title>
     <script>
       partytown = {
+        resolveUrl(url, location) {
+          if (url.hostname.includes('forms.hsforms.com')) {
+            const proxyUrl = new URL('https://cdn.builder.io/api/v1/proxy-api');
+            proxyUrl.searchParams.append('url', url);
+            return proxyUrl;
+          }
+        },
         forward: [],
         logCalls: true,
         logGetters: true,
