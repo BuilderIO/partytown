@@ -555,6 +555,6 @@ export interface MediaSelf {
 }
 
 export interface PostMessageData {
-  $origin$: string;
+  $winId$: number;
   $data$: string;
 }

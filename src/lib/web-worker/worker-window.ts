@@ -221,7 +221,10 @@ export class Window extends WorkerInstance {
   }
 
   get parent() {
-    return proxyAncestorPostMessage(environments[getEnv(this).$parentWinId$].$window$, this.origin);
+    return proxyAncestorPostMessage(
+      environments[getEnv(this).$parentWinId$].$window$,
+      this[WinIdKey]
+    );
   }
 
   postMessage(...args: any[]) {
@@ -235,7 +238,7 @@ export class Window extends WorkerInstance {
   get top(): any {
     for (let envWinId in environments) {
       if (environments[envWinId].$winId$ === environments[envWinId].$parentWinId$) {
-        return proxyAncestorPostMessage(environments[envWinId].$window$, this.origin);
+        return proxyAncestorPostMessage(environments[envWinId].$window$, this[WinIdKey]);
       }
     }
   }
@@ -256,7 +259,7 @@ export class Window extends WorkerInstance {
   }
 }
 
-const proxyAncestorPostMessage = (parentWin: any, $origin$: string) =>
+const proxyAncestorPostMessage = (parentWin: any, $winId$: number) =>
   new Proxy<any>(parentWin, {
     get: (targetParent, propName) => {
       if (propName === 'postMessage') {
@@ -266,7 +269,7 @@ const proxyAncestorPostMessage = (parentWin: any, $origin$: string) =>
           }
           postMessages.push({
             $data$: JSON.stringify(args[0]),
-            $origin$,
+            $winId$,
           });
           targetParent.postMessage(...args);
         };

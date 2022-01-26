@@ -719,16 +719,18 @@
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testCrossOrigin');
+            const iframe = document.createElement('iframe');
 
             window.addEventListener('message', (ev) => {
-              const eventInfo = `${ev.type} ${ev.data} ${ev.origin}`;
+              const eventInfo = `${ev.type} ${ev.data} ${ev.origin} ${
+                ev.source === iframe.contentWindow
+              }`;
               if (ev.data === '88' && ev.origin === 'https://partytown.builder.io') {
                 elm.textContent = eventInfo;
                 elm.className = 'testCrossOrigin';
               }
             });
 
-            const iframe = document.createElement('iframe');
             iframe.style.height = '45px';
 
             const url = new URL('https://partytown.builder.io/platform/iframe/cross-origin.html');
