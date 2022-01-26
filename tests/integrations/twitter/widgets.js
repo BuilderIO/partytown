@@ -4613,10 +4613,16 @@ Function &&
               new i()
                 .attachReceiver(new o.Receiver(r, 'twttr.embed'))
                 .bind('twttr.private.initialized', function (t) {
-                  var e = u(this),
-                    n = e && e.id,
-                    r = t.iframe_version;
-                  n && r && c && c(n, r);
+                  var e = u(this);
+                  var n = e && e.id;
+                  var r = t.iframe_version;
+                  if (n) {
+                    if (r) {
+                      if (c) {
+                        c(n, r);
+                      }
+                    }
+                  }
                 })
                 .bind('twttr.private.trigger', l)
                 .bind('twttr.private.results', function () {
@@ -4670,13 +4676,21 @@ Function &&
               var n, r;
               return (function (t) {
                 var e, n, r;
-                return (
-                  !!o.isObject(t) &&
-                  ((e = t.jsonrpc === u),
-                  (n = o.isType('string', t.method)),
-                  (r = !('id' in t) || d(t.id)),
-                  e && n && r)
-                );
+
+                if (!!o.isObject(t)) {
+                  e = t.jsonrpc === u;
+                  n = o.isType('string', t.method);
+                  r = !('id' in t) || d(t.id);
+
+                  if (e) {
+                    if (n) {
+                      if (r) {
+                        return true;
+                      }
+                    }
+                  }
+                }
+                return false;
               })(t)
                 ? ((n =
                     'params' in t && ((r = t.params), !o.isObject(r) || o.isType('function', r))
@@ -4741,15 +4755,9 @@ Function &&
           };
         },
         function (t, e, n) {
-          var r = n(9),
-            i = n(1),
-            o = n(25),
-            s = n(2),
-            a = n(21),
-            u = n(0),
-            c = n(3),
-            d = n(7),
-            l = a.ie9();
+          var r = n(9);
+          var i = n(1);
+          (o = n(25)), (s = n(2)), (a = n(21)), (u = n(0)), (c = n(3)), (d = n(7)), (l = a.ie9());
           function f(t, e, n) {
             var r;
             t &&
@@ -4785,6 +4793,7 @@ Function &&
           }
           u.aug(m.prototype, {
             _onMessage: function (t) {
+              console.warn('_onMessage', t);
               var e,
                 n = this;
               this.server &&
@@ -4841,8 +4850,16 @@ Function &&
         function (t, e, n) {
           var r = n(4);
           t.exports = function (t) {
-            for (var e, n = r.getElementsByTagName('iframe'), i = 0; n[i]; i++)
-              if ((e = n[i]).contentWindow === t) return e;
+            var e;
+            var n = r.getElementsByTagName('iframe');
+            for (var e, i = 0; n[i]; i++) {
+              e = n[i];
+              const contentWindow = e.contentWindow;
+
+              if (contentWindow === t) {
+                return e;
+              }
+            }
           };
         },
         function (t, e, n) {
