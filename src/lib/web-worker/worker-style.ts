@@ -1,9 +1,9 @@
 import { cachedDimensions } from './worker-constants';
 import { callMethod, getter } from './worker-proxy';
+import { CallType, StateProp } from '../types';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { logDimensionCacheClearMethod } from '../log';
 import type { Node } from './worker-node';
-import { StateProp } from '../types';
 
 export const HTMLStyleDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
   sheet: {
@@ -46,7 +46,7 @@ export class CSSStyleSheet {
     const cssRules = getCssRules(this.ownerNode);
     index = index === undefined ? 0 : index;
     if (index >= 0 && index <= cssRules.length) {
-      callMethod(this.ownerNode, ['sheet', 'insertRule'], [ruleText, index]);
+      callMethod(this.ownerNode, ['sheet', 'insertRule'], [ruleText, index], CallType.NonBlocking);
       // insert bogus data so the array/length is correct
       // but later on, if we ever want to "read" this inserted rule
       // we do a real lookup to get the dom correct data
@@ -58,7 +58,7 @@ export class CSSStyleSheet {
   }
 
   deleteRule(index: number) {
-    callMethod(this.ownerNode, ['sheet', 'deleteRule'], [index]);
+    callMethod(this.ownerNode, ['sheet', 'deleteRule'], [index], CallType.NonBlocking);
     getCssRules(this.ownerNode).splice(index, 1);
     logDimensionCacheClearMethod(this.ownerNode, 'deleteRule');
     cachedDimensions.clear();

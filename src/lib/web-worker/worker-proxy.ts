@@ -22,6 +22,7 @@ import {
   HookPrevent,
   InstanceIdKey,
   NodeNameKey,
+  nonBlockingMethods,
   structureChangingMethodNames,
   webWorkerCtx,
   WinIdKey,
@@ -209,7 +210,9 @@ export const callMethod: CallMethod = (
   methodName = applyPath[len(applyPath) - 1];
   applyPath = [...applyPath, serializeInstanceForMain(instance, args)];
 
-  callType = callType || CallType.Blocking;
+  callType =
+    callType ||
+    (nonBlockingMethods.includes(methodName!) ? CallType.NonBlocking : CallType.Blocking);
 
   if (methodName === 'setAttribute' && hasInstanceStateValue(instance, args[0])) {
     setInstanceStateValue(instance, args[0], args[1]);

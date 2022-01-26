@@ -1,10 +1,10 @@
 import { InstanceIdKey, NodeNameKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { callMethod, setter, sendToMain } from './worker-proxy';
+import { CallType, NodeName, SerializedAttr, StateProp, WorkerMessageType } from '../types';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue } from './worker-state';
 import { insertIframe, runScriptContent } from './worker-exec';
 import { isScriptJsType } from './worker-script';
-import { NodeName, SerializedAttr, StateProp, WorkerMessageType } from '../types';
 import { SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
 import { WorkerInstance } from './worker-instance';
 
@@ -45,7 +45,7 @@ export class Node extends WorkerInstance {
       }
     }
 
-    callMethod(this, ['insertBefore'], [newNode, referenceNode]);
+    callMethod(this, ['insertBefore'], [newNode, referenceNode], CallType.NonBlocking);
 
     if (isIFrame) {
       // an iframe element's instanceId is also
