@@ -1,11 +1,11 @@
-import { environments, InstanceIdKey, webWorkerCtx } from './worker-constants';
-import { getEnv } from './worker-environment';
-import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
+import { createEnvironment, getEnv } from './worker-environment';
+import { environments, InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import { getter, sendToMain, setter } from './worker-proxy';
 import { getPartytownScript, resolveUrl } from './worker-exec';
 import { HTMLSrcElementDescriptorMap } from './worker-src-element';
 import type { Node } from './worker-node';
 import { SCRIPT_TYPE } from '../utils';
-import { sendToMain, setter } from './worker-proxy';
+import { setInstanceStateValue } from './worker-state';
 import { StateProp, WorkerMessageType } from '../types';
 
 export const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
@@ -17,9 +17,23 @@ export const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
 
   contentWindow: {
     get() {
-      // the winId of an iframe's window is the same
+      // the winId of an iframe's contentWindow is the same
       // as the instanceId of the containing iframe element
-      return environments[this[InstanceIdKey]].$window$;
+      const $winId$ = this[InstanceIdKey];
+
+      if (!environments[$winId$]) {
+        createEnvironment(
+          {
+            $winId$,
+            // iframe contentWindow parent winId is the iframe element's winId
+            $parentWinId$: this[WinIdKey],
+            $url$: getter(this, ['src']) || 'about:blank',
+          },
+          true
+        );
+      }
+
+      return environments[$winId$].$window$;
     },
   },
 

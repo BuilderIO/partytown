@@ -777,6 +777,26 @@
           })();
         </script>
       </li>
+
+      <li>
+        <strong>getElementsByTagName('iframe')[i].contentWindow.document</strong>
+        <code id="testGetByTagName"></code>
+        <iframe id="existing-iframe"></iframe>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testGetByTagName');
+            const iframes = document.getElementsByTagName('iframe');
+            for (let i = 0; i < iframes.length; i++) {
+              const iframe = iframes[i];
+              if (iframe.id === 'existing-iframe') {
+                const contentWindow = iframe.contentWindow;
+                elm.textContent = iframe.contentWindow.document.nodeName;
+                elm.className = 'testGetByTagName';
+              }
+            }
+          })();
+        </script>
+      </li>
     </ul>
 
     <hr />

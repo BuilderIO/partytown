@@ -118,4 +118,8 @@ test('iframe', async ({ page }) => {
   await expect(testSrcChange1).toHaveText('src-change1');
   const testSrcChange2 = page.locator('#testSrcChange2');
   await expect(testSrcChange2).toHaveText('src-change2');
+
+  await page.waitForSelector('.testGetByTagName');
+  const testGetByTagName = page.locator('#testGetByTagName');
+  await expect(testGetByTagName).toHaveText('#document');
 });
