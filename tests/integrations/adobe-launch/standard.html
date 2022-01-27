@@ -8,16 +8,11 @@
     <title>Standard Adobe Launch</title>
 
     <!-- Adobe Launch -->
-    <script>
-      (function (window, document, i) {
-        var firstScript = document.getElementsByTagName('script')[0];
-        var gtmScript = document.createElement('script');
-        var dataLayer = 'dataLayer' != 'dataLayer' ? '&l=' + 'dataLayer' : '';
-        gtmScript.async = true;
-        gtmScript.src = 'https://assets.adobedtm.com/0d863d487334/1df1eade08c2/launch-d4935864d5f5.min.js';
-        firstScript.parentNode.insertBefore(gtmScript, firstScript);
-      })(window, document, 'GTM-W275NLW');
-    </script>
+    <!-- <script
+      src="https://assets.adobedtm.com/0d863d487334/1df1eade08c2/launch-d4935864d5f5.min.js"
+      async
+    ></script> -->
+    <script src="launch-d4935864d5f5.min.js" async></script>
     <!-- End Adobe Launch -->
 
     <link
@@ -69,10 +64,10 @@
 
     <script>
       (function () {
-        setTimeout(function(){
+        setTimeout(function () {
           // wait for launch to load for 2 seconds
           window._satellite.setDebug(true);
-          window._satellite.track('generic-vp-v1')
+          window._satellite.track('generic-vp-v1');
           document.body.classList.add('completed');
         }, 2000);
       })();

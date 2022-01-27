@@ -11,14 +11,13 @@
       partytown = {
         debug: true,
         resolveUrl(url, location) {
-          if (
-            url.hostname.includes('assets.adobedtm.com')
-          ) {
+          if (url.hostname.includes('assets.adobedtm.com')) {
             const proxyUrl = new URL('https://cdn.builder.io/api/v1/proxy-api');
             proxyUrl.searchParams.append('url', url);
             return proxyUrl;
           }
         },
+        forward: ['_satellite.track', '_satellite.setDebug'],
         logCalls: true,
         logGetters: true,
         logSetters: true,
@@ -31,20 +30,13 @@
     </script>
     <script src="/~partytown/debug/partytown.js"></script>
 
-    <!-- Google Tag Manager -->
     <!-- Adobe Launch -->
-    <script type="text/partytown">
-      (function (window, document, i) {
-        var firstScript = document.getElementsByTagName('script')[0];
-        var gtmScript = document.createElement('script');
-        var dataLayer = 'dataLayer' != 'dataLayer' ? '&l=' + 'dataLayer' : '';
-        gtmScript.async = true;
-        gtmScript.src = 'https://assets.adobedtm.com/0d863d487334/1df1eade08c2/launch-d4935864d5f5.min.js';
-        firstScript.parentNode.insertBefore(gtmScript, firstScript);
-      })(window, document, 'GTM-W275NLW');
-    </script>
+    <!-- <script
+      src="https://assets.adobedtm.com/0d863d487334/1df1eade08c2/launch-d4935864d5f5.min.js"
+      async
+    ></script> -->
+    <script src="launch-d4935864d5f5.min.js" async></script>
     <!-- End Adobe Launch -->
-    <!-- End Google Tag Manager -->
 
     <link
       rel="icon"
@@ -93,15 +85,15 @@
   <body>
     <h1>Adobe Launch</h1>
 
-    <script type="text/partytown">
-      (function () {
-        setTimeout(function(){
-          // wait for launch to load for 2 seconds
-          window._satellite.setDebug(true);
-          window._satellite.track('generic-vp-v1')
-          document.body.classList.add('completed');
-        }, 2000);
-      })();
+    <button id="track">track</button>
+    <span id="result"></span>
+    <script>
+      document.getElementById('track').addEventListener('click', () => {
+        window._satellite.setDebug(true);
+        window._satellite.track('generic-vp-v1');
+        document.body.classList.add('completed');
+        document.getElementById('result').innerHTML = `tracked`;
+      });
     </script>
 
     <p><a href="/integrations/adobe-launch/standard.html">Standard Adobe Launch</a></p>
