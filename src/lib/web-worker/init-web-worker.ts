@@ -22,8 +22,8 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
 
   webWorkerCtx.$importScripts$ = importScripts.bind(self);
   webWorkerCtx.$libPath$ = initWebWorkerData.$libPath$;
-  webWorkerCtx.$localStorage$ = initWebWorkerData.$localStorage$;
-  webWorkerCtx.$sessionStorage$ = initWebWorkerData.$sessionStorage$;
+  webWorkerCtx.$localStorage$ = new Map([[self.origin, initWebWorkerData.$localStorage$]]);
+  webWorkerCtx.$sessionStorage$ = new Map([[self.origin, initWebWorkerData.$sessionStorage$]]);
   webWorkerCtx.$postMessage$ = (postMessage as any).bind(self);
   webWorkerCtx.$sharedDataBuffer$ = initWebWorkerData.$sharedDataBuffer$;
 
