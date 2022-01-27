@@ -136,6 +136,41 @@
       </script>
     </template>
 
+    <template id="hs">
+      <script>
+        (function () {
+          console.log('Hubspot');
+          var output = document.getElementById('output');
+
+          var hsScript = document.createElement('script');
+          hsScript.async = true;
+          hsScript.defer = true;
+          hsScript.id = 'hs-script-loader';
+          hsScript.src = '//js.hs-scripts.com/20632911.js';
+          output.appendChild(hsScript);
+        })();
+      </script>
+    </template>
+
+    <template id="twitter">
+      <script>
+        (function () {
+          console.log('Twitter');
+          var output = document.getElementById('output');
+
+          var twitterBlockquote = document.createElement('blockquote');
+          twitterBlockquote.className = 'twitter-tweet';
+          twitterBlockquote.innerHTML = `<p lang="en" dir="ltr">How <a href="https://twitter.com/builderio?ref_src=twsrc%5Etfw">@builderio</a> cut 99% of their JavaScript with <a href="https://twitter.com/QwikDev?ref_src=twsrc%5Etfw">@QwikDev</a> + Partytown<a href="https://t.co/VhdljVdqrZ">https://t.co/VhdljVdqrZ</a> <a href="https://t.co/vb9VLu7vbJ">https://t.co/vb9VLu7vbJ</a></p>&mdash; Qwik WebDev Framework (@QwikDev) <a href="https://twitter.com/QwikDev/status/1468672275775950854?ref_src=twsrc%5Etfw">December 8, 2021</a>`;
+          output.appendChild(twitterBlockquote);
+
+          var twitterScript = document.createElement('script');
+          twitterScript.async = true;
+          twitterScript.src = 'https://platform.twitter.com/widgets.js';
+          output.appendChild(twitterScript);
+        })();
+      </script>
+    </template>
+
     <template id="wistia">
       <script>
         (function () {
@@ -158,22 +193,6 @@
       </script>
     </template>
 
-    <template id="hs">
-      <script>
-        (function () {
-          console.log('Hubspot');
-          var output = document.getElementById('output');
-
-          var hsScript = document.createElement('script');
-          hsScript.async = true;
-          hsScript.defer = true;
-          hsScript.id = 'hs-script-loader';
-          hsScript.src = '//js.hs-scripts.com/20632911.js';
-          output.appendChild(hsScript);
-        })();
-      </script>
-    </template>
-
     <template id="partytown">
       <script>
         partytown = {
@@ -183,7 +202,8 @@
               url.hostname.includes('www.googletagmanager.com') ||
               url.hostname.includes('connect.facebook.net') ||
               url.hostname.includes('js.hs-scripts.com') ||
-              url.hostname.includes('js.hs-analytics.net')
+              url.hostname.includes('js.hs-analytics.net') ||
+              url.hostname.includes('cdn.syndication.twimg.com')
             ) {
               const proxyUrl = new URL('https://cdn.builder.io/api/v1/proxy-api');
               proxyUrl.searchParams.append('url', url);
@@ -250,6 +270,7 @@
           { name: 'Facebook Pixel', id: 'fbp' },
           { name: 'Google Tag Manager', id: 'gtm' },
           { name: 'Hubspot', id: 'hs' },
+          { name: 'Twitter', id: 'twitter' },
           { name: 'Wistia', id: 'wistia' },
         ];
 
