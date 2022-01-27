@@ -18,6 +18,7 @@
           }
         },
         forward: ['_satellite.track', '_satellite.setDebug'],
+        globalFns: ['s_gi', 'AppMeasurement'],
         logCalls: true,
         logGetters: true,
         logSetters: true,
@@ -29,14 +30,6 @@
       };
     </script>
     <script src="/~partytown/debug/partytown.js"></script>
-
-    <!-- Adobe Launch -->
-    <!-- <script
-      src="https://assets.adobedtm.com/0d863d487334/1df1eade08c2/launch-d4935864d5f5.min.js"
-      async
-    ></script> -->
-    <script src="launch-d4935864d5f5.min.js" async></script>
-    <!-- End Adobe Launch -->
 
     <link
       rel="icon"
@@ -94,6 +87,16 @@
         document.body.classList.add('completed');
         document.getElementById('result').innerHTML = `tracked`;
       });
+    </script>
+
+    <script>
+      (function () {
+        var script = document.createElement('script');
+        script.async = true;
+        script.type = 'text/partytown';
+        script.src = 'launch-d4935864d5f5.min.js';
+        document.head.appendChild(script);
+      })();
     </script>
 
     <p><a href="/integrations/adobe-launch/standard.html">Standard Adobe Launch</a></p>

@@ -355,6 +355,15 @@ export interface PartytownConfig {
    * https://github.com/BuilderIO/partytown/wiki/Forwarding-Events-and-Triggers
    */
   forward?: PartytownForwardProperty[];
+  /**
+   * Rarely, a script will add a named function to the global scope with the
+   * intent that other scripts can call the named function (like Adobe Launch).
+   * Due to how Partytown scopes each script, these named functions do not get
+   * added to `window`. The `globalFns` config can be used to manually ensure
+   * each function is added to the global scope. Consider this an escape hatch
+   * when a third-party script rudely pollutes `window` with functions.
+   */
+  globalFns?: string[];
   get?: GetHook;
   set?: SetHook;
   apply?: ApplyHook;

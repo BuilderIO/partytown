@@ -7,14 +7,6 @@
 
     <title>Standard Adobe Launch</title>
 
-    <!-- Adobe Launch -->
-    <!-- <script
-      src="https://assets.adobedtm.com/0d863d487334/1df1eade08c2/launch-d4935864d5f5.min.js"
-      async
-    ></script> -->
-    <script src="launch-d4935864d5f5.min.js" async></script>
-    <!-- End Adobe Launch -->
-
     <link
       rel="icon"
       id="favicon"
@@ -61,6 +53,15 @@
   </head>
   <body>
     <h1>Standard Adobe Launch</h1>
+
+    <script>
+      (function () {
+        var script = document.createElement('script');
+        script.async = true;
+        script.src = 'launch-d4935864d5f5.min.js';
+        document.head.appendChild(script);
+      })();
+    </script>
 
     <script>
       (function () {
