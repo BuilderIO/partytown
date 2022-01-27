@@ -5,29 +5,21 @@ import type { InitWebWorkerData } from '../types';
 import { Node } from './worker-node';
 import type { PartytownConfig } from '@builder.io/partytown/intergration';
 import { Performance } from './worker-performance';
-import { webWorkerCtx } from './worker-constants';
+import { webWorkerCtx, webWorkerlocalStorage, webWorkerSessionStorage } from './worker-constants';
 import { Window } from './worker-window';
 
 export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   const config: PartytownConfig = (webWorkerCtx.$config$ = JSON.parse(initWebWorkerData.$config$));
-
-  const functionify = (configName: keyof PartytownConfig) => {
-    if (config[configName]) {
-      config[configName] = new Function('return ' + config[configName])();
-    }
-  };
-
-  const fnConfigs: (keyof PartytownConfig)[] = ['resolveUrl', 'get', 'set', 'apply'];
-  fnConfigs.map(functionify);
-
   webWorkerCtx.$importScripts$ = importScripts.bind(self);
   webWorkerCtx.$libPath$ = initWebWorkerData.$libPath$;
-  webWorkerCtx.$localStorage$ = new Map([[self.origin, initWebWorkerData.$localStorage$]]);
-  webWorkerCtx.$sessionStorage$ = new Map([[self.origin, initWebWorkerData.$sessionStorage$]]);
   webWorkerCtx.$postMessage$ = (postMessage as any).bind(self);
   webWorkerCtx.$sharedDataBuffer$ = initWebWorkerData.$sharedDataBuffer$;
 
-  (self as any).postMessage = (self as any).importScripts = undefined;
+  webWorkerlocalStorage.set(origin, initWebWorkerData.$localStorage$);
+  webWorkerSessionStorage.set(origin, initWebWorkerData.$sessionStorage$);
+
+  delete (self as any).postMessage;
+  delete (self as any).importScripts;
 
   (self as any).Node = Node;
   (self as any).Window = Window;
@@ -37,6 +29,13 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   initWebWorkerData.$interfaces$.map(defineWorkerInterface);
 
   patchPrototypes();
+
+  const fnConfigs: (keyof PartytownConfig)[] = ['resolveUrl', 'get', 'set', 'apply'];
+  fnConfigs.map((configName: keyof PartytownConfig) => {
+    if (config[configName]) {
+      config[configName] = new Function('return ' + config[configName])();
+    }
+  });
 
   webWorkerCtx.$isInitialized$ = 1;
 

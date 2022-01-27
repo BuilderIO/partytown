@@ -9,7 +9,8 @@ import {
   envGlobalConstructors,
   environments,
   postMessages,
-  webWorkerCtx,
+  webWorkerlocalStorage,
+  webWorkerSessionStorage,
   WinIdKey,
 } from './worker-constants';
 import { getEnv } from './worker-environment';
@@ -132,8 +133,8 @@ export class Window extends WorkerInstance {
     _this.cancelIdleCallback = (id: number) => clearTimeout(id);
 
     // add storage APIs to the window
-    addStorageApi(_this, 'localStorage', webWorkerCtx.$localStorage$);
-    addStorageApi(_this, 'sessionStorage', webWorkerCtx.$sessionStorage$);
+    addStorageApi(_this, 'localStorage', webWorkerlocalStorage);
+    addStorageApi(_this, 'sessionStorage', webWorkerSessionStorage);
 
     if (isIframeWindow) {
       historyState = {};

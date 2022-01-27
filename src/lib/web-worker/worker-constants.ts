@@ -2,6 +2,7 @@ import type {
   InterfaceInfo,
   PostMessageData,
   RefHandler,
+  StorageItem,
   WebWorkerContext,
   WebWorkerEnvironment,
 } from '../types';
@@ -26,6 +27,9 @@ export const postMessages: PostMessageData[] = [];
 
 export const webWorkerCtx: WebWorkerContext = {} as any;
 export const webWorkerInterfaces: InterfaceInfo[] = [];
+
+export const webWorkerlocalStorage = /*#__PURE__*/ new Map<string, StorageItem[]>();
+export const webWorkerSessionStorage = /*#__PURE__*/ new Map<string, StorageItem[]>();
 
 export const environments: { [winId: number]: WebWorkerEnvironment } = {};
 

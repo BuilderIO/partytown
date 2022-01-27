@@ -117,9 +117,7 @@ export interface WebWorkerContext {
   $importScripts$: (...urls: string[]) => void;
   $isInitialized$?: number;
   $libPath$: string;
-  $localStorage$: StorageItem[];
   $postMessage$: (msg: MessageFromWorkerToSandbox, arr?: any[]) => void;
-  $sessionStorage$: StorageItem[];
   $sharedDataBuffer$?: SharedArrayBuffer;
   lastLog?: string;
 }
