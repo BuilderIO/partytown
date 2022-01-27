@@ -48,5 +48,5 @@ export const PartytownScript = ({ id, innerHTML, type }: PartytownScriptProps): 
   if (type !== SCRIPT_TYPE) {
     jsxInnerHTML = `document.currentScript.dataset.ptScript=${JSON.stringify(id)};` + jsxInnerHTML;
   }
-  return <script dangerouslySetInnerHTML={{ __html: jsxInnerHTML }} type={type} />;
+  return <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: jsxInnerHTML }} type={type} />;
 };
