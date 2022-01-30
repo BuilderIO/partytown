@@ -32,7 +32,9 @@
       "require": "./index.cjs"
     }
   },
+  "bin": "bin/partytown.cjs",
   "files": [
+    "bin/partytown.cjs",
     "index.cjs",
     "index.mjs",
     "index.d.ts",
