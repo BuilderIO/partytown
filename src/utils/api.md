@@ -5,7 +5,10 @@
 ```ts
 
 // @public
-export function copyLibFiles(destDir: string): Promise<void>;
+export function copyLibFiles(destDir: string): Promise<{
+    src: string;
+    dest: string;
+}>;
 
 // @public
 export function libDirPath(): string;

@@ -45,6 +45,7 @@ export interface PartytownConfig {
     forward?: PartytownForwardProperty[];
     // (undocumented)
     get?: GetHook;
+    globalFns?: string[];
     lib?: string;
     logCalls?: boolean;
     logGetters?: boolean;
