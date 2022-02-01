@@ -13,8 +13,8 @@ const config: PlaywrightTestConfig = {
     },
   },
   webServer: {
-    command: 'npm run serve.test',
-    port: 4001,
+    command: 'cd tests/nextjs-app && npm run build && npm start',
+    port: 3000,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
   },
