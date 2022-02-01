@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { SCRIPT_TYPE } from '@builder.io/partytown/intergration';
+import { SCRIPT_TYPE } from '@builder.io/partytown/integration';
 
 export interface PartytownScriptProps {
   /**

@@ -3,7 +3,7 @@ import { defineWorkerInterface, patchPrototypes } from './worker-define-construc
 import { logWorker } from '../log';
 import type { InitWebWorkerData } from '../types';
 import { Node } from './worker-node';
-import type { PartytownConfig } from '@builder.io/partytown/intergration';
+import type { PartytownConfig } from '@builder.io/partytown/integration';
 import { Performance } from './worker-performance';
 import { webWorkerCtx, webWorkerlocalStorage, webWorkerSessionStorage } from './worker-constants';
 import { Window } from './worker-window';

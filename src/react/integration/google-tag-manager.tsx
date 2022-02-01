@@ -3,7 +3,7 @@ import {
   googleTagManager,
   googleTagManagerForward,
   SCRIPT_TYPE,
-} from '@builder.io/partytown/intergration';
+} from '@builder.io/partytown/integration';
 import { PartytownScript } from '../script';
 import { PartytownForward } from '../forward';
 

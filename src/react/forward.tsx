@@ -1,5 +1,5 @@
 import React from 'react';
-import { appendForwardConfig } from '@builder.io/partytown/intergration';
+import { appendForwardConfig } from '@builder.io/partytown/integration';
 import { PartytownScript } from './script';
 import type { PartytownForwardProperty } from '../lib/types';
 
