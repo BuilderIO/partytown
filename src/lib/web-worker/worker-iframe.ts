@@ -7,39 +7,24 @@ import type { Node } from './worker-node';
 import { SCRIPT_TYPE } from '../utils';
 import { setInstanceStateValue } from './worker-state';
 import { StateProp, WorkerMessageType } from '../types';
+import type { WorkerInstance } from './worker-instance';
 
 export const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
   contentDocument: {
     get() {
-      return (this as any).contentWindow.document;
+      return getIframeEnv(this).$document$;
     },
   },
 
   contentWindow: {
     get() {
-      // the winId of an iframe's contentWindow is the same
-      // as the instanceId of the containing iframe element
-      const $winId$ = this[InstanceIdKey];
-
-      if (!environments[$winId$]) {
-        createEnvironment(
-          {
-            $winId$,
-            // iframe contentWindow parent winId is the iframe element's winId
-            $parentWinId$: this[WinIdKey],
-            $url$: getter(this, ['src']) || 'about:blank',
-          },
-          true
-        );
-      }
-
-      return environments[$winId$].$window$;
+      return getIframeEnv(this).$window$;
     },
   },
 
   src: {
     get() {
-      let src = environments[this[InstanceIdKey]].$location$.href;
+      let src = getIframeEnv(this).$location$.href;
       if (src.startsWith('about')) {
         src = '';
       }
@@ -48,8 +33,7 @@ export const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
     set(src: string) {
       let xhr = new XMLHttpRequest();
       let xhrStatus: number;
-      let winId = this[InstanceIdKey];
-      let env = environments[winId];
+      let env = getIframeEnv(this);
 
       env.$location$.href = src = resolveUrl(getEnv(this), src);
       env.$isLoading$ = 1;
@@ -73,7 +57,7 @@ export const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
         );
 
         sendToMain(true);
-        webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextScript, winId]);
+        webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextScript, env.$winId$]);
       } else {
         setInstanceStateValue(this, StateProp.loadErrorStatus, xhrStatus);
         env.$isLoading$ = 0;
@@ -82,4 +66,24 @@ export const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
   },
 
   ...HTMLSrcElementDescriptorMap,
+};
+
+const getIframeEnv = (iframe: WorkerInstance) => {
+  // the winId of an iframe's contentWindow is the same
+  // as the instanceId of the containing iframe element
+  const $winId$ = iframe[InstanceIdKey];
+
+  if (!environments[$winId$]) {
+    createEnvironment(
+      {
+        $winId$,
+        // iframe contentWindow parent winId is the iframe element's winId
+        $parentWinId$: iframe[WinIdKey],
+        $url$: getter(iframe, ['src']) || 'about:blank',
+      },
+      true
+    );
+  }
+
+  return environments[$winId$];
 };

@@ -122,4 +122,8 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testGetByTagName');
   const testGetByTagName = page.locator('#testGetByTagName');
   await expect(testGetByTagName).toHaveText('#document');
+
+  await page.waitForSelector('.testGetIframeSrc');
+  const testGetIframeSrc = page.locator('#testGetIframeSrc');
+  await expect(testGetIframeSrc).toHaveText('/platform/iframe/content.html');
 });

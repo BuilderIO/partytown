@@ -799,6 +799,20 @@
           })();
         </script>
       </li>
+
+      <li>
+        <strong>getElementsById('existing-iframe2').getAttribute('src')</strong>
+        <code id="testGetIframeSrc"></code>
+        <iframe id="existing-iframe2" src="content.html"></iframe>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testGetIframeSrc');
+            const iframe = document.getElementById('existing-iframe2');
+            elm.textContent = new URL(iframe.getAttribute('src'), location.href).pathname;
+            elm.className = 'testGetIframeSrc';
+          })();
+        </script>
+      </li>
     </ul>
 
     <hr />
