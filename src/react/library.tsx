@@ -1,6 +1,6 @@
 import React from 'react';
 import type { PartytownConfig } from '../lib/types';
-import { partytownSnippet } from '@builder.io/partytown/intergration';
+import { partytownSnippet } from '@builder.io/partytown/integration';
 import { PartytownScript } from './script';
 
 /**

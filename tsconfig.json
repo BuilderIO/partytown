@@ -15,7 +15,7 @@
     "jsx": "react",
     "baseUrl": ".",
     "paths": {
-      "@builder.io/partytown/intergration": ["src/integration/index.ts"],
+      "@builder.io/partytown/integration": ["src/integration/index.ts"],
       "react": ["node_modules/react"]
     }
   },
