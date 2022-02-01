@@ -5,7 +5,7 @@ import { partytownSnippet } from '@builder.io/partytown/integration';
 
 export default function Home() {
   return (
-    <div>
+    <>
       <Head>
         <title>Next.js</title>
         <link
@@ -13,28 +13,24 @@ export default function Home() {
           id="favicon"
           href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🎉</text></svg>"
         />
-        {/* <Partytown debug={true} /> */}
-        {/* <Script
-          dangerouslySetInnerHTML={{
-            __html: partytownSnippet(),
-          }}
-        /> */}
+        <Partytown debug={true} />
       </Head>
 
       <main>
         <h1>Next.js with 🎉</h1>
 
-        <p id="output" suppressHydrationWarning></p>
+        <p id="output" suppressHydrationWarning />
 
-        <Script
-          type="text/javascript"
+        <script
+          type="text/partytown"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
-          document.getElementById('output').textContent = 'passed';
-        `,
+              document.getElementById('output').textContent = 'passed';
+            `,
           }}
         />
       </main>
-    </div>
+    </>
   );
 }

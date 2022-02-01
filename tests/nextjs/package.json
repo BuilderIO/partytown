@@ -1,0 +1,13 @@
+{
+  "name": "nextjs-app",
+  "private": true,
+  "scripts": {
+    "dev": "npm run partytown && next dev",
+    "build": "npm run partytown && next build",
+    "start": "next start",
+    "partytown": "../../bin/partytown.cjs copylib public/~partytown"
+  },
+  "dependencies": {
+    "@builder.io/partytown": "file:../../"
+  }
+}
