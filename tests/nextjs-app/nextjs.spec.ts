@@ -5,4 +5,7 @@ test('nextjs', async ({ page }) => {
 
   const h1 = page.locator('h1');
   await expect(h1).toHaveText('Next.js with 🎉');
+
+  const output = page.locator('#output');
+  await expect(output).toHaveText('passed');
 });
