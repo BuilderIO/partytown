@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import Script from 'next/script';
 import { Partytown } from '@builder.io/partytown/react';
-import { partytownSnippet } from '@builder.io/partytown/integration';
 
 export default function Home() {
   return (
@@ -19,14 +18,25 @@ export default function Home() {
       <main>
         <h1>Next.js with 🎉</h1>
 
-        <p id="output" suppressHydrationWarning />
+        <p id="output-script" suppressHydrationWarning />
+
+        <p id="output-next-script" suppressHydrationWarning />
+
+        <Script
+          type="text/partytown"
+          dangerouslySetInnerHTML={{
+            __html: `
+              document.getElementById('output-next-script').textContent = 'passed';
+            `,
+          }}
+        />
 
         <script
           type="text/partytown"
-          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{
             __html: `
-              document.getElementById('output').textContent = 'passed';
+              document.getElementById('output-script').textContent = 'passed';
+              document.body.classList.add('completed');
             `,
           }}
         />
