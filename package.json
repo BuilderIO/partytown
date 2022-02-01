@@ -66,7 +66,6 @@
     "fmt": "prettier --config package.json --write src"
   },
   "devDependencies": {
-    "@builder.io/partytown": "file:./",
     "@microsoft/api-extractor": "^7.19.2",
     "@playwright/test": "^1.17.1",
     "@types/fs-extra": "^9.0.13",

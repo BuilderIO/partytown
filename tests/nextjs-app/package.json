@@ -5,5 +5,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start"
+  },
+  "dependencies": {
+    "@builder.io/partytown": "file:../../"
   }
 }
