@@ -8,7 +8,7 @@
   "apiReport": {
     "enabled": true,
     "reportFileName": "api.md",
-    "reportFolder": "<projectFolder>/src/",
+    "reportFolder": "<projectFolder>/src/integration/",
     "reportTempFolder": "<projectFolder>/.cache/api-extractor/integration/"
   },
   "dtsRollup": {
