@@ -1,10 +1,12 @@
 .cache/
+.next/
 .DS_Store
 node_modules/
 /integration/
 /lib/
 /react/
 /tests/~partytown/
+/tests/nextjs/public/
 /tests/benchmarks/screenshots/
 /tests/videos/
 /tsc/

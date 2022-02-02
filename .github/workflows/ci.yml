@@ -4,9 +4,6 @@ on: [push, pull_request]
 jobs:
   test-chromium:
     name: Test Chromium (Ubuntu)
-    strategy:
-      fail-fast: false
-
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -51,9 +48,6 @@ jobs:
 
   test-webkit:
     name: Test WebKit (MacOS)
-    strategy:
-      fail-fast: false
-
     runs-on: macos-latest
     steps:
       - name: Checkout
@@ -92,9 +86,6 @@ jobs:
 
   benchmark-chromium:
     name: Benchmark Chromium (Ubuntu)
-    strategy:
-      fail-fast: false
-
     runs-on: ubuntu-latest
     steps:
       - name: Checkout

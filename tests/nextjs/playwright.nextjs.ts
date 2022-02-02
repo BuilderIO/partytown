@@ -1,20 +1,9 @@
 import type { PlaywrightTestConfig } from '@playwright/test';
 
 const config: PlaywrightTestConfig = {
-  use: {
-    viewport: {
-      width: 520,
-      height: 600,
-    },
-    contextOptions: {
-      recordVideo: {
-        dir: 'tests/videos/',
-      },
-    },
-  },
   webServer: {
-    command: 'npm run serve.test',
-    port: 4001,
+    command: 'npm run build && npm start',
+    port: 3000,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
   },

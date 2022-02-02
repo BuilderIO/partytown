@@ -65,6 +65,8 @@ export function snippet(
             // no support for atomics or service worker
             fallback();
           }
+        } else if (debug && scripts!.length === 0) {
+          console.debug('No Partytown scripts found');
         }
       } else if (debug) {
         console.warn('Partytown config.lib url must start with "/"');
