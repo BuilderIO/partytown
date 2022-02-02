@@ -20,6 +20,12 @@
     },
     "./react/index.mjs": "./react/index.mjs",
     "./react/index.cjs": "./react/index.cjs",
+    "./services/index.mjs": "./services/index.mjs",
+    "./services/index.cjs": "./services/index.cjs",
+    "./services": {
+      "import": "./services/index.mjs",
+      "require": "./services/index.cjs"
+    },
     "./utils": {
       "import": "./utils/index.mjs",
       "require": "./utils/index.cjs"
@@ -41,6 +47,7 @@
     "integration/",
     "lib/",
     "react/",
+    "services/",
     "utils/"
   ],
   "scripts": {

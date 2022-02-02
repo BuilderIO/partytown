@@ -6,6 +6,7 @@ import { buildMediaImplementation } from './build-media-implementations';
 import { buildMainSnippet } from './build-main-snippet';
 import { buildReact } from './build-react';
 import { buildServiceWorker } from './build-service-worker';
+import { buildServices } from './build-services';
 import { buildUtils } from './build-utils';
 import { emptyDir, ensureDir, readJsonSync, writeFile } from 'fs-extra';
 import { join } from 'path';
@@ -25,6 +26,7 @@ export async function runBuild(rootDir: string, isDev: boolean, generateApi: boo
     ...buildAtomics(opts),
     buildMediaImplementation(opts),
     buildIntegration(opts),
+    buildServices(opts),
     buildReact(opts),
     buildUtils(opts),
   ];
@@ -63,6 +65,7 @@ async function createRootPackage(opts: BuildOptions) {
 
 function createBuildOptions(rootDir: string, isDev: boolean, generateApi: boolean) {
   const distIntegrationDir = join(rootDir, 'integration');
+  const distServicesDir = join(rootDir, 'services');
   const distLibDir = join(rootDir, 'lib');
   const distLibDebugDir = join(distLibDir, 'debug');
   const distReactDir = join(rootDir, 'react');
@@ -70,6 +73,7 @@ function createBuildOptions(rootDir: string, isDev: boolean, generateApi: boolea
 
   const srcDir = join(rootDir, 'src');
   const srcIntegrationDir = join(srcDir, 'integration');
+  const srcServicesDir = join(srcDir, 'services');
   const srcLibDir = join(srcDir, 'lib');
   const srcReactDir = join(srcDir, 'react');
   const srcUtilsDir = join(srcDir, 'utils');
@@ -82,6 +86,7 @@ function createBuildOptions(rootDir: string, isDev: boolean, generateApi: boolea
   const tscDir = join(rootDir, 'tsc');
   const tscSrcDir = join(tscDir, 'src');
   const tscIntegrationDir = join(tscSrcDir, 'integration');
+  const tscServicesDir = join(tscSrcDir, 'services');
   const tscLibDir = join(tscSrcDir, 'lib');
   const tscReactDir = join(tscSrcDir, 'react');
   const tscUtilsDir = join(tscSrcDir, 'utils');
@@ -96,6 +101,7 @@ function createBuildOptions(rootDir: string, isDev: boolean, generateApi: boolea
     rootDir,
 
     distIntegrationDir,
+    distServicesDir,
     distLibDir,
     distLibDebugDir,
     distTestsLibDir,
@@ -105,6 +111,7 @@ function createBuildOptions(rootDir: string, isDev: boolean, generateApi: boolea
 
     srcDir,
     srcIntegrationDir,
+    srcServicesDir,
     srcLibDir,
     srcReactDir,
     srcUtilsDir,
@@ -114,6 +121,7 @@ function createBuildOptions(rootDir: string, isDev: boolean, generateApi: boolea
 
     tscDir,
     tscIntegrationDir,
+    tscServicesDir,
     tscLibDir,
     tscReactDir,
     tscUtilsDir,

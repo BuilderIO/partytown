@@ -160,12 +160,14 @@ export interface BuildOptions {
   distIntegrationDir: string;
   distLibDir: string;
   distLibDebugDir: string;
+  distServicesDir: string;
   distTestsLibDir: string;
   distTestsLibDebugDir: string;
   distReactDir: string;
   distUtilsDir: string;
   srcDir: string;
   srcIntegrationDir: string;
+  srcServicesDir: string;
   srcLibDir: string;
   srcReactDir: string;
   srcUtilsDir: string;
@@ -173,6 +175,7 @@ export interface BuildOptions {
   testsVideosDir: string;
   tscDir: string;
   tscIntegrationDir: string;
+  tscServicesDir: string;
   tscLibDir: string;
   tscReactDir: string;
   tscUtilsDir: string;

@@ -9,6 +9,7 @@ node_modules/
 /tests/nextjs/public/
 /tests/benchmarks/screenshots/
 /tests/videos/
+/services/
 /tsc/
 /utils/
 /index.cjs

@@ -1,6 +1,5 @@
 import * as assert from 'uvu/assert';
 import { suite } from './utils';
-import { appendForwardConfig } from '../../src/integration/forward';
 import { createSnippet } from '../../src/integration/snippet';
 
 const test = suite();
@@ -63,21 +62,6 @@ test('partytownSnippet w/out config', ({ snippetCode, run, win }) => {
   const code = (createSnippet as any)(null, snippetCode);
   run(code);
   assert.equal(win.partytown, { forward: [] });
-});
-
-test('one, two appendForwardConfig', () => {
-  const c = appendForwardConfig('one', 'two');
-  assert.equal(c.includes('.push("one","two")'), true);
-});
-
-test('one appendForwardConfig', () => {
-  const c = appendForwardConfig('one');
-  assert.equal(c.includes('.push("one")'), true);
-});
-
-test('no appendForwardConfig', () => {
-  const c = appendForwardConfig();
-  assert.equal(c, '');
 });
 
 test.run();

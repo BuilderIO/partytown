@@ -5,32 +5,7 @@
 ```ts
 
 // @public
-export const FacebookPixel: ({ pixelId, enablePartytown }: FacebookPixelProps) => any;
-
-// @public (undocumented)
-export const FacebookPixelNoScript: ({ pixelId }: FacebookPixelProps) => any;
-
-// @public
-export interface FacebookPixelProps {
-    enablePartytown?: boolean;
-    pixelId: string;
-}
-
-// @public
-export const GoogleTagManager: ({ containerId, dataLayerName, enablePartytown, }: GoogleTagManagerProps) => any;
-
-// @public
-export const GoogleTagManagerNoScript: ({ containerId }: GoogleTagManagerProps) => any;
-
-// @public
-export interface GoogleTagManagerProps {
-    containerId: string;
-    dataLayerName?: string;
-    enablePartytown?: boolean;
-}
-
-// @public
-export const Partytown: (props?: PartytownProps | undefined) => any;
+export const Partytown: (props?: PartytownProps) => any;
 
 // Warning: (ae-forgotten-export) The symbol "PartytownConfig" needs to be exported by the entry point index.d.ts
 //
