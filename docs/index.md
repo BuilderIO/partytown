@@ -1,18 +1,11 @@
 ---
-title: Partytown - Run third-party scripts from a web worker
+title: Partytown
 description: Partytown - Run third-party scripts from a web worker
 ---
 
-<img width="838" alt="Partytown github fit 2x" src="https://user-images.githubusercontent.com/452425/134568488-f36f4640-9ada-4a78-a969-2b8315cf7f47.png">
-
-- [Introducing Partytown: Run Third-Party Scripts From a Web Worker](https://dev.to/adamdbradley/introducing-partytown-run-third-party-scripts-from-a-web-worker-2cnp)
-- [How Partytown's Sync Communication Works](https://dev.to/adamdbradley/how-partytown-s-sync-communication-works-4244)
-- [How we cut 99% of our JavaScript with Qwik + Partytown](https://www.builder.io/blog/how-we-cut-99-percent-js-with-qwik-and-partytown)
-- [Partytown is now in Beta](https://www.builder.io/blog/partytown-beta-release)
-
 Partytown is a lazy-loaded library to help relocate resource intensive scripts into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), and off of the [main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread). Its goal is to help speed up sites by dedicating the main thread to your code, and offloading third-party scripts to a web worker.
 
-[Getting Started](https://github.com/BuilderIO/partytown/wiki/Getting-Started)
+[Getting Started](/getting-started)
 
 ## Goals
 
@@ -33,8 +26,6 @@ Partytown's philosophy is that the main thread should be dedicated to your code,
 
 ![Without Partytown and With Partytown: Your code and third-party code compete for main thread resources](https://user-images.githubusercontent.com/452425/149344822-53154491-fd70-47ad-8c92-3ff5e4ccb4ec.jpeg)
 
-> If you're looking to run _your_ app within a web worker, we recommend the [WorkerDom](https://github.com/ampproject/worker-dom) project.
-
 ## Use-Cases
 
 While full webapps "could" run from within Partytown, it's actually best intended for code that doesn't need to be in the [critical rendering path](https://developer.mozilla.org/en-US/docs/Web/Performance/Critical_rendering_path). Most third-party scripts fall into this category, as they're not required for the first-paint. Additionally, the asynchronous natural of most third-party script works well with Partytown, as they can lazily receive updates and post data to their respective services.
@@ -47,3 +38,10 @@ Below are just a few examples of third-party scripts that might be a good candid
 - [Hubspot](https://www.hubspot.com/)
 - [Segment](https://segment.com/)
 - [Amplitude](https://amplitude.com/)
+
+## Articles
+
+- [Introducing Partytown: Run Third-Party Scripts From a Web Worker](https://dev.to/adamdbradley/introducing-partytown-run-third-party-scripts-from-a-web-worker-2cnp)
+- [How Partytown's Sync Communication Works](https://dev.to/adamdbradley/how-partytown-s-sync-communication-works-4244)
+- [How we cut 99% of our JavaScript with Qwik + Partytown](https://www.builder.io/blog/how-we-cut-99-percent-js-with-qwik-and-partytown)
+- [Partytown is now in Beta](https://www.builder.io/blog/partytown-beta-release)

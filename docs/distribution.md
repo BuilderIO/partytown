@@ -30,7 +30,7 @@ The `partyown.js` file must be in the `<head>` before all other third-party scri
 
 The `lib/debug` directory has the same purpose as the `lib`, but instead will console log more information and files themselves are not minified. Additionally, you'll notice there are more debug files than the production lib files, and that's because the lib files inline many scripts. For example, the web worker script is inlined, rather than being a separate request.
 
-The `lib/debug` files are not meant to be used in production. See the [Partytown Configuration](https://github.com/BuilderIO/partytown/wiki/Configuration) docs on how to enable debug mode.
+The `lib/debug` files are not meant to be used in production. See the [Partytown Configuration](/configuration) docs on how to enable debug mode.
 
 ```bash
 @builder.io/partytown/lib/debug/

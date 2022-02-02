@@ -9,10 +9,10 @@ What's different from most web development libraries is that Partytown does _not
 
 Below are the install steps:
 
-1. [Install NPM package](https://github.com/BuilderIO/partytown/wiki/Getting-Started#user-content-install-npm-package)
-1. [Add Partytown type attribute to Third-Party Scripts](https://github.com/BuilderIO/partytown/wiki/Getting-Started#user-content-add-partytown-type-attribute-to-third-party-scripts)
-1. [Add Partytown snippet to the `<head>`](https://github.com/BuilderIO/partytown/wiki/Getting-Started#user-content-add-partytown-snippet-to-the-head)
-1. [Copy Partytown library files](https://github.com/BuilderIO/partytown/wiki/Getting-Started#user-content-copy-partytown-library-files)
+1. [Install NPM package](/getting-started#user-content-install-npm-package)
+1. [Add Partytown type attribute to Third-Party Scripts](/getting-started#user-content-add-partytown-type-attribute-to-third-party-scripts)
+1. [Add Partytown snippet to the `<head>`](/getting-started#user-content-add-partytown-snippet-to-the-head)
+1. [Copy Partytown library files](/getting-started#user-content-copy-partytown-library-files)
 
 ## Install NPM package
 
@@ -33,7 +33,7 @@ Add the `type="text/partytown"` attribute to each individual third-party script 
 
 How the Partytown snippet script is added to the `<head>` is different for every website. While the script could be an external request, we recommend to inline the script instead since it's so small, and it's better for performance. If you're using React, we recommend the `<Partytown/>` [React component](#React).
 
-You can find the `partytown.js` script within `@builder.io/partytown/lib`. See the [distribution](https://github.com/BuilderIO/partytown/wiki/Distribution) docs for more info on the `@builder.io/partytown` package files.
+You can find the `partytown.js` script within `@builder.io/partytown/lib`. See the [distribution](/distribution) docs for more info on the `@builder.io/partytown` package files.
 
 ### React
 
@@ -65,7 +65,7 @@ The [@builder.io/partytown](https://www.npmjs.com/package/@builder.io/partytown)
 
 The `/~partytown/` directory should serve the static files found within [@builder.io/partytown/lib](https://unpkg.com/browse/@builder.io/partytown/lib/). The quickest way is to copy the `lib` directory into a public `/~partytown` directory within your static server. Another option would be to set up a copy task within the project's bundler, or create a build step.
 
-You can also use the [lib config](https://github.com/BuilderIO/partytown/wiki/Configuration) if your site must host these files from a directory other than the default `/~partytown/`.
+You can also use the [lib config](/configuration) if your site must host these files from a directory other than the default `/~partytown/`.
 
 ### Copy Task Command
 

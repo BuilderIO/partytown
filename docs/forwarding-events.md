@@ -48,7 +48,7 @@ Note that the React integration components, such as `<GoogleTagManager/>` and `<
 
 ## Common Services
 
-Partytown already comes with a few components for commonly used Services. Please see [Integrating Services](https://github.com/BuilderIO/partytown/wiki/Integrating-Services) before manually configuring the `forward` property.
+Partytown already comes with a few components for commonly used Services. Please see [Services](/services) before manually configuring the `forward` property.
 
 | Service                                                                                                                    | Forward Config                                                                |
 | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |

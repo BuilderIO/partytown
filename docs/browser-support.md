@@ -13,7 +13,7 @@ At its core, Partytown uses Service Workers or Atomics to do its synchronous com
 1. If the browser and site do not have support for Atomics, it'll then check to see if the browser has support for [Service Workers](https://developer.mozilla.org/en-US/docs/Web/API/Service_Worker_API). Currently this is the most commonly used one.
 1. If the browser does not have support for Service Workers or Atomics, it'll then find all the `type="text/partytown"` scripts and reset them to be traditional scripts and execute normally.
 
-> Note: Atomics are still experimental, and also require specific server-side response headers for them to work. Please see the [Enabling Atomics](https://github.com/BuilderIO/partytown/wiki/Enabling-Atomics) section for more info.
+> Note: Atomics are still experimental, and also require specific server-side response headers for them to work. Please see the [Enabling Atomics](/atomics) section for more info.
 
 ## Web API Feature Support
 
