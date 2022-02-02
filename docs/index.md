@@ -3,8 +3,6 @@ title: Introduction
 description: Partytown - Run third-party scripts from a web worker
 ---
 
-# Run third-party scripts from a web worker
-
 Partytown is a lazy-loaded library to help relocate resource intensive scripts into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), and off of the [main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread). Its goal is to help speed up sites by dedicating the main thread to your code, and offloading third-party scripts to a web worker.
 
 [Getting Started](/getting-started)
