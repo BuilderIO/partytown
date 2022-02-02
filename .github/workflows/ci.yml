@@ -36,9 +36,6 @@ jobs:
       - name: Run Chromium E2E Tests (Atomics)
         run: npm run test.atomics
 
-      - name: Run Chromium NextJs Tests
-        run: npm run test.nextjs.chromium
-
       - name: Run Unit Tests
         run: npm run test.unit
 
@@ -79,9 +76,6 @@ jobs:
 
       - name: Run WebKit E2E Tests
         run: npm run test.webkit
-
-      - name: Run WebKit NextJs Tests
-        run: npm run test.nextjs.webkit
 
       - name: Upload WebKit E2E Test Videos
         uses: actions/upload-artifact@v1
