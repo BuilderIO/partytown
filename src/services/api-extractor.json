@@ -4,16 +4,16 @@
   "compiler": {
     "tsconfigFilePath": "<projectFolder>/tsconfig.json"
   },
-  "mainEntryPointFilePath": "<projectFolder>/tsc/src/integration/index.d.ts",
+  "mainEntryPointFilePath": "<projectFolder>/tsc/src/services/index.d.ts",
   "apiReport": {
     "enabled": true,
     "reportFileName": "api.md",
-    "reportFolder": "<projectFolder>/src/integration/",
-    "reportTempFolder": "<projectFolder>/.cache/api-extractor/integration/"
+    "reportFolder": "<projectFolder>/src/services/",
+    "reportTempFolder": "<projectFolder>/.cache/api-extractor/services/"
   },
   "dtsRollup": {
     "enabled": true,
-    "untrimmedFilePath": "<projectFolder>/integration/index.d.ts"
+    "untrimmedFilePath": "<projectFolder>/services/index.d.ts"
   },
   "docModel": {
     "enabled": false

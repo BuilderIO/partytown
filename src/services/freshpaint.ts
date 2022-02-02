@@ -1,4 +1,4 @@
-import type { PartytownForwardProperty } from '../../lib/types';
+import type { PartytownForwardProperty } from '../lib/types';
 
 /**
  * Forwards Freshpaint.io main window calls to Partytown's worker thread.
@@ -7,7 +7,7 @@ import type { PartytownForwardProperty } from '../../lib/types';
  *
  * @public
  */
-export const freshpaintForward = (): PartytownForwardProperty[] => [
+export const freshpaintForward: PartytownForwardProperty[] = [
   'freshpaint.addPageviewProperties',
   'freshpaint.identify',
   'freshpaint.track',

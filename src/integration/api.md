@@ -4,38 +4,15 @@
 
 ```ts
 
-// @public
-export const appendForwardConfig: (...forwards: PartytownForwardProperty[]) => string;
-
 // Warning: (ae-forgotten-export) The symbol "ApplyHookOptions" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
 export type ApplyHook = (opts: ApplyHookOptions) => any;
 
-// @public
-export const facebookPixel: (opts: {
-    pixelId: string;
-}) => string;
-
-// @public
-export const facebookPixelForward: () => PartytownForwardProperty[];
-
-// @public
-export const freshpaintForward: () => PartytownForwardProperty[];
-
 // Warning: (ae-forgotten-export) The symbol "GetHookOptions" needs to be exported by the entry point index.d.ts
 //
 // @public (undocumented)
 export type GetHook = (opts: GetHookOptions) => any;
-
-// @public
-export const googleTagManager: (opts: {
-    containerId: string;
-    dataLayerName?: string;
-}) => string;
-
-// @public
-export const googleTagManagerForward: () => PartytownForwardProperty[];
 
 // @public
 export interface PartytownConfig {

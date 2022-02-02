@@ -5,7 +5,7 @@ import { Extractor, ExtractorConfig } from '@microsoft/api-extractor';
 export function buildApi(opts: BuildOptions) {
   console.log('👑 Generate API types\n');
 
-  const dirs = [opts.srcIntegrationDir, opts.srcReactDir, opts.srcUtilsDir];
+  const dirs = [opts.srcIntegrationDir, opts.srcServicesDir, opts.srcReactDir, opts.srcUtilsDir];
   dirs.forEach((dir) => {
     const extractorConfig = ExtractorConfig.loadFileAndPrepare(join(dir, 'api-extractor.json'));
     const result = Extractor.invoke(extractorConfig, {
