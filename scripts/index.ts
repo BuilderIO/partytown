@@ -35,22 +35,19 @@ export async function runBuild(rootDir: string, isDev: boolean, generateApi: boo
 async function createRootPackage(opts: BuildOptions) {
   if (opts.isDev) {
     await ensureDir(opts.distIntegrationDir);
+    await ensureDir(opts.distServicesDir);
     await ensureDir(opts.distLibDir);
     await ensureDir(opts.distTestsLibDir);
     await ensureDir(opts.distReactDir);
   } else {
     await emptyDir(opts.distIntegrationDir);
+    await emptyDir(opts.distServicesDir);
     await emptyDir(opts.distLibDir);
     await emptyDir(opts.distTestsLibDir);
     await emptyDir(opts.distReactDir);
   }
-
   await ensureDir(opts.distLibDebugDir);
-  await ensureDir(opts.distTestsLibDebugDir);
-  await ensureDir(opts.distIntegrationDir);
-  await ensureDir(opts.distLibDir);
-  await ensureDir(opts.distLibDebugDir);
-  await ensureDir(opts.distReactDir);
+  await emptyDir(opts.distTestsLibDebugDir);
 
   const indexCjsPath = join(opts.rootDir, 'index.cjs');
   const indexMjsPath = join(opts.rootDir, 'index.mjs');
