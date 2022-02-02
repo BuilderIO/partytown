@@ -1,0 +1,101 @@
+---
+import * as CONFIG from '../../config.ts';
+import SkipToContent from './SkipToContent.astro';
+import SidebarToggle from './SidebarToggle.tsx';
+
+const { currentPage } = Astro.props;
+---
+
+<header>
+	<SkipToContent />
+	<nav class="nav-wrapper" title="Top Navigation">
+		<div class="menu-toggle">
+			<SidebarToggle client:idle />
+		</div>
+		<div class="logo flex">
+			<a class="logo-image" href="/">
+				<img src="partytown-logo.png" alt="Partytown Logo"/>
+			</a>
+		</div>
+		<div style="flex-grow: 1;"></div>
+	</nav>
+</header>
+
+<style>
+	header {
+		z-index: 11;
+		height: var(--theme-navbar-height);
+		width: 100%;
+		background-color: var(--theme-navbar-bg);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+		position: sticky;
+		top: 0;
+	}
+
+	.logo {
+		display: flex;
+		overflow: hidden;
+		font-size: 2rem;
+		flex-shrink: 0;
+		font-weight: 600;
+		line-height: 1;
+		color: hsla(var(--color-base-white), 100%, 1);
+		gap: 0.25em;
+		z-index: -1;
+	}
+
+	.logo img {
+		width: 200px;
+		height: 36px;
+	}
+
+	.nav-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: flex-end;
+		gap: 1em;
+		width: 100%;
+		max-width: 82em;
+		padding: 0 1rem;
+	}
+
+	@media (min-width: 50em) {
+		header {
+			position: static;
+			padding: 1.5rem 0rem;
+		}
+		.logo {
+			width: auto;
+			margin: 0;
+			z-index: 0;
+		}
+		.menu-toggle {
+			display: none;
+		}
+		.logo {
+			width: auto;
+		}
+	}
+
+	/** Style Algolia */
+	:root {
+		--docsearch-primary-color: var(--theme-accent);
+		--docsearch-logo-color: var(--theme-text);
+	}
+
+	.search-item {
+		display: none;
+		position: relative;
+		z-index: 10;
+		flex-grow: 1;
+		padding-right: 0.7rem;
+		display: flex;
+		max-width: 200px;
+	}
+	:global(.search-item > *) {
+		flex-grow: 1;
+	} 
+</style>
