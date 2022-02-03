@@ -11,7 +11,7 @@
 
 Partytown is a lazy-loaded library to help relocate resource intensive scripts into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), and off of the [main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread). Its goal is to help speed up sites by dedicating the main thread to your code, and offloading third-party scripts to a web worker.
 
-The philosophy is that the main thread should be dedicated to your code, and any scripts that are not required to be in the [critical path](https://developers.google.com/web/fundamentals/performance/critical-rendering-path) should be moved to a web worker. Main thread performance is, without question, more important than web worker thread performance. See the [test pages](https://partytown.builder.io/) for some live demos.
+The philosophy is that the main thread should be dedicated to your code, and any scripts that are not required to be in the [critical path](https://developers.google.com/web/fundamentals/performance/critical-rendering-path) should be moved to a web worker. Main thread performance is, without question, more important than web worker thread performance.
 
 - [Getting Started](https://partytown.builder.io/getting-started)
 - [Integrations](https://partytown.builder.io/integrations)
@@ -19,12 +19,11 @@ The philosophy is that the main thread should be dedicated to your code, and any
 
 ![Without Partytown and With Partytown: Your code and third-party code compete for main thread resources](https://user-images.githubusercontent.com/452425/152393346-6f721a4f-3f66-410a-8878-a2b49e24307f.png)
 
-
 ## Community
 
-- [Partytown Discord](https://discord.gg/hbuEtxdEZ3)
+- [Partytown Discord](https://discord.gg/tw5qMfgQ)
 - [@QwikDev](https://twitter.com/QwikDev)
-- [@builderio](https://twitter.com/builderio)
+- [@Builderio](https://twitter.com/builderio)
 - [Local Development](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#local-development)
 
 ## Related Projects
