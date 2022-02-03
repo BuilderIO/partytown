@@ -14,7 +14,7 @@ async function copySiteDist() {
   const distTests = join(dist, 'tests');
   await emptyDir(distTests);
 
-  const tests = ['benchmarks', 'integrations', 'platform', '404.html', 'index.html'];
+  const tests = ['atomics', 'benchmarks', 'integrations', 'platform', '404.html', 'index.html'];
   await Promise.all(
     tests.map(async (f) => {
       const src = join(rootDir, 'tests', f);
