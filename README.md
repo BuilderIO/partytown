@@ -17,7 +17,8 @@ The philosophy is that the main thread should be dedicated to your code, and any
 - [Integrations](https://partytown.builder.io/integrations)
 - [Configuration](https://partytown.builder.io/configuration)
 
-![Without Partytown and With Partytown: Your code and third-party code compete for main thread resources](https://user-images.githubusercontent.com/452425/152363590-89d3b9a5-35c7-4c12-8f3e-c8b5ce4bb267.png)
+![Without Partytown and With Partytown: Your code and third-party code compete for main thread resources](https://user-images.githubusercontent.com/452425/152393346-6f721a4f-3f66-410a-8878-a2b49e24307f.png)
+
 
 ## Community
 
