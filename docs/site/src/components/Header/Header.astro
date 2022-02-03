@@ -22,25 +22,9 @@ const { currentPage } = Astro.props;
 </header>
 
 <style>
-	header {
-		z-index: 11;
-		height: var(--theme-navbar-height);
-		width: 100%;
-		background-color: var(--theme-navbar-bg);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		overflow: hidden;
-		position: sticky;
-		top: 0;
-	}
-
 	.logo {
 		display: flex;
-		overflow: hidden;
-		font-size: 2rem;
-		flex-shrink: 0;
-		font-weight: 600;
+		overflow: hidden; 
 		line-height: 1;
 		color: hsla(var(--color-base-white), 100%, 1);
 		gap: 0.25em;
@@ -48,8 +32,9 @@ const { currentPage } = Astro.props;
 	}
 
 	.logo img {
-		width: 200px;
-		height: 36px;
+		width: 171px;
+		height: 42px;
+		max-width: initial;
 	}
 
 	.nav-wrapper {
@@ -59,7 +44,20 @@ const { currentPage } = Astro.props;
 		gap: 1em;
 		width: 100%;
 		max-width: 82em;
-		padding: 0 1rem;
+		padding: 0 2rem;
+	}
+
+	header {
+		z-index: 11;
+		height: var(--theme-navbar-height);
+		width: 100%;
+		background-color: var(--theme-bg);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		overflow: hidden;
+		position: sticky;
+		top: 0;
 	}
 
 	@media (min-width: 50em) {
@@ -80,11 +78,13 @@ const { currentPage } = Astro.props;
 		}
 	}
 
-	/** Style Algolia */
-	:root {
-		--docsearch-primary-color: var(--theme-accent);
-		--docsearch-logo-color: var(--theme-text);
+	@media (min-width: 72em) {
+		header {
+			width: 82em;
+			margin: 0 auto;
+		} 
 	}
+
 
 	.search-item {
 		display: none;

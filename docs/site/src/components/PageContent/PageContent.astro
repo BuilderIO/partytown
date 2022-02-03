@@ -21,7 +21,7 @@ const currentPage = Astro.request.url.pathname;
 		<slot />
 	</section>
 	<nav class="block sm:hidden">
-		<MoreMenu editHref={githubEditUrl} />
+		<MoreMenu githubEditUrl={githubEditUrl} />
 	</nav>
 </article>
 
