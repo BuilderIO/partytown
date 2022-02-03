@@ -5,6 +5,7 @@ import { mkdir, readdir, readFile, unlink, writeFile } from 'fs/promises';
 import { join } from 'path';
 
 const markdownLayout = `../layouts/MainLayout.astro`;
+const hasLoaded = new Set();
 
 async function loadDocs() {
   console.log(`📝 Load Docs\n`);
@@ -22,36 +23,38 @@ async function loadDocs() {
 
   const toc = await loadToc();
 
-  await loadContent(toc, new Set());
+  await loadContent(toc);
 }
 
-async function loadContent(toc, hasFetched) {
+async function loadContent(toc) {
   if (Array.isArray(toc)) {
     await Promise.all(
       toc.map(async (c) => {
         if (c && c.filename) {
           const mdFilename = c.filename + '.md';
-          if (!c.filename.startsWith('http') && !hasFetched.has(mdFilename)) {
-            hasFetched.add(mdFilename);
-            console.log(mdFilename);
+          if (!hasLoaded.has(mdFilename)) {
+            hasLoaded.add(mdFilename);
             const orgContent = await readSourceContent(mdFilename);
+            if (orgContent != null) {
+              console.log(mdFilename);
 
-            const fmContent = frontMatter(orgContent);
-            const content = [`---`];
-            if (fmContent.attributes) {
-              Object.keys(fmContent.attributes).forEach((attr) => {
-                content.push(`${attr}: ${fmContent.attributes[attr]}`);
-              });
+              const fmContent = frontMatter(orgContent);
+              const content = [`---`];
+              if (fmContent.attributes) {
+                Object.keys(fmContent.attributes).forEach((attr) => {
+                  content.push(`${attr}: ${fmContent.attributes[attr]}`);
+                });
+              }
+              content.push(`layout: ${markdownLayout}`);
+              content.push(`---`);
+              content.push(``);
+              content.push(fmContent.body);
+
+              await writeFile(join('src', 'pages', mdFilename), content.join('\n'));
             }
-            content.push(`layout: ${markdownLayout}`);
-            content.push(`---`);
-            content.push(``);
-            content.push(fmContent.body);
-
-            await writeFile(join('src', 'pages', mdFilename), content.join('\n'));
           }
 
-          await loadContent(c.children, hasFetched);
+          await loadContent(c.children);
         }
       })
     );
@@ -135,9 +138,13 @@ async function loadToc() {
   return toc;
 }
 
-function readSourceContent(fileName) {
-  const filePath = join('..', fileName);
-  return readFile(filePath, 'utf-8');
+async function readSourceContent(fileName) {
+  try {
+    const filePath = join('..', fileName);
+    const content = await readFile(filePath, 'utf-8');
+    return content;
+  } catch (e) {}
+  return null;
 }
 
 loadDocs();
