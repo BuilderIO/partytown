@@ -4,4 +4,4 @@ export const SITE = {
   defaultLanguage: 'en_US',
 };
 
-export const GITHUB_EDIT_URL = `https://github.com/BuilderIO/partytown/edit/docs/docs`;
+export const GITHUB_EDIT_URL = `https://github.com/BuilderIO/partytown/edit/main/docs`;
