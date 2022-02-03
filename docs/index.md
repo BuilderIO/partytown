@@ -19,7 +19,7 @@ We set out to solve this situation, so that apps of all sizes will be able to co
 
 ## Web Workers
 
-Partytown's philosophy is that the main thread should be dedicated to your code, and any scripts that are not required to be in the [critical path](https://developers.google.com/web/fundamentals/performance/critical-rendering-path) should be moved to a web worker. Main thread performance is, without question, more important than web worker thread performance. See the [test pages](https://partytown.builder.io/tests/) for some live demos.
+Partytown's philosophy is that the main thread should be dedicated to your code, and any scripts that are not required to be in the [critical path](https://developers.google.com/web/fundamentals/performance/critical-rendering-path) should be moved to a web worker. Main thread performance is, without question, more important than web worker thread performance. See the [test pages](/tests/) for some live demos.
 
 ![Without Partytown and With Partytown: Your code and third-party code compete for main thread resources](https://user-images.githubusercontent.com/452425/152363590-89d3b9a5-35c7-4c12-8f3e-c8b5ce4bb267.png)
 
@@ -38,7 +38,7 @@ Below are just a few examples of third-party scripts that might be a good candid
 
 ## Articles
 
-- [Introducing Partytown: Run Third-Party Scripts From a Web Worker](https://dev.to/adamdbradley/introducing-partytown-run-third-party-scripts-from-a-web-worker-2cnp)
-- [How Partytown's Sync Communication Works](https://dev.to/adamdbradley/how-partytown-s-sync-communication-works-4244)
-- [How we cut 99% of our JavaScript with Qwik + Partytown](https://www.builder.io/blog/how-we-cut-99-percent-js-with-qwik-and-partytown)
-- [Partytown is now in Beta](https://www.builder.io/blog/partytown-beta-release)
+- <a href="https://dev.to/adamdbradley/introducing-partytown-run-third-party-scripts-from-a-web-worker-2cnp" target="_blank" rel="noopener">Introducing Partytown: Run Third-Party Scripts From a Web Worker</a>
+- <a href="https://dev.to/adamdbradley/how-partytown-s-sync-communication-works-4244" target="_blank" rel="noopener">How Partytown's Sync Communication Works</a>
+- <a href="https://www.builder.io/blog/how-we-cut-99-percent-js-with-qwik-and-partytown" target="_blank" rel="noopener">How we cut 99% of our JavaScript with Qwik + Partytown</a>
+- <a href="https://www.builder.io/blog/partytown-beta-release" target="_blank" rel="noopener">Partytown is now in Beta</a>
