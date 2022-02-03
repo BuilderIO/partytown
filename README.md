@@ -13,31 +13,11 @@ Partytown is a lazy-loaded library to help relocate resource intensive scripts i
 
 The philosophy is that the main thread should be dedicated to your code, and any scripts that are not required to be in the [critical path](https://developers.google.com/web/fundamentals/performance/critical-rendering-path) should be moved to a web worker. Main thread performance is, without question, more important than web worker thread performance. See the [test pages](https://partytown.builder.io/) for some live demos.
 
-[Getting Started](https://github.com/BuilderIO/partytown/wiki/Getting-Started)
+- [Getting Started](https://partytown.builder.io/getting-started)
+- [Integrations](https://partytown.builder.io/integrations)
+- [Configuration](https://partytown.builder.io/configuration)
 
 ![Without Partytown and With Partytown: Your code and third-party code compete for main thread resources](https://user-images.githubusercontent.com/452425/149344822-53154491-fd70-47ad-8c92-3ff5e4ccb4ec.jpeg)
-
-## Docs
-
-- [Introduction](https://github.com/BuilderIO/partytown/wiki)
-  - [Third-Party Scripts](https://github.com/BuilderIO/partytown/wiki#negative-impacts-from-third-party-scripts)
-  - [Goals](https://github.com/BuilderIO/partytown/wiki#goals)
-  - [Web Workers](https://github.com/BuilderIO/partytown/wiki#web-workers)
-  - [Trade-Offs](https://github.com/BuilderIO/partytown/wiki#trade-offs)
-  - [Use-Cases](https://github.com/BuilderIO/partytown/wiki#use-cases)
-- [How Does It Work?](https://github.com/BuilderIO/partytown/wiki/How-Does-It-Work%3F)
-- [Getting Started](https://github.com/BuilderIO/partytown/wiki/Getting-Started)
-  - [React](https://github.com/BuilderIO/partytown/wiki/Getting-Started#react)
-  - [Webpack](https://github.com/BuilderIO/partytown/wiki/Getting-Started#webpack)
-- [Configuration](https://github.com/BuilderIO/partytown/wiki/Configuration)
-- [Forwarding Events and Triggers](https://github.com/BuilderIO/partytown/wiki/Forwarding-Events-and-Triggers)
-- [Sandboxing](https://github.com/BuilderIO/partytown/wiki/Sandboxing)
-- [Proxying Requests](https://github.com/BuilderIO/partytown/wiki/Proxying-Requests)
-- [Integrating Services](https://github.com/BuilderIO/partytown/wiki/Integrating-Services)
-- [Debugging](https://github.com/BuilderIO/partytown/wiki/Debugging)
-- [Enabling Atomics](https://github.com/BuilderIO/partytown/wiki/Enabling-Atomics)
-- [Distribution](https://github.com/BuilderIO/partytown/wiki/Distribution)
-- [Browser Support](https://github.com/BuilderIO/partytown/wiki/Browser-Support)
 
 ## Community
 
