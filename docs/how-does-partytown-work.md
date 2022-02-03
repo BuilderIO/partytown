@@ -24,7 +24,7 @@ There are currently two ways to communicate synchronously between the web worker
 
 ## Designating Web Worker Scripts
 
-It's important to note that Partytown does not automatically move all scripts to the web worker, but prefers an opt-in approach. Meaning, it's best that the developer can pick and choose exactly which scripts should use Partytown, while all the others would go unchanged.
+It's important to note that Partytown does not automatically move all scripts to the web worker, but prefers an opt-in approach. Meaning, it's best that the developer can pick and choose exactly which scripts should use Partytown, while all the others would go unchanged. Please see the [Partytown Scripts](/partytown-scripts) for more info.
 
 Partytown is only enabled for specific scripts when they have the `type="text/partytown"` attribute. This `type` attribute does two things:
 
@@ -53,7 +53,15 @@ Below is an example of adding the `type="text/partytown"` attribute to an existi
 
 ## Atomics
 
-1. TODO
+Please see the [Atomics communication layer docs](/atomics) on how to enabled them. When Atomics are not enabled, the fallback is to use the Service Worker instead. In the end, Atomics are preferred because they're roughly 10x faster in transfering data between the web worker and main thread.
+
+1. Scripts are disabled from running on the main thread by using the `type="text/partytown"` attribute on the `<script/>` tag.
+1. Main thread detects Atomics communication can be used, and loads the Atomics build instead of the Service Worker build.
+1. Web worker is given the scripts to execute within the worker thread.
+1. Web worker creates JavaScript Proxies to replicate and forward calls to the main thread APIs (such as DOM operations).
+1. Any call to the JS proxy will use [Atomics.store()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/store) and `postMessage()` to send the data to the main thread, and run [Atomics.wait()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/wait).
+1. [Atomics.load()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/load) is used once the web worker recieves the results data from the main thread.
+1. From the point of view of code executing on the web worker, everything was synchronous, and each call to the document was blocking.
 
 ## Serialization
 
