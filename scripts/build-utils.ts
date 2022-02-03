@@ -15,7 +15,7 @@ export function buildUtils(opts: BuildOptions): RollupOptions {
         format: 'es',
       },
     ],
-    external: ['fs', 'path', 'util'],
+    external: ['fs', 'path', 'url', 'util'],
     plugins: [
       submodulePackageJson(
         '@builder.io/partytown/utils',
