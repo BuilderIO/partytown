@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('resize-observer', async ({ page }) => {
-  await page.goto('/platform/resize-observer/');
+  await page.goto('/tests/platform/resize-observer/');
 
   await page.waitForSelector('.completed');
 

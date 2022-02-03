@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('script', async ({ page }) => {
-  await page.goto('/platform/script/');
+  await page.goto('/tests/platform/script/');
 
   await page.waitForSelector('.testJSONP');
   const testJSONP = page.locator('#testJSONP');
@@ -54,7 +54,7 @@ test('script', async ({ page }) => {
   const testSrcAttr = page.locator('#testSrcAttr');
   const srcAttr = await testSrcAttr.textContent();
   const srcUrl = new URL(srcAttr);
-  expect(srcUrl.pathname).toBe('/platform/script/set-get-attr.js');
+  expect(srcUrl.pathname).toBe('/tests/platform/script/set-get-attr.js');
 
   await page.waitForSelector('.testSetPropType');
   const testSetPropType = page.locator('#testSetPropType');

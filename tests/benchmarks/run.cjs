@@ -25,7 +25,7 @@ async function runBenchmark(browserType, isBaseline, label) {
   const page = await browser.newPage();
   await page.setViewportSize({ width: 360, height: 360 });
 
-  const url = new URL('/benchmarks/', server.address);
+  const url = new URL('/tests/benchmarks/', server.address);
   if (isBaseline) {
     url.searchParams.set('baseline', '');
   }

@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('element style', async ({ page }) => {
-  await page.goto('/platform/element-style/');
+  await page.goto('/tests/platform/element-style/');
   await page.waitForSelector('.completed');
 
   const testColor = page.locator('#testColor');

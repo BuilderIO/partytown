@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('document', async ({ page }) => {
-  await page.goto('/platform/document/');
+  await page.goto('/tests/platform/document/');
 
   await page.waitForSelector('.completed');
 
@@ -27,7 +27,7 @@ test('document', async ({ page }) => {
   await expect(testCookie).toHaveText('mph=88');
 
   const testLocationGet = page.locator('#testLocationGet');
-  await expect(testLocationGet).toHaveText('/platform/document/');
+  await expect(testLocationGet).toHaveText('/tests/platform/document/');
 
   const testDefaultView = page.locator('#testDefaultView');
   await expect(testDefaultView).toHaveText('window');
@@ -50,7 +50,9 @@ test('document', async ({ page }) => {
   const testCurrentScriptSrc = page.locator('#testCurrentScriptSrc');
   const testCurrentScriptSrcLocation = page.locator('#testCurrentScriptSrcLocation');
   await expect(testCurrentScriptSrc).toHaveText('src');
-  await expect(testCurrentScriptSrcLocation).toHaveText('/platform/document/current-script-src.js');
+  await expect(testCurrentScriptSrcLocation).toHaveText(
+    '/tests/platform/document/current-script-src.js'
+  );
 
   await page.waitForSelector('.testCurrentScriptNullAsync');
   const testCurrentScriptNullAsync = page.locator('#testCurrentScriptNullAsync');

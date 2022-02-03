@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('integration config', async ({ page }) => {
-  await page.goto('/integrations/config/');
+  await page.goto('/tests/integrations/config/');
   await page.waitForSelector('.completed');
 
   const testGetContinue = page.locator('#testGetContinue');

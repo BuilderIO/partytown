@@ -728,7 +728,7 @@
 
             iframe.style.height = '45px';
 
-            const url = new URL('https://partytown.builder.io/platform/iframe/cross-origin.html');
+            const url = new URL('https://partytown.builder.io/tests/platform/iframe/cross-origin.html');
             url.searchParams.set('parentorigin', window.origin);
             iframe.src = url.href;
             elm.parentNode.appendChild(iframe);

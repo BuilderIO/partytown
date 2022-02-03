@@ -1,12 +1,5 @@
 import type { OutputOptions, RollupOptions } from 'rollup';
-import {
-  BuildOptions,
-  copyOutputToTests,
-  fileSize,
-  jsBannerPlugin,
-  versionPlugin,
-  watchDir,
-} from './utils';
+import { BuildOptions, fileSize, jsBannerPlugin, versionPlugin, watchDir } from './utils';
 import { join } from 'path';
 import { minifyPlugin } from './minify';
 
@@ -35,10 +28,6 @@ export function buildMediaImplementation(opts: BuildOptions): RollupOptions {
   return {
     input: join(opts.tscLibDir, 'web-worker', 'media', 'index.js'),
     output,
-    plugins: [
-      watchDir(opts, join(opts.tscLibDir, 'web-worker', 'media')),
-      jsBannerPlugin(opts),
-      copyOutputToTests(opts),
-    ],
+    plugins: [watchDir(opts, join(opts.tscLibDir, 'web-worker', 'media')), jsBannerPlugin(opts)],
   };
 }

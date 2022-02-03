@@ -3,7 +3,7 @@ import { test, expect } from '@playwright/test';
 test('video', async ({ page, context }) => {
   // TODO: figure out why playwright crashes
 
-  await page.goto('/platform/video/', { waitUntil: 'networkidle' });
+  await page.goto('/tests/platform/video/', { waitUntil: 'networkidle' });
 
   const btnPlay = page.locator('#btnPlay');
   await btnPlay.click();

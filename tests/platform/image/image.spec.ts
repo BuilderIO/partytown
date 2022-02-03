@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('image', async ({ page }) => {
-  await page.goto('/platform/image/');
+  await page.goto('/tests/platform/image/');
 
   await page.waitForSelector('.testImageOnLoad');
   const testImageOnLoad = page.locator('#testImageOnLoad');

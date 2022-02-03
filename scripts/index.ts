@@ -37,17 +37,14 @@ async function createRootPackage(opts: BuildOptions) {
     await ensureDir(opts.distIntegrationDir);
     await ensureDir(opts.distServicesDir);
     await ensureDir(opts.distLibDir);
-    await ensureDir(opts.distTestsLibDir);
     await ensureDir(opts.distReactDir);
   } else {
     await emptyDir(opts.distIntegrationDir);
     await emptyDir(opts.distServicesDir);
     await emptyDir(opts.distLibDir);
-    await emptyDir(opts.distTestsLibDir);
     await emptyDir(opts.distReactDir);
   }
   await ensureDir(opts.distLibDebugDir);
-  await emptyDir(opts.distTestsLibDebugDir);
 
   const indexCjsPath = join(opts.rootDir, 'index.cjs');
   const indexMjsPath = join(opts.rootDir, 'index.mjs');
@@ -77,8 +74,6 @@ function createBuildOptions(rootDir: string, isDev: boolean, generateApi: boolea
 
   const testsDir = join(rootDir, 'tests');
   const testsVideosDir = join(testsDir, 'videos');
-  const distTestsLibDir = join(testsDir, '~partytown');
-  const distTestsLibDebugDir = join(distTestsLibDir, 'debug');
 
   const tscDir = join(rootDir, 'tsc');
   const tscSrcDir = join(tscDir, 'src');
@@ -101,8 +96,6 @@ function createBuildOptions(rootDir: string, isDev: boolean, generateApi: boolea
     distServicesDir,
     distLibDir,
     distLibDebugDir,
-    distTestsLibDir,
-    distTestsLibDebugDir,
     distReactDir,
     distUtilsDir,
 

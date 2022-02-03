@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('gtm', async ({ page }) => {
-  await page.goto('/integrations/gtm/');
+  await page.goto('/tests/integrations/gtm/');
 
   await page.waitForSelector('.completed');
 

@@ -32,7 +32,6 @@ export async function buildWebWorker(opts: BuildOptions, msgType: MessageType, d
   if (debug) {
     const outName = `partytown-ww-${msgType}.js`;
     await writeFile(join(opts.distLibDebugDir, outName), webWorkerCode);
-    await writeFile(join(opts.distTestsLibDebugDir, outName), webWorkerCode);
   }
 
   return webWorkerCode;

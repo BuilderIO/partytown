@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('adobe-launch', async ({ page }) => {
-  await page.goto('/integrations/adobe-launch/');
+  await page.goto('/tests/integrations/adobe-launch/');
 
   const btnTrack = page.locator('#track');
   await btnTrack.click();

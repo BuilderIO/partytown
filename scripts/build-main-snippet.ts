@@ -1,4 +1,4 @@
-import { BuildOptions, copyOutputToTests, fileSize, jsBannerPlugin, versionPlugin } from './utils';
+import { BuildOptions, fileSize, jsBannerPlugin, versionPlugin } from './utils';
 import { join } from 'path';
 import { minifyPlugin } from './minify';
 import type { OutputOptions, RollupOptions } from 'rollup';
@@ -40,6 +40,6 @@ export function buildMainSnippet(opts: BuildOptions): RollupOptions {
   return {
     input: join(opts.tscLibDir, 'main', 'snippet-entry.js'),
     output,
-    plugins: [jsBannerPlugin(opts), copyOutputToTests(opts)],
+    plugins: [jsBannerPlugin(opts)],
   };
 }

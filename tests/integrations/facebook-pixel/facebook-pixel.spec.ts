@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('facebook-pixel', async ({ page }) => {
-  await page.goto('/integrations/facebook-pixel/');
+  await page.goto('/tests/integrations/facebook-pixel/');
 
   await page.waitForSelector('.completed');
 

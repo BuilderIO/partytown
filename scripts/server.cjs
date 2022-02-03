@@ -3,14 +3,20 @@ const http = require('http');
 const fs = require('fs');
 
 exports.createServer = function (port, enableAtomics) {
-  const testsDir = path.join(__dirname, '..', 'tests');
+  const rootDir = path.join(__dirname, '..');
   const address = `http://localhost:${port}/`;
 
   const server = http.createServer(async (req, rsp) => {
     const url = new URL(req.url, address);
-    let filePath = path.join(testsDir, url.pathname.substring(1));
-    if (url.pathname.endsWith('/')) {
-      filePath = path.join(filePath, 'index.html');
+    const pathName = url.pathname.substring(1);
+    let filePath;
+
+    if (pathName.startsWith('~partytown')) {
+      filePath = path.join(rootDir, 'lib', pathName.replace('~partytown/', ''));
+    } else if (pathName.endsWith('/')) {
+      filePath = path.join(rootDir, pathName, 'index.html');
+    } else {
+      filePath = path.join(rootDir, pathName);
     }
 
     if (url.searchParams.has('delay')) {

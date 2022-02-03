@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('element class', async ({ page }) => {
-  await page.goto('/platform/element-class/');
+  await page.goto('/tests/platform/element-class/');
   await page.waitForSelector('.completed');
 
   const testClassname = page.locator('#testClassname');

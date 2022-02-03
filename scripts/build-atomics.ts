@@ -1,7 +1,6 @@
 import type { RollupOptions } from 'rollup';
 import {
   BuildOptions,
-  copyOutputToTests,
   fileSize,
   jsBannerPlugin,
   syncCommunicationModulesPlugin,
@@ -10,7 +9,6 @@ import {
 } from './utils';
 import { join } from 'path';
 import { minifyPlugin } from './minify';
-import { writeFile } from 'fs-extra';
 import { webWorkerBlobUrlPlugin } from './build-web-worker';
 
 export function buildAtomics(opts: BuildOptions): RollupOptions[] {
@@ -41,7 +39,6 @@ function buildAtomicsDebug(opts: BuildOptions): RollupOptions {
       webWorkerBlobUrlPlugin(opts, 'atomics', true),
       watchDir(opts, join(opts.tscLibDir, 'atomics')),
       watchDir(opts, join(opts.tscLibDir, 'web-worker')),
-      copyOutputToTests(opts),
       jsBannerPlugin(opts),
     ],
   };
@@ -63,7 +60,6 @@ function buildAtomicsMin(opts: BuildOptions): RollupOptions {
       webWorkerBlobUrlPlugin(opts, 'atomics', false),
       watchDir(opts, join(opts.tscLibDir, 'atomics')),
       watchDir(opts, join(opts.tscLibDir, 'web-worker')),
-      copyOutputToTests(opts),
       versionPlugin(opts),
       jsBannerPlugin(opts),
     ],

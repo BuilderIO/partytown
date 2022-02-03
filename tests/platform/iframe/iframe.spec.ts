@@ -1,15 +1,15 @@
 import { test, expect } from '@playwright/test';
 
 test('iframe', async ({ page }) => {
-  await page.goto('/platform/iframe/');
+  await page.goto('/tests/platform/iframe/');
 
   await page.waitForSelector('.testSrc');
   const testSrc = page.locator('#testSrc');
-  await expect(testSrc).toHaveText('/platform/iframe/content.html');
+  await expect(testSrc).toHaveText('/tests/platform/iframe/content.html');
 
   await page.waitForSelector('.testSrcAttr');
   const testSrcAttr = page.locator('#testSrcAttr');
-  await expect(testSrcAttr).toHaveText('/platform/iframe/content.html');
+  await expect(testSrcAttr).toHaveText('/tests/platform/iframe/content.html');
 
   await page.waitForSelector('.testOnload');
   const testOnload = page.locator('#testOnload');
@@ -45,7 +45,7 @@ test('iframe', async ({ page }) => {
 
   await page.waitForSelector('.testCurrentScript');
   const testCurrentScript = page.locator('#testCurrentScript');
-  await expect(testCurrentScript).toHaveText('/platform/iframe/current-script.js');
+  await expect(testCurrentScript).toHaveText('/tests/platform/iframe/current-script.js');
 
   await page.waitForSelector('.testScriptOnload');
   const testScriptOnload = page.locator('#testScriptOnload');
@@ -111,7 +111,7 @@ test('iframe', async ({ page }) => {
 
   await page.waitForSelector('.testLocation');
   const testLocation = page.locator('#testLocation');
-  await expect(testLocation).toHaveText('/platform/iframe/location2.html');
+  await expect(testLocation).toHaveText('/tests/platform/iframe/location2.html');
 
   await page.waitForSelector('.testSrcChange');
   const testSrcChange1 = page.locator('#testSrcChange1');
@@ -125,5 +125,5 @@ test('iframe', async ({ page }) => {
 
   await page.waitForSelector('.testGetIframeSrc');
   const testGetIframeSrc = page.locator('#testGetIframeSrc');
-  await expect(testGetIframeSrc).toHaveText('/platform/iframe/content.html');
+  await expect(testGetIframeSrc).toHaveText('/tests/platform/iframe/content.html');
 });

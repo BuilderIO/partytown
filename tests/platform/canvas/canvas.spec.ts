@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('canvas', async ({ page }) => {
-  await page.goto('/platform/canvas/');
+  await page.goto('/tests/platform/canvas/');
 
   await page.waitForSelector('.completed');
 

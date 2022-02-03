@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('navigator', async ({ page }) => {
-  await page.goto('/platform/navigator/');
+  await page.goto('/tests/platform/navigator/');
 
   const testUserAgent = await page.waitForSelector('.testUserAgent');
   const ua = await testUserAgent.textContent();

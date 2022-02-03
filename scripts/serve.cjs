@@ -5,5 +5,5 @@ const enableAtomics = process.argv.includes('--atomics');
 
 (async () => {
   const server = await createServer(port, enableAtomics);
-  console.log(`Serving${server.enableAtomics ? ` (atomics)` : ``}: ${server.address}`);
+  console.log(`Serving${server.enableAtomics ? ` (atomics)` : ``}: ${server.address}tests/`);
 })();

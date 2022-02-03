@@ -6,7 +6,7 @@ test('audio', async ({ page }) => {
     return;
   }
 
-  await page.goto('/platform/audio/');
+  await page.goto('/tests/platform/audio/');
 
   page.on('console', (msg) => {
     if (msg.type() === 'error') {

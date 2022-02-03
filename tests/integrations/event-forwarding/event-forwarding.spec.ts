@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('integration event forwarding', async ({ page }) => {
-  await page.goto('/integrations/event-forwarding/');
+  await page.goto('/tests/integrations/event-forwarding/');
   await page.waitForSelector('.completed');
 
   const testFn = page.locator('#testFn');
