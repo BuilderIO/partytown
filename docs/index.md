@@ -12,11 +12,10 @@ We set out to solve this situation, so that apps of all sizes will be able to co
 - Free up main thread resources to be used only for the primary web app execution.
 - Sandbox third-party scripts and allow or deny their access main thread APIs.
 - Isolate long-running tasks within the web worker thread.
-- Reduce layout thrashing coming from third-party scripts.
+- Reduce layout thrashing coming from third-party scripts by batching DOM setters/getter into group updates.
 - Throttle third-party scripts' access to the main thread.
 - Allow third-party scripts to run exactly how they're coded and without any alterations.
 - Read and write main thread DOM operations _synchronously_ from within a web worker, allowing scripts running from the web worker to execute as expected.
-- No build-steps or bundling required, but rather update scripts the same way as traditional third-party scripts are updated.
 
 ## Web Workers
 
