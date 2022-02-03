@@ -97,7 +97,7 @@ p {
 }
 
 .content ul {
-  line-height: 1.1em;
+  line-height: 1.4em;
 }
 
 p,
@@ -135,7 +135,7 @@ article > section li > :is(p, pre, blockquote):not(:first-child) {
 }
 
 article > section :is(ul, ol) {
-  padding-left: 1em;
+  padding-left: 1.5em;
 }
 
 article > section nav :is(ul, ol) {
@@ -249,18 +249,23 @@ table {
 }
 
 /* Zebra striping */
-tr:nth-of-type(odd) {
-  background: var(--theme-bg-hover);
+tr:nth-of-type(even) {
+  background: #f7f7f7;
 }
 th {
-  background: var(--color-black);
+  background: transparent;
   color: var(--theme-color);
   font-weight: bold;
+  border-bottom: 2px solid var(--theme-divider);
 }
 td,
 th {
   padding: 6px;
   text-align: left;
+}
+
+table code {
+  white-space: nowrap;
 }
 
 pre {
