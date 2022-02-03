@@ -53,6 +53,7 @@
   "scripts": {
     "build": "tsc && rollup -c scripts/rollup.config.js",
     "build.prod": "tsc && rollup -c scripts/rollup.config.js --configApi",
+    "build.site": "npm run build && cd docs/site && npm i && npm run build && node ../../scripts/copy-site.cjs",
     "build.watch": "rollup -c scripts/rollup.config.js -w --configDev",
     "start": "npm run dev",
     "dev": "tsc && concurrently \"npm:build.watch\" \"npm:tsc.watch\" -n build,tsc -c magenta,yellow",
