@@ -1,6 +1,5 @@
 ---
 title: Proxying Requests
-description: Proxying Requests
 ---
 
 Often third-party scripts are added to the page by appending a script tag, such as:

@@ -1,6 +1,5 @@
 ---
 title: Sandboxing
-description: Sandboxing
 ---
 
 Third-party scripts are often a black-box with large amounts of code. What's buried within the obfuscated code is difficult to tell. It's minified for good reason, but regardless it becomes very difficult to understand what third-party scripts are executing on _your_ site and _your_ user's devices.

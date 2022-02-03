@@ -1,6 +1,10 @@
 .cache/
 .next/
 .DS_Store
+/dist/
+/docs/site/dist/
+/docs/site/src/table-of-contents.ts
+/docs/site/src/pages/
 node_modules/
 /integration/
 /lib/

@@ -1,6 +1,5 @@
 ---
 title: Improving Performance With Web Workers
-description: Improving Performance With Web Workers
 ---
 
 Even with a fast and highly tuned following all of today's best practices, it's all too common for your performance wins to be erased the moment third-party scripts are added. By third-party scripts we mean code that is embedded within your site, but not directly under your control. A few examples include: analytics, metrics, ads, A/B testing, trackers, etc. Their inclusion are often a double-edged sword.

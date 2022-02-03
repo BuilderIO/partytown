@@ -1,0 +1,40 @@
+---
+const { path } = Astro.props;
+---
+
+<footer>
+	<nav>
+		<a href="https://github.com/BuilderIO/partytown" aria-current="false" class="astro-T2MLJ6Q3">
+			Github
+		</a>
+		<a href="https://discord.gg/tw5qMfgQ" aria-current="false" class="astro-T2MLJ6Q3">
+			Discord
+		</a>
+		<a href="https://twitter.com/QwikDev" aria-current="false" class="astro-T2MLJ6Q3">
+			@QwikDev
+		</a>
+		<a href="https://twitter.com/builderio" aria-current="false" class="astro-T2MLJ6Q3">
+			@Builderio
+		</a> 
+	</nav>
+</footer>
+
+<style>
+	footer {
+		margin-top: 2rem;
+		padding: 2rem 0;
+		border-top: 2px solid var(--theme-divider);
+		text-align: center;
+	}
+	footer a {
+		margin: 0 4px;
+		padding: 4px 12px;
+		text-decoration: none;
+		color: var(--theme-text-light);
+		display: inline-block;
+		border-radius: 4px;
+	}
+	footer a:hover {
+		background-color: var(--theme-bg-hover);
+	}
+</style>

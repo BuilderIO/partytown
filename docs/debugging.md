@@ -1,13 +1,12 @@
 ---
 title: Debugging
-description: Debugging
 ---
 
 With `debug` mode and logging enabled, below is an example of the Partytown logs showing all calls, getters and setters:
 
 ![Partytown Debug Console Logs](https://user-images.githubusercontent.com/452425/131688576-e207cb15-7ce5-4009-a358-3e3093d51957.png)
 
-The [debug config](https://github.com/BuilderIO/partytown/wiki/Configuration) must be `true` in order to see more verbose logging messages. The config table below lists all of the possible log configurations.
+The [debug config](/configuration) must be `true` in order to see more verbose logging messages. The config table below lists all of the possible log configurations.
 
 | Log Config Property     | Description                         |
 | ----------------------- | ----------------------------------- |
@@ -41,4 +40,4 @@ Example enabling debugging and logging all setters:
 </html>
 ```
 
-Please see the [debug file docs](https://github.com/BuilderIO/partytown/wiki/Distribution#libdebug) more information about the distribution.
+Please see the [debug file docs](/distribution#libdebug) more information about the distribution.

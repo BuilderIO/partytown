@@ -1,0 +1,34 @@
+---
+import { SITE,   } from '../config.ts';
+export interface Props {
+	content: any;
+	site: any;
+	canonicalURL: URL | string;
+}
+const { content = {}, canonicalURL } = Astro.props;
+const formattedContentTitle = content.title ? `${content.title} ${SITE.title}` : SITE.title;
+const imageSrc = '';
+const canonicalImageSrc = new URL(imageSrc, Astro.site);
+const imageAlt = '';
+---
+
+<!-- Page Metadata -->
+<link rel="canonical" href={canonicalURL} />
+
+<!-- OpenGraph Tags -->
+<meta property="og:title" content={formattedContentTitle} />
+<meta property="og:type" content="article" />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:locale" content={SITE.defaultLanguage} />
+<meta property="og:image" content={canonicalImageSrc} />
+<meta property="og:image:alt" content={imageAlt} />
+<meta name="description" property="og:description" content={content.description ? content.description : SITE.description} />
+<meta property="og:site_name" content={SITE.title} />
+
+<!-- Twitter Tags -->
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@builderio" />
+<meta name="twitter:title" content={formattedContentTitle} />
+<meta name="twitter:description" content={content.description ? content.description : formattedContentTitle} />
+<meta name="twitter:image" content="https://partytown.builder.io/partytown-media.png	" />
+<meta name="twitter:image:alt" content="Partytown Logo" />

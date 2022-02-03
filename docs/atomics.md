@@ -1,6 +1,5 @@
 ---
 title: Atomics
-description: Atomics
 ---
 
 Partytown will use [Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics) when they're enabled by the browser. Some of the advantages include:

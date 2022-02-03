@@ -315,7 +315,7 @@ export interface SerializedInstance {
 }
 
 /**
- * https://github.com/BuilderIO/partytown/wiki/Configuration
+ * https://partytown.builder.io/configuration
  *
  * @public
  */
@@ -324,7 +324,7 @@ export interface PartytownConfig {
    * The `resolveUrl()` hook can be used to modify the URL about to be
    * requested, which could be used to rewrite urls so they go through a proxy.
    *
-   * https://github.com/BuilderIO/partytown/wiki/Proxying-Requests
+   * https://partytown.builder.io/proxying-requests
    *
    * @param url - The URL to be resolved. This is a URL https://developer.mozilla.org/en-US/docs/Web/API/URL, not a string.
    * @param location - The current window location.
@@ -334,7 +334,7 @@ export interface PartytownConfig {
   /**
    * When set to `true`, Partytown scripts are not inlined and not minified.
    *
-   * https://github.com/BuilderIO/partytown/wiki/Debugging
+   * https://partytown.builder.io/debugging
    */
   debug?: boolean;
   /**
@@ -352,7 +352,7 @@ export interface PartytownConfig {
    * ['dataLayer.push', 'fbq']
    * ```
    *
-   * https://github.com/BuilderIO/partytown/wiki/Forwarding-Events-and-Triggers
+   * https://partytown.builder.io/forwarding-events
    */
   forward?: PartytownForwardProperty[];
   /**
@@ -413,7 +413,7 @@ export interface PartytownConfig {
  * A foward property to patch on `window`. The foward config property is an string,
  * representing the call to forward, such as `dataLayer.push` or `fbq`.
  *
- * https://github.com/BuilderIO/partytown/wiki/Forwarding-Events-and-Triggers
+ * https://partytown.builder.io/forwarding-events
  *
  * @public
  */

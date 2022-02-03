@@ -1,6 +1,5 @@
 ---
 title: Trade-Offs
-description: Trade-Offs
 ---
 
 Nothing is without trade-offs. Using Partytown to orchestrate third-party scripts vs adding them to your pages has the following considerations to keep in mind:
