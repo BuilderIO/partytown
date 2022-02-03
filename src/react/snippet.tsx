@@ -36,7 +36,7 @@ export const Partytown = (props: PartytownProps = {}): any => {
   // Added code will set the [type="data-pt-script"] attribute with the "lib" id.
   // If this code renders as SSR/Static HTML, then it'll execute and add the attribute
   // which will tell the Client JS of the component to NOT add the same script to the head.
-  const innerHTML = `document.currentScript.dataset.ptScript=lib;` + partytownSnippet(props);
+  const innerHTML = `document.currentScript.dataset.ptScript="lib";` + partytownSnippet(props);
 
   return <script suppressHydrationWarning dangerouslySetInnerHTML={{ __html: innerHTML }} />;
 };
