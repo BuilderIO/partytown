@@ -1,6 +1,5 @@
 ---
 title: Getting Started
-description: Getting Started
 ---
 
 Partytown is fairly different from most web development libraries in mainly what’s required for its setup and configuration. At the lowest level, Partytown can work with just vanilla HTML, meaning it doesn’t need to be a part of a build process, doesn’t need a bundler, doesn’t require a specific framework, etc. Because it can integrate with any HTML page, it also makes it much easier to then create wrapper components or plugins for almost any ecosystem, such as Shopify, Wordpress, Nextjs, Gatsby and much more.

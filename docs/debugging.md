@@ -1,6 +1,5 @@
 ---
 title: Debugging
-description: Debugging
 ---
 
 With `debug` mode and logging enabled, below is an example of the Partytown logs showing all calls, getters and setters:

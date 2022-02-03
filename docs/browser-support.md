@@ -1,6 +1,5 @@
 ---
 title: Browser Support
-description: Browser Support
 ---
 
 Partytown works to ensure that all browsers can still run third-party scripts, whether they have support for service workers, atomics, or neither. This means if you're supporting legacy browsers such as IE11, the scripts should continue to work as if Partytown wasn't being used.

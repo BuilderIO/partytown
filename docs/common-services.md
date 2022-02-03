@@ -1,6 +1,5 @@
 ---
 title: Common Services
-description: Common Services
 ---
 
 Partytown already comes with a few components for commonly used Services. Please see [Services](/services) before manually configuring the `forward` property.

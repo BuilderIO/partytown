@@ -1,6 +1,5 @@
 ---
-title: Script Updates
-description: Script Updates
+title: Partytown Scripts
 ---
 
 ## Add Partytown type attribute to Third-Party Scripts

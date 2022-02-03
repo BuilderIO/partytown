@@ -1,6 +1,5 @@
 ---
 title: How Does Partytown Work
-description: How Does Partytown Work
 ---
 
 - [How Partytown's Service Worker Sync Communication Works](https://dev.to/adamdbradley/how-partytown-s-sync-communication-works-4244)

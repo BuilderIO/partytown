@@ -1,6 +1,5 @@
 ---
 title: Forwarding Events And Triggers
-description: Forwarding Events And Triggers
 ---
 
 Many third-party scripts add a global variable to `window` which user code calls in order to send data to the service. For example, Google Tag Manager uses a [Data Layer](https://developers.google.com/tag-manager/devguide) array, and by pushing data to the array, the data is then sent on to GTM Servers. Because we're moving third-party scripts to a web worker, the main thread needs to know which variables to patch on `window`, and when these services are called, the data is correctly forwarded to the web worker. This includes queuing any events that may have happened before Partytown has even finished initializing.

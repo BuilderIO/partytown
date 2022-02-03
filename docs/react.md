@@ -1,4 +1,3 @@
 ---
 title: React
-description: React
 ---
