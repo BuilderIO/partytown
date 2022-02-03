@@ -6,6 +6,7 @@
   - [Trade-Offs](/trade-offs)
   - [Browser Support](/browser-support)
 - [Getting Started](/getting-started)
+  - [Overview](/getting-started)
   - [Copy Library Files](/copy-library-files)
   - [Partytown Scripts](/partytown-scripts)
   - [Atomics](/atomics)
