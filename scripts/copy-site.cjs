@@ -23,6 +23,8 @@ async function copySiteDist() {
       await copy(src, dest, { overwrite: true });
     })
   );
+
+  await copy(join(rootDir, 'lib'), join(dist, '~partytown'));
 }
 
 copySiteDist();
