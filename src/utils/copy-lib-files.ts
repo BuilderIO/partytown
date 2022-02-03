@@ -1,11 +1,14 @@
 import fs from 'fs';
-import { isAbsolute, resolve } from 'path';
+import { dirname, isAbsolute, resolve } from 'path';
+import { fileURLToPath } from 'url';
 import { promisify } from 'util';
 
 const copyFile = promisify(fs.copyFile);
 const mkdir = promisify(fs.mkdir);
 const readdir = promisify(fs.readdir);
 const stat = promisify(fs.stat);
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
  * Absolute path to the Partytown lib directory within the
