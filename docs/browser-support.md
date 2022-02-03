@@ -18,4 +18,6 @@ At its core, Partytown uses Service Workers or Atomics to do its synchronous com
 ## Web API Feature Support
 
 - [Atomics](https://caniuse.com/mdn-javascript_builtins_atomics)
+- [JavaScript Proxy](https://caniuse.com/proxy)
 - [Service Workers](https://caniuse.com/serviceworkers)
+- [Web Workers](https://caniuse.com/webworkers)
