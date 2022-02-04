@@ -21,20 +21,26 @@ Set the script element's `type` attribute to `text/partytown`. For example:
 
 The `connect.facebook.net` response does not provide the correct CORS header, and a reverse proxy should be used. Below is an example of setting the `resolveUrl` config to proxy the `connect.facebook.net` requests. Please see [Proxying Requests](/proxying-requests) for more information.
 
+## Forward Events
+
+Facebook Pixel uses the [fbq()](https://www.facebook.com/business/help/402791146561655?id=1205376682832142) function to send events. In order for Partytown to forward the calls to `window.fbq({..})`, the forward config should add `"fbq"`. Please see [forwarding events and triggers](/forwarding-events) for more information.
+
+## Example Config
+
 ```js
 // https://partytown.builder.io/configuration
 {
   resolveUrl={function(url) {
-    var proxyDomains = [
-      'connect.facebook.net'
-    ];
-    if (proxyDomains.includes(url.hostname)) {
-      const proxyUrl = new URL('https://my-reverse-proxy.com/')
-      proxyUrl.searchParams.append('url', url)
-      return proxyUrl
+    if (url.hostname === "connect.facebook.net") {
+      var proxyUrl = new URL('https://my-reverse-proxy.com/');
+      proxyUrl.searchParams.append('url', url);
+      return proxyUrl;
     }
-  }
+  },
+  forward: [
+    "fbq"
+  ]
 }
 ```
 
-## Forward Events
+Please see the [integration docs](/integrations) for framework specific configuration.
