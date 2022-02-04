@@ -47,3 +47,38 @@ const currentPage = Astro.request.url.pathname;
 		}
 	}
 </style>
+
+<script>
+(function(){
+	if (typeof document !== 'undefined') {
+	 	Array.from(document.querySelectorAll('.content .main-section h2, .content .main-section h3')).forEach(function (header) {
+			if (!header.classList.contains('named-anchor')) {
+				header.classList.add('named-anchor');
+				header.addEventListener('click', function() {
+					document.getElementById(header.id).scrollIntoView();
+					const url = new URL(location.href);
+					url.hash = header.id;
+					history.pushState(null, '', url.pathname + url.search + url.hash);
+				});
+			}
+		});
+
+		if (!document.body.classList.contains('named-anchors')) {
+			document.body.classList.add('named-anchors');
+			window.addEventListener('hashchange', function(ev) {
+				requestAnimationFrame(function() {
+					console.log(location.hash)
+					if (location.hash === '') {
+						window.scrollTo(0, 0);
+					} else {
+						var elm = document.getElementById(location.hash.replace('#', ''));
+						if (elm) {
+							elm.scrollIntoView();
+						}
+					}
+				});
+			});
+		}
+	}
+})()
+</script>

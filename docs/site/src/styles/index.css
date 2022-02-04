@@ -122,6 +122,10 @@ a {
   text-decoration: none;
 }
 
+article .named-anchor {
+  cursor: pointer;
+}
+
 article > section :is(ul, ol) > * + * {
   margin-top: 0.75rem;
 }
