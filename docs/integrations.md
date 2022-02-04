@@ -5,6 +5,7 @@ title: Integration Guides
 Partytown can work with any HTML page, and doesn't require a specific framework. However, to make it easier to use in various frameworks or services, plugins/wrappers can be made for their ecosystem.
 
 - [React](/react)
+- [Nuxt](/nuxt)
 - [HTML (Frameworkless)](/html)
 
 ## Contribute Guides

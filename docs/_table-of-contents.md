@@ -13,6 +13,7 @@
   - [Distribution](/distribution)
 - [Integrations](/integrations)
   - [React](/react)
+  - [Nuxt](/nuxt)
   - [HTML](/html)
 - [Configuration](/configuration)
   - [Overview](/configuration)
