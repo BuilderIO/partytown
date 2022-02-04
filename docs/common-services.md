@@ -2,7 +2,7 @@
 title: Common Services
 ---
 
-Partytown already comes with a few components for commonly used Services. Please see [Services](/services) before manually configuring the `forward` property.
+Below is a list of commonly used [forward configs](forwarding-events). If you would like to add to this list, please [edit this doc](https://github.com/BuilderIO/partytown/edit/main/docs/common-services.md).
 
 | Service                                                                                                                    | Forward Config                                                                |
 | -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
