@@ -19,18 +19,19 @@ We set out to solve this situation, so that apps of all sizes will be able to co
 
 ## Web Workers
 
-Partytown's philosophy is that the main thread should be dedicated to your code, and any scripts that are not required to be in the [critical path](https://developers.google.com/web/fundamentals/performance/critical-rendering-path) should be moved to a web worker. Main thread performance is, without question, more important than web worker thread performance. See the [test pages](/tests/) for some live demos.
+Partytown's philosophy is that the main thread should be dedicated to your code, and any scripts that are not required to be in the [critical path](https://developers.google.com/web/fundamentals/performance/critical-rendering-path) should be moved to a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API). Main thread performance is, without question, more important than web worker thread performance. Please see the [test pages](/tests/) for some live demos.
 
 ![Without Partytown and With Partytown: Your code and third-party code compete for main thread resources](https://user-images.githubusercontent.com/452425/152363590-89d3b9a5-35c7-4c12-8f3e-c8b5ce4bb267.png)
 
 ## Use-Cases
 
-While full webapps "could" run from within Partytown, it's actually best intended for code that doesn't need to be in the [critical rendering path](https://developer.mozilla.org/en-US/docs/Web/Performance/Critical_rendering_path). Most third-party scripts fall into this category, as they're not required for the first-paint. Additionally, the asynchronous natural of most third-party script works well with Partytown, as they can lazily receive updates and post data to their respective services.
+While full webapps "can" run from within Partytown, it's actually best intended for code that doesn't need to be in the [critical rendering path](https://developer.mozilla.org/en-US/docs/Web/Performance/Critical_rendering_path). Most third-party scripts fall into this category, as they're not required for the first-paint. Additionally, the asynchronous natural of most third-party script works well with Partytown, as they can lazily receive user events and post data to their respective services.
 
-Below are just a few examples of third-party scripts that might be a good candidate to run from within a web worker. The goal is to continue validating commonly used services to ensure Partytown has the correct API, but Partytown itself does not hardcode to any specific services. Help us test!
+Below are just a few examples of third-party scripts that might be a good candidate to run from within a web worker. The goal is to continue validating commonly used services to ensure Partytown has the correct API, but Partytown itself does not hardcode to any specific services. Help us test and join the conversation in [Partytown's Discord](https://discord.gg/tw5qMfgQ)!
 
 - [Google Tag Manager (GTM)](https://marketingplatform.google.com/about/tag-manager/)
 - [Google Analytics (GA)](https://analytics.google.com/)
+- [Facebook Pixel](https://www.facebook.com/business/learn/facebook-ads-pixel)
 - [Mixpanel](https://mixpanel.com/)
 - [Hubspot](https://www.hubspot.com/)
 - [Segment](https://segment.com/)
