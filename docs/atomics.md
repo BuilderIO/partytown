@@ -48,6 +48,13 @@ Below is an example of setting the `crossorigin` attribute on an image:
 - Mobile:
   - Safari 15.2+ (Dec 2021)
 
+## Test Atomics
+
+You can test if a browser is capable of enabling Atomics by visiting these test pages which respond with the correct headers.
+
+- [Test COEP "credentialless"](https://partytown.builder.io/tests/atomics/)
+- [Test COEP "require-corp"](https://partytown.builder.io/tests/atomics/?coep=require-corp)
+
 ## Additional Resources
 
 - [Making your website "cross-origin isolated" using COOP and COEP](https://web.dev/coop-coep/)
