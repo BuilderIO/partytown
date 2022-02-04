@@ -2,7 +2,7 @@
 title: Atomics
 ---
 
-Partytown will use [Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics) when they're enabled by the browser. Some of the advantages include:
+Partytown will use [Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics) and [SharedArrayBuffer](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/SharedArrayBuffer) when they're available by the browser. Some of the advantages include:
 
 - 10x faster communication between threads compared to the service-worker requests
 - 5% smaller build file compared to the service-worker build
