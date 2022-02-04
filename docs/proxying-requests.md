@@ -14,7 +14,7 @@ When the `<script>` element is appended to the `<head>` using this traditional a
 
 However, because Partytown requests the scripts within a web worker using [fetch()](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API), then the script's response _requires_ the correct CORS headers.
 
-Many third-party scripts already provide the correct CORS headers, but not all do. For services that do not add the correct headers, then a [reverse proxy](#Reverse-Proxy) to another domain must be used in order to provide the CORS headers.
+Many third-party scripts already provide the correct CORS headers, but not all do. For services that do not add the correct headers, then a [reverse proxy](#reverse-Proxy) to another domain must be used in order to provide the CORS headers.
 
 #### CORS Response Header
 
@@ -24,7 +24,7 @@ Access-Control-Allow-Origin: *
 
 ## Configuring URL Proxies
 
-When executed from within Partytown, every URL is resolved by Partytown, which also gives users the ability to inspect and modify any and every URL being resolved. The `resolveUrl()` config can be used to check for a specific URL, and optionally return the proxied URL instead. For example, in the code below we're checking if the URL to be resolved is for Google Analytics, and if so, return a different URL that points to a [reverse proxy](#Reverse-Proxy).
+When executed from within Partytown, every URL is resolved by Partytown, which also gives users the ability to inspect and modify any and every URL being resolved. The `resolveUrl()` config can be used to check for a specific URL, and optionally return the proxied URL instead. For example, in the code below we're checking if the URL to be resolved is for Google Analytics, and if so, return a different URL that points to a [reverse proxy](#reverse-Proxy).
 
 ### React `<Partytown/>` Config Example
 
