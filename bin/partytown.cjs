@@ -1,31 +1,31 @@
 #!/usr/bin/env node
 
 async function run() {
-  const args = process.argv.slice(2);
-  const task = args[0];
+  const task = process.argv.slice(2).filter((a) => !a.startsWith('-'))[0];
+  const args = process.argv.slice(2).filter((a) => a !== task);
 
-  if (!task) {
-    panic('Missing partytown task argument. Example command: partytown copylib dest/directory');
-  }
-
-  switch (task) {
-    case 'copylib': {
-      await copyLibTask(args);
-      break;
-    }
-    default: {
-      panic('Unknown partytown task: ' + task);
-    }
+  if (task === 'help' || args.includes('--help') || args.includes('-h')) {
+    help();
+  } else if (task === 'version' || args.includes('--version') || args.includes('-v')) {
+    console.log(version());
+  } else if (task === 'copylib') {
+    await copyLibTask(args);
+  } else {
+    panic('Unknown partytown task: ' + task);
   }
 }
 
 async function copyLibTask(args) {
   try {
     const utils = require('../utils/index.cjs');
-    const destDir = args[1];
-    const result = await utils.copyLibFiles(destDir);
+    const destDir = args.filter((a) => !a.startsWith('-'))[0];
+    const logResult = !args.includes('--silent');
+    const includeDebugDir = !args.includes('--no-debug');
+    const result = await utils.copyLibFiles(destDir, {
+      debugDir: includeDebugDir,
+    });
 
-    if (!args.includes('--silent')) {
+    if (logResult) {
       console.log('Partytown lib copied to: ' + result.dest);
     }
   } catch (e) {
@@ -33,8 +33,21 @@ async function copyLibTask(args) {
   }
 }
 
+function help() {
+  console.log(``);
+  console.log(`Partytown (${version()}):`);
+  console.log(``);
+  console.log(`  copylib <destDir> [--no-debug | --silent]`);
+  console.log(``);
+}
+
+function version() {
+  return require('../package.json').version;
+}
+
 function panic(msg) {
-  console.error('❌ ' + msg);
+  console.error('\n❌ ' + msg);
+  help();
   process.exit(1);
 }
 

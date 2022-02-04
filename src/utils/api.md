@@ -5,10 +5,15 @@
 ```ts
 
 // @public
-export function copyLibFiles(destDir: string): Promise<{
+export function copyLibFiles(destDir: string, opts?: CopyLibFilesOptions): Promise<{
     src: string;
     dest: string;
 }>;
+
+// @public (undocumented)
+export interface CopyLibFilesOptions {
+    debugDir?: boolean;
+}
 
 // @public
 export function libDirPath(): string;

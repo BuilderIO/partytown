@@ -29,23 +29,27 @@ export function libDirPath() {
  * This utility function is to make it easier to locate the source library files
  * and copy them to your server's correct location, for example: `./public/~partytown/`.
  *
+ * By default, both the minified and debug builds are copied to the destination.
+ * However, by setting the `debugDir` option to `false`, the debug directory will
+ * not be copied.
+ *
  * @public
  */
-export async function copyLibFiles(destDir: string) {
+export async function copyLibFiles(destDir: string, opts: CopyLibFilesOptions = {}) {
   if (typeof destDir !== 'string' || destDir.length === 0) {
     throw new Error('Missing destDir');
   }
   if (!isAbsolute(destDir)) {
     destDir = resolve(process.cwd(), destDir);
   }
-  await copyLibDir(libDirPath(), destDir);
+  await copyLibDir(libDirPath(), destDir, opts);
   return {
     src: libDirPath(),
     dest: destDir,
   };
 }
 
-async function copyLibDir(srcDir: string, destDir: string) {
+async function copyLibDir(srcDir: string, destDir: string, opts: CopyLibFilesOptions) {
   try {
     await mkdir(destDir, { recursive: true });
   } catch (e) {}
@@ -61,8 +65,21 @@ async function copyLibDir(srcDir: string, destDir: string) {
       if (s.isFile()) {
         await copyFile(srcPath, destPath);
       } else if (s.isDirectory()) {
-        await copyLibDir(srcPath, destPath);
+        if (srcName === 'debug' && opts.debugDir === false) {
+          return;
+        }
+        await copyLibDir(srcPath, destPath, opts);
       }
     })
   );
+}
+
+/**
+ * @public
+ */
+export interface CopyLibFilesOptions {
+  /**
+   * When set to `false` the debug directory will not be copied.
+   */
+  debugDir?: boolean;
 }
