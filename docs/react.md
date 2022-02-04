@@ -16,3 +16,11 @@ export function Head() {
   );
 }
 ```
+
+## React Forward Prop
+
+Example of setting the [forward](/forwarding-events) config with the Partytown component.
+
+```jsx
+<Partytown forward={['dataLayer.push', 'fbq']} />
+```

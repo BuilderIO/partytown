@@ -13,7 +13,7 @@ export interface PartytownProps extends PartytownConfig {}
 
 /**
  * The React `<Partytown/>` component should be placed within the `<head>`
- * of the document, and after any integrations such as `<GoogleTagManager/>`.
+ * of the document`.
  *
  * @public
  */

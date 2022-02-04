@@ -17,3 +17,18 @@ While the `partytown.js` file _could_ be an external request, it's recommended t
   </head>
 </html>
 ```
+
+## Forward Config
+
+The `forward` property is an array of strings, with each string representing a variable that should be patched on `window`. Below is a vanilla example of setting up the forwarding for [Google Tag Manager](https://developers.google.com/tag-manager/devguide) and [Facebook Pixel Events](https://www.facebook.com/business/help/952192354843755?id=1205376682832142).
+
+```html
+<script>
+  partytown = {
+    forward: ['dataLayer.push', 'fbq'],
+  };
+</script>
+<script>
+  /* Inlined Partytown Snippet */
+</script>
+```
