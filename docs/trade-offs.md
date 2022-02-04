@@ -2,14 +2,34 @@
 title: Trade-Offs
 ---
 
-Nothing is without trade-offs. Using Partytown to orchestrate third-party scripts vs adding them to your pages has the following considerations to keep in mind:
+Nothing is without trade-offs. Using Partytown to orchestrate third-party scripts vs adding them to your pages has the following considerations:
 
-- Partytown library must be hosted from the same origin as the HTML document (it can however, execute third-party scripts from another origin, such as a CDN).
-- DOM operations within the worker are purposely throttled, slowing down execution compared to the same code running on the main thread. (We also see this as a feature.)
-- A total of three threads are used: Main Thread, Web Worker, Service Worker. Note that [Atomics](/atomics) do not have this issue.
-- Not ideal for scripts that are required to block the main document (blocking is bad).
-- `event.preventDefault()` will have no effect, similar to [passive event listeners](https://github.com/WICG/EventListenerOptions/blob/gh-pages/explainer.md).
-- Trade-offs with intercepted network requests:
-  - Many service worker network requests may show up in the network tab.
-  - Partytown service worker requests are intercepted by the client, and transfer `0 bytes` over the network.
-  - [Lighthouse scores](https://web.dev/performance-scoring/) are unaffected by the intercepted requests (any work on thread other than `main` has no impact on Lighthouse).
+## Intercepted Network Requests
+
+You'll notice in the network tab there may be hundreds of requests to `proxytown`. Even though these requests are listed in the network tab, each of these are intercepted by the service worker and handled by Partytown locally, and they are not external HTTP requests. Using these locally intercepted network requests is how the [service worker communication layer](/how-does-partytown-work#service-worker) is able to work.
+
+These requests showing up are more of an annoyance than anything else, since they shouldn't be affecting performance or [Lighthouse scores](https://web.dev/performance-scoring/). Additionally, they can give you an insight into what certain third-party scripts are up to. See the [debugging documentation](/debugging) for more info.
+
+## Throttled DOM Operations
+
+DOM operations within the worker are purposely throttled, slowing down their execution compared to the same code running on the main thread. (We also see this as a feature.) Because their code is running in another thread and needs to send and receive data between the two, it may take a few milliseconds to perform a blocking operation. Partytown does however batch most operations together to reduce the calls between threads.
+
+## UI Intensive Third-Party Scripts
+
+For a third-party script that is UI intensive, meaning the script builds up a mini-app within your page, Partytown may not be best suited for that script. For example, the third-party script may popup a dialog with a form inside of it.
+
+Every script is different, and each are performing operations in different ways, so it's difficult to state exactly which services do and do not work well with Partytown. While Partytown may work great for some UI implementations, it may not work well for others. For this reason, Partytown is opt-in, and you can explicitly set which scripts to use it on.
+
+Partytown is best suited for third-party scripts such as Google Tag Manager or Facebook Pixel, since they're only handling user events and lazily posting data to their services in the background. Third-party scripts that insert a large amount of DOM nodes to a page may not be the best candidates.
+
+## Events Cannot Prevent Default
+
+Events handled by third-party scripts that call `event.preventDefault()` will have no effect. Partytown is able to be blocking when the code is ran within the web worker, but not in the other direction.
+
+For example, when a user clicks a link on the main thread, a third-party script may have an event handler on that same link, which may have [event.preventDefault()](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault). By the time the web worker receives and event that the link was clicked, it is no longer a synchronous operation and calling `preventDefault()` has no effect. As a side note, you could also see this as a feature when third-party scripts are abusing `scroll` events without using passive event listeners.
+
+- Partytown library must be hosted from the same origin as the HTML document (it can however, execute third-party scripts from another origin, such as a CDN). More info at [Copying Library Files](/copy-library-files).
+
+## Service Worker
+
+For the Service Worker build, a total of three threads are used: Main Thread, Web Worker, and Service Worker. Note that the [Atomics](/atomics) build only uses two threads.
