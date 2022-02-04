@@ -1,7 +1,6 @@
 # Docs Table Of Contents
 
 - [Introduction](/)
-  - [Improving Performance](/improving-performance)
   - [How Does It Work?](/how-does-partytown-work)
   - [Trade-Offs](/trade-offs)
   - [Browser Support](/browser-support)

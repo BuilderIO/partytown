@@ -5,6 +5,8 @@ description: Partytown - Run third-party scripts from a web worker
 
 Partytown is a lazy-loaded library to help relocate resource intensive scripts into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), and off of the [main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread). Its goal is to help speed up sites by dedicating the main thread to your code, and offloading third-party scripts to a web worker.
 
+Even with a fast and highly tuned following all of today's best practices, it's all too common for your performance wins to be erased the moment third-party scripts are added. By third-party scripts we mean code that is embedded within your site, but not directly under your control. A few examples include: analytics, metrics, ads, A/B testing, trackers, etc.
+
 ## Goals
 
 We set out to solve this situation, so that apps of all sizes will be able to continue to use third-party scripts without the performance hit. Some of Partytown's goals include:
@@ -22,6 +24,20 @@ We set out to solve this situation, so that apps of all sizes will be able to co
 Partytown's philosophy is that the main thread should be dedicated to your code, and any scripts that are not required to be in the [critical path](https://developers.google.com/web/fundamentals/performance/critical-rendering-path) should be moved to a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API). Main thread performance is, without question, more important than web worker thread performance. Please see the [test pages](/tests/) for some live demos.
 
 ![Without Partytown and With Partytown: Your code and third-party code compete for main thread resources](https://user-images.githubusercontent.com/452425/152363590-89d3b9a5-35c7-4c12-8f3e-c8b5ce4bb267.png)
+
+## Negative Impacts from Third-Party Scripts
+
+Below is a summary of potential issues after add third-party scripts, referenced from [Loading Third-Party JavaScript](https://developers.google.com/web/fundamentals/performance/optimizing-content-efficiency/loading-third-party-javascript):
+
+- Firing too many network requests to multiple servers. The more requests a site has to make, the longer it can take to load.
+- Sending too much JavaScript which keeps the main thread busy. Too much JavaScript can block DOM construction, delaying how quickly pages can render.
+- CPU-intensive script parsing and execution can delay user interaction and cause battery drain.
+- Third-party scripts that were loaded without care can be a single-point of failure (SPOF).
+- Insufficient HTTP caching, forcing resources to be fetched from the network often.
+- The use of legacy APIs (e.g `document.write()`), which are known to be harmful to the user experience.
+- Excessive DOM elements or expensive CSS selectors.
+- Including multiple third-party embeds that can lead to multiple frameworks and libraries being pulled in several times, which exacerbates the performance issues.
+- Third-party scripts also often use embed techniques that can block `window.onload`, even if the embed is using async or defer.
 
 ## Use-Cases
 
