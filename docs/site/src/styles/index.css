@@ -264,11 +264,12 @@ th {
 }
 td,
 th {
-  padding: 6px;
+  padding: 6px 10px;
   text-align: left;
 }
 
-table code {
+table code,
+table td:first-child {
   white-space: nowrap;
 }
 
