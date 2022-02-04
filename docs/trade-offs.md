@@ -2,7 +2,7 @@
 title: Trade-Offs
 ---
 
-Nothing is without trade-offs. Using Partytown to orchestrate third-party scripts vs adding them to your pages has the following considerations:
+Nothing is without trade-offs. Using Partytown to orchestrate third-party scripts vs. adding them to your pages the traditional way has the following considerations:
 
 ## Intercepted Network Requests
 
@@ -12,7 +12,9 @@ These requests showing up are more of an annoyance than anything else, since the
 
 ## Throttled DOM Operations
 
-DOM operations within the worker are purposely throttled, slowing down their execution compared to the same code running on the main thread. (We also see this as a feature.) Because their code is running in another thread and needs to send and receive data between the two, it may take a few milliseconds to perform a blocking operation. Partytown does however batch most operations together to reduce the calls between threads.
+DOM operations within the worker are purposely throttled, slowing down their execution compared to the same code running on the main thread. (We also see this as a feature.) Because their code is running in another thread and needs to send and receive data between the two, it may take a few milliseconds to perform a blocking operation. This ties into why [UI intensive scripts](#ui-intensive-third-party-scripts) may not be the best fit for Partytown.
+
+Partytown does however batch most operations together to reduce the calls between threads.
 
 ## UI Intensive Third-Party Scripts
 
@@ -22,13 +24,15 @@ Every script is different, and each are performing operations in different ways,
 
 Partytown is best suited for third-party scripts such as Google Tag Manager or Facebook Pixel, since they're only handling user events and lazily posting data to their services in the background. Third-party scripts that insert a large amount of DOM nodes to a page may not be the best candidates.
 
+## Third-Party Scripts Without CORS Headers
+
+While most third-party scripts add the correct [Cross-Origin Resource Sharing (CORS) headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS), such as `Access-Control-Allow-Origin: *`, not all do. Please see the [Proxying Requests](/proxying-requests) documentation on how to use Partytown with any services that do not add the correct headers.
+
 ## Events Cannot Prevent Default
 
 Events handled by third-party scripts that call `event.preventDefault()` will have no effect. Partytown is able to be blocking when the code is ran within the web worker, but not in the other direction.
 
 For example, when a user clicks a link on the main thread, a third-party script may have an event handler on that same link, which may have [event.preventDefault()](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault). By the time the web worker receives and event that the link was clicked, it is no longer a synchronous operation and calling `preventDefault()` has no effect. As a side note, you could also see this as a feature when third-party scripts are abusing `scroll` events without using passive event listeners.
-
-- Partytown library must be hosted from the same origin as the HTML document (it can however, execute third-party scripts from another origin, such as a CDN). More info at [Copying Library Files](/copy-library-files).
 
 ## Service Worker
 
