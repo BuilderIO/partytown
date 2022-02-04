@@ -3,13 +3,13 @@
 .DS_Store
 /dist/
 /docs/site/dist/
+/docs/site/public/~partytown/
 /docs/site/src/table-of-contents.ts
 /docs/site/src/pages/
 node_modules/
 /integration/
 /lib/
 /react/
-/tests/~partytown/
 /tests/nextjs/public/
 /tests/benchmarks/screenshots/
 /tests/videos/

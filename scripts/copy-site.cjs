@@ -24,7 +24,7 @@ async function copySiteDist() {
     })
   );
 
-  await copy(join(rootDir, 'lib'), join(dist, '~partytown'));
+  await copy(join(rootDir, 'lib'), join(dist, '~partytown'), { overwrite: true });
 }
 
 copySiteDist();

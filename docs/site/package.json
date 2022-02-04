@@ -3,15 +3,17 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "dev": "astro dev",
-    "start": "astro dev",
-    "build": "npm run docs && astro build",
+    "dev": "npm run partytown && astro dev",
+    "start": "npm run partytown && astro dev",
+    "build": "npm run partytown && npm run docs && astro build",
     "preview": "astro preview",
-    "docs": "node ./load-docs.mjs"
+    "docs": "node ./load-docs.mjs",
+    "partytown": "partytown copylib public/~partytown"
   },
   "devDependencies": {
     "@astrojs/renderer-preact": "^0.4.0",
-    "astro": "^0.22.20",
+    "@builder.io/partytown": "^0.2.4",
+    "astro": "^0.23.0-next.1",
     "domino": "^2.1.6",
     "front-matter": "^4.0.2",
     "marked": "^4.0.12"
