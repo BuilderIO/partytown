@@ -21,7 +21,7 @@ Cross-Origin-Embedder-Policy: credentialless
 Cross-Origin-Opener-Policy: same-origin
 ```
 
-- [Cross-Origin-Embedder-Policy (COEP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Embedder-Policy) response header prevents a document from loading any cross-origin resources that don't explicitly grant the document permission. At the time of writing, "credentialless" is not a supported value in Safari, so Safari will fallback to using the Service Worker communication.
+- [Cross-Origin-Embedder-Policy (COEP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Embedder-Policy) response header prevents a document from loading any cross-origin resources that don't explicitly grant the document permission. At the time of writing, `credentialless` is not a supported value in Safari, so Safari will fallback to using the Service Worker communication. An alternative to `credentialless` is to use `require-corp`, which does work in Safari too. Please see [Setting Cross-Origin Attribute](#setting-cross-origin-attribute) for more info.
 - [Cross-Origin-Opener-Policy (COOP)](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cross-Origin-Opener-Policy) response header allows you to ensure a top-level document does not share a browsing context group with cross-origin documents.
 
 ## Setting Cross-Origin Attribute
