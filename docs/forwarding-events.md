@@ -20,4 +20,10 @@ However, since GTM and Facebook Pixel were actually loaded in the web worker, th
 
 Notice the forward configs are just strings, not actual objects. We're using strings here so we can easily serialize what service variable was called, along with the function argument values. When the web worker receives the information, it then knows how to correctly apply the call and arguments that were fired from the main thread.
 
+## Integrations
+
 Please see the [Integrations](/integrations) section for examples using the `forward` config.
+
+## Common Services
+
+Please see the [Common Services](/common-services) section for a list of known configs for various services.
