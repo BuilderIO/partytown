@@ -46,7 +46,10 @@ Below is an example of setting the `crossorigin` attribute on an image:
   - Firefox 78+ (June 2020)
   - Safari 15.2+ (Dec 2021)
 - Mobile:
-  - Safari 15.2+ (Dec 2021)
+  - Android, Chrome 97+
+  - Android, Edge 97+
+  - Android, Firefox 98+
+  - iOS, Safari 15.2+ (Dec 2021)
 
 ## Test Atomics
 
