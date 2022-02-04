@@ -20,7 +20,7 @@
   - [Forwarding Events](/forwarding-events)
   - [Sandboxing](/sandboxing)
   - [Debugging](/debugging)
-- [Third-Party Services](/third-party-services)
+- [Third-Party Services](/common-services)
   - [Common Services](/common-services)
   - [Facebook Pixel](/facebook-pixel)
   - [Google Tag Manager](/google-tag-manager)
