@@ -25,7 +25,7 @@ There is a first-class [Nuxt integration for partytown](https://github.com/nuxt-
 
 3. Add `type: 'text/partytown'` attribute to any scripts you want to be handled by partytown.
 
-   ```vue
+   ```html
    <template>
      <div>
        <Script type="text/partytown" src="https://example.com/analytics.js" />
