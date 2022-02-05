@@ -7,6 +7,8 @@ Partytown is a lazy-loaded library to help relocate resource intensive scripts i
 
 Even with a fast and highly tuned following all of today's best practices, it's all too common for your performance wins to be erased the moment third-party scripts are added. By third-party scripts we mean code that is embedded within your site, but not directly under your control. A few examples include: analytics, metrics, ads, A/B testing, trackers, etc.
 
+Partytown is currently in [Beta](https://www.builder.io/blog/partytown-is-now-in-beta).
+
 ## Goals
 
 We set out to solve this situation, so that apps of all sizes will be able to continue to use third-party scripts without the performance hit. Some of Partytown's goals include:
@@ -58,4 +60,4 @@ Below are just a few examples of third-party scripts that might be a good candid
 - <a href="https://dev.to/adamdbradley/introducing-partytown-run-third-party-scripts-from-a-web-worker-2cnp" target="_blank" rel="noopener">Introducing Partytown: Run Third-Party Scripts From a Web Worker</a>
 - <a href="https://dev.to/adamdbradley/how-partytown-s-sync-communication-works-4244" target="_blank" rel="noopener">How Partytown's Sync Communication Works</a>
 - <a href="https://www.builder.io/blog/how-we-cut-99-percent-js-with-qwik-and-partytown" target="_blank" rel="noopener">How we cut 99% of our JavaScript with Qwik + Partytown</a>
-- <a href="https://www.builder.io/blog/partytown-beta-release" target="_blank" rel="noopener">Partytown is now in Beta</a>
+- <a href="https://www.builder.io/blog/partytown-is-now-in-beta" target="_blank" rel="noopener">Partytown is now in Beta</a>

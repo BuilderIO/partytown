@@ -1,9 +1,7 @@
 ---
-import * as CONFIG from '../../config.ts';
 import SkipToContent from './SkipToContent.astro';
 import SidebarToggle from './SidebarToggle.tsx';
 
-const { currentPage } = Astro.props;
 ---
 
 <header>
@@ -16,6 +14,7 @@ const { currentPage } = Astro.props;
 			<a class="logo-image" href="/">
 				<img src="partytown-logo.png" alt="Partytown Logo"/>
 			</a>
+			<a href="https://www.builder.io/blog/partytown-is-now-in-beta" target="_blank" class="beta">Beta</a>
 		</div>
 		<div style="flex-grow: 1;"></div>
 	</nav>
@@ -35,6 +34,21 @@ const { currentPage } = Astro.props;
 		width: 171px;
 		height: 42px;
 		max-width: initial;
+	}
+
+	.beta {
+		margin-left: 4px;
+		background: #ddd;
+		border-radius: 10px;
+		padding: 2px 8px;
+		text-decoration: none;
+		color:white;
+		border: 1px solid transparent;
+	}
+	.beta:hover {
+		border-color: #ddd;
+		color: #ddd;
+		background-color: white;
 	}
 
 	.nav-wrapper {
