@@ -18,26 +18,4 @@ The [debug config](/configuration) must be `true` in order to see more verbose l
 | `logSendBeaconRequests` | Log navigator.sendBeacon() requests |
 | `logStackTraces`        | Log stack traces                    |
 
-Example enabling debugging and logging all setters:
-
-```html
-<html>
-  <head>
-    <title>Log Getters</title>
-    <script>
-      partytown = {
-        debug: true,
-        logGetters: true,
-      };
-    </script>
-    <script>
-      /* Inlined Partytown Snippet */
-    </script>
-  </head>
-  <body>
-    ...
-  </body>
-</html>
-```
-
 Please see the [debug file docs](/distribution#libdebug) more information about the distribution.

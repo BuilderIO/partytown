@@ -4,24 +4,31 @@ title: Astro
 
 The easiest way to add Partytown to a [Astro](https://astro.build/) site is adding the snippet to a `<script>` in the `<head>` using the `partytownSnippet(config)` function.
 
-1. Install `@builder.io/partytown`
+## Install
 
 ```bash
 npm install @builder.io/partytown
 ```
 
-2. Import the `@builder.io/partytown/integration` submodule into the header of the `.astro` file, and create the snippet HTML with the `partytownSnippet(config)` function.
+## Configure
+
+Import the `@builder.io/partytown/integration` submodule into the header of the `.astro` file, and create the snippet HTML with the `partytownSnippet(config)` function. The optional Partytown [configuration](/configuration) is the first argument.
 
 ```tsx
 ---
 import { partytownSnippet } from '@builder.io/partytown/integration';
 const partytownSnippetHtml = partytownSnippet({
-  debug: true
+  debug: true,
+  forward: ['dataLayer.push']
 });
 ---
 ```
 
-3. Add the scripts to the body of the same `.astro` file. (Note that the `set:html` attribute is current available in `astro@next`.)
+## Partytown Script
+
+Add the scripts to the body of the same `.astro` file. (Note that the `set:html` attribute is current available in `astro@next`.)
+
+Add the `type="text/partytown"` [attribute](/partytown-scripts) for each script that should run from a web worker.
 
 ```jsx
 <script set:html={partytownSnippetHtml}></script>
@@ -31,7 +38,9 @@ const partytownSnippetHtml = partytownSnippet({
 </script>
 ```
 
-4. Copy library files to `public/~partytown`. How the files are copied or served from your site is up each site's setup. A `partytown copylib` CLI [copy task](/copy-library-files) has been provided for convenience which helps copy the Partytown library files to the public directory. Below is an example of creating a "partytown" NPM script which runs before the `astro build` command:
+## Copy Library Files
+
+Copy library files to `public/~partytown`. How the files are copied or served from your site is up each site's setup. A `partytown copylib` CLI [copy task](/copy-library-files) has been provided for convenience which helps copy the Partytown library files to the public directory. Below is an example of creating a "partytown" NPM script which runs before the `astro build` command:
 
 ```json
 "scripts": {

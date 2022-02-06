@@ -25,7 +25,7 @@ What we mean by "vanilla config", is that the Partytown config can be set withou
       };
     </script>
     <script>
-      /* Inlined Partytown Snippet */
+      // Inlined Partytown Snippet
     </script>
   </head>
   <body>
@@ -33,3 +33,5 @@ What we mean by "vanilla config", is that the Partytown config can be set withou
   </body>
 </html>
 ```
+
+Please see the [integration guides](/integrations) for more information.

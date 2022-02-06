@@ -7,28 +7,43 @@ At the lowest level, Partytown is not tied to one specific framework or build to
 While the `partytown.js` file _could_ be an external request, it's recommended to inline the script instead.
 
 ```html
-<html>
-  <head>
-    <title>My Site</title>
-    <script>
-      <!-- inline partytown.js here -->
-    </script>
-    <script type="text/partytown" src="https://example.com/analytics.js"></script>
-  </head>
-</html>
+<head>
+  <script>
+    // Inlined Partytown Snippet
+  </script>
+  <script type="text/partytown" src="https://example.com/analytics.js"></script>
+</head>
 ```
 
-## Forward Config
+## Configure
 
-The [forward config](/forwarding-events) is an array of strings, with each string representing a variable that should be patched on `window`. Below is a vanilla example of setting up the forwarding for [Google Tag Manager](https://developers.google.com/tag-manager/devguide) and [Facebook Pixel Events](https://www.facebook.com/business/help/952192354843755?id=1205376682832142).
+The [configuration](/configuration) should be added to `window` using the `partytown` global object.
+
+Below is an HTML example of setting up the [forwarding](/forwarding-events) for [Google Tag Manager](/google-tag-manager). Note that the config is before the inlined partytown script.
 
 ```html
-<script>
-  partytown = {
-    forward: ['dataLayer.push', 'fbq'],
-  };
-</script>
-<script>
-  /* Inlined Partytown Snippet */
+<head>
+  <script>
+    partytown = {
+      forward: ['dataLayer.push'],
+    };
+  </script>
+  <script>
+    // Inlined Partytown Snippet
+  </script>
+</head>
+```
+
+## Partytown Script
+
+Add the `type="text/partytown"` [attribute](/partytown-scripts) for each script that should run from a web worker.
+
+```html
+<script type="text/partytown">
+  // inlined third-party script
 </script>
 ```
+
+## Copy Library Files
+
+How the files are copied or served from your site is up each site's setup. A `partytown copylib` CLI [copy task](/copy-library-files) has been provided for convenience which helps copy the Partytown library files to the public directory.

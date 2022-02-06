@@ -4,31 +4,39 @@ title: Nuxt
 
 There is a first-class [Nuxt integration for partytown](https://github.com/nuxt-community/partytown-module).
 
-1. Add `@nuxtjs/partytown` dependency to your project
+## Install
 
-   ```bash
-   yarn add @nuxtjs/partytown # or npm install @nuxtjs/partytown
-   ```
+Add `@nuxtjs/partytown` dependency to your project.
 
-2. Add `@nuxtjs/partytown` to the `modules` section of `nuxt.config.ts`
+```bash
+yarn add @nuxtjs/partytown # or npm install @nuxtjs/partytown
+```
 
-   ```js
-   import { defineNuxtConfig } from 'nuxt3';
+## Configure
 
-   export default defineNuxtConfig({
-     modules: ['@nuxtjs/partytown'],
-     partytown: {
-       /* any partytown-specific configuration */
-     },
-   });
-   ```
+Add `@nuxtjs/partytown` to the `modules` section of `nuxt.config.ts`. Use the `partytown` property for the [configuration](/configuration).
 
-3. Add `type: 'text/partytown'` attribute to any scripts you want to be handled by partytown.
+```js
+import { defineNuxtConfig } from 'nuxt3';
 
-   ```html
-   <template>
-     <div>
-       <Script type="text/partytown" src="https://example.com/analytics.js" />
-     </div>
-   </template>
-   ```
+export default defineNuxtConfig({
+  modules: ['@nuxtjs/partytown'],
+  partytown: {
+    /* any partytown-specific configuration */
+  },
+});
+```
+
+## Partytown Script
+
+Add `type: 'text/partytown'` [attribute](/partytown-scripts) to any scripts you want to be handled by partytown.
+
+```html
+<template>
+  <div>
+    <script type="text/partytown" src="https://example.com/analytics.js" />
+  </div>
+</template>
+```
+
+Note that the [Nuxt Partytown](https://github.com/nuxt-community/partytown-module) module already handles copying the library files to the correct location.
