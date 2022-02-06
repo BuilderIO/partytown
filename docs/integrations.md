@@ -6,6 +6,7 @@ Partytown can work with any HTML page, and doesn't require a specific framework.
 
 - [Astro](/astro)
 - [HTML (Frameworkless)](/html)
+- [Next.js](/nextjs)
 - [Nuxt](/nuxt)
 - [React](/react)
 

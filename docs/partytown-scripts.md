@@ -2,41 +2,24 @@
 title: Partytown Scripts
 ---
 
-## Add Partytown type attribute to Third-Party Scripts
+## Partytown Script Type
 
-Add the `type="text/partytown"` attribute to each individual third-party script to run from a web worker.
+Add the `type="text/partytown"` attribute to each individual third-party script to run from a web worker. Note that each script is opt-in, meaning that the updated `type` attribute should only be added to scripts that should run with Partytown. Partytown will _not_ automatically upgrade any scripts unless this attribute is added.
 
 ```diff
 - <script>...</script>
 + <script type="text/partytown">...</script>
 ```
 
-## Add Partytown snippet to the `<head>`
+## Why `type="text/partytown"`?
 
-How the Partytown snippet script is added to the `<head>` is different for every website. While the script could be an external request, we recommend to inline the script instead since it's so small, and it's better for performance. If you're using React, we recommend the `<Partytown/>` [React component](#React).
+The `type="text/partytown"` attribute does two things:
 
-You can find the `partytown.js` script within `@builder.io/partytown/lib`. See the [distribution](/distribution) docs for more info on the `@builder.io/partytown` package files.
+1. Informs the browser to _not_ process the script.
+2. Provides a query selector so Partytown can find all the scripts to run from within the web worker.
 
-### React
+By giving the script a [type attribute](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/script#attr-type) which the browser does not recognize: "The embedded content is treated as a data block which won't be processed by the browser."
 
-The React integration can be found in the `@builder.io/partytown/react` submodule. The following is an example of including the `<Partytown/>` component in a Nextjs page. Notice the `<Partytown/>` component is in the `<Head>`, and the example analytics script has the `type="text/partytown"` attribute.
+## Integrations
 
-```jsx
-import Head from 'next/head';
-import { Partytown } from '@builder.io/partytown/react';
-
-const Home = () => {
-  return (
-    <>
-      <Head>
-        <title>My App</title>
-        <Partytown />
-        <script src="https://example.com/analytics.js" type="text/partytown"></script>
-      </Head>
-      <main>...</main>
-    </>
-  );
-};
-
-export default Home;
-```
+Please see the [integration guides](/integrations) for more information on how to setup Partytown.

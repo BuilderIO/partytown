@@ -13,6 +13,7 @@
 - [Integrations](/integrations)
   - [Astro](/astro)
   - [HTML](/html)
+  - [Next.js](/nextjs)
   - [Nuxt](/nuxt)
   - [React](/react)
 - [Configuration](/configuration)
