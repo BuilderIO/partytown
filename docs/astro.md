@@ -2,7 +2,7 @@
 title: Astro
 ---
 
-The easiest way to add Partytown to a [Astro](https://astro.build/) site is adding the snippet to a `<script>` in the `<head>` using the `partytownSnippet(config)` function.
+The easiest way to add Partytown to an [Astro](https://astro.build/) site is adding the snippet to a `<script>` in the `<head>` using the `partytownSnippet(config)` function.
 
 ## Install
 
