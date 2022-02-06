@@ -1,8 +1,8 @@
 ---
-title: Next.js
+title: NextJS
 ---
 
-The Next.js setup is largely the same as the [React integration guide](/react), except it goes further into how to add to the [Next.js](https://nextjs.org/) framework's `<Head/>` component.
+The Next.js setup is largely the same as the [React integration guide](/react), except it goes further into how to add to the [NextJS](https://nextjs.org/) framework's `<Head/>` component.
 
 ## Install
 
