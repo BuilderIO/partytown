@@ -23,12 +23,19 @@ const partytownSnippetHtml = partytownSnippet({
 
 3. Add the scripts to the body of the same `.astro` file. (Note that the `set:html` attribute is current available in `astro@next`.)
 
-```html
-<!-- Partytown Script -->
-<script set:html="{partytownSnippetHtml}"></script>
+```jsx
+<script set:html={partytownSnippetHtml}></script>
 
-<!-- Example third-partyt script -->
 <script type="text/partytown">
   // inlined third-party script
 </script>
+```
+
+4. Copy library files to `public/~partytown`. How the files are copied or served from your site is up each site's setup. A `partytown copylib` CLI [copy task](/copy-library-files) has been provided for convenience which helps copy the Partytown library files to the public directory. Below is an example of creating a "partytown" NPM script which runs before the `astro build` command:
+
+```json
+"scripts": {
+  "build": "npm run partytown && astro build",
+  "partytown": "partytown copylib public/~partytown"
+}
 ```
