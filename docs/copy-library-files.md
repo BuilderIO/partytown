@@ -6,7 +6,7 @@ The [@builder.io/partytown](https://www.npmjs.com/package/@builder.io/partytown)
 
 The `/~partytown/` directory should serve the static files found within [@builder.io/partytown/lib](https://unpkg.com/browse/@builder.io/partytown/). The quickest way is to copy the `lib` directory into a public `/~partytown` directory within your static server. Another option would be to set up a copy task within the project's bundler, or create a build step.
 
-You can also use the [lib config](/configuration) if your site must host these files from a directory other than the default `/~partytown/`.
+You can also use the [lib config](/configuration) if your site must host these files from a directory other than the default `/~partytown/`. Please see the [integration guides](/integrations) for more info on copying library files.
 
 ### Copy Task Command
 

@@ -14,6 +14,6 @@ npm install @builder.io/partytown
 
 ## Next Steps
 
-1. [Copy Partytown library files](/copy-library-files)
 1. [Add Partytown type attribute to Third-Party Scripts](/partytown-scripts)
-1. [Add Partytown snippet to the `<head>`](/integrations)
+2. [Add Partytown snippet to the `<head>`](/integrations)
+3. [Copy Partytown library files](/copy-library-files)
