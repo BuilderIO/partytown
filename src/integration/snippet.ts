@@ -1,11 +1,9 @@
 import type { PartytownConfig } from '../lib/types';
 
 export const createSnippet = (config: PartytownConfig, snippetCode: string) => {
-  config = config || {};
-  const forward = config.forward || [];
-  delete config.forward;
+  const { forward = [], ...filteredConfig } = config || {};
 
-  const configStr = JSON.stringify(config, (k, v) => {
+  const configStr = JSON.stringify(filteredConfig, (k, v) => {
     if (typeof v === 'function') {
       v = String(v);
       if (v.startsWith(k + '(')) {
@@ -17,7 +15,7 @@ export const createSnippet = (config: PartytownConfig, snippetCode: string) => {
 
   return [
     `!(function(w,p,f,c){`,
-    Object.keys(config).length > 0
+    Object.keys(filteredConfig).length > 0
       ? `c=w[p]=Object.assign(w[p]||{},${configStr});`
       : `c=w[p]=w[p]||{};`,
     `c[f]=(c[f]||[])`,
