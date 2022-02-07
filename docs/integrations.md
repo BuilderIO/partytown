@@ -9,6 +9,7 @@ Partytown can work with any HTML page, and doesn't require a specific framework.
 - [NextJS](/nextjs)
 - [Nuxt](/nuxt)
 - [React](/react)
+- [Remix](/remix)
 
 ## Help Contribute
 
