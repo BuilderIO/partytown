@@ -1,6 +1,6 @@
 import type { PartytownConfig } from '../lib/types';
 
-export const createSnippet = (config: PartytownConfig, snippetCode: string) => {
+export const createSnippet = (config: PartytownConfig | undefined | null, snippetCode: string) => {
   const { forward = [], ...filteredConfig } = config || {};
 
   const configStr = JSON.stringify(filteredConfig, (k, v) => {

@@ -8,7 +8,7 @@ import type { PartytownConfig } from '../lib/types';
  *
  * @public
  */
-export const partytownSnippet = (config: PartytownConfig) =>
+export const partytownSnippet = (config?: PartytownConfig) =>
   createSnippet(config, PartytownSnippet);
 
 export { SCRIPT_TYPE } from '../lib/utils';

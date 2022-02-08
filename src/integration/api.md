@@ -41,7 +41,7 @@ export interface PartytownConfig {
 export type PartytownForwardProperty = string;
 
 // @public
-export const partytownSnippet: (config: PartytownConfig) => string;
+export const partytownSnippet: (config?: PartytownConfig) => string;
 
 // @public
 export const SCRIPT_TYPE = "text/partytown";
