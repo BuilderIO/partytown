@@ -16,7 +16,13 @@ window.fbq = function(){...};
 
 Because GTM and Facebook Pixel objects are added immediately in the `<head>` by each service, then anywhere within the webpage, your code and their code, can safely call `dataLayer.push(...)` or `fbq(...)`.
 
-However, since GTM and Facebook Pixel were actually loaded in the web worker, then we need to forward these calls. The `forward` config is used to set which `window` variables should be patched and forwarded on.
+However, since GTM and Facebook Pixel were actually loaded in the web worker, then we need to forward these calls. The `forward` config is used to set which `window` variables should be patched and forwarded on. The forward string value is of the function to call, and since GTM is pushing to an array, the function to call is `dataLayer.push`.
+
+```json
+{
+  "forward": ["dataLayer.push", "fbq"]
+}
+```
 
 Notice the forward configs are just strings, not actual objects. We're using strings here so we can easily serialize what service variable was called, along with the function argument values. When the web worker receives the information, it then knows how to correctly apply the call and arguments that were fired from the main thread.
 
