@@ -34,7 +34,7 @@ Add the `type="text/partytown"` [attribute](/partytown-scripts) for each script 
 <script set:html={partytownSnippetHtml}></script>
 
 <script type="text/partytown">
-  // inlined third-party script
+  /* Inlined Third-Party Script */
 </script>
 ```
 

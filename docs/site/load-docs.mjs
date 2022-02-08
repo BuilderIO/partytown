@@ -8,7 +8,7 @@ const markdownLayout = `../layouts/MainLayout.astro`;
 const hasLoaded = new Set();
 
 async function loadDocs() {
-  console.log(`📝 Load Docs\n`);
+  console.log(`📝 Loading Docs...\n`);
 
   try {
     await mkdir(join('src', 'pages'));
@@ -24,6 +24,8 @@ async function loadDocs() {
   const toc = await loadToc();
 
   await loadContent(toc);
+
+  console.log(`💥 Loaded Docs\n`);
 }
 
 async function loadContent(toc) {
@@ -50,7 +52,9 @@ async function loadContent(toc) {
               content.push(``);
               content.push(fmContent.body);
 
-              await writeFile(join('src', 'pages', mdFilename), content.join('\n'));
+              const outputPath = join('src', 'pages', mdFilename);
+              console.log('write', outputPath);
+              await writeFile(outputPath, content.join('\n'));
             }
           }
 

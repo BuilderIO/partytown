@@ -12,7 +12,7 @@ Set the script element's `type` attribute to `text/partytown`. For example:
 
 ```html
 <script type="text/partytown">
-  // insert gtm script here
+  /* Insert GTM Script Here */
 </script>
 ```
 
@@ -26,10 +26,9 @@ Google Tag Manager uses the [dataLayer](https://developers.google.com/tag-platfo
 
 ## Example Config
 
-```js
-// https://partytown.builder.io/configuration
+```json
 {
-  forward: ['dataLayer.push'];
+  "forward": ["dataLayer.push"]
 }
 ```
 

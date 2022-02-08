@@ -9,7 +9,7 @@ While the `partytown.js` file _could_ be an external request, it's recommended t
 ```html
 <head>
   <script>
-    // Inlined Partytown Snippet
+    /* Inlined Partytown Snippet */
   </script>
   <script type="text/partytown" src="https://example.com/analytics.js"></script>
 </head>
@@ -29,7 +29,7 @@ Below is an HTML example of setting up the [forwarding](/forwarding-events) for 
     };
   </script>
   <script>
-    // Inlined Partytown Snippet
+    /* Inlined Partytown Snippet */
   </script>
 </head>
 ```
@@ -40,7 +40,7 @@ Add the `type="text/partytown"` [attribute](/partytown-scripts) for each script 
 
 ```html
 <script type="text/partytown">
-  // inlined third-party script
+  /* Inlined Third-Party Script */
 </script>
 ```
 

@@ -36,7 +36,7 @@ Add the `type="text/partytown"` [prop](/partytown-scripts) for each script that 
 <script
   type="text/partytown"
   dangerouslySetInnerHTML={{
-    __html: '// inlined third-party script',
+    __html: '/* Inlined Third-Party Script */',
   }}
 />
 ```
