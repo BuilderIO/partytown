@@ -24,7 +24,7 @@ export const Partytown = (props: PartytownProps = {}): any => {
   // purposely not using useState() or useEffect() so this component
   // can also work as a React Server Component
 
-  // this check is only be done on the client, and skipped over on server
+  // this check is only be done on the client, and skipped over on the server
   if (typeof document !== 'undefined' && !document._partytown) {
     if (!document.querySelector('script[data-partytown]')) {
       // the append script to document code should only run on the client
@@ -43,8 +43,8 @@ export const Partytown = (props: PartytownProps = {}): any => {
 
   // `dangerouslySetInnerHTML` only works for scripts rendered as HTML from SSR.
   // The added code will set the [type="data-pt-script"] attribute to the SSR rendered
-  // <script> the "lib" value. If this code renders as SSR HTML, then on the client it'll
-  // execute and add the attribute which will tell the Client JS of the component to NOT
+  // <script>. If this code renders as SSR HTML, then on the client it'll execute
+  // and add the attribute which will tell the Client JS of the component to NOT
   // add the same script to the <head>.
   const innerHTML = partytownSnippet(props) + 'document.currentScript.dataset.partytown="";';
 
