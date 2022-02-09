@@ -9,12 +9,34 @@ exports.createServer = function (port, enableAtomics) {
   const server = http.createServer(async (req, rsp) => {
     const url = new URL(req.url, address);
     const pathName = url.pathname.substring(1);
-    let filePath;
 
+    if (pathName.endsWith('post')) {
+      rsp.writeHead(200);
+      let body = '';
+      req.setEncoding('utf-8');
+      req.on('data', (chunk) => {
+        body += chunk;
+      });
+      req.on('end', () => {
+        const postDir = path.join(rootDir, 'tests', 'posts');
+        const fileName = `${Math.round(Math.random() * 8999 + 1000)}.js`;
+        try {
+          fs.mkdirSync(postDir, { recursive: true });
+        } catch (e) {}
+
+        fs.writeFileSync(path.join(postDir, fileName), body);
+        rsp.end();
+      });
+      return;
+    }
+
+    let filePath;
     if (pathName.startsWith('~partytown')) {
       filePath = path.join(rootDir, 'lib', pathName.replace('~partytown/', ''));
     } else if (pathName.endsWith('/')) {
       filePath = path.join(rootDir, pathName, 'index.html');
+    } else if (pathName.endsWith('favicon.ico')) {
+      filePath = path.join(rootDir, 'docs', 'site', 'public', 'favicon.ico');
     } else {
       filePath = path.join(rootDir, pathName);
     }
@@ -52,6 +74,10 @@ exports.createServer = function (port, enableAtomics) {
         }
         case '.png': {
           rsp.setHeader('Content-Type', 'image/png');
+          break;
+        }
+        case '.ico': {
+          rsp.setHeader('Content-Type', 'image/x-icon');
           break;
         }
         default: {

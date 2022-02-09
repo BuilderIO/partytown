@@ -12,6 +12,7 @@ node_modules/
 /react/
 /tests/nextjs/public/
 /tests/benchmarks/screenshots/
+/tests/posts/
 /tests/videos/
 /services/
 /tsc/
