@@ -17,6 +17,7 @@
   - [Nuxt](/nuxt)
   - [React](/react)
   - [Remix](/remix)
+  - [Shopify Hydrogen](/shopify-hydrogen)
 - [Configuration](/configuration)
   - [Overview](/configuration)
   - [Proxying Requests](/proxying-requests)
