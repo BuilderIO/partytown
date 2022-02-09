@@ -98,7 +98,9 @@ export const runScriptContent = (
   return errorMsg;
 };
 
-const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) =>
+const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) => {
+  env.$runWindowLoadEvent$ = 1;
+
   new Function(
     `with(this){${scriptContent
       .replace(/\bthis\b/g, '(thi$(this)?window:this)')
@@ -109,6 +111,9 @@ const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: strin
       .map((g) => `(typeof ${g}=='function'&&(window.${g}=${g}))`)
       .join(';')}}` + (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '')
   ).call(env.$window$);
+
+  env.$runWindowLoadEvent$ = 0;
+};
 
 const runStateLoadHandlers = (
   instance: WorkerInstance,

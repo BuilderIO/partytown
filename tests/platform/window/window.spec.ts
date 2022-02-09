@@ -145,4 +145,8 @@ test('window', async ({ page }) => {
   // TODO: test in CI
   // const testIsTypeSupported = page.locator('#testIsTypeSupported');
   // await expect(testIsTypeSupported).toHaveText('true');
+
+  await page.waitForSelector('.testWindowLoad');
+  const testWindowLoad = page.locator('#testWindowLoad');
+  await expect(testWindowLoad).toHaveText('load');
 });

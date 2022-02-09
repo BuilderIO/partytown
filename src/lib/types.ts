@@ -138,6 +138,7 @@ export interface WebWorkerEnvironment extends Omit<InitializeEnvironmentData, '$
   $currentScriptId$?: number;
   $isInitialized$?: number;
   $isLoading$?: number;
+  $runWindowLoadEvent$?: number;
 }
 
 export interface MembersInterfaceTypeInfo {

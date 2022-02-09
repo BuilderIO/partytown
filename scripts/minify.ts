@@ -100,6 +100,7 @@ function managlePropsPlugin(): Plugin {
     $postMessage$: '',
     $refId$: '',
     $rtnValue$: '',
+    $runWindowLoadEvent$: '',
     $sessionStorage$: '',
     $sharedDataBuffer$: '',
     $tasks$: '',

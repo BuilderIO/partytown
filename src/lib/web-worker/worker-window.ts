@@ -155,6 +155,16 @@ export class Window extends WorkerInstance {
     _this.Worker = undefined;
   }
 
+  addEventListener(...args: any[]) {
+    if (args[0] === 'load') {
+      if (getEnv(this).$runWindowLoadEvent$) {
+        setTimeout(() => args[1]({ type: 'load' }));
+      }
+    } else {
+      callMethod(this, ['addEventListener'], args, CallType.NonBlocking);
+    }
+  }
+
   get body() {
     return getEnv(this).$body$;
   }

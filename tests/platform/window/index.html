@@ -711,6 +711,20 @@
         </script>
       </li>
 
+      <li>
+        <strong>addEventListener('load')</strong>
+        <code id="testWindowLoad"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testWindowLoad');
+            window.addEventListener('load', (ev) => {
+              elm.textContent = ev.type;
+              elm.className = 'testWindowLoad';
+            });
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');
