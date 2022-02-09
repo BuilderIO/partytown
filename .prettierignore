@@ -4,3 +4,4 @@
 /react
 /tsc
 api.md
+tests/platform/script/source-mapping-url.js

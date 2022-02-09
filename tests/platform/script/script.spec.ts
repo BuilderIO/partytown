@@ -75,4 +75,8 @@ test('script', async ({ page }) => {
   await page.waitForSelector('.testNonJsType');
   const testNonJsType = page.locator('#testNonJsType');
   await expect(testNonJsType).toHaveText('application/ld+json');
+
+  await page.waitForSelector('.testSourceMappingURL');
+  const testSourceMappingURL = page.locator('#testSourceMappingURL');
+  await expect(testSourceMappingURL).toHaveText('sourceMappingURL');
 });
