@@ -13,6 +13,7 @@ node_modules/
 /tests/nextjs/public/
 /tests/benchmarks/screenshots/
 /tests/posts/
+/tests/react-app/public/~partytown/
 /tests/videos/
 /services/
 /tsc/
