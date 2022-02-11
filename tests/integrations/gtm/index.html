@@ -18,6 +18,8 @@
             proxyUrl.searchParams.append('url', url);
             return proxyUrl;
           }
+          
+          return url;
         },
         forward: ['dataLayer.push'],
         logCalls: true,
