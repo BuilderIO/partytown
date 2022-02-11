@@ -16,7 +16,7 @@ Set the script element's `type` attribute to `text/partytown`. For example:
 </script>
 ```
 
-## Google Analtyics 4 (GA4)
+## Google Analytics 4 (GA4)
 
 When using Google Analytics, it's recommended to use [Google Analytics 4](https://support.google.com/analytics/answer/10089681?hl=en). Not only is GA4 Google's official recommendation, but it's also because the GA4 responses come with the correct CORS headers. Simply put, if you ensure you're using GA4, you will not have to [proxy](/proxying-requests) the requests to `www.google-analytics.com`.
 
