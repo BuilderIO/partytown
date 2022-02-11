@@ -36,7 +36,7 @@ export function snippet(
           top!.dispatchEvent(new CustomEvent(PT_IFRAME_APPENDED, { detail: win }));
         } else if (scripts!.length) {
           // set a timeout to fire if PT hasn't initialized in Xms
-          timeout = setTimeout(fallback, debug ? 60000 : 10000);
+          timeout = setTimeout(fallback, 10000);
           doc.addEventListener(PT_INITIALIZED_EVENT, clearFallback);
 
           if (useAtomics) {
@@ -98,6 +98,10 @@ export function snippet(
       script = doc.createElement('script');
       script.innerHTML = scripts![i].innerHTML;
       doc.head.appendChild(script);
+    }
+
+    if (sandbox) {
+      sandbox.parentNode!.removeChild(sandbox);
     }
   }
 
