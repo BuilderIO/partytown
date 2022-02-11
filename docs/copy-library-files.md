@@ -32,8 +32,8 @@ This command can be used before a build script. Below is an example of copying t
 The same code that the `partytown copylib` CLI task uses, is also exposed as an API and can be imported by any NodeJS script. Below is an example of importing the `@builder.io/partytown/utils` API and copying the lib files to the given directory. Both examples of an ESM import or CommonJS require should work.
 
 ```js
-import { copyLibFiles } from '@builder.io/partytown/utils'; // ESM
-// const { copyLibFiles } = require('@builder.io/partytown/utils'); // CommonJS
+import { copyLibFiles } from 'builder.io/partytown/utils'; // ESM
+// const { copyLibFiles } = require('builder.io/partytown/utils'); // CommonJS
 
 async function myBuildTask() {
   await copyLibFiles('path/to/public/~partytown');
@@ -61,3 +61,37 @@ module.exports = {
   ],
 };
 ```
+
+
+### Vite
+
+Vite uses the `vite.config.js` file for configuration. Using the `plugins` [option](https://vitejs.dev/config/#plugins), configure the `rollup-plugin-copy` [plugin](https://github.com/vladshcherbin/rollup-plugin-copy) to copy the source `lib` directory found in the [@builder.io/partytown](https://www.npmjs.com/package/@builder.io/partytown) package, to the `public/~partytown/` directory:
+
+
+```js
+import path from 'path';
+import copy from 'rollup-plugin-copy';
+
+export default ({ command }) => ({
+  build: {
+    plugins: [
+        copy({
+          targets: [
+            {
+              src: [
+                path.resolve(
+                  './node_modules/@builder.io/partytown/lib/**/*',
+                ),
+              ],
+              dest: path.join(__dirname, 'public', '~partytown'),
+            },
+          ],
+          hook: 'writeBundle', // defaults to 'buildEnd'
+        }),
+      ],
+  }
+
+});
+```
+
+Note the `hook` used in the example to change from the default. See [documentation](https://github.com/vladshcherbin/rollup-plugin-copy#hook) for more details.
