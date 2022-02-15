@@ -61,7 +61,7 @@ So instead of inserting something like this on your page for [Google Analytics](
 
 ```html
 <!-- Google Analytics -->
-<script>
+<script type="text/partytown">
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
@@ -77,7 +77,7 @@ You instead download the `analytics.js` JavaScript resource, and serve it locall
 
 ```html
 <!-- Google Analytics -->
-<script>
+<script type="text/partytown">
 (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
 (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
 m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
