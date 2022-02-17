@@ -1,6 +1,6 @@
 {
   "name": "@builder.io/partytown",
-  "version": "0.3.5",
+  "version": "0.3.6",
   "description": "Relocate resource intensive third-party scripts off of the main thread and into a web worker.",
   "license": "MIT",
   "main": "index.cjs",
