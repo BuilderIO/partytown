@@ -93,7 +93,7 @@ export interface InitWebWorkerData {
 
 /**
  * [0] Constructor name
- * [1] Prototype parent construtor name
+ * [1] Prototype parent constructor name
  * [2] InterfaceMember[]
  * [3]? Node Name
  */
