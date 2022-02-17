@@ -33,7 +33,7 @@ partytown = {
   resolveUrl: function (url) {
     if (url.hostname === 'www.google-analytics.com') {
       var proxyUrl = new URL('https://my-reverse-proxy.com/');
-      proxyUrl.searchParams.append('url', url);
+      proxyUrl.searchParams.append('url', url.href);
       return proxyUrl;
     }
     return url;
@@ -62,13 +62,13 @@ So instead of inserting something like this on your page for [Google Analytics](
 ```html
 <!-- Google Analytics -->
 <script type="text/partytown">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
 
-ga('create', 'UA-XXXXX-Y', 'auto');
-ga('send', 'pageview');
+  ga('create', 'UA-XXXXX-Y', 'auto');
+  ga('send', 'pageview');
 </script>
 <!-- End Google Analytics -->
 ```
@@ -78,16 +78,15 @@ You instead download the `analytics.js` JavaScript resource, and serve it locall
 ```html
 <!-- Google Analytics -->
 <script type="text/partytown">
-(function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-(i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-})(window,document,'script','https://example.com/analytics.js','ga');
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://example.com/analytics.js','ga');
 
-ga('create', 'UA-XXXXX-Y', 'auto');
-ga('send', 'pageview');
+  ga('create', 'UA-XXXXX-Y', 'auto');
+  ga('send', 'pageview');
 </script>
 <!-- End Google Analytics -->
-
 ```
 
 Since you are serving the resource from your own server, you control the headers that come along with it, including the `Access-Control-Allow-Origin` header that the proxy work-around is sometimes needed for.
@@ -99,13 +98,13 @@ You can manually download these self-hosted third-party JavaScript resources, or
 ```js
 const SaveRemoteFilePlugin = require('save-remote-file-webpack-plugin');
 module.exports = {
-    plugins: [
-        new SaveRemoteFilePlugin([
-            {
-                url: 'https://google-analytics.com/analytics.js',
-                filepath: 'js/analytics.js',
-            },
-        ])
-    ]
-}
+  plugins: [
+    new SaveRemoteFilePlugin([
+      {
+        url: 'https://google-analytics.com/analytics.js',
+        filepath: 'js/analytics.js',
+      },
+    ]),
+  ],
+};
 ```

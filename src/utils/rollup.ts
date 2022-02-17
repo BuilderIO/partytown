@@ -2,7 +2,7 @@ import { isAbsolute } from 'path';
 import { copyLibFiles } from './copy-lib-files';
 
 /** @public */
-export interface PartytownRollupOptions {
+export interface RollupPartytownOptions {
   /** An absolute path to the destination directory where the lib files should be copied. */
   dest: string;
 
@@ -20,21 +20,21 @@ export interface PartytownRollupOptions {
  *
  * @public
  */
-export function rollupPartytownCopyLib(opts: PartytownRollupOptions) {
-  opts = opts || {};
+export function rollupPartytown(opts: RollupPartytownOptions) {
+  opts = opts || ({} as any);
 
-  if (typeof opts.dest !== 'string') {
-    throw new Error(`Partytown copylib plugin must have "dest" property.`);
+  if (typeof opts.dest !== 'string' || opts.dest.length === 0) {
+    throw new Error(`Partytown plugin must have "dest" property.`);
   }
 
   if (!isAbsolute(opts.dest)) {
-    throw new Error(`Partytown copylib plugin "dest" property must be an absolute path.`);
+    throw new Error(`Partytown plugin "dest" property must be an absolute path.`);
   }
 
   let hasCopied = false;
 
-  return {
-    name: 'partytown-copylib',
+  const plugin = {
+    name: 'rollup-plugin-partytown',
     async writeBundle() {
       if (!hasCopied) {
         await copyLibFiles(opts.dest, { debugDir: opts.debug });
@@ -42,13 +42,6 @@ export function rollupPartytownCopyLib(opts: PartytownRollupOptions) {
       }
     },
   };
-}
 
-/**
- * Vite plugin to copy Partytown `lib` directory to the given destination.
- *
- * https://partytown.builder.io/copy-library-files
- *
- * @public
- */
-export { rollupPartytownCopyLib as vitePartytownCopyLib };
+  return plugin as { name: string };
+}

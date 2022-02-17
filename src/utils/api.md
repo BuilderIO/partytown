@@ -5,7 +5,7 @@
 ```ts
 
 // @public
-export function copyLibFiles(destDir: string, opts?: CopyLibFilesOptions): Promise<{
+export function copyLibFiles(dest: string, opts?: CopyLibFilesOptions): Promise<{
     src: string;
     dest: string;
 }>;
@@ -15,22 +15,33 @@ export interface CopyLibFilesOptions {
     debugDir?: boolean;
 }
 
+// @public (undocumented)
+export interface LibDirOptions {
+    debugDir?: boolean;
+}
+
 // @public
-export function libDirPath(): string;
+export function libDirPath(opts?: LibDirOptions): string;
+
+// @public
+export function rollupPartytown(opts: RollupPartytownOptions): {
+    name: string;
+};
 
 // @public (undocumented)
-export interface PartytownRollupOptions {
+export interface RollupPartytownOptions {
     debug?: boolean;
     dest: string;
 }
 
 // @public
-function rollupPartytownCopyLib(opts: PartytownRollupOptions): {
+export function vitePartytown(opts: VitePartytownOptions): {
     name: string;
-    writeBundle(): Promise<void>;
 };
-export { rollupPartytownCopyLib }
-export { rollupPartytownCopyLib as vitePartytownCopyLib }
+
+// @public (undocumented)
+export interface VitePartytownOptions extends RollupPartytownOptions {
+}
 
 // (No @packageDocumentation comment for this package)
 

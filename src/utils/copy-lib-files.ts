@@ -1,14 +1,5 @@
-import fs from 'fs';
-import { dirname, isAbsolute, resolve } from 'path';
-import { fileURLToPath } from 'url';
-import { promisify } from 'util';
-
-const copyFile = promisify(fs.copyFile);
-const mkdir = promisify(fs.mkdir);
-const readdir = promisify(fs.readdir);
-const stat = promisify(fs.stat);
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { copyFile, mkdir, readdir, stat, __dirname } from './fs';
+import { isAbsolute, resolve } from 'path';
 
 /**
  * Absolute path to the Partytown lib directory within the
@@ -18,7 +9,10 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  *
  * @public
  */
-export function libDirPath() {
+export function libDirPath(opts?: LibDirOptions) {
+  if (opts && opts.debugDir) {
+    return resolve(__dirname, '..', 'lib', 'debug');
+  }
   return resolve(__dirname, '..', 'lib');
 }
 
@@ -87,6 +81,17 @@ export interface CopyLibFilesOptions {
   /**
    * When set to `false` the `lib/debug` directory will not be copied. The default is
    * that both the production and debug directories are copied to the destination.
+   */
+  debugDir?: boolean;
+}
+
+/**
+ * @public
+ */
+export interface LibDirOptions {
+  /**
+   * When the `debugDir` option is set to `true`, the returned
+   * directory is the absolute path to the `lib/debug` directory.
    */
   debugDir?: boolean;
 }

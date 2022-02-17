@@ -33,9 +33,10 @@ Facebook Pixel uses the [fbq()](https://www.facebook.com/business/help/402791146
   resolveUrl={function(url) {
     if (url.hostname === "connect.facebook.net") {
       var proxyUrl = new URL('https://my-reverse-proxy.com/');
-      proxyUrl.searchParams.append('url', url);
+      proxyUrl.searchParams.append('url', url.href);
       return proxyUrl;
     }
+    return url;
   },
   forward: [
     "fbq"
