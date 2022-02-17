@@ -57,7 +57,7 @@
 :root {
   color-scheme: light;
   --theme-accent: hsla(var(--color-blue), 1);
-  --theme-text-accent: #136beb;
+  --theme-text-accent: #2e6ac8;
   --theme-accent-opacity: 0.15;
   --theme-divider: hsla(var(--color-gray-95), 1);
   --theme-text: hsla(var(--color-gray-10), 1);
