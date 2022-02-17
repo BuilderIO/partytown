@@ -40,6 +40,56 @@ async function myBuildTask() {
 }
 ```
 
+### Rollup
+
+> Available as of Partytown 0.3.6
+
+Import the `partytownRollup` plugin from `@builder.io/partytown/utils` into your `rollup.config.js` config file. Next, add `partytownRollup(opts)` to the `plugins` [option](https://rollupjs.org/guide/en/#using-plugins).
+
+The Rollup plugin will copy Partytown `lib` directory to the given destination, which must be an absolute file path. The copying will happen at the time of the `writeBundle()` hook.
+
+Below is an example of copying the Partytown `lib` to a `dist` build directory:
+
+```js
+// rollup.config.js
+import { partytownRollup } from '@builder.io/partytown/utils';
+import path from 'path';
+
+export default {
+  plugins: [
+    partytownRollup({
+      dest: join(__dirname, 'dist', '~partytown'),
+    }),
+  ],
+};
+```
+
+### Vite
+
+> Available as of Partytown 0.3.6
+
+Import the `partytownVite` plugin from `@builder.io/partytown/utils` into your `vite.config.js` config file. Next, add `partytownVite(opts)` to the `plugins` [option](https://vitejs.dev/config/#plugins).
+
+The Vite plugin will copy Partytown `lib` directory to the given destination, which must be an absolute file path. The copying will happen at the time of the `writeBundle()` hook. When in dev mode, the Partytown lib files will be served using the Vite Dev Server.
+
+Below is an example of copying the Partytown `lib` to a `dist` build directory:
+
+```js
+// vite.config.js
+import { partytownVite } from '@builder.io/partytown/utils';
+import path from 'path';
+
+export default ({ command }) => ({
+  build: {
+    plugins: [
+      partytownVite({
+        dest: join(__dirname, 'dist', '~partytown'),
+      }),
+    ],
+  },
+});
+```
+
 ### Webpack
 
 Below is an example of using [Webpack's copy plugin](https://webpack.js.org/plugins/copy-webpack-plugin/) to copy the source `lib` directory found in the [@builder.io/partytown](https://www.npmjs.com/package/@builder.io/partytown) package, to the `public/~partytown/` directory:
@@ -61,37 +111,3 @@ module.exports = {
   ],
 };
 ```
-
-
-### Vite
-
-Vite uses the `vite.config.js` file for configuration. Using the `plugins` [option](https://vitejs.dev/config/#plugins), configure the `rollup-plugin-copy` [plugin](https://github.com/vladshcherbin/rollup-plugin-copy) to copy the source `lib` directory found in the [@builder.io/partytown](https://www.npmjs.com/package/@builder.io/partytown) package, to the `public/~partytown/` directory:
-
-
-```js
-import path from 'path';
-import copy from 'rollup-plugin-copy';
-
-export default ({ command }) => ({
-  build: {
-    plugins: [
-        copy({
-          targets: [
-            {
-              src: [
-                path.resolve(
-                  './node_modules/@builder.io/partytown/lib/**/*',
-                ),
-              ],
-              dest: path.join(__dirname, 'public', '~partytown'),
-            },
-          ],
-          hook: 'writeBundle', // defaults to 'buildEnd'
-        }),
-      ],
-  }
-
-});
-```
-
-Note the `hook` used in the example to change from the default. See [documentation](https://github.com/vladshcherbin/rollup-plugin-copy#hook) for more details.

@@ -9,10 +9,9 @@ import type { IncomingMessage, ServerResponse } from 'http';
 export interface PartytownViteOptions extends PartytownRollupOptions {}
 
 /**
- * Vite plugin to copy Partytown `lib` directory to the given destination.
- *
- * When in dev mode, the Partytown lib files will be served
- * from the Vite Dev Server.
+ * The Vite plugin will copy Partytown `lib` directory to the given destination,
+ * which must be an absolute file path. When in dev mode, the Partytown
+ * lib files will be served using the Vite Dev Server.
  *
  * https://partytown.builder.io/copy-library-files
  *
