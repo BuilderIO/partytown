@@ -14,6 +14,8 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
  * Absolute path to the Partytown lib directory within the
  * `@builder.io/partytown` package.
  *
+ * https://partytown.builder.io/copy-library-files
+ *
  * @public
  */
 export function libDirPath() {
@@ -29,24 +31,27 @@ export function libDirPath() {
  * This utility function is to make it easier to locate the source library files
  * and copy them to your server's correct location, for example: `./public/~partytown/`.
  *
- * By default, both the minified and debug builds are copied to the destination.
+ * By default, both the production and debug builds are copied to the destination.
  * However, by setting the `debugDir` option to `false`, the debug directory will
  * not be copied.
  *
+ * https://partytown.builder.io/copy-library-files
+ *
  * @public
  */
-export async function copyLibFiles(destDir: string, opts: CopyLibFilesOptions = {}) {
-  if (typeof destDir !== 'string' || destDir.length === 0) {
-    throw new Error('Missing destDir');
+export async function copyLibFiles(dest: string, opts?: CopyLibFilesOptions) {
+  opts = opts || {};
+  if (typeof dest !== 'string' || dest.length === 0) {
+    throw new Error('Missing destination directory');
   }
-  if (!isAbsolute(destDir)) {
-    destDir = resolve(process.cwd(), destDir);
+  if (!isAbsolute(dest)) {
+    dest = resolve(process.cwd(), dest);
   }
-  await copyLibDir(libDirPath(), destDir, opts);
-  return {
-    src: libDirPath(),
-    dest: destDir,
-  };
+
+  const src = libDirPath();
+  await copyLibDir(src, dest, opts);
+
+  return { src, dest };
 }
 
 async function copyLibDir(srcDir: string, destDir: string, opts: CopyLibFilesOptions) {
@@ -58,6 +63,10 @@ async function copyLibDir(srcDir: string, destDir: string, opts: CopyLibFilesOpt
 
   await Promise.all(
     itemNames.map(async (srcName) => {
+      if (srcName === 'debug' && opts.debugDir === false) {
+        return;
+      }
+
       const srcPath = resolve(srcDir, srcName);
       const destPath = resolve(destDir, srcName);
 
@@ -65,9 +74,6 @@ async function copyLibDir(srcDir: string, destDir: string, opts: CopyLibFilesOpt
       if (s.isFile()) {
         await copyFile(srcPath, destPath);
       } else if (s.isDirectory()) {
-        if (srcName === 'debug' && opts.debugDir === false) {
-          return;
-        }
         await copyLibDir(srcPath, destPath, opts);
       }
     })
@@ -79,7 +85,8 @@ async function copyLibDir(srcDir: string, destDir: string, opts: CopyLibFilesOpt
  */
 export interface CopyLibFilesOptions {
   /**
-   * When set to `false` the debug directory will not be copied.
+   * When set to `false` the `lib/debug` directory will not be copied. The default is
+   * that both the production and debug directories are copied to the destination.
    */
   debugDir?: boolean;
 }

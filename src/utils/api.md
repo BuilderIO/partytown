@@ -18,6 +18,20 @@ export interface CopyLibFilesOptions {
 // @public
 export function libDirPath(): string;
 
+// @public (undocumented)
+export interface PartytownRollupOptions {
+    debug?: boolean;
+    dest: string;
+}
+
+// @public
+function rollupPartytownCopyLib(opts: PartytownRollupOptions): {
+    name: string;
+    writeBundle(): Promise<void>;
+};
+export { rollupPartytownCopyLib }
+export { rollupPartytownCopyLib as vitePartytownCopyLib }
+
 // (No @packageDocumentation comment for this package)
 
 ```
