@@ -2,7 +2,7 @@ import { isAbsolute } from 'path';
 import { copyLibFiles } from './copy-lib-files';
 
 /** @public */
-export interface RollupPartytownOptions {
+export interface PartytownRollupOptions {
   /** An absolute path to the destination directory where the lib files should be copied. */
   dest: string;
 
@@ -20,7 +20,7 @@ export interface RollupPartytownOptions {
  *
  * @public
  */
-export function rollupPartytown(opts: RollupPartytownOptions) {
+export function partytownRollup(opts: PartytownRollupOptions) {
   opts = opts || ({} as any);
 
   if (typeof opts.dest !== 'string' || opts.dest.length === 0) {

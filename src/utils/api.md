@@ -24,23 +24,23 @@ export interface LibDirOptions {
 export function libDirPath(opts?: LibDirOptions): string;
 
 // @public
-export function rollupPartytown(opts: RollupPartytownOptions): {
+export function partytownRollup(opts: PartytownRollupOptions): {
     name: string;
 };
 
 // @public (undocumented)
-export interface RollupPartytownOptions {
+export interface PartytownRollupOptions {
     debug?: boolean;
     dest: string;
 }
 
 // @public
-export function vitePartytown(opts: VitePartytownOptions): {
+export function partytownVite(opts: PartytownViteOptions): {
     name: string;
 };
 
 // @public (undocumented)
-export interface VitePartytownOptions extends RollupPartytownOptions {
+export interface PartytownViteOptions extends PartytownRollupOptions {
 }
 
 // (No @packageDocumentation comment for this package)

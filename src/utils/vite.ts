@@ -1,12 +1,12 @@
 import { libDirPath } from './copy-lib-files';
-import type { RollupPartytownOptions } from './rollup';
-import { rollupPartytown } from './rollup';
+import type { PartytownRollupOptions } from './rollup';
+import { partytownRollup } from './rollup';
 import { join } from 'path';
 import { readFile } from './fs';
 import type { IncomingMessage, ServerResponse } from 'http';
 
 /** @public */
-export interface VitePartytownOptions extends RollupPartytownOptions {}
+export interface PartytownViteOptions extends PartytownRollupOptions {}
 
 /**
  * Vite plugin to copy Partytown `lib` directory to the given destination.
@@ -18,10 +18,10 @@ export interface VitePartytownOptions extends RollupPartytownOptions {}
  *
  * @public
  */
-export function vitePartytown(opts: VitePartytownOptions) {
+export function partytownVite(opts: PartytownViteOptions) {
   opts = opts || ({} as any);
 
-  const plugin: any = rollupPartytown(opts);
+  const plugin: any = partytownRollup(opts);
 
   plugin.name = 'vite-plugin-partytown';
 
