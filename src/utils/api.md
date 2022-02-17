@@ -5,7 +5,7 @@
 ```ts
 
 // @public
-export function copyLibFiles(destDir: string, opts?: CopyLibFilesOptions): Promise<{
+export function copyLibFiles(dest: string, opts?: CopyLibFilesOptions): Promise<{
     src: string;
     dest: string;
 }>;
@@ -15,8 +15,33 @@ export interface CopyLibFilesOptions {
     debugDir?: boolean;
 }
 
+// @public (undocumented)
+export interface LibDirOptions {
+    debugDir?: boolean;
+}
+
 // @public
-export function libDirPath(): string;
+export function libDirPath(opts?: LibDirOptions): string;
+
+// @public
+export function partytownRollup(opts: PartytownRollupOptions): {
+    name: string;
+};
+
+// @public (undocumented)
+export interface PartytownRollupOptions {
+    debug?: boolean;
+    dest: string;
+}
+
+// @public
+export function partytownVite(opts: PartytownViteOptions): {
+    name: string;
+};
+
+// @public (undocumented)
+export interface PartytownViteOptions extends PartytownRollupOptions {
+}
 
 // (No @packageDocumentation comment for this package)
 
