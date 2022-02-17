@@ -52,13 +52,13 @@ Below is an example of copying the Partytown `lib` to a `dist` build directory:
 
 ```js
 // rollup.config.js
-import { partytownRollup } from '@builder.io/partytown/utils';
 import path from 'path';
+import { partytownRollup } from '@builder.io/partytown/utils';
 
 export default {
   plugins: [
     partytownRollup({
-      dest: join(__dirname, 'dist', '~partytown'),
+      dest: path.join(__dirname, 'dist', '~partytown'),
     }),
   ],
 };
@@ -76,14 +76,14 @@ Below is an example of copying the Partytown `lib` to a `dist` build directory:
 
 ```js
 // vite.config.js
-import { partytownVite } from '@builder.io/partytown/utils';
 import path from 'path';
+import { partytownVite } from '@builder.io/partytown/utils';
 
 export default ({ command }) => ({
   build: {
     plugins: [
       partytownVite({
-        dest: join(__dirname, 'dist', '~partytown'),
+        dest: path.join(__dirname, 'dist', '~partytown'),
       }),
     ],
   },
@@ -95,6 +95,8 @@ export default ({ command }) => ({
 Below is an example of using [Webpack's copy plugin](https://webpack.js.org/plugins/copy-webpack-plugin/) to copy the source `lib` directory found in the [@builder.io/partytown](https://www.npmjs.com/package/@builder.io/partytown) package, to the `public/~partytown/` directory:
 
 ```js
+// webpack.config.js
+import path from 'path';
 const CopyPlugin = require('copy-webpack-plugin');
 const partytown = require('@builder.io/partytown/utils');
 
