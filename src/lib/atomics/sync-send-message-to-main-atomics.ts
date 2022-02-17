@@ -15,10 +15,10 @@ const syncSendMessageToMainAtomics = (
   // Reset length before call
   Atomics.store(sharedData, 0, 0);
 
-  // Asyncronously call main
+  // Asynchronously call main
   webWorkerCtx.$postMessage$([WorkerMessageType.ForwardWorkerAccessRequest, accessReq]);
 
-  // Syncronously wait for response
+  // Synchronously wait for response
   Atomics.wait(sharedData, 0, 0);
 
   let dataLength = Atomics.load(sharedData, 0);
