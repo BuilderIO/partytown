@@ -1,5 +1,6 @@
 import { debug, PT_IFRAME_APPENDED, PT_INITIALIZED_EVENT, SCRIPT_TYPE } from '../utils';
 import type { MainWindow, PartytownConfig } from '../types';
+import { VERSION } from '../build-modules/version';
 
 export function snippet(
   win: MainWindow,
@@ -36,7 +37,7 @@ export function snippet(
           top!.dispatchEvent(new CustomEvent(PT_IFRAME_APPENDED, { detail: win }));
         } else if (scripts!.length) {
           // set a timeout to fire if PT hasn't initialized in Xms
-          timeout = setTimeout(fallback, 1000000);
+          timeout = setTimeout(fallback, 10000);
           doc.addEventListener(PT_INITIALIZED_EVENT, clearFallback);
 
           if (useAtomics) {
@@ -81,7 +82,9 @@ export function snippet(
       sandbox.setAttribute('aria-hidden', !0 as any);
     }
     sandbox.src =
-      libPath + 'partytown-' + (isAtomics ? 'atomics.js' : 'sandbox-sw.html?' + Date.now());
+      libPath +
+      'partytown-' +
+      (isAtomics ? 'atomics.js?v=' + VERSION : 'sandbox-sw.html?' + Date.now());
     doc.body.appendChild(sandbox);
   }
 
@@ -131,7 +134,6 @@ export function snippet(
     });
   }
 
-  console.log('load');
   if (doc.readyState == 'complete') {
     ready();
   } else {

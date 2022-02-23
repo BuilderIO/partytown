@@ -29,6 +29,7 @@ export function buildMainSnippet(opts: BuildOptions): RollupOptions {
         },
       },
       fileSize(),
+      versionPlugin(opts),
     ],
   };
 
