@@ -1,18 +1,18 @@
 import { debug } from '../utils';
+import { environments, partytownLibUrl, webWorkerCtx } from './worker-constants';
 import {
   EventHandler,
   InitializeScriptData,
   NodeName,
   StateProp,
   WebWorkerEnvironment,
+  WorkerInstance,
   WorkerMessageType,
 } from '../types';
-import { environments, partytownLibUrl, webWorkerCtx } from './worker-constants';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getOrCreateNodeInstance } from './worker-constructors';
 import { logWorker } from '../log';
 import { setter } from './worker-proxy';
-import type { WorkerInstance } from './worker-instance';
 
 export const initNextScriptsInWebWorker = async (initScript: InitializeScriptData) => {
   let winId = initScript.$winId$;
@@ -35,7 +35,7 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
         logWorker(`Execute script (${instanceId}) src: ${scriptOrgSrc}`, winId);
       }
 
-      rsp = await self.fetch(scriptSrc);
+      rsp = await fetch(scriptSrc);
       if (rsp.ok) {
         scriptContent = await rsp.text();
 

@@ -1,12 +1,22 @@
-import { createAudioConstructor } from './audio';
-import './media-element';
-import { createMediaSourceConstructor } from './media-source';
-import './canvas/index';
-import type { InitLazyMediaConstructors } from '../../types';
+import type { MediaSelf } from '../../types';
+import { initCanvas } from './canvas';
+import { initMedia } from './media';
 
-const MediaCstrs: InitLazyMediaConstructors = {
-  Audio: createAudioConstructor,
-  MediaSource: createMediaSourceConstructor,
+self.$bridgeFromMedia$ = (
+  WorkerBase,
+  WorkerEventTargetProxy,
+  env,
+  win,
+  windowMediaConstructors
+) => {
+  // initialize window environment media
+  windowMediaConstructors.map((mediaCstrName) => {
+    // remove bogus media constructor getters
+    delete win[mediaCstrName];
+  });
+
+  initCanvas(WorkerBase, win);
+  initMedia(WorkerBase, WorkerEventTargetProxy, env, win);
 };
 
-(self as any).ptm = MediaCstrs;
+declare const self: MediaSelf;

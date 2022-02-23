@@ -96,6 +96,8 @@ export const readMainPlatform = () => {
     readOwnImplementation($interfaces$, cstrName, CstrPrototype, impl, intefaceType)
   );
 
+  addGlobalConstructorUsingPrototype($interfaces$, mainWindow, 'IntersectionObserverEntry');
+
   if (debug) {
     logMain(
       `Read ${$interfaces$.length} interfaces in ${(performance.now() - startTime).toFixed(1)}ms`
@@ -215,3 +217,23 @@ const readStorage = (storageName: 'localStorage' | 'sessionStorage') => {
 
 const getGlobalConstructor = (mainWindow: any, cstrName: string) =>
   typeof mainWindow[cstrName] !== 'undefined' ? new mainWindow[cstrName](noop) : 0;
+
+const addGlobalConstructorUsingPrototype = (
+  $interfaces$: InterfaceInfo[],
+  mainWindow: any,
+  cstrName: string
+) => {
+  if (typeof mainWindow[cstrName] !== 'undefined') {
+    // we don't have an actual implementation, only the prototype
+    // so let's just read what props exist, and assume they're all values, not functions
+    $interfaces$.push([
+      cstrName,
+      'Object',
+      Object.keys(mainWindow[cstrName].prototype).map((propName) => [
+        propName,
+        InterfaceType.Property,
+      ]),
+      InterfaceType.EnvGlobalConstructor,
+    ]);
+  }
+};

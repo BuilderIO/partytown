@@ -1,7 +1,6 @@
 import { InstanceStateKey, webWorkerRefIdsByRef, webWorkerRefsByRefId } from './worker-constants';
 import { randomId } from '../utils';
-import type { RefHandler } from '../types';
-import type { WorkerInstance } from './worker-instance';
+import type { RefHandler, WorkerInstance } from '../types';
 
 export const hasInstanceStateValue = (instance: WorkerInstance, stateKey: string | number) =>
   stateKey in instance[InstanceStateKey];

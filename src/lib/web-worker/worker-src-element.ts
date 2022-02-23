@@ -1,11 +1,10 @@
 import { callMethod } from './worker-proxy';
 import { commaSplit } from './worker-constants';
-import { EventHandler, StateProp } from '../types';
+import { EventHandler, StateProp, WorkerNode } from '../types';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
-import type { Node } from './worker-node';
 import { noop } from '../utils';
 
-export const HTMLSrcElementDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
+export const HTMLSrcElementDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
   addEventListener: {
     value(...args: any[]) {
       const eventName = args[0];

@@ -636,7 +636,10 @@
           iframe.contentDocument.head.innerHTML = `
             <style>body { background: aquamarine; }</style>
           `;
-          iframe.contentDocument.body.textContent = iframe.contentWindow.frameElement.id;
+          const iframeContentWindow = iframe.contentWindow;
+          const iframeElement = iframeContentWindow.frameElement;
+          const iframeElementId = iframeElement.id;
+          iframe.contentDocument.body.textContent = iframeElementId;
           elm.textContent = iframe.contentWindow.document.body.textContent;
           elm.className = 'testFrameElement';
         </script>

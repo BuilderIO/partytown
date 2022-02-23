@@ -66,6 +66,21 @@
   <body>
     <h1>IntersectionObserver</h1>
 
+    <p>
+      <span>window.IntersectionObserver</span>
+      <span id="testWindowIntersectionObserver"></span>
+    </p>
+
+    <p>
+      <span>window.IntersectionObserverEntry</span>
+      <span id="testWindowIntersectionObserverEntry"></span>
+    </p>
+
+    <p>
+      <span>intersectionRatio</span>
+      <span id="testIntersectionRatio"></span>
+    </p>
+
     <a id="scrolldown" href="#testIntersectionObserver">⬇️ Scroll Down ⬇️</a>
 
     <div class="scroll-area">
@@ -77,6 +92,43 @@
     <script type="text/partytown">
       (function () {
         const elm = document.getElementById('testIntersectionObserver');
+
+        const hasIntersectionObserver =
+          !!window.IntersectionObserver &&
+          !!IntersectionObserver &&
+          'IntersectionObserver' in window;
+
+        const hasIntersectionObserverEntry =
+          !!window.IntersectionObserverEntry &&
+          !!IntersectionObserverEntry &&
+          'IntersectionObserverEntry' in window;
+
+        const hasIntersectionRatio =
+          'intersectionRatio' in window.IntersectionObserverEntry.prototype;
+
+        console.log(
+          window.IntersectionObserverEntry.prototype,
+          Object.keys(window.IntersectionObserverEntry.prototype)
+        );
+
+        document.getElementById('testWindowIntersectionObserver').textContent =
+          hasIntersectionObserver;
+
+        document.getElementById('testWindowIntersectionObserverEntry').textContent =
+          hasIntersectionObserverEntry;
+
+        document.getElementById('testIntersectionRatio').textContent = hasIntersectionRatio;
+
+        const hasIsIntersecting = 'isIntersecting' in window.IntersectionObserverEntry.prototype;
+        if (hasIntersectionRatio) {
+          if (!hasIsIntersecting) {
+            Object.defineProperty(window.IntersectionObserverEntry.prototype, 'isIntersecting', {
+              get: function () {
+                return 0 < window.intersectionRatio;
+              },
+            });
+          }
+        }
 
         const observer = new IntersectionObserver((entries, observer) => {
           entries.forEach((entry) => {

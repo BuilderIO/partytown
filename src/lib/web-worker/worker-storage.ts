@@ -7,7 +7,7 @@ export const addStorageApi = (
   storageName: 'localStorage' | 'sessionStorage',
   storages: Map<string, StorageItem[]>
 ) => {
-  let isOrigin = () => self.origin === win.origin;
+  let isOrigin = () => origin === win.origin;
   let getItems = (items?: StorageItem[]) => {
     items = storages.get(win.origin);
     if (!items) {

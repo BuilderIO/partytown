@@ -95,10 +95,12 @@ export interface InitWebWorkerData {
  * [0] Constructor name
  * [1] Prototype parent constructor name
  * [2] InterfaceMember[]
- * [3]? Node Name
+ * [3]? InterfaceType
+ * [4]? Node Name
  */
 export type InterfaceInfo =
   | [string, string, InterfaceMember[], InterfaceType, string]
+  | [string, string, InterfaceMember[], InterfaceType]
   | [string, string, InterfaceMember[]];
 
 /**
@@ -115,6 +117,9 @@ export type InterfaceMember =
 export interface WebWorkerContext {
   $config$: PartytownConfig;
   $importScripts$: (...urls: string[]) => void;
+  $initWindowMedia$?: InitWindowMedia;
+  $interfaces$: InterfaceInfo[];
+  $indexedDB$: any;
   $isInitialized$?: number;
   $libPath$: string;
   $postMessage$: (msg: MessageFromWorkerToSandbox, arr?: any[]) => void;
@@ -135,6 +140,7 @@ export interface WebWorkerEnvironment extends Omit<InitializeEnvironmentData, '$
   $head$: HTMLElement;
   $body$: HTMLElement;
   $location$: Location;
+  $createNode$: (nodeName: string, instanceId: number, namespace?: string) => WorkerNode;
   $currentScriptId$?: number;
   $isInitialized$?: number;
   $isLoading$?: number;
@@ -531,8 +537,14 @@ export type DefinePrototypePropertyDescriptor = (Cstr: any, propertyDescriptorMa
 
 export type RandomId = () => number;
 
-import type { ApplyPathKey, InstanceIdKey, WinIdKey } from './web-worker/worker-constants';
-import type { WorkerEventTargetProxy, WorkerInstance } from './web-worker/worker-instance';
+import type {
+  ApplyPathKey,
+  InstanceIdKey,
+  InstanceStateKey,
+  NamespaceKey,
+  NodeNameKey,
+  WinIdKey,
+} from './web-worker/worker-constants';
 
 export type LazyBridge = [
   Getter,
@@ -541,28 +553,50 @@ export type LazyBridge = [
   ConstructGlobal,
   DefinePrototypePropertyDescriptor,
   RandomId,
-  typeof WorkerInstance,
-  typeof WorkerEventTargetProxy,
   typeof WinIdKey,
   typeof InstanceIdKey,
   typeof ApplyPathKey
 ];
 
-export type InitLazyMediaConstructor = (
+export type InitWindowMedia = (
+  WorkerBase: WorkerConstructor,
+  WorkerEventTargetProxy: WorkerConstructor,
   env: WebWorkerEnvironment,
-  winInstance: any,
-  CstrName: string
+  win: WorkerWindow,
+  windowMediaConstructors: string[]
 ) => any;
 
-export interface InitLazyMediaConstructors {
-  [CstrName: string]: InitLazyMediaConstructor;
-}
-
 export interface MediaSelf {
-  ptm?: LazyBridge;
+  $bridgeToMedia$?: LazyBridge;
+  $bridgeFromMedia$?: InitWindowMedia;
 }
 
 export interface PostMessageData {
   $winId$: number;
   $data$: string;
+}
+
+export interface WorkerConstructor {
+  new (
+    instanceId: number,
+    winId: number,
+    applyPath?: ApplyPath,
+    nodeName?: string,
+    namespace?: string
+  ): WorkerInstance;
+}
+
+export interface WorkerInstance {
+  [WinIdKey]: number;
+  [InstanceIdKey]: number;
+  [ApplyPathKey]: string[];
+  [NodeNameKey]: string | undefined;
+  [NamespaceKey]: string | undefined;
+  [InstanceStateKey]: { [key: string]: any };
+}
+
+export interface WorkerNode extends WorkerInstance, Node {}
+
+export interface WorkerWindow extends WorkerInstance {
+  [key: string]: any;
 }

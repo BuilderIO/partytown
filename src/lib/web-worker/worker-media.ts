@@ -8,33 +8,35 @@ import {
 } from './worker-constants';
 import { callMethod, constructGlobal, getter, setter } from './worker-proxy';
 import { definePrototypePropertyDescriptor, randomId } from '../utils';
-import type { InitLazyMediaConstructors, MediaSelf } from '../types';
-import { WorkerEventTargetProxy, WorkerInstance } from './worker-instance';
+import type { MediaSelf } from '../types';
 
-export const lazyLoadMedia = (): InitLazyMediaConstructors => {
-  if (!self.ptm) {
+export const getInitWindowMedia = () => {
+  if (!webWorkerCtx.$initWindowMedia$) {
     // assign functions the lazy loaded code will need
-    self.ptm = [
+    // partytown media script will load from self.ptb
+    self.$bridgeToMedia$ = [
       getter,
       setter,
       callMethod,
       constructGlobal,
       definePrototypePropertyDescriptor,
       randomId,
-      WorkerInstance,
-      WorkerEventTargetProxy,
       WinIdKey,
       InstanceIdKey,
       ApplyPathKey,
     ];
 
-    // sync load partytown-media, which will reset self.ptm
+    // sync load partytown-media, which will set self.ptm
     // to Window media constructors, like Audio and MediaSource
     webWorkerCtx.$importScripts$(partytownLibUrl('partytown-media.js'));
+
+    // keep reference to the loaded media constructors, like MediaSource
+    webWorkerCtx.$initWindowMedia$ = self.$bridgeFromMedia$;
+    delete self.$bridgeFromMedia$;
   }
 
-  // return the map of Window media constructors
-  return self.ptm as any;
+  // get initialize Window media fn
+  return webWorkerCtx.$initWindowMedia$!;
 };
 
 export const htmlMedia = commaSplit('AUDIO,CANVAS,VIDEO');

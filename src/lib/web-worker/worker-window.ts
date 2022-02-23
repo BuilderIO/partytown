@@ -1,274 +1,536 @@
 import { addStorageApi } from './worker-storage';
-import { callMethod, constructGlobal } from './worker-proxy';
-import { CallType, NodeName, PlatformInstanceId } from '../types';
-import { createNavigator } from './worker-navigator';
-import { createImageConstructor } from './worker-image';
-import { createNodeInstance, getOrCreateNodeInstance } from './worker-constructors';
-import { debug, defineConstructorName, defineProperty, len, randomId } from '../utils';
 import {
-  envGlobalConstructors,
+  ApplyPath,
+  CallType,
+  InterfaceType,
+  NodeName,
+  PlatformInstanceId,
+  WorkerConstructor,
+  WorkerInstance,
+  WorkerNode,
+  WorkerWindow,
+} from '../types';
+import {
+  ApplyPathKey,
+  commaSplit,
   environments,
+  eventTargetMethods,
+  InstanceIdKey,
+  InstanceStateKey,
+  NamespaceKey,
+  NodeNameKey,
   postMessages,
+  webWorkerCtx,
   webWorkerlocalStorage,
   webWorkerSessionStorage,
   WinIdKey,
 } from './worker-constants';
+import {
+  cachedDimensionMethods,
+  cachedDimensionProps,
+  cachedProps,
+  definePrototypeNodeType,
+  getOrCreateNodeInstance,
+} from './worker-constructors';
+import { callMethod, constructGlobal, getter, setter } from './worker-proxy';
+import { createCSSStyleDeclarationCstr } from './worker-css-style-declaration';
+import { createCSSStyleSheetConstructor } from './worker-style';
+import { createImageConstructor } from './worker-image';
+import { createNavigator } from './worker-navigator';
+import { createNodeCstr } from './worker-node';
+import { createPerformanceConstructor } from './worker-performance';
+import {
+  debug,
+  defineConstructorName,
+  defineProperty,
+  definePrototypeProperty,
+  definePrototypeValue,
+  EMPTY_ARRAY,
+  len,
+  randomId,
+} from '../utils';
 import { getEnv } from './worker-environment';
-import { resolveUrl } from './worker-exec';
-import { lazyLoadMedia, windowMediaConstructors } from './worker-media';
+import {
+  getInstanceStateValue,
+  hasInstanceStateValue,
+  setInstanceStateValue,
+} from './worker-state';
+import { getInitWindowMedia, htmlMedia, windowMediaConstructors } from './worker-media';
 import { Location } from './worker-location';
 import { normalizedWinId } from '../log';
-import { WorkerInstance } from './worker-instance';
+import {
+  patchDocument,
+  patchDocumentElementChild,
+  patchDocumentFragment,
+  patchHTMLHtmlElement,
+} from './worker-document';
+import { patchElement } from './worker-element';
+import { patchHTMLAnchorElement } from './worker-anchor';
+import { patchHTMLIFrameElement } from './worker-iframe';
+import { patchHTMLScriptElement } from './worker-script';
+import { resolveUrl } from './worker-exec';
 
-export class Window extends WorkerInstance {
-  constructor($winId$: number, $parentWinId$: number, url: string, isIframeWindow?: boolean) {
-    super($winId$, PlatformInstanceId.window);
+export const createWindow = (
+  $winId$: number,
+  $parentWinId$: number,
+  url: string,
+  isIframeWindow?: boolean
+) => {
+  // base class all Nodes/Elements/Global Constructors will extend
+  const WorkerBase = class implements WorkerInstance {
+    [WinIdKey]: number;
+    [InstanceIdKey]: number;
+    [ApplyPathKey]: string[];
+    [NodeNameKey]: string | undefined;
+    [NamespaceKey]: string | undefined;
+    [InstanceStateKey]: { [key: string]: any };
 
-    let _this: any = this;
-    let globalName: string;
-    let value: any;
-    let historyState: any;
+    constructor(
+      winId: number,
+      instanceId: number,
+      applyPath?: ApplyPath,
+      nodeName?: string,
+      namespace?: string
+    ) {
+      this[WinIdKey] = winId!;
+      this[InstanceIdKey] = instanceId!;
+      this[ApplyPathKey] = applyPath || [];
+      this[NodeNameKey] = nodeName;
+      this[InstanceStateKey] = {};
+      if (namespace) {
+        this[NamespaceKey] = namespace;
+      }
+    }
+  };
 
-    // assign global properties already in the web worker global
-    // that we can put onto the environment window
-    for (globalName in self) {
-      if (!(globalName in _this) && globalName !== 'onmessage') {
-        // global properties already in the web worker global
-        value = self[globalName] as any;
-        if (value != null) {
-          // function examples: atob(), fetch()
-          // object examples: crypto, indexedDB
-          // boolean examples: isSecureContext, crossOriginIsolated
-          const isFunction = typeof value === 'function' && !value.toString().startsWith('class');
-          _this[globalName] = isFunction ? value.bind(self) : value;
+  // window global eveything will live within
+  const WorkerWindow = defineConstructorName(
+    class extends WorkerBase implements WorkerWindow {
+      [WinIdKey]: number;
+      [InstanceIdKey]: number;
+      [ApplyPathKey]: string[];
+      [NodeNameKey]: string | undefined;
+      [NamespaceKey]: string | undefined;
+      [InstanceStateKey]: { [key: string]: any };
+
+      constructor() {
+        super($winId$, PlatformInstanceId.window);
+
+        let win: WorkerWindow = this;
+        let value: any;
+        let historyState: any;
+        let hasInitializedMedia = 0;
+
+        let initWindowMedia = () => {
+          if (!hasInitializedMedia) {
+            getInitWindowMedia()(
+              WorkerBase,
+              WorkerEventTargetProxy,
+              environments[$winId$],
+              win,
+              windowMediaConstructors
+            );
+            hasInitializedMedia = 1;
+          }
+        };
+
+        let nodeCstrs: { [nodeName: string]: any } = {};
+        let $createNode$ = (
+          nodeName: string,
+          instanceId: number,
+          namespace?: string
+        ): WorkerNode => {
+          if (htmlMedia.includes(nodeName)) {
+            initWindowMedia();
+          }
+          const NodeCstr: WorkerConstructor = nodeCstrs[nodeName]
+            ? nodeCstrs[nodeName]
+            : nodeName.includes('-')
+            ? nodeCstrs.UNKNOWN
+            : nodeCstrs.DIV;
+          return new NodeCstr($winId$, instanceId, EMPTY_ARRAY, nodeName, namespace) as any;
+        };
+
+        win.Window = WorkerWindow;
+
+        createNodeCstr(win, WorkerBase);
+        createCSSStyleDeclarationCstr(win, WorkerBase, 'CSSStyleDeclaration');
+        createPerformanceConstructor(win, WorkerBase, 'Performance');
+
+        // define all of the global constructors that should live on window
+        webWorkerCtx.$interfaces$.map(
+          ([cstrName, superCstrName, members, interfaceType, nodeName]) => {
+            const SuperCstr = TrapConstructors[cstrName]
+              ? WorkerTrapProxy
+              : superCstrName === 'EventTarget'
+              ? WorkerEventTargetProxy
+              : superCstrName === 'Object'
+              ? WorkerBase
+              : win[superCstrName];
+
+            const Cstr = (win[cstrName] = defineConstructorName(
+              win[cstrName] || class extends SuperCstr {},
+              cstrName
+            ));
+
+            if (interfaceType === InterfaceType.EnvGlobalConstructor) {
+              // create the constructor and set as a prop on window
+              win[cstrName] = defineConstructorName(
+                class {
+                  constructor(...args: any[]) {
+                    const instance = new Cstr($winId$, randomId());
+                    constructGlobal(instance, cstrName, args);
+                    return instance;
+                  }
+                },
+                cstrName
+              );
+            }
+
+            if (nodeName) {
+              // this is a node name, such as #text or an element's tagname, like all caps DIV
+              nodeCstrs[nodeName] = Cstr;
+            }
+
+            members.map(([memberName, memberType, staticValue]) => {
+              if (!(memberName in Cstr.prototype) && !(memberName in SuperCstr.prototype)) {
+                // member not already in the constructor's prototype
+                if (typeof memberType === 'string') {
+                  definePrototypeProperty(Cstr, memberName, {
+                    get(this: WorkerInstance) {
+                      if (!hasInstanceStateValue(this, memberName)) {
+                        const winId = this[WinIdKey];
+                        const instanceId = this[InstanceIdKey];
+                        const applyPath = [...this[ApplyPathKey], memberName];
+                        const nodeName = this[NodeNameKey];
+                        const PropCstr: typeof WorkerBase = win[memberType];
+
+                        setInstanceStateValue(
+                          this,
+                          memberName,
+                          new PropCstr(winId, instanceId, applyPath, nodeName)
+                        );
+                      }
+                      return getInstanceStateValue(this, memberName);
+                    },
+                    set(this: WorkerInstance, value) {
+                      setInstanceStateValue(this, memberName, value);
+                    },
+                  });
+                } else {
+                  // interface type
+                  if (memberType === InterfaceType.Function) {
+                    // method that should access main
+                    definePrototypeValue(Cstr, memberName, function (this: Node, ...args: any[]) {
+                      return callMethod(this, [memberName], args);
+                    });
+                  } else if (memberType > 0) {
+                    // property
+                    if (staticValue !== undefined) {
+                      // static property that doesn't change
+                      // and no need to access main
+                      definePrototypeValue(Cstr, memberName, staticValue);
+                    } else {
+                      // property getter/setter that should access main
+                      definePrototypeProperty(Cstr, memberName, {
+                        get(this: WorkerNode) {
+                          return getter(this, [memberName]);
+                        },
+                        set(this: WorkerNode, value) {
+                          return setter(this, [memberName], value);
+                        },
+                      });
+                    }
+                  }
+                }
+              }
+            });
+          }
+        );
+
+        // we already assigned the same prototypes found on the main thread's Window
+        // to the worker's Window, but actually it assigned a few that are already on
+        // the web worker's global we can use instead. So manually set which web worker
+        // globals we can reuse, instead of calling the main access.
+        // These same window properties will be assigned to the window instance
+        // when Window is constructed, and these won't make calls to the main thread.
+        commaSplit(
+          'atob,btoa,crypto,indexedDB,setTimeout,setInterval,clearTimeout,clearInterval'
+        ).map((globalName) => {
+          delete (WorkerWindow as any).prototype[globalName];
+
+          if (!(globalName in win)) {
+            // global properties already in the web worker global
+            value = (self as any)[globalName];
+            if (value != null) {
+              // function examples: atob(), fetch()
+              // object examples: crypto, indexedDB
+              // boolean examples: isSecureContext, crossOriginIsolated
+              win[globalName] =
+                typeof value === 'function' && !value.toString().startsWith('class')
+                  ? value.bind(self)
+                  : value;
+            }
+          }
+        });
+
+        // assign web worker global properties to the environment window
+        // window.Promise = self.Promise
+        Object.getOwnPropertyNames(self).map((globalName) => {
+          if (!(globalName in win)) {
+            win[globalName] = (self as any)[globalName];
+          }
+        });
+
+        windowMediaConstructors.map((cstrName) =>
+          defineProperty(win, cstrName, {
+            get() {
+              // lazy load media constructors if called, replacing this getter
+              initWindowMedia();
+              return win[cstrName];
+            },
+          })
+        );
+
+        if ('trustedTypes' in (self as any)) {
+          // https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API
+          win.trustedTypes = (self as any).trustedTypes;
+        }
+
+        // patch this window's global constructors with some additional props
+        patchElement(win.Element);
+        patchDocument(win.Document);
+        patchDocumentFragment(win.DocumentFragment);
+        patchHTMLAnchorElement(win.HTMLAnchorElement);
+        patchHTMLIFrameElement(win.HTMLIFrameElement);
+        patchHTMLScriptElement(win.HTMLScriptElement);
+        patchDocumentElementChild(win.HTMLHeadElement);
+        patchDocumentElementChild(win.HTMLBodyElement);
+        patchHTMLHtmlElement(win.HTMLHtmlElement);
+        createCSSStyleSheetConstructor(win, 'CSSStyleSheet');
+
+        definePrototypeNodeType(win.Comment, 8);
+        definePrototypeNodeType(win.DocumentType, 10);
+
+        environments[$winId$] = {
+          $winId$,
+          $parentWinId$,
+          $window$: new Proxy(win, {
+            has: () =>
+              // window "has" any and all props, this is especially true for global variables
+              // that are meant to be assigned to window, but without "window." prefix,
+              // like: <script>globalProp = true</script>
+              true,
+          }) as any,
+          $document$: $createNode$(NodeName.Document, PlatformInstanceId.document) as any,
+          $documentElement$: $createNode$(
+            NodeName.DocumentElement,
+            PlatformInstanceId.documentElement
+          ) as any,
+          $head$: $createNode$(NodeName.Head, PlatformInstanceId.head) as any,
+          $body$: $createNode$(NodeName.Body, PlatformInstanceId.body) as any,
+          $location$: new Location(url) as any,
+          $createNode$,
+        };
+
+        // requestAnimationFrame() is provided by Chrome in a web worker, but not Safari
+        win.requestAnimationFrame = (cb: (ts: number) => void) =>
+          setTimeout(() => cb(performance.now()), 9);
+        win.cancelAnimationFrame = (id: number) => clearTimeout(id);
+
+        // ensure requestIdleCallback() happens in the worker and doesn't call to main
+        // it's also not provided by Safari
+        win.requestIdleCallback = (
+          cb: (opts: { didTimeout: boolean; timeRemaining: () => number }) => void,
+          start?: number
+        ) => {
+          start = Date.now();
+          return setTimeout(
+            () =>
+              cb({
+                didTimeout: false,
+                timeRemaining: () => Math.max(0, 50 - (Date.now() - start!)),
+              }),
+            1
+          );
+        };
+        win.cancelIdleCallback = (id: number) => clearTimeout(id);
+
+        // add storage APIs to the window
+        addStorageApi(win, 'localStorage', webWorkerlocalStorage);
+        addStorageApi(win, 'sessionStorage', webWorkerSessionStorage);
+
+        if (isIframeWindow) {
+          historyState = {};
+          win.history = {
+            pushState(stateObj: any) {
+              historyState = stateObj;
+            },
+            replaceState(stateObj: any) {
+              historyState = stateObj;
+            },
+            get state() {
+              return historyState;
+            },
+            length: 0,
+          };
+          win.indexeddb = undefined;
+        }
+
+        win.Worker = undefined;
+      }
+
+      addEventListener(...args: any[]) {
+        if (args[0] === 'load') {
+          if (getEnv(this).$runWindowLoadEvent$) {
+            setTimeout(() => args[1]({ type: 'load' }));
+          }
+        } else {
+          callMethod(this, ['addEventListener'], args, CallType.NonBlocking);
         }
       }
-    }
 
-    // assign web worker global properties to the environment window
-    // window.Promise = self.Promise
-    Object.getOwnPropertyNames(self).map((globalName) => {
-      if (!(globalName in _this)) {
-        _this[globalName] = (self as any)[globalName];
+      get body() {
+        return getEnv(this).$body$;
       }
-    });
 
-    envGlobalConstructors.forEach((GlobalCstr, cstrName) => {
-      // create the constructor and set as a prop
-      _this[cstrName] = defineConstructorName(
-        class {
-          constructor(...args: any[]) {
-            const instance = new GlobalCstr($winId$, randomId());
-            constructGlobal(instance, cstrName, args);
-            return instance;
+      get document() {
+        return getEnv(this).$document$;
+      }
+
+      get documentElement() {
+        return getEnv(this).$documentElement$;
+      }
+
+      fetch(input: string | URL | Request, init: any) {
+        input = typeof input === 'string' || input instanceof URL ? String(input) : input.url;
+        return fetch(resolveUrl(getEnv(this), input), init);
+      }
+
+      get frameElement() {
+        const env = getEnv(this);
+        const parentWinId = env.$parentWinId$;
+        const winId = env.$winId$;
+
+        if (winId === parentWinId) {
+          // this is the top window, not in an iframe
+          return null;
+        }
+
+        // the winId of an iframe's window is the same
+        // as the instanceId of the containing iframe element
+        return getOrCreateNodeInstance(parentWinId, winId, NodeName.IFrame);
+      }
+
+      get globalThis() {
+        return this;
+      }
+
+      get head() {
+        return getEnv(this).$head$;
+      }
+
+      get location() {
+        return getEnv(this).$location$;
+      }
+      set location(loc: any) {
+        getEnv(this).$location$.href = loc + '';
+      }
+
+      get Image() {
+        return createImageConstructor(getEnv(this));
+      }
+
+      get name() {
+        return (
+          name +
+          (debug
+            ? `${normalizedWinId(this[WinIdKey])} (${this[WinIdKey]})`
+            : (this[WinIdKey] as any))
+        );
+      }
+
+      get navigator() {
+        return createNavigator(getEnv(this));
+      }
+
+      get origin() {
+        return getEnv(this).$location$.origin;
+      }
+      set origin(_) {}
+
+      get parent() {
+        return proxyAncestorPostMessage(
+          environments[getEnv(this).$parentWinId$].$window$,
+          this[WinIdKey]
+        );
+      }
+
+      postMessage(...args: any[]) {
+        callMethod(this, ['postMessage'], args, CallType.NonBlockingNoSideEffect);
+      }
+
+      get self() {
+        return this;
+      }
+
+      get top(): any {
+        for (let envWinId in environments) {
+          if (environments[envWinId].$winId$ === environments[envWinId].$parentWinId$) {
+            return proxyAncestorPostMessage(environments[envWinId].$window$, this[WinIdKey]);
           }
-        },
-        cstrName
-      );
-    });
+        }
+      }
 
-    windowMediaConstructors.map((cstrName) =>
-      defineProperty(_this, cstrName, {
-        get() {
-          // lazy load media constructors if called, remove the getter
-          delete _this[cstrName];
-          const initMediaConstructors = lazyLoadMedia();
-          const initMediaConstructor = initMediaConstructors[cstrName];
-          return (_this[cstrName] = initMediaConstructor(getEnv(_this), _this, cstrName));
+      get window() {
+        return this;
+      }
+
+      get XMLHttpRequest() {
+        const env = getEnv(this);
+        return class XMLHttpRequest_ extends (self as any).XMLHttpRequest {
+          open(...args: any[]) {
+            args[1] = resolveUrl(env, args[1]);
+            super.open(...args);
+          }
+          set withCredentials(_: any) {}
+        };
+      }
+    },
+    'Window'
+  );
+
+  // extends WorkerBase, but also a proxy so certain constructors like style.color work
+  const WorkerTrapProxy = class extends WorkerBase {
+    constructor(winId: number, instanceId: number, applyPath?: ApplyPath, nodeName?: string) {
+      super(winId, instanceId, applyPath, nodeName);
+
+      return new Proxy(this, {
+        get(instance, propName) {
+          return getter(instance, [propName]);
         },
+        set(instance, propName, propValue) {
+          setter(instance, [propName], propValue);
+          return true;
+        },
+      });
+    }
+  };
+
+  const WorkerEventTargetProxy = class extends WorkerBase {};
+  eventTargetMethods.map(
+    (methodName) =>
+      ((WorkerEventTargetProxy as any).prototype[methodName] = function (...args: any[]) {
+        return callMethod(this, [methodName], args, CallType.NonBlocking);
       })
-    );
+  );
 
-    if ('trustedTypes' in (self as any)) {
-      // https://developer.mozilla.org/en-US/docs/Web/API/Trusted_Types_API
-      _this.trustedTypes = (self as any).trustedTypes;
-    }
+  cachedProps(WorkerWindow, 'devicePixelRatio');
+  cachedDimensionProps(WorkerWindow);
+  cachedDimensionMethods(WorkerWindow, ['getComputedStyle']);
 
-    environments[$winId$] = {
-      $winId$,
-      $parentWinId$,
-      $window$: new Proxy(_this, {
-        has: () =>
-          // window "has" any and all props, this is especially true for global variables
-          // that are meant to be assigned to window, but without "window." prefix,
-          // like: <script>globalProp = true</script>
-          true,
-      }),
-      $document$: createNodeInstance(
-        $winId$,
-        PlatformInstanceId.document,
-        NodeName.Document
-      ) as any,
-      $documentElement$: createNodeInstance(
-        $winId$,
-        PlatformInstanceId.documentElement,
-        NodeName.DocumentElement
-      ) as any,
-      $head$: createNodeInstance($winId$, PlatformInstanceId.head, NodeName.Head) as any,
-      $body$: createNodeInstance($winId$, PlatformInstanceId.body, NodeName.Body) as any,
-      $location$: new Location(url) as any,
-    };
-
-    // requestAnimationFrame() is provided by Chrome in a web worker, but not Safari
-    _this.requestAnimationFrame = (cb: (ts: number) => void) =>
-      setTimeout(() => cb(performance.now()), 9);
-    _this.cancelAnimationFrame = (id: number) => clearTimeout(id);
-
-    // ensure requestIdleCallback() happens in the worker and doesn't call to main
-    // it's also not provided by Safari
-    _this.requestIdleCallback = (
-      cb: (opts: { didTimeout: boolean; timeRemaining: () => number }) => void,
-      start?: number
-    ) => {
-      start = Date.now();
-      return setTimeout(
-        () =>
-          cb({
-            didTimeout: false,
-            timeRemaining: () => Math.max(0, 50 - (Date.now() - start!)),
-          }),
-        1
-      );
-    };
-    _this.cancelIdleCallback = (id: number) => clearTimeout(id);
-
-    // add storage APIs to the window
-    addStorageApi(_this, 'localStorage', webWorkerlocalStorage);
-    addStorageApi(_this, 'sessionStorage', webWorkerSessionStorage);
-
-    if (isIframeWindow) {
-      historyState = {};
-      _this.history = {
-        pushState(stateObj: any) {
-          historyState = stateObj;
-        },
-        replaceState(stateObj: any) {
-          historyState = stateObj;
-        },
-        get state() {
-          return historyState;
-        },
-        length: 0,
-      };
-    }
-
-    _this.Worker = undefined;
-  }
-
-  addEventListener(...args: any[]) {
-    if (args[0] === 'load') {
-      if (getEnv(this).$runWindowLoadEvent$) {
-        setTimeout(() => args[1]({ type: 'load' }));
-      }
-    } else {
-      callMethod(this, ['addEventListener'], args, CallType.NonBlocking);
-    }
-  }
-
-  get body() {
-    return getEnv(this).$body$;
-  }
-
-  get document() {
-    return getEnv(this).$document$;
-  }
-
-  get documentElement() {
-    return getEnv(this).$documentElement$;
-  }
-
-  fetch(input: string | URL | Request, init: any) {
-    input = typeof input === 'string' || input instanceof URL ? String(input) : input.url;
-    return fetch(resolveUrl(getEnv(this), input), init);
-  }
-
-  get frameElement() {
-    const env = getEnv(this);
-    const parentWinId = env.$parentWinId$;
-    const winId = env.$winId$;
-
-    if (winId === parentWinId) {
-      // this is the top window, not in an iframe
-      return null;
-    }
-
-    // the winId of an iframe's window is the same
-    // as the instanceId of the containing iframe element
-    return getOrCreateNodeInstance(parentWinId, winId, NodeName.IFrame);
-  }
-
-  get globalThis() {
-    return this;
-  }
-
-  get head() {
-    return getEnv(this).$head$;
-  }
-
-  get location() {
-    return getEnv(this).$location$;
-  }
-  set location(loc: any) {
-    getEnv(this).$location$.href = loc + '';
-  }
-
-  get Image() {
-    return createImageConstructor(getEnv(this));
-  }
-
-  get name() {
-    return (
-      name +
-      (debug ? `${normalizedWinId(this[WinIdKey])} (${this[WinIdKey]})` : (this[WinIdKey] as any))
-    );
-  }
-
-  get navigator() {
-    return createNavigator(getEnv(this));
-  }
-
-  get origin() {
-    return getEnv(this).$location$.origin;
-  }
-
-  get parent() {
-    return proxyAncestorPostMessage(
-      environments[getEnv(this).$parentWinId$].$window$,
-      this[WinIdKey]
-    );
-  }
-
-  postMessage(...args: any[]) {
-    callMethod(this, ['postMessage'], args, CallType.NonBlockingNoSideEffect);
-  }
-
-  get self() {
-    return this;
-  }
-
-  get top(): any {
-    for (let envWinId in environments) {
-      if (environments[envWinId].$winId$ === environments[envWinId].$parentWinId$) {
-        return proxyAncestorPostMessage(environments[envWinId].$window$, this[WinIdKey]);
-      }
-    }
-  }
-
-  get window() {
-    return this;
-  }
-
-  get XMLHttpRequest() {
-    const env = getEnv(this);
-    return class XMLHttpRequest_ extends (self as any).XMLHttpRequest {
-      open(...args: any[]) {
-        args[1] = resolveUrl(env, args[1]);
-        super.open(...args);
-      }
-      set withCredentials(_: any) {}
-    };
-  }
-}
+  new WorkerWindow();
+};
 
 const proxyAncestorPostMessage = (parentWin: any, $winId$: number) =>
   new Proxy<any>(parentWin, {
@@ -289,3 +551,10 @@ const proxyAncestorPostMessage = (parentWin: any, $winId$: number) =>
       }
     },
   });
+
+// Trap Constructors are ones where all properties have
+// proxy traps, such as dataset.name
+const TrapConstructors: { [cstrName: string]: 1 } = {
+  DOMStringMap: 1,
+  NamedNodeMap: 1,
+};

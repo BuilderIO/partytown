@@ -45,7 +45,6 @@ function minifyOptions(opts: BuildOptions, debug: boolean): MinifyOptions {
       global_defs: {
         'globalThis.partytownDebug': false,
       },
-      keep_classnames: keepConstructorNames(),
       ecma: 2018,
       passes: 3,
       unsafe_symbols: true,
@@ -54,27 +53,22 @@ function minifyOptions(opts: BuildOptions, debug: boolean): MinifyOptions {
       comments: false,
       ecma: 2018,
     },
-    keep_classnames: keepConstructorNames(),
-    mangle: {
-      keep_classnames: keepConstructorNames(),
-    },
   };
 }
 
-function keepConstructorNames() {
-  return /HTMLAnchorElement|HTMLIFrameElement|HTMLScriptElement|HTMLDocument|HTMLElement|Node|Window/;
-}
-
 function managlePropsPlugin(): Plugin {
-  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$'.split('');
+  const chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ$_'.split('');
   const mangleProps: { [key: string]: string } = {
     $applyPath$: '',
     $args$: '',
     $assignInstanceId$: '',
     $body$: '',
+    $bridgeFromMedia$: '',
+    $bridgeToMedia$: '',
     $buf$: '',
     $config$: '',
     $content$: '',
+    $createNode$: '',
     $currentScriptId$: '',
     $data$: '',
     $document$: '',
@@ -84,6 +78,7 @@ function managlePropsPlugin(): Plugin {
     $groupedGetters$: '',
     $head$: '',
     $importScripts$: '',
+    $initWindowMedia$: '',
     $interfaces$: '',
     $instanceId$: '',
     $isInitialized$: '',

@@ -7,11 +7,11 @@ export const [
   constructGlobal,
   definePrototypePropertyDescriptor,
   randomId,
-  WorkerProxy,
-  WorkerEventTargetProxy,
   WinIdKey,
   InstanceIdKey,
   ApplyPathKey,
-] = self.ptm!;
+] = self.$bridgeToMedia$!;
+
+delete self.$bridgeToMedia$;
 
 declare const self: MediaSelf;

@@ -1,8 +1,8 @@
+import { createWindow } from './worker-window';
 import { debug } from '../utils';
 import { environments, webWorkerCtx, WinIdKey } from './worker-constants';
 import { InitializeEnvironmentData, WorkerMessageType } from '../types';
 import { logWorker, normalizedWinId } from '../log';
-import { Window } from './worker-window';
 
 export const createEnvironment = (
   { $winId$, $parentWinId$, $url$ }: InitializeEnvironmentData,
@@ -11,7 +11,7 @@ export const createEnvironment = (
   if (!environments[$winId$]) {
     // create a simulated global environment for this window
     // if it hasn't already been created (like an iframe)
-    new Window($winId$, $parentWinId$, $url$, isIframeWindow);
+    createWindow($winId$, $parentWinId$, $url$, isIframeWindow);
 
     if (debug) {
       const winType = $winId$ === $parentWinId$ ? 'top' : 'iframe';

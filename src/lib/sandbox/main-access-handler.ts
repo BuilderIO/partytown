@@ -27,7 +27,6 @@ export const mainAccessHandler = async (
   let instance: any;
   let rtnValue: any;
   let isLast: boolean;
-
   for (; i < totalTasks; i++) {
     try {
       isLast = i === totalTasks - 1;

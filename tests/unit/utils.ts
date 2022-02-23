@@ -123,6 +123,7 @@ function createWorkerWindownEnvironment(winId: number) {
     $head$: {} as any,
     $body$: {} as any,
     $location$: {} as any,
+    $createNode$: () => null as any,
   };
 
   return environments[winId];

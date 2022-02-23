@@ -78,10 +78,21 @@
             const elm = document.getElementById('testBeforeAppendLabel');
             const span = document.createElement('span');
             span.id = 'testBeforeAppend';
-            span.style.color = 'blue';
+            span.style.color = 'green';
             span.style.fontWeight = '800';
             span.textContent = span.style.color;
             elm.appendChild(span);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>get existing style</strong>
+        <code id="testGetExisting" style="color: blue"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testGetExisting');
+            elm.textContent = elm.style.color;
           })();
         </script>
       </li>

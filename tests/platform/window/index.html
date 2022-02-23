@@ -142,7 +142,7 @@
       </li>
 
       <li>
-        <strong>getComputedStyle().getPropertyValue('color')</strong>
+        <strong>getComputedStyle(elm).getPropertyValue('color')</strong>
         <code id="testGetComputedStyleGetPropertyValue" style="color: limegreen"></code>
         <script type="text/partytown">
           (function () {
@@ -390,7 +390,10 @@
             document.head.removeChild(iframe1);
             document.head.removeChild(iframe2);
             const elm = document.getElementById('testPerformanceTimingNavigationStart');
-            elm.textContent = window.performance.timing.navigationStart;
+            const perf = window.performance;
+            const timing = perf.timing;
+            const navigationStart = timing.navigationStart
+            elm.textContent = navigationStart;
             elm.className = 'testPerformanceTimingNavigationStart';
           })();
         </script>
@@ -498,9 +501,9 @@
         </code>
         <script type="text/partytown">
           (function () {
-            const elm = document.getElementById('testCrypto');
             const arr = new Uint32Array(1);
             window.crypto.getRandomValues(arr);
+            const elm = document.getElementById('testCrypto');
             elm.textContent = arr[0];
           })();
         </script>

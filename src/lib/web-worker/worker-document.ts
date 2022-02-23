@@ -1,187 +1,214 @@
 import { callMethod, setter } from './worker-proxy';
-import { CallType, NodeName, StateProp } from '../types';
+import { CallType, NodeName, StateProp, WorkerNode } from '../types';
 import { createEnvironment, getEnv, getEnvWindow } from './worker-environment';
+import {
+  cachedProps,
+  cachedTreeProps,
+  definePrototypeNodeType,
+  getOrCreateNodeInstance,
+} from './worker-constructors';
+import { definePrototypePropertyDescriptor, randomId, SCRIPT_TYPE } from '../utils';
+import { elementStructurePropNames, IS_TAG_REG, WinIdKey } from './worker-constants';
 import { getInstanceStateValue } from './worker-state';
-import { getOrCreateNodeInstance } from './worker-constructors';
 import { getPartytownScript } from './worker-exec';
 import { isScriptJsType } from './worker-script';
-import { IS_TAG_REG, WinIdKey } from './worker-constants';
-import type { Node } from './worker-node';
-import { noop, randomId, SCRIPT_TYPE } from '../utils';
 
-export const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
-  body: {
-    get() {
-      return getEnv(this).$body$;
+export const patchDocument = (WorkerDocument: any) => {
+  const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
+    body: {
+      get() {
+        return getEnv(this).$body$;
+      },
     },
-  },
 
-  createElement: {
-    value(tagName: string) {
-      tagName = tagName.toUpperCase();
-      if (!IS_TAG_REG.test(tagName)) {
-        throw tagName + ' not valid';
-      }
+    createElement: {
+      value(tagName: string) {
+        tagName = tagName.toUpperCase();
+        if (!IS_TAG_REG.test(tagName)) {
+          throw tagName + ' not valid';
+        }
 
-      const winId = this[WinIdKey];
-      const instanceId = randomId();
-      const elm = getOrCreateNodeInstance(winId, instanceId, tagName);
+        const winId = this[WinIdKey];
+        const instanceId = randomId();
+        const elm = getOrCreateNodeInstance(winId, instanceId, tagName);
 
-      callMethod(this, ['createElement'], [tagName], CallType.NonBlocking, instanceId);
+        callMethod(this, ['createElement'], [tagName], CallType.NonBlocking, instanceId);
 
-      if (tagName === NodeName.IFrame) {
-        // an iframe element's instanceId is the same as its contentWindow's winId
-        // and the contentWindow's parentWinId is the iframe element's winId
-        const env = createEnvironment(
-          {
-            $winId$: instanceId,
-            $parentWinId$: winId,
-            $url$: 'about:blank',
-          },
-          true
+        if (tagName === NodeName.IFrame) {
+          // an iframe element's instanceId is the same as its contentWindow's winId
+          // and the contentWindow's parentWinId is the iframe element's winId
+          const env = createEnvironment(
+            {
+              $winId$: instanceId,
+              $parentWinId$: winId,
+              $url$: 'about:blank',
+            },
+            true
+          );
+
+          // iframe's get the native fetch
+          // common for analytics to use "const fetch = iframe.contentWindow.fetch"
+          // so they don't go through a patched fetch()
+          env.$window$.fetch = fetch;
+
+          setter(elm, ['srcdoc'], getPartytownScript());
+        } else if (tagName === NodeName.Script) {
+          const scriptType = getInstanceStateValue(elm, StateProp.type);
+          if (isScriptJsType(scriptType)) {
+            setter(elm, ['type'], SCRIPT_TYPE);
+          }
+        }
+
+        return elm;
+      },
+    },
+
+    createElementNS: {
+      value(namespace: string, tagName: string) {
+        tagName = tagName.toLowerCase();
+
+        const winId = this[WinIdKey];
+        const instanceId = randomId();
+        const nsElm = getOrCreateNodeInstance(winId, instanceId, tagName, namespace);
+
+        callMethod(
+          this,
+          ['createElementNS'],
+          [namespace, tagName],
+          CallType.NonBlocking,
+          instanceId
         );
 
-        // iframe's get the native fetch
-        // common for analytics to use "const fetch = iframe.contentWindow.fetch"
-        // so they don't go through a patched fetch()
-        env.$window$.fetch = fetch;
+        return nsElm;
+      },
+    },
 
-        setter(elm, ['srcdoc'], getPartytownScript());
-      } else if (tagName === NodeName.Script) {
-        const scriptType = getInstanceStateValue(elm, StateProp.type);
-        if (isScriptJsType(scriptType)) {
-          setter(elm, ['type'], SCRIPT_TYPE);
+    createTextNode: {
+      value(text: string) {
+        const winId = this[WinIdKey];
+        const instanceId = randomId();
+        const textNode = getOrCreateNodeInstance(winId, instanceId, NodeName.Text);
+
+        callMethod(this, ['createTextNode'], [text], CallType.NonBlocking, instanceId);
+
+        return textNode;
+      },
+    },
+
+    createEvent: {
+      value: (type: string) => new Event(type),
+    },
+
+    currentScript: {
+      get() {
+        const winId = this[WinIdKey];
+        const currentScriptId = getEnv(this).$currentScriptId$!;
+        if (currentScriptId > 0) {
+          return getOrCreateNodeInstance(winId, currentScriptId, NodeName.Script);
         }
-      }
-
-      return elm;
+        return null;
+      },
     },
-  },
 
-  createElementNS: {
-    value(namespace: string, tagName: string) {
-      tagName = tagName.toLowerCase();
-
-      const winId = this[WinIdKey];
-      const instanceId = randomId();
-      const nsElm = getOrCreateNodeInstance(winId, instanceId, tagName, namespace);
-
-      callMethod(this, ['createElementNS'], [namespace, tagName], CallType.NonBlocking, instanceId);
-
-      return nsElm;
+    defaultView: {
+      get() {
+        return getEnvWindow(this);
+      },
     },
-  },
 
-  createTextNode: {
-    value(text: string) {
-      const winId = this[WinIdKey];
-      const instanceId = randomId();
-      const textNode = getOrCreateNodeInstance(winId, instanceId, NodeName.Text);
-
-      callMethod(this, ['createTextNode'], [text], CallType.NonBlocking, instanceId);
-
-      return textNode;
+    documentElement: {
+      get() {
+        return getEnv(this).$documentElement$;
+      },
     },
-  },
 
-  createEvent: {
-    value: (type: string) => new Event(type),
-  },
-
-  currentScript: {
-    get() {
-      const winId = this[WinIdKey];
-      const currentScriptId = getEnv(this).$currentScriptId$!;
-      if (currentScriptId > 0) {
-        return getOrCreateNodeInstance(winId, currentScriptId, NodeName.Script);
-      }
-      return null;
+    getElementsByTagName: {
+      value(tagName: string) {
+        tagName = tagName.toUpperCase();
+        if (tagName === NodeName.Body) {
+          return [getEnv(this).$body$];
+        } else if (tagName === NodeName.Head) {
+          return [getEnv(this).$head$];
+        } else {
+          return callMethod(this, ['getElementsByTagName'], [tagName]);
+        }
+      },
     },
-  },
 
-  defaultView: {
-    get() {
-      return getEnvWindow(this);
+    head: {
+      get() {
+        return getEnv(this).$head$;
+      },
     },
-  },
 
-  documentElement: {
-    get() {
-      return getEnv(this).$documentElement$;
+    implementation: {
+      value: {
+        hasFeature: () => true,
+      },
     },
-  },
 
-  getElementsByTagName: {
-    value(tagName: string) {
-      tagName = tagName.toUpperCase();
-      if (tagName === NodeName.Body) {
-        return [getEnv(this).$body$];
-      } else if (tagName === NodeName.Head) {
-        return [getEnv(this).$head$];
-      } else {
-        return callMethod(this, ['getElementsByTagName'], [tagName]);
-      }
+    location: {
+      get() {
+        return getEnv(this).$location$;
+      },
+      set(url) {
+        getEnv(this).$location$.href = url + '';
+      },
     },
-  },
 
-  head: {
-    get() {
-      return getEnv(this).$head$;
+    nodeType: {
+      value: 9,
     },
-  },
 
-  implementation: {
-    value: {
-      hasFeature: () => true,
+    parentNode: {
+      value: null,
     },
-  },
 
-  location: {
-    get() {
-      return getEnv(this).$location$;
+    parentElement: {
+      value: null,
     },
-    set(url) {
-      getEnv(this).$location$.href = url + '';
+
+    readyState: {
+      value: 'complete',
     },
-  },
+  };
 
-  nodeType: {
-    value: 9,
-  },
+  definePrototypePropertyDescriptor(WorkerDocument, DocumentDescriptorMap);
 
-  parentNode: {
-    value: null,
-  },
-
-  parentElement: {
-    value: null,
-  },
-
-  readyState: {
-    value: 'complete',
-  },
+  cachedProps(WorkerDocument, 'compatMode,referrer');
 };
 
-export const DocumentElementChildDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
-  parentElement: {
-    get() {
-      return (this as any).parentNode;
+export const patchDocumentElementChild = (WokerDocumentElementChild: any) => {
+  const DocumentElementChildDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
+    parentElement: {
+      get() {
+        return (this as any).parentNode;
+      },
     },
-  },
-  parentNode: {
-    get() {
-      return getEnv(this).$documentElement$;
+    parentNode: {
+      get() {
+        return getEnv(this).$documentElement$;
+      },
     },
-  },
+  };
+  definePrototypePropertyDescriptor(WokerDocumentElementChild, DocumentElementChildDescriptorMap);
 };
 
-export const DocumentElementDescriptorMap: PropertyDescriptorMap & ThisType<Node> = {
-  parentElement: {
-    value: null,
-  },
-  parentNode: {
-    get() {
-      return getEnv(this).$document$;
+export const patchHTMLHtmlElement = (WorkerHTMLHtmlElement: any) => {
+  const DocumentElementDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
+    parentElement: {
+      value: null,
     },
-  },
+    parentNode: {
+      get() {
+        return getEnv(this).$document$;
+      },
+    },
+  };
+  definePrototypePropertyDescriptor(WorkerHTMLHtmlElement, DocumentElementDescriptorMap);
+};
+
+export const patchDocumentFragment = (WorkerDocumentFragment: any) => {
+  definePrototypeNodeType(WorkerDocumentFragment, 11);
+  cachedTreeProps(WorkerDocumentFragment, elementStructurePropNames);
 };

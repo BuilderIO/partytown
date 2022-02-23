@@ -11,6 +11,8 @@ import {
   MainAccessTask,
   Setter,
   WorkerMessageType,
+  WorkerInstance,
+  WorkerNode,
 } from '../types';
 import {
   ApplyPathKey,
@@ -41,9 +43,7 @@ import {
   logWorkerSetter,
   taskDebugInfo,
 } from '../log';
-import type { Node } from './worker-node';
 import syncSendMessageToMain from '../build-modules/sync-send-message-to-main';
-import type { WorkerInstance } from './worker-instance';
 
 const taskQueue: MainAccessTask[] = [];
 
@@ -250,6 +250,6 @@ export const constructGlobal: ConstructGlobal = (
 const createHookOptions = (instance: WorkerInstance, applyPath: ApplyPath): HookOptions => ({
   name: applyPath.join('.'),
   continue: HookContinue,
-  nodeName: (instance as any as Node)[NodeNameKey],
+  nodeName: (instance as any as WorkerNode)[NodeNameKey],
   constructor: getConstructorName(instance),
 });

@@ -2,16 +2,16 @@ import {
   ApplyPath,
   PlatformInstanceId,
   RefHandlerCallbackData,
+  SerializedAttr,
   SerializedInstance,
   SerializedObject,
   SerializedRefTransferData,
   SerializedTransfer,
   SerializedType,
   WebWorkerEnvironment,
+  WorkerNode,
 } from '../types';
-import { Attr } from './worker-node';
 import { callMethod } from './worker-proxy';
-import { CSSStyleDeclaration } from './worker-css-style-declaration';
 import {
   environments,
   InstanceIdKey,
@@ -20,9 +20,8 @@ import {
   webWorkerRefsByRefId,
   WinIdKey,
 } from './worker-constants';
-import { getConstructorName, noop } from '../utils';
+import { getConstructorName, len, noop } from '../utils';
 import { getOrCreateNodeInstance } from './worker-constructors';
-import { NodeList } from './worker-node-list';
 import { setWorkerRef } from './worker-state';
 
 export const serializeForMain = (
@@ -177,7 +176,13 @@ export const deserializeFromMain = (
     }
 
     if (serializedType === SerializedType.CSSStyleDeclaration) {
-      return new CSSStyleDeclaration(winId!, instanceId!, applyPath, obj);
+      return new (environments[winId!].$window$ as any).CSSStyleDeclaration(
+        winId!,
+        instanceId!,
+        applyPath,
+        '',
+        obj
+      );
     }
 
     if (serializedType === SerializedType.Event) {
@@ -274,6 +279,51 @@ const deserializeRefFromMain = (
   }
 
   return webWorkerRefsByRefId[$refId$];
+};
+
+const NodeList = class {
+  private _: WorkerNode[];
+
+  constructor(nodes: WorkerNode[]) {
+    (this._ = nodes).map((node, index) => ((this as any)[index] = node));
+  }
+  entries() {
+    return this._.entries();
+  }
+  forEach(cb: (value: Node, index: number) => void, thisArg?: any) {
+    this._.map(cb, thisArg);
+  }
+  item(index: number) {
+    return (this as any)[index];
+  }
+  keys() {
+    return this._.keys();
+  }
+  get length() {
+    return len(this._);
+  }
+  values() {
+    return this._.values();
+  }
+  [Symbol.iterator]() {
+    return this._[Symbol.iterator]();
+  }
+};
+
+const Attr = class {
+  name: string;
+  value: string;
+
+  constructor(serializedAttr: SerializedAttr) {
+    this.name = serializedAttr[0];
+    this.value = serializedAttr[1];
+  }
+  get nodeName() {
+    return this.name;
+  }
+  get nodeType() {
+    return 2;
+  }
 };
 
 declare const TrustedHTML: any;
