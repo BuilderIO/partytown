@@ -44,14 +44,20 @@ The `lib/debug` files are not meant to be used in production. See the [Partytown
 └── partytown.js
 ```
 
-## `@builder.io/partytown/integrations`
+## `@builder.io/partytown/integration`
 
-The `integrations` submodule provides functions that can be used for integrations.
+The `integration` submodule provides functions that can be used for integrations.
 
 | Export             | Description                                                                                                                             |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------------------------- |
 | partytownSnippet() | Function that returns the Partytown snippet as a string which can be used as the innerHTML of the inlined Partytown script in the head. |
 | SCRIPT_TYPE        | The value for the script type attribute: `text/partytown`                                                                               |
+
+```js
+import { partytownSnippet } from '@builder.io/partytown/integration';
+
+const snippetText = partytownSnippet();
+```
 
 ## `@builder.io/partytown/react`
 
