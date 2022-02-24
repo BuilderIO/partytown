@@ -118,6 +118,17 @@
       </li>
 
       <li>
+        <strong>self === window</strong>
+        <code id="testSelfWindow"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testSelfWindow');
+            elm.textContent = String(window === self);
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>window.HTMLBodyElement.name</strong>
         <code id="testHTMLBodyElementName"></code>
         <script type="text/partytown">
@@ -724,6 +735,28 @@
               elm.textContent = ev.type;
               elm.className = 'testWindowLoad';
             });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>importScripts function</strong>
+        <code id="testImportScripts"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testImportScripts');
+            elm.textContent = typeof importScripts === 'function';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>WorkerGlobalScope</strong>
+        <code id="testWorkerGlobalScope"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testWorkerGlobalScope');
+            elm.textContent = typeof WorkerGlobalScope !== 'undefined';
           })();
         </script>
       </li>

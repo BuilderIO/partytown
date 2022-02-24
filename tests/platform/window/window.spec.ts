@@ -20,6 +20,9 @@ test('window', async ({ page }) => {
   const testThisWindow = page.locator('#testThisWindow');
   await expect(testThisWindow).toHaveText('true');
 
+  const testSelfWindow = page.locator('#testSelfWindow');
+  await expect(testSelfWindow).toHaveText('true');
+
   const testHTMLBodyElementName = page.locator('#testHTMLBodyElementName');
   await expect(testHTMLBodyElementName).toHaveText('HTMLBodyElement HTMLBodyElement');
 
@@ -146,7 +149,9 @@ test('window', async ({ page }) => {
   // const testIsTypeSupported = page.locator('#testIsTypeSupported');
   // await expect(testIsTypeSupported).toHaveText('true');
 
-  await page.waitForSelector('.testWindowLoad');
-  const testWindowLoad = page.locator('#testWindowLoad');
-  await expect(testWindowLoad).toHaveText('load');
+  const testImportScripts = page.locator('#testImportScripts');
+  await expect(testImportScripts).toHaveText('false');
+
+  const testWorkerGlobalScope = page.locator('#testWorkerGlobalScope');
+  await expect(testWorkerGlobalScope).toHaveText('false');
 });
