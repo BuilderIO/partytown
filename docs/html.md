@@ -15,7 +15,7 @@ While the `partytown.js` file _could_ be an external request, it's recommended t
 </head>
 ```
 
-One option to load the snippet is from the `partytownSnippet()` function, exported from the [@builder.io/partytown/integrations](/distribution#builderiopartytownintegrations) submodule.
+One option to load the snippet is from the `partytownSnippet()` function, exported from the [@builder.io/partytown/integration](/distribution#builderiopartytownintegration) submodule.
 
 ```js
 import { partytownSnippet } from '@builder.io/partytown/integration';
