@@ -15,10 +15,10 @@ import {
   commaSplit,
   environments,
   eventTargetMethods,
+  InstanceDataKey,
   InstanceIdKey,
   InstanceStateKey,
   NamespaceKey,
-  NodeNameKey,
   postMessages,
   webWorkerCtx,
   webWorkerlocalStorage,
@@ -81,7 +81,7 @@ export const createWindow = (
     [WinIdKey]: number;
     [InstanceIdKey]: number;
     [ApplyPathKey]: string[];
-    [NodeNameKey]: string | undefined;
+    [InstanceDataKey]: any;
     [NamespaceKey]: string | undefined;
     [InstanceStateKey]: { [key: string]: any };
 
@@ -89,13 +89,13 @@ export const createWindow = (
       winId: number,
       instanceId: number,
       applyPath?: ApplyPath,
-      nodeName?: string,
+      instanceData?: any,
       namespace?: string
     ) {
       this[WinIdKey] = winId!;
       this[InstanceIdKey] = instanceId!;
       this[ApplyPathKey] = applyPath || [];
-      this[NodeNameKey] = nodeName;
+      this[InstanceDataKey] = instanceData;
       this[InstanceStateKey] = {};
       if (namespace) {
         this[NamespaceKey] = namespace;
@@ -109,7 +109,7 @@ export const createWindow = (
       [WinIdKey]: number;
       [InstanceIdKey]: number;
       [ApplyPathKey]: string[];
-      [NodeNameKey]: string | undefined;
+      [InstanceDataKey]: undefined;
       [NamespaceKey]: string | undefined;
       [InstanceStateKey]: { [key: string]: any };
 
@@ -134,7 +134,7 @@ export const createWindow = (
           }
         };
 
-        let nodeCstrs: { [nodeName: string]: any } = {};
+        let nodeCstrs: { [nodeName: string]: WorkerConstructor } = {};
         let $createNode$ = (
           nodeName: string,
           instanceId: number,
@@ -143,7 +143,7 @@ export const createWindow = (
           if (htmlMedia.includes(nodeName)) {
             initWindowMedia();
           }
-          const NodeCstr: WorkerConstructor = nodeCstrs[nodeName]
+          const NodeCstr = nodeCstrs[nodeName]
             ? nodeCstrs[nodeName]
             : nodeName.includes('-')
             ? nodeCstrs.UNKNOWN
@@ -202,14 +202,15 @@ export const createWindow = (
                         const winId = this[WinIdKey];
                         const instanceId = this[InstanceIdKey];
                         const applyPath = [...this[ApplyPathKey], memberName];
-                        const nodeName = this[NodeNameKey];
                         const PropCstr: typeof WorkerBase = win[memberType];
 
-                        setInstanceStateValue(
-                          this,
-                          memberName,
-                          new PropCstr(winId, instanceId, applyPath, nodeName)
-                        );
+                        if (PropCstr) {
+                          setInstanceStateValue(
+                            this,
+                            memberName,
+                            new PropCstr(winId, instanceId, applyPath)
+                          );
+                        }
                       }
                       return getInstanceStateValue(this, memberName);
                     },

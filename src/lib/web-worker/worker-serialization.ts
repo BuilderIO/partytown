@@ -180,7 +180,6 @@ export const deserializeFromMain = (
         winId!,
         instanceId!,
         applyPath,
-        '',
         obj
       );
     }

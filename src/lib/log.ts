@@ -1,8 +1,8 @@
 import { ApplyPath, CallType, InterfaceType, NodeName, PlatformInstanceId } from './types';
 import {
   ApplyPathKey,
+  InstanceDataKey,
   InstanceIdKey,
-  NodeNameKey,
   webWorkerCtx,
   WinIdKey,
 } from './web-worker/worker-constants';
@@ -146,8 +146,8 @@ const getTargetProp = (target: any, applyPath: ApplyPath) => {
       n = 'document.head.';
     } else if (instanceId === PlatformInstanceId.body) {
       n = 'document.body.';
-    } else if (target[NodeNameKey]) {
-      let nodeName: string = target[NodeNameKey];
+    } else if (typeof target[InstanceDataKey] === 'string') {
+      let nodeName: string = target[InstanceDataKey];
       if (nodeName === NodeName.Text) {
         n = 'textNode.';
       } else if (nodeName === NodeName.Comment) {
@@ -166,7 +166,7 @@ const getTargetProp = (target: any, applyPath: ApplyPath) => {
     } else if (cstrName === 'CanvasRenderingContextWebGL') {
       n = 'contextWebGL.';
     } else if (cstrName === 'CSSStyleDeclaration') {
-      n = 'value.';
+      n = 'style.';
     } else if (cstrName === 'MutationObserver') {
       n = 'mutationObserver.';
     } else if (cstrName === 'NamedNodeMap') {
@@ -230,15 +230,15 @@ const getLogValue = (applyPath: ApplyPath, v: any): string => {
         return `window`;
       }
 
-      if (v[NodeNameKey]) {
+      if (typeof v[InstanceDataKey] === 'string') {
         if (v.nodeType === 1) {
-          return `<${v[NodeNameKey].toLowerCase()}>`;
+          return `<${v[InstanceDataKey].toLowerCase()}>`;
         }
         if (v.nodeType === InterfaceType.DocumentTypeNode) {
-          return `<!DOCTYPE ${v[NodeNameKey]}>`;
+          return `<!DOCTYPE ${v[InstanceDataKey]}>`;
         }
         if (v.nodeType <= InterfaceType.DocumentFragmentNode) {
-          return v[NodeNameKey];
+          return v[InstanceDataKey];
         }
       }
 

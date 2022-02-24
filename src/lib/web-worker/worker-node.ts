@@ -8,7 +8,13 @@ import {
   WorkerMessageType,
   WorkerNode,
 } from '../types';
-import { commaSplit, InstanceIdKey, NodeNameKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import {
+  commaSplit,
+  InstanceDataKey,
+  InstanceIdKey,
+  webWorkerCtx,
+  WinIdKey,
+} from './worker-constants';
 import { defineConstructorName, SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
 import { getEnv } from './worker-environment';
 import { getInstanceStateValue } from './worker-state';
@@ -34,7 +40,7 @@ export const createNodeCstr = (win: any, WorkerBase: WorkerConstructor) => {
         // is given the same winId as the window it's being added to
         const winId = (newNode[WinIdKey] = this[WinIdKey]);
         const instanceId = newNode[InstanceIdKey];
-        const nodeName = newNode[NodeNameKey];
+        const nodeName = newNode[InstanceDataKey];
         const isScript = nodeName === NodeName.Script;
         const isIFrame = nodeName === NodeName.IFrame;
 
@@ -76,7 +82,7 @@ export const createNodeCstr = (win: any, WorkerBase: WorkerConstructor) => {
       }
 
       get nodeName() {
-        return this[NodeNameKey];
+        return this[InstanceDataKey];
       }
 
       get nodeType() {

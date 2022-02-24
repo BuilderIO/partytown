@@ -22,8 +22,8 @@ import {
   dimensionChangingSetterNames,
   HookContinue,
   HookPrevent,
+  InstanceDataKey,
   InstanceIdKey,
-  NodeNameKey,
   nonBlockingMethods,
   structureChangingMethodNames,
   webWorkerCtx,
@@ -250,6 +250,6 @@ export const constructGlobal: ConstructGlobal = (
 const createHookOptions = (instance: WorkerInstance, applyPath: ApplyPath): HookOptions => ({
   name: applyPath.join('.'),
   continue: HookContinue,
-  nodeName: (instance as any as WorkerNode)[NodeNameKey],
+  nodeName: (instance as any as WorkerNode)[InstanceDataKey],
   constructor: getConstructorName(instance),
 });

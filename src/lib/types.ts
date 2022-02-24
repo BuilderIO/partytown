@@ -539,10 +539,10 @@ export type RandomId = () => number;
 
 import type {
   ApplyPathKey,
+  InstanceDataKey,
   InstanceIdKey,
   InstanceStateKey,
   NamespaceKey,
-  NodeNameKey,
   WinIdKey,
 } from './web-worker/worker-constants';
 
@@ -581,7 +581,7 @@ export interface WorkerConstructor {
     instanceId: number,
     winId: number,
     applyPath?: ApplyPath,
-    nodeName?: string,
+    instanceData?: any,
     namespace?: string
   ): WorkerInstance;
 }
@@ -590,7 +590,7 @@ export interface WorkerInstance {
   [WinIdKey]: number;
   [InstanceIdKey]: number;
   [ApplyPathKey]: string[];
-  [NodeNameKey]: string | undefined;
+  [InstanceDataKey]: string | undefined;
   [NamespaceKey]: string | undefined;
   [InstanceStateKey]: { [key: string]: any };
 }

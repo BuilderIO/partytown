@@ -7,8 +7,8 @@ import {
 import {
   commaSplit,
   elementStructurePropNames,
+  InstanceDataKey,
   NamespaceKey,
-  NodeNameKey,
 } from './worker-constants';
 import { definePrototypePropertyDescriptor } from '../utils';
 import type { WorkerNode } from '../types';
@@ -17,7 +17,7 @@ export const patchElement = (WorkerElement: any) => {
   const ElementDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
     localName: {
       get() {
-        return this[NodeNameKey]!.toLowerCase();
+        return this[InstanceDataKey]!.toLowerCase();
       },
     },
     namespaceURI: {
@@ -30,7 +30,7 @@ export const patchElement = (WorkerElement: any) => {
     },
     tagName: {
       get() {
-        return this[NodeNameKey];
+        return this[InstanceDataKey];
       },
     },
   };

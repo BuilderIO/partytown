@@ -10,7 +10,7 @@ import type {
 
 export const WinIdKey = /*#__PURE__*/ Symbol();
 export const InstanceIdKey = /*#__PURE__*/ Symbol();
-export const NodeNameKey = /*#__PURE__*/ Symbol();
+export const InstanceDataKey = /*#__PURE__*/ Symbol();
 export const NamespaceKey = /*#__PURE__*/ Symbol();
 export const ApplyPathKey = /*#__PURE__*/ Symbol();
 export const InstanceStateKey = /*#__PURE__*/ Symbol();
