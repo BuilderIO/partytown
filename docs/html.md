@@ -4,7 +4,7 @@ title: HTML
 
 At the lowest level, Partytown is not tied to one specific framework or build tool. Because of this, Partytown can be used in any webpage as long as the HTML is updated, and the [library scripts](/copy-library-files) are hosted from the origin.
 
-While the `partytown.js` file _could_ be an external request, it's recommended to inline the script instead.
+While the `partytown.js` file _could_ be an external request, it's recommended to inline the script instead. How the Partytown snippet is inlined into the page depends on each site's setup and an [integration](/integrations) may already exist for your framework.
 
 ```html
 <head>
@@ -13,6 +13,14 @@ While the `partytown.js` file _could_ be an external request, it's recommended t
   </script>
   <script type="text/partytown" src="https://example.com/analytics.js"></script>
 </head>
+```
+
+One option to load the snippet is from the `partytownSnippet()` function, exported from the [@builder.io/partytown/integrations](/distribution#builderiopartytownintegrations) submodule.
+
+```js
+import { partytownSnippet } from '@builder.io/partytown/integration';
+
+const snippetText = partytownSnippet();
 ```
 
 ## Configure
