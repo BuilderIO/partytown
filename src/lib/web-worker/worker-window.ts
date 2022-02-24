@@ -169,23 +169,17 @@ export const createWindow = (
               : win[superCstrName];
 
             const Cstr = (win[cstrName] = defineConstructorName(
-              win[cstrName] || class extends SuperCstr {},
+              interfaceType === InterfaceType.EnvGlobalConstructor
+                ? class extends WorkerBase {
+                    // create the constructor and set as a prop on window
+                    constructor(...args: any[]) {
+                      super($winId$, randomId());
+                      constructGlobal(this, cstrName, args);
+                    }
+                  }
+                : win[cstrName] || class extends SuperCstr {},
               cstrName
             ));
-
-            if (interfaceType === InterfaceType.EnvGlobalConstructor) {
-              // create the constructor and set as a prop on window
-              win[cstrName] = defineConstructorName(
-                class {
-                  constructor(...args: any[]) {
-                    const instance = new Cstr($winId$, randomId());
-                    constructGlobal(instance, cstrName, args);
-                    return instance;
-                  }
-                },
-                cstrName
-              );
-            }
 
             if (nodeName) {
               // this is a node name, such as #text or an element's tagname, like all caps DIV

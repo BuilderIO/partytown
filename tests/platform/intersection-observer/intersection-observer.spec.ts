@@ -13,12 +13,12 @@ test('intersection-observer', async ({ page }) => {
 
   await expect(testIntersectionObserver).toHaveText('intersecting #testIntersectionObserver');
 
-  // const testWindowIntersectionObserver = page.locator('#testWindowIntersectionObserver');
-  // await expect(testWindowIntersectionObserver).toHaveText('true');
+  const testWindowIntersectionObserver = page.locator('#testWindowIntersectionObserver');
+  await expect(testWindowIntersectionObserver).toHaveText('true');
 
-  // const testWindowIntersectionObserverEntry = page.locator('#testWindowIntersectionObserverEntry');
-  // await expect(testWindowIntersectionObserverEntry).toHaveText('true');
+  const testWindowIntersectionObserverEntry = page.locator('#testWindowIntersectionObserverEntry');
+  await expect(testWindowIntersectionObserverEntry).toHaveText('true');
 
-  // const testIntersectionRatio = page.locator('#testIntersectionRatio');
-  // await expect(testIntersectionRatio).toHaveText('true');
+  const testIntersectionRatio = page.locator('#testIntersectionRatio');
+  await expect(testIntersectionRatio).toHaveText('true');
 });

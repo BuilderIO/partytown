@@ -119,17 +119,6 @@
 
         document.getElementById('testIntersectionRatio').textContent = hasIntersectionRatio;
 
-        const hasIsIntersecting = 'isIntersecting' in window.IntersectionObserverEntry.prototype;
-        if (hasIntersectionRatio) {
-          if (!hasIsIntersecting) {
-            Object.defineProperty(window.IntersectionObserverEntry.prototype, 'isIntersecting', {
-              get: function () {
-                return 0 < window.intersectionRatio;
-              },
-            });
-          }
-        }
-
         const observer = new IntersectionObserver((entries, observer) => {
           entries.forEach((entry) => {
             if (entry.isIntersecting) {
