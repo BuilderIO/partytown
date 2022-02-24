@@ -46,6 +46,7 @@ import {
   definePrototypeProperty,
   definePrototypeValue,
   EMPTY_ARRAY,
+  getConstructorName,
   len,
   randomId,
 } from '../utils';
@@ -483,13 +484,23 @@ export const createWindow = (
 
       get XMLHttpRequest() {
         const env = getEnv(this);
-        return class XMLHttpRequest_ extends (self as any).XMLHttpRequest {
-          open(...args: any[]) {
-            args[1] = resolveUrl(env, args[1]);
-            super.open(...args);
-          }
-          set withCredentials(_: any) {}
-        };
+        const Xhr = XMLHttpRequest;
+        const str = String(Xhr);
+        const ExtendedXhr = defineConstructorName(
+          class extends Xhr {
+            open(...args: any[]) {
+              args[1] = resolveUrl(env, args[1]);
+              (super.open as any)(...args);
+            }
+            set withCredentials(_: any) {}
+            toString() {
+              return str;
+            }
+          },
+          getConstructorName(Xhr)
+        );
+        ExtendedXhr.prototype.constructor.toString = () => str;
+        return ExtendedXhr;
       }
     },
     'Window'

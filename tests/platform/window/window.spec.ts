@@ -121,18 +121,6 @@ test('window', async ({ page }) => {
   const testNotStandard = page.locator('#testNotStandard');
   await expect(testNotStandard).toHaveText('undefined');
 
-  await page.waitForSelector('.testFetchText');
-  const testFetchText = page.locator('#testFetchText');
-  await expect(testFetchText).toHaveText('text');
-
-  await page.waitForSelector('.testFetchJson');
-  const testFetchJson = page.locator('#testFetchJson');
-  await expect(testFetchJson).toHaveText('{"mph":88}');
-
-  await page.waitForSelector('.testXMLHttpRequest');
-  const testXMLHttpRequest = page.locator('#testXMLHttpRequest');
-  await expect(testXMLHttpRequest).toHaveText('text');
-
   const testOpener = page.locator('#testOpener');
   await expect(testOpener).toHaveText('null');
 
