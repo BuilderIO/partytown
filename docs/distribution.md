@@ -63,6 +63,18 @@ const snippetText = partytownSnippet();
 
 The `react` submodule is where you'll find the React specific components, which is just a wrapper around the `partytown.js` snippet code. Please see the [React](/react) docs for more information.
 
+```js
+import { Partytown } from '@builder.io/partytown/react';
+
+export function Head() {
+  return (
+    <>
+      <Partytown />
+    </>
+  );
+}
+```
+
 ## `@builder.io/partytown/services`
 
 The `services` submodule provides some of the commonly used [forward events](/forwarding-events), such as Google Tag Manager or Facebook Pixel. Please see the [Common Services](/common-services) docs for more informaiton.
@@ -75,3 +87,5 @@ The `utils` submodule provides some convenience utilities, such as the the [Copy
 | --------------------- | ------------------------------------------------ |
 | copyLibFiles(destDir) | Async copy the `lib` directory to the `destDir`. |
 | libDirPath()          | Returns an absolute path to the `lib` directory. |
+| partytownRollup()     | [Rollup plugin](/copy-library-files#rollup).     |
+| partytownVite()       | [Vite plugin](/copy-library-files#vite).         |
