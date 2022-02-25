@@ -65,11 +65,8 @@ export const patchDocument = (WorkerDocument: any) => {
 
     createElementNS: {
       value(namespace: string, tagName: string) {
-        tagName = tagName.toLowerCase();
-
-        const winId = this[WinIdKey];
         const instanceId = randomId();
-        const nsElm = getOrCreateNodeInstance(winId, instanceId, tagName, namespace);
+        const nsElm = getOrCreateNodeInstance(this[WinIdKey], instanceId, tagName, namespace);
 
         callMethod(
           this,

@@ -19,4 +19,7 @@ test('svg', async ({ page }) => {
 
   const testGetScreenCTM = page.locator('#testGetScreenCTM');
   await expect(testGetScreenCTM).toHaveText('true');
+
+  const svgForeignObject = page.locator('#svgForeignObject');
+  await expect(svgForeignObject).toHaveText('88');
 });

@@ -215,6 +215,33 @@
           })();
         </script>
       </li>
+
+      <li>
+        <strong>foreignObject</strong>
+        <span id="svgForeignObject"></span>
+        <script type="text/partytown">
+          (function () {
+            const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            const fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+
+            svg.setAttribute('width', '20');
+            svg.setAttribute('height', '20');
+            fo.setAttribute('width', '20');
+            fo.setAttribute('height', '20');
+
+            const div = document.createElement('div');
+            div.style.background = 'red';
+            div.style.color = 'white';
+            div.style.textAlign = 'center';
+            const text = document.createTextNode('88');
+            div.appendChild(text);
+
+            fo.appendChild(div);
+            svg.appendChild(fo);
+            document.getElementById('svgForeignObject').appendChild(svg);
+          })();
+        </script>
+      </li>
     </ul>
 
     <script type="text/partytown">
