@@ -64,7 +64,7 @@
     "serve.atomics.test": "node scripts/serve.cjs 4003 --atomics",
     "test": "npm run test.unit && npm run test.chromium",
     "test.atomics": "playwright test tests/integrations tests/platform --config playwright.atomics.config.ts --browser=chromium",
-    "test.chromium": "playwright test tests/platform --browser=chromium",
+    "test.chromium": "playwright test tests/integrations tests/platform --browser=chromium",
     "test.webkit": "playwright test tests/integrations tests/platform --browser=webkit",
     "test.nextjs.chromium": "cd tests/nextjs && npm i && playwright test --config playwright.nextjs.ts --browser=chromium",
     "test.nextjs.webkit": "cd tests/nextjs && npm i && playwright test --config playwright.nextjs.ts --browser=webkit",

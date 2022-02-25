@@ -64,7 +64,9 @@ export const dimensionChangingSetterNames = /*#__PURE__*/ commaSplit(
 );
 
 /** method calls that could change dimensions of elements */
-export const dimensionChangingMethodNames = /*#__PURE__*/ commaSplit('setAttribute,setProperty');
+export const dimensionChangingMethodNames = /*#__PURE__*/ commaSplit(
+  'setAttribute,setAttributeNS,setProperty'
+);
 
 export const eventTargetMethods = /*#__PURE__*/ commaSplit(
   'addEventListener,dispatchEvent,removeEventListener'

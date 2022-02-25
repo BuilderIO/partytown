@@ -1,4 +1,11 @@
-import { debug, getConstructorName, isValidMemberName, len, noop } from '../utils';
+import {
+  createElementFromConstructor,
+  debug,
+  getConstructorName,
+  isValidMemberName,
+  len,
+  noop,
+} from '../utils';
 import {
   InterfaceType,
   InterfaceInfo,
@@ -13,10 +20,10 @@ export const readMainPlatform = () => {
   const startTime = debug ? performance.now() : 0;
 
   const docImpl = doc.implementation.createHTMLDocument();
+  const elm = docImpl.head;
   const textNode = docImpl.createTextNode('');
   const comment = docImpl.createComment('');
   const frag = docImpl.createDocumentFragment();
-  const svg = docImpl.createElementNS('http://www.w3.org/2000/svg', 'svg');
   const intersectionObserver = getGlobalConstructor(mainWindow, 'IntersectionObserver');
   const mutationObserver = getGlobalConstructor(mainWindow, 'MutationObserver');
   const resizeObserver = getGlobalConstructor(mainWindow, 'ResizeObserver');
@@ -26,11 +33,9 @@ export const readMainPlatform = () => {
   // get all HTML*Element constructors on window
   // and create each element to get their implementation
   const elms = Object.getOwnPropertyNames(mainWindow)
-    .filter((c) => /^HTML.+Element$/.test(c))
-    .map((htmlCstrName) => [docImpl.createElement(getHtmlTagNameFromConstructor(htmlCstrName))]);
-
-  // get the first HTMLElement to read its properties
-  const elm = elms[0][0];
+    .map((interfaceName) => createElementFromConstructor(docImpl, interfaceName))
+    .filter((elm) => elm)
+    .map((elm) => [elm]);
 
   const impls: any[] = [
     // window implementations
@@ -55,7 +60,6 @@ export const readMainPlatform = () => {
     [elm.classList],
     [elm.dataset],
     [elm.style],
-    [svg],
     [docImpl],
     [docImpl.doctype!],
     ...elms,
@@ -182,25 +186,6 @@ const readImplementationMember = (
   } catch (e) {
     console.warn(e);
   }
-};
-
-const htmlConstructorToTagMap: { [key: string]: string } = {
-  Anchor: 'A',
-  DList: 'DL',
-  Image: 'IMG',
-  OList: 'OL',
-  Paragraph: 'P',
-  TableCaption: 'CAPTION',
-  TableCell: 'TD',
-  TableCol: 'COLGROUP',
-  TableRow: 'TR',
-  TableSection: 'TBODY',
-  UList: 'UL',
-};
-
-const getHtmlTagNameFromConstructor = (t: string) => {
-  t = t.slice(4).replace('Element', '');
-  return htmlConstructorToTagMap[t] || t;
 };
 
 const readStorage = (storageName: 'localStorage' | 'sessionStorage') => {

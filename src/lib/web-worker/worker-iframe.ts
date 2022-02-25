@@ -7,7 +7,7 @@ import { HTMLSrcElementDescriptorMap } from './worker-src-element';
 import { setInstanceStateValue } from './worker-state';
 import { StateProp, WorkerInstance, WorkerMessageType, WorkerNode } from '../types';
 
-export const patchHTMLIFrameElement = (WorkerHTMLIFrameDescriptorMap: any) => {
+export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any) => {
   const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
     contentDocument: {
       get() {
@@ -67,7 +67,7 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameDescriptorMap: any) => {
     ...HTMLSrcElementDescriptorMap,
   };
 
-  definePrototypePropertyDescriptor(WorkerHTMLIFrameDescriptorMap, HTMLIFrameDescriptorMap);
+  definePrototypePropertyDescriptor(WorkerHTMLIFrameElement, HTMLIFrameDescriptorMap);
 };
 
 const getIframeEnv = (iframe: WorkerInstance) => {

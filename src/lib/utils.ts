@@ -80,3 +80,34 @@ export const definePrototypeValue = (Cstr: any, memberName: string, value: any) 
     value,
     writable: true,
   });
+
+const elementConstructorToTagMap: { [key: string]: string } = {
+  Anchor: 'a',
+  DList: 'dl',
+  Image: 'img',
+  OList: 'ol',
+  Graphics: 'g',
+  Paragraph: 'p',
+  Quote: 'q',
+  TableCaption: 'caption',
+  TableCell: 'td',
+  TableCol: 'colgroup',
+  TableRow: 'tr',
+  TableSection: 'tbody',
+  UList: 'ul',
+};
+
+export const createElementFromConstructor = (
+  doc: Document,
+  interfaceName: string,
+  r?: RegExpMatchArray | null,
+  tag?: string
+) => {
+  r = interfaceName.match(/^(HTML|SVG)(.+)Element$/);
+  if (r) {
+    tag = elementConstructorToTagMap[r[2]] || r[2];
+    return interfaceName[0] == 'S'
+      ? doc.createElementNS('http://www.w3.org/2000/svg', tag.toLowerCase())
+      : doc.createElement(tag);
+  }
+};
