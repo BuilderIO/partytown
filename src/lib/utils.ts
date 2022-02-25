@@ -107,7 +107,10 @@ export const createElementFromConstructor = (
   if (r) {
     tag = elementConstructorToTagMap[r[2]] || r[2];
     return interfaceName[0] == 'S'
-      ? doc.createElementNS('http://www.w3.org/2000/svg', tag.toLowerCase())
+      ? doc.createElementNS(
+          'http://www.w3.org/2000/svg',
+          tag == 'SVG' ? 'svg' : tag.slice(0, 2).toLowerCase() + tag.slice(2)
+        )
       : doc.createElement(tag);
   }
 };
