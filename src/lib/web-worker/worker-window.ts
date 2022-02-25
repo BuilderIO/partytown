@@ -57,8 +57,7 @@ import {
   setInstanceStateValue,
 } from './worker-state';
 import { getInitWindowMedia, htmlMedia, windowMediaConstructors } from './worker-media';
-import { Location } from './worker-location';
-import { normalizedWinId } from '../log';
+import { logWorker, normalizedWinId } from '../log';
 import {
   patchDocument,
   patchDocumentElementChild,
@@ -104,6 +103,23 @@ export const createWindow = (
       }
     }
   };
+
+  const WorkerLocation = defineConstructorName(
+    class extends URL {
+      assign() {
+        logWorker(`location.assign(), noop`);
+      }
+      reload() {
+        logWorker(`location.reload(), noop`);
+      }
+      replace() {
+        logWorker(`location.replace(), noop`);
+      }
+    },
+    'Location'
+  );
+
+  const $location$ = new WorkerLocation(url);
 
   // window global eveything will live within
   const WorkerWindow = defineConstructorName(
@@ -327,7 +343,7 @@ export const createWindow = (
           ) as any,
           $head$: $createNode$(NodeName.Head, PlatformInstanceId.head) as any,
           $body$: $createNode$(NodeName.Body, PlatformInstanceId.body) as any,
-          $location$: new Location(url) as any,
+          $location$,
           $createNode$,
         };
 
@@ -429,10 +445,10 @@ export const createWindow = (
       }
 
       get location() {
-        return getEnv(this).$location$;
+        return $location$;
       }
       set location(loc: any) {
-        getEnv(this).$location$.href = loc + '';
+        $location$.href = loc + '';
       }
 
       get Image() {
@@ -453,7 +469,7 @@ export const createWindow = (
       }
 
       get origin() {
-        return getEnv(this).$location$.origin;
+        return $location$.origin;
       }
       set origin(_) {}
 

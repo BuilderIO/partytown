@@ -47,8 +47,6 @@ import syncSendMessageToMain from '../build-modules/sync-send-message-to-main';
 
 const taskQueue: MainAccessTask[] = [];
 
-let asyncMsgTimer: any = 0;
-
 const queue = (
   instance: WorkerInstance,
   $applyPath$: ApplyPath,
@@ -91,11 +89,11 @@ const queue = (
   }
 
   // task is not blocking, so just update the async timer
-  asyncMsgTimer = setTimeout(sendToMain, 20);
+  webWorkerCtx.$asyncMsgTimer$ = setTimeout(sendToMain, 20);
 };
 
 export const sendToMain = (isBlocking?: boolean) => {
-  clearTimeout(asyncMsgTimer);
+  clearTimeout(webWorkerCtx.$asyncMsgTimer$);
 
   if (len(taskQueue)) {
     if (debug && webWorkerCtx.$config$.logMainAccess) {

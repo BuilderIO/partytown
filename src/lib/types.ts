@@ -115,6 +115,7 @@ export type InterfaceMember =
   | [string, InterfaceType.Property, string | number | boolean];
 
 export interface WebWorkerContext {
+  $asyncMsgTimer$?: any;
   $config$: PartytownConfig;
   $importScripts$: (...urls: string[]) => void;
   $initWindowMedia$?: InitWindowMedia;

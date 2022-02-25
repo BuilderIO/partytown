@@ -61,6 +61,7 @@ function managlePropsPlugin(): Plugin {
   const mangleProps: { [key: string]: string } = {
     $applyPath$: '',
     $args$: '',
+    $asyncMsgTimer$: '',
     $assignInstanceId$: '',
     $body$: '',
     $bridgeFromMedia$: '',
