@@ -81,12 +81,11 @@ export const definePrototypeValue = (Cstr: any, memberName: string, value: any) 
     writable: true,
   });
 
-const elementConstructorToTagMap: { [key: string]: string } = {
+const htmlConstructorTags: { [key: string]: string } = {
   Anchor: 'a',
   DList: 'dl',
   Image: 'img',
   OList: 'ol',
-  Graphics: 'g',
   Paragraph: 'p',
   Quote: 'q',
   TableCaption: 'caption',
@@ -97,6 +96,11 @@ const elementConstructorToTagMap: { [key: string]: string } = {
   UList: 'ul',
 };
 
+const svgConstructorTags: { [key: string]: string } = {
+  Graphics: 'g',
+  SVG: 'svg',
+};
+
 export const createElementFromConstructor = (
   doc: Document,
   interfaceName: string,
@@ -105,12 +109,12 @@ export const createElementFromConstructor = (
 ) => {
   r = interfaceName.match(/^(HTML|SVG)(.+)Element$/);
   if (r) {
-    tag = elementConstructorToTagMap[r[2]] || r[2];
+    tag = r[2];
     return interfaceName[0] == 'S'
       ? doc.createElementNS(
           'http://www.w3.org/2000/svg',
-          tag == 'SVG' ? 'svg' : tag.slice(0, 2).toLowerCase() + tag.slice(2)
+          svgConstructorTags[tag] || tag.slice(0, 2).toLowerCase() + tag.slice(2)
         )
-      : doc.createElement(tag);
+      : doc.createElement(htmlConstructorTags[tag] || tag);
   }
 };

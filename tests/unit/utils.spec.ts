@@ -21,6 +21,7 @@ test('createElementFromConstructor, SVG', ({ doc }) => {
   assert.is(createElementFromConstructor(doc, 'SVGMPathElement')!.tagName, 'mpath');
   assert.is(createElementFromConstructor(doc, 'SVGDefsElement')!.tagName, 'defs');
   assert.is(createElementFromConstructor(doc, 'SVGGraphicsElement')!.tagName, 'g');
+  assert.is(createElementFromConstructor(doc, 'SVGImageElement')!.tagName, 'image');
   assert.is(createElementFromConstructor(doc, 'SVGAElement')!.tagName, 'a');
   assert.is(createElementFromConstructor(doc, 'SVGPathElement')!.tagName, 'path');
   assert.is(createElementFromConstructor(doc, 'SVGSVGElement')!.tagName, 'svg');
