@@ -1,4 +1,4 @@
-import type { BuildOptions } from './utils';
+import type { BuildOptions, PackageJson } from './utils';
 import { buildApi } from './build-api';
 import { buildAtomics } from './build-atomics';
 import { buildIntegration } from './build-integration';
@@ -11,12 +11,12 @@ import { buildUtils } from './build-utils';
 import { emptyDir, ensureDir, readJsonSync, writeFile } from 'fs-extra';
 import { join } from 'path';
 
-export async function runBuild(rootDir: string, isDev: boolean, generateApi: boolean) {
-  const opts = createBuildOptions(rootDir, isDev, generateApi);
+export async function runBuild(rootDir: string, isDev: boolean, isReleaseBuild: boolean) {
+  const opts = createBuildOptions(rootDir, isDev, isReleaseBuild);
 
   await createRootPackage(opts);
 
-  if (opts.generateApi) {
+  if (opts.isReleaseBuild) {
     buildApi(opts);
   }
 
@@ -57,7 +57,7 @@ async function createRootPackage(opts: BuildOptions) {
   await writeFile(indexDtsPath, `export declare const version: string;\n`);
 }
 
-function createBuildOptions(rootDir: string, isDev: boolean, generateApi: boolean) {
+function createBuildOptions(rootDir: string, isDev: boolean, isReleaseBuild: boolean) {
   const distIntegrationDir = join(rootDir, 'integration');
   const distServicesDir = join(rootDir, 'services');
   const distLibDir = join(rootDir, 'lib');
@@ -84,11 +84,15 @@ function createBuildOptions(rootDir: string, isDev: boolean, generateApi: boolea
   const tscUtilsDir = join(tscSrcDir, 'utils');
 
   const packageJsonPath = join(rootDir, 'package.json');
-  const packageJson = readJsonSync(packageJsonPath);
+  const packageJson: PackageJson = readJsonSync(packageJsonPath);
+
+  if (!isReleaseBuild) {
+    packageJson.version += '-dev' + Date.now();
+  }
 
   const opts: BuildOptions = {
     isDev,
-    generateApi,
+    isReleaseBuild,
     packageJson,
     rootDir,
 

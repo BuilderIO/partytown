@@ -59,7 +59,7 @@ export function webWorkerBlobUrlPlugin(
         return `const WEB_WORKER_BLOB = ${code}; export default WEB_WORKER_BLOB;`;
       }
       if (id.endsWith('web-worker-url')) {
-        return `const WEB_WORKER_URL = "partytown-ww-${msgType}.js"; export default WEB_WORKER_URL;`;
+        return `const WEB_WORKER_URL = "partytown-ww-${msgType}.js?v=${opts.packageJson.version}"; export default WEB_WORKER_URL;`;
       }
       return null;
     },

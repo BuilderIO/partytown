@@ -143,7 +143,7 @@ export function versionPlugin(opts: BuildOptions): Plugin {
 
 export interface BuildOptions {
   isDev: boolean;
-  generateApi: boolean;
+  isReleaseBuild: boolean;
   rootDir: string;
   distIntegrationDir: string;
   distLibDir: string;

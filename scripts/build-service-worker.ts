@@ -69,7 +69,7 @@ async function buildSandboxServiceWorker(opts: BuildOptions, msgType: MessageTyp
   if (debug) {
     const outName = `partytown-sandbox-${msgType}.js`;
     await writeFile(join(opts.distLibDebugDir, outName), sandboxJsCode);
-    sandboxHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><script src="./partytown-sandbox-${msgType}.js"></script></head></html>`;
+    sandboxHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><script src="./partytown-sandbox-${msgType}.js?v=${opts.packageJson.version}"></script></head></html>`;
   } else {
     sandboxHtml = `<!DOCTYPE html><html><head><meta charset="utf-8"><script type="module">${sandboxJsCode}</script></head></html>`;
   }
