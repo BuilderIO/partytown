@@ -230,9 +230,14 @@
             fo.setAttribute('height', '20');
 
             const div = document.createElement('div');
-            div.style.background = 'red';
-            div.style.color = 'white';
             div.style.textAlign = 'center';
+
+            div.style.setProperty('background', 'red');
+            div.style.setProperty('color', 'white');
+
+            div.style.setProperty('width', '200px');
+            div.style.removeProperty('width');
+
             const text = document.createTextNode('88');
             div.appendChild(text);
 

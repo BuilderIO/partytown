@@ -1,7 +1,7 @@
-import type { ApplyPath, WorkerConstructor } from '../types';
+import { ApplyPath, CallType, WorkerConstructor } from '../types';
 import { cachedDimensions, InstanceDataKey } from './worker-constants';
+import { callMethod, getter, setter } from './worker-proxy';
 import { defineConstructorName } from '../utils';
-import { getter, setter } from './worker-proxy';
 import { logDimensionCacheClearStyle } from '../log';
 
 export const createCSSStyleDeclarationCstr = (
@@ -37,11 +37,22 @@ export const createCSSStyleDeclarationCstr = (
           },
         });
       }
-      getPropertyValue(propName: string) {
-        return (this as any)[InstanceDataKey][propName];
+      setProperty(...args: string[]) {
+        (this as any)[InstanceDataKey][args[0]] = args[1];
+        callMethod(this, ['setProperty'], args, CallType.NonBlocking);
+        logDimensionCacheClearStyle(this, args[0]);
+        cachedDimensions.clear();
       }
-      setProperty(propName: string, propValue: any) {
-        (this as any)[InstanceDataKey][propName] = propValue;
+      getPropertyValue(propName: string) {
+        return (this as any)[propName];
+      }
+      removeProperty(propName: string) {
+        let value = (this as any)[InstanceDataKey][propName];
+        callMethod(this, ['removeProperty'], [propName], CallType.NonBlocking);
+        logDimensionCacheClearStyle(this, propName);
+        cachedDimensions.clear();
+        (this as any)[InstanceDataKey][propName] = undefined;
+        return value;
       }
     },
     cstrName

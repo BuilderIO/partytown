@@ -97,6 +97,31 @@
         </script>
       </li>
 
+      <li>
+        <strong>setProperty()/getPropertyValue()</strong>
+        <code id="testSetGetProperty"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testSetGetProperty');
+            elm.style.setProperty('color', 'purple', 'important');
+            elm.textContent =
+              elm.style.getPropertyValue('color') + ' ' + elm.style.getPropertyPriority('color');
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>removeProperty()</strong>
+        <code id="testRemoveProperty" style="color: red"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testRemoveProperty');
+            elm.style.removeProperty('color');
+            elm.textContent = '"' + elm.style.getPropertyValue('color') + '"';
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         document.body.classList.add('completed');
       </script>

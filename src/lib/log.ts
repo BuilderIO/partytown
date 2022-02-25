@@ -159,7 +159,7 @@ const getTargetProp = (target: any, applyPath: ApplyPath) => {
       } else {
         n = nodeName.toLowerCase() + '.';
       }
-    } else if (target.nodeType === InterfaceType.AttributeNode) {
+    } else if ('nodeType' in target && target.nodeType === InterfaceType.AttributeNode) {
       n = 'attributes.';
     } else if (cstrName === 'CanvasRenderingContext2D') {
       n = 'context2D.';
