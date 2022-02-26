@@ -57,7 +57,7 @@ Add the `type="text/partytown"` [prop](/partytown-scripts) for each script that 
 
 ## Copy Library Files
 
-Copy library files to `public/~partytown`. How the files are copied or served from your site is up each site's setup. A `partytown copylib` CLI [copy task](/copy-library-files) has been provided for convenience which helps copy the Partytown library files to the public directory. Below is an example of creating a "partytown" NPM script which could run before the build:
+Copy library files to `public/~partytown`. How the files are copied or served from your site is up to each site's setup. A `partytown copylib` CLI [copy task](/copy-library-files) has been provided for convenience which helps copy the Partytown library files to the public directory. Below is an example of creating a "partytown" NPM script which could run before the build:
 
 ```json
   "scripts": {
