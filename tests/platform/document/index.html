@@ -334,6 +334,18 @@
       </li>
 
       <li>
+        <strong>document.forms</strong>
+        <code id="testDocumentForms"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDocumentForms');
+            const forms = document.forms;
+            elm.textContent = `${forms.length}`;
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>DocumentType node</strong>
         <code id="testDocType"></code>
         <script type="text/partytown">
