@@ -400,6 +400,26 @@
       </li>
 
       <li>
+        <strong>set about:blank location</strong>
+        <code id="testSetAboutBlankHref">--</code>
+        <code id="testSetAboutBlankSrc">--</code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testSetAboutBlankHref');
+
+            const iframe = document.createElement('iframe');
+            iframe.src = 'about:blank';
+            elm.parentNode.appendChild(iframe);
+
+            const elm2 = document.getElementById('testSetAboutBlankSrc');
+            elm2.textContent = String(iframe.contentWindow.location.href);
+
+            elm.textContent = String(iframe.src);
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>set/call window.parent.fn()</strong>
         <code id="testSetCallWindowParentFn"></code>
         <script type="text/partytown">

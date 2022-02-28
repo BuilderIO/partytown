@@ -61,6 +61,11 @@ test('iframe', async ({ page }) => {
   const testAboutBlankSrc = page.locator('#testAboutBlankSrc');
   await expect(testAboutBlankSrc).toHaveText('');
 
+  const testSetAboutBlankHref = page.locator('#testSetAboutBlankHref');
+  const testSetAboutBlankSrc = page.locator('#testSetAboutBlankSrc');
+  await expect(testSetAboutBlankSrc).toHaveText('about:blank');
+  await expect(testSetAboutBlankHref).toHaveText('');
+
   await page.waitForSelector('.testSetCallWindowParentFn');
   const testSetCallWindowParentFn = page.locator('#testSetCallWindowParentFn');
   await expect(testSetCallWindowParentFn).toHaveText('1985 1985');

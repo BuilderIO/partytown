@@ -30,36 +30,38 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any) => {
         return src;
       },
       set(src: string) {
-        let xhr = new XMLHttpRequest();
-        let xhrStatus: number;
-        let env = getIframeEnv(this);
+        if (!src.startsWith('about')) {
+          let xhr = new XMLHttpRequest();
+          let xhrStatus: number;
+          let env = getIframeEnv(this);
 
-        env.$location$.href = src = resolveUrl(getEnv(this), src);
-        env.$isLoading$ = 1;
+          env.$location$.href = src = resolveUrl(getEnv(this), src);
+          env.$isLoading$ = 1;
 
-        setInstanceStateValue(this, StateProp.loadErrorStatus, undefined);
+          setInstanceStateValue(this, StateProp.loadErrorStatus, undefined);
 
-        xhr.open('GET', src, false);
-        xhr.send();
-        xhrStatus = xhr.status;
+          xhr.open('GET', src, false);
+          xhr.send();
+          xhrStatus = xhr.status;
 
-        if (xhrStatus > 199 && xhrStatus < 300) {
-          setter(
-            this,
-            ['srcdoc'],
-            `<base href="${src}">` +
-              xhr.responseText
-                .replace(/<script>/g, `<script type="${SCRIPT_TYPE}">`)
-                .replace(/<script /g, `<script type="${SCRIPT_TYPE}" `)
-                .replace(/text\/javascript/g, SCRIPT_TYPE) +
-              getPartytownScript()
-          );
+          if (xhrStatus > 199 && xhrStatus < 300) {
+            setter(
+              this,
+              ['srcdoc'],
+              `<base href="${src}">` +
+                xhr.responseText
+                  .replace(/<script>/g, `<script type="${SCRIPT_TYPE}">`)
+                  .replace(/<script /g, `<script type="${SCRIPT_TYPE}" `)
+                  .replace(/text\/javascript/g, SCRIPT_TYPE) +
+                getPartytownScript()
+            );
 
-          sendToMain(true);
-          webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextScript, env.$winId$]);
-        } else {
-          setInstanceStateValue(this, StateProp.loadErrorStatus, xhrStatus);
-          env.$isLoading$ = 0;
+            sendToMain(true);
+            webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextScript, env.$winId$]);
+          } else {
+            setInstanceStateValue(this, StateProp.loadErrorStatus, xhrStatus);
+            env.$isLoading$ = 0;
+          }
         }
       },
     },
