@@ -172,7 +172,7 @@ export const patchDocument = (WorkerDocument: any) => {
 
   definePrototypePropertyDescriptor(WorkerDocument, DocumentDescriptorMap);
 
-  cachedProps(WorkerDocument, 'compatMode,referrer');
+  cachedProps(WorkerDocument, 'compatMode,referrer,forms');
 };
 
 export const patchDocumentElementChild = (WokerDocumentElementChild: any) => {
