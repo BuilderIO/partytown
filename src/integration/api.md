@@ -35,6 +35,7 @@ export interface PartytownConfig {
     resolveUrl?(url: URL, location: Location): URL | undefined | null;
     // (undocumented)
     set?: SetHook;
+    swPath?: string;
 }
 
 // @public
