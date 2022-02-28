@@ -4,6 +4,21 @@ import { suite } from './utils';
 
 const test = suite();
 
+test('service worker url config', ({ win, document, navigator, top }) => {
+  win.partytown = {
+    swPath: 'partytown-sw.js?mph=88',
+  };
+
+  const script = document.createElement('script');
+  script.type = 'text/partytown';
+  document.body.appendChild(script);
+
+  snippet(win, document, navigator, top, false);
+
+  assert.equal(navigator.$serviceWorkerUrl, '/~partytown/partytown-sw.js?mph=88');
+  assert.equal(navigator.$serviceWorkerOptions, { scope: '/~partytown/' });
+});
+
 test('service worker iframe, lib and debug config', ({ win, document, navigator, top }) => {
   win.partytown = {
     lib: '/my-custom-location/',

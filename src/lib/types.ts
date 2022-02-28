@@ -415,6 +415,10 @@ export interface PartytownConfig {
    * Log stack traces (debug mode required)
    */
   logStackTraces?: boolean;
+  /**
+   * Path to the service worker file. Defaults to `partytown-sw.js`.
+   */
+  swPath?: string;
 }
 
 /**
