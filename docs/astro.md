@@ -40,7 +40,7 @@ Add the `type="text/partytown"` [attribute](/partytown-scripts) for each script 
 
 ## Copy Library Files
 
-Copy library files to `public/~partytown`. How the files are copied or served from your site is up each site's setup. A `partytown copylib` CLI [copy task](/copy-library-files) has been provided for convenience which helps copy the Partytown library files to the public directory. Below is an example of creating a "partytown" NPM script which runs before the `astro build` command:
+Copy library files to `public/~partytown`. How the files are copied or served from your site is up to each site's setup. A `partytown copylib` CLI [copy task](/copy-library-files) has been provided for convenience which helps copy the Partytown library files to the public directory. Below is an example of creating a "partytown" NPM script which runs before the `astro build` command:
 
 ```json
 "scripts": {

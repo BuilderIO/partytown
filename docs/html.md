@@ -54,4 +54,4 @@ Add the `type="text/partytown"` [attribute](/partytown-scripts) for each script 
 
 ## Copy Library Files
 
-How the files are copied or served from your site is up each site's setup. A `partytown copylib` CLI [copy task](/copy-library-files) has been provided for convenience which helps copy the Partytown library files to the public directory.
+How the files are copied or served from your site is up to each site's setup. A `partytown copylib` CLI [copy task](/copy-library-files) has been provided for convenience which helps copy the Partytown library files to the public directory.
