@@ -5,9 +5,9 @@ import { EMPTY_ARRAY } from '../utils';
 export const addStorageApi = (
   win: any,
   storageName: 'localStorage' | 'sessionStorage',
-  storages: Map<string, StorageItem[]>
+  storages: Map<string, StorageItem[]>,
+  isSameOrigin: boolean
 ) => {
-  let isOrigin = () => origin === win.origin;
   let getItems = (items?: StorageItem[]) => {
     items = storages.get(win.origin);
     if (!items) {
@@ -32,7 +32,7 @@ export const addStorageApi = (
       } else {
         getItems().push([key, value]);
       }
-      if (isOrigin()) {
+      if (isSameOrigin) {
         callMethod(win, [storageName, 'setItem'], [key, value], CallType.NonBlocking);
       }
     },
@@ -42,7 +42,7 @@ export const addStorageApi = (
       if (index > -1) {
         getItems().splice(index, 1);
       }
-      if (isOrigin()) {
+      if (isSameOrigin) {
         callMethod(win, [storageName, 'removeItem'], [key], CallType.NonBlocking);
       }
     },
@@ -54,7 +54,7 @@ export const addStorageApi = (
 
     clear() {
       getItems().length = 0;
-      if (isOrigin()) {
+      if (isSameOrigin) {
         callMethod(win, [storageName, 'clear'], EMPTY_ARRAY, CallType.NonBlocking);
       }
     },

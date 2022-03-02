@@ -15,11 +15,11 @@ import {
   hasInstanceStateValue,
   setInstanceStateValue,
 } from './worker-state';
-import type { WorkerInstance, WorkerNode } from '../types';
+import type { InstanceId, WinId, WorkerInstance, WorkerNode } from '../types';
 
 export const getOrCreateNodeInstance = (
-  winId: number,
-  instanceId: number,
+  winId: WinId,
+  instanceId: InstanceId,
   nodeName: string,
   namespace?: string,
   instance?: WorkerNode

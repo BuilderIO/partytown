@@ -1,16 +1,11 @@
 import { debug } from '../utils';
-import {
-  InitializeEnvironmentData,
-  MainWindow,
-  PartytownWebWorker,
-  WorkerMessageType,
-} from '../types';
 import { logMain, normalizedWinId } from '../log';
+import { MainWindow, PartytownWebWorker, WinId, WorkerMessageType } from '../types';
 import { winCtxs, windowIds } from './main-constants';
 
 export const registerWindow = (
   worker: PartytownWebWorker,
-  $winId$: number,
+  $winId$: WinId,
   $window$: MainWindow
 ) => {
   if (!windowIds.has($window$)) {
@@ -62,7 +57,7 @@ export const registerWindow = (
 
     if (debug) {
       const winType = $winId$ === $parentWinId$ ? 'top' : 'iframe';
-      logMain(`Registered ${winType} window ${normalizedWinId($winId$)} (${$winId$})`);
+      logMain(`Registered ${winType} window ${normalizedWinId($winId$)}`);
     }
 
     if (doc.readyState === 'complete') {

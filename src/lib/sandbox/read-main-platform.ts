@@ -92,6 +92,7 @@ export const readMainPlatform = () => {
     $config$,
     $libPath$: new URL(libPath, mainWindow.location as any) + '',
     $interfaces$,
+    $origin$: origin,
     $localStorage$: readStorage('localStorage'),
     $sessionStorage$: readStorage('sessionStorage'),
   };

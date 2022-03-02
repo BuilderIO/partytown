@@ -1,8 +1,15 @@
 import { CreatedKey, InstanceIdKey, instances, winCtxs } from './main-constants';
-import { MainWindow, MainWindowContext, NodeName, PlatformInstanceId } from '../types';
+import {
+  InstanceId,
+  MainWindow,
+  MainWindowContext,
+  NodeName,
+  PlatformInstanceId,
+  WinId,
+} from '../types';
 import { randomId } from '../utils';
 
-export const getAndSetInstanceId = (instance: any, instanceId?: number, nodeName?: string) => {
+export const getAndSetInstanceId = (instance: any, instanceId?: InstanceId, nodeName?: string) => {
   if (instance) {
     if (instance === (instance as any).window) {
       return PlatformInstanceId.window;
@@ -21,17 +28,16 @@ export const getAndSetInstanceId = (instance: any, instanceId?: number, nodeName
       return PlatformInstanceId.body;
     }
 
-    if (typeof (instanceId = instance[InstanceIdKey]) !== 'number') {
+    if (!(instanceId = instance[InstanceIdKey])) {
       setInstanceId(instance, (instanceId = randomId()));
     }
     return instanceId;
   }
-  return -1;
 };
 
 export const getInstance = <T = any>(
-  winId: number,
-  instanceId: number,
+  winId: WinId,
+  instanceId: InstanceId,
   winCtx?: MainWindowContext,
   win?: MainWindow,
   doc?: Document
@@ -61,7 +67,7 @@ export const getInstance = <T = any>(
   }
 };
 
-export const setInstanceId = (instance: any, instanceId: number, now?: number) => {
+export const setInstanceId = (instance: any, instanceId: InstanceId, now?: number) => {
   if (instance) {
     instances.set(instanceId, instance);
     instance[InstanceIdKey] = instanceId;

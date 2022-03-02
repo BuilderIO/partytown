@@ -1,4 +1,4 @@
-import { callMethod, setter } from './worker-proxy';
+import { callMethod, getter, setter } from './worker-proxy';
 import { CallType, NodeName, StateProp, WorkerNode } from '../types';
 import { createEnvironment, getEnv, getEnvWindow } from './worker-environment';
 import {
@@ -7,17 +7,38 @@ import {
   definePrototypeNodeType,
   getOrCreateNodeInstance,
 } from './worker-constructors';
-import { definePrototypePropertyDescriptor, randomId, SCRIPT_TYPE } from '../utils';
+import { debug, definePrototypePropertyDescriptor, randomId, SCRIPT_TYPE } from '../utils';
 import { elementStructurePropNames, IS_TAG_REG, WinIdKey } from './worker-constants';
 import { getInstanceStateValue } from './worker-state';
 import { getPartytownScript } from './worker-exec';
 import { isScriptJsType } from './worker-script';
+import { logWorker } from '../log';
 
-export const patchDocument = (WorkerDocument: any) => {
+export const patchDocument = (WorkerDocument: any, isSameOrigin: boolean) => {
   const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
     body: {
       get() {
         return getEnv(this).$body$;
+      },
+    },
+
+    cookie: {
+      get() {
+        if (isSameOrigin) {
+          return getter(this, ['cookie']);
+        } else {
+          if (debug) {
+            logWorker(`Partytown unable to get cross-origin cookie`);
+          }
+          return '';
+        }
+      },
+      set(value) {
+        if (isSameOrigin) {
+          setter(this, ['cookie'], value);
+        } else if (debug) {
+          logWorker(`Partytown unable to set cross-origin cookie`);
+        }
       },
     },
 
@@ -100,7 +121,7 @@ export const patchDocument = (WorkerDocument: any) => {
       get() {
         const winId = this[WinIdKey];
         const currentScriptId = getEnv(this).$currentScriptId$!;
-        if (currentScriptId > 0) {
+        if (currentScriptId) {
           return getOrCreateNodeInstance(winId, currentScriptId, NodeName.Script);
         }
         return null;

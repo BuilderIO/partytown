@@ -1,7 +1,7 @@
 import { createWindow } from './worker-window';
 import { debug } from '../utils';
 import { environments, webWorkerCtx, WinIdKey } from './worker-constants';
-import { InitializeEnvironmentData, WorkerMessageType } from '../types';
+import { InitializeEnvironmentData, WinId, WorkerMessageType } from '../types';
 import { logWorker, normalizedWinId } from '../log';
 
 export const createEnvironment = (
@@ -15,10 +15,7 @@ export const createEnvironment = (
 
     if (debug) {
       const winType = $winId$ === $parentWinId$ ? 'top' : 'iframe';
-      logWorker(
-        `Created ${winType} window ${normalizedWinId($winId$)} environment (${$winId$})`,
-        $winId$
-      );
+      logWorker(`Created ${winType} window ${normalizedWinId($winId$)} environment`, $winId$);
     }
   }
 
@@ -27,6 +24,6 @@ export const createEnvironment = (
   return environments[$winId$];
 };
 
-export const getEnv = (instance: { [WinIdKey]: number }) => environments[instance[WinIdKey]];
+export const getEnv = (instance: { [WinIdKey]: WinId }) => environments[instance[WinIdKey]];
 
-export const getEnvWindow = (instance: { [WinIdKey]: number }) => getEnv(instance).$window$;
+export const getEnvWindow = (instance: { [WinIdKey]: WinId }) => getEnv(instance).$window$;

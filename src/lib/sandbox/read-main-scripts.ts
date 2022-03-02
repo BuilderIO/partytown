@@ -1,7 +1,8 @@
-import { debug, PT_INITIALIZED_EVENT, SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
+import { debug, SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
 import { getAndSetInstanceId } from './main-instances';
 import {
   InitializeScriptData,
+  InstanceId,
   MainWindowContext,
   PartytownWebWorker,
   WorkerMessageType,
@@ -16,7 +17,7 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
   let scriptSelector = `script[type="${SCRIPT_TYPE}"]:not([data-ptid]):not([data-pterror])`;
   let blockingScriptSelector = scriptSelector + `:not([async]):not([defer])`;
   let scriptElm: HTMLScriptElement | null;
-  let $instanceId$: number;
+  let $instanceId$: InstanceId;
   let scriptData: InitializeScriptData;
 
   if (doc && doc.body) {
@@ -57,7 +58,7 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
 
         mainForwardTrigger(worker, $winId$, win);
 
-        doc.dispatchEvent(new CustomEvent(PT_INITIALIZED_EVENT));
+        doc.dispatchEvent(new CustomEvent('pt0'));
 
         if (debug) {
           const winType = win === win.top ? 'top' : 'iframe';
@@ -80,18 +81,21 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
 export const initializedWorkerScript = (
   worker: PartytownWebWorker,
   winCtx: MainWindowContext,
-  instanceId: number,
+  instanceId: InstanceId,
   errorMsg: string,
-  script?: HTMLScriptElement | null
+  scriptElm?: HTMLScriptElement | null
 ) => {
-  script = winCtx.$window$.document.querySelector<HTMLScriptElement>(`[data-ptid="${instanceId}"]`);
+  scriptElm = winCtx.$window$.document.querySelector<HTMLScriptElement>(
+    `[data-ptid="${instanceId}"]`
+  );
 
-  if (script) {
+  if (scriptElm) {
     if (errorMsg) {
-      script.dataset.pterror = errorMsg;
+      scriptElm.dataset.pterror = errorMsg;
     } else {
-      script.type += SCRIPT_TYPE_EXEC;
+      scriptElm.type += SCRIPT_TYPE_EXEC;
     }
+    delete scriptElm.dataset.ptid;
   }
 
   readNextScript(worker, winCtx);

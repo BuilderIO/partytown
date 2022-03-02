@@ -31,10 +31,7 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
         const winId = msgValue;
         const env = environments[winId];
         const winType = env.$winId$ === env.$parentWinId$ ? 'top' : 'iframe';
-        logWorker(
-          `Initialized ${winType} window ${normalizedWinId(winId)} environment (${winId}) 🎉`,
-          winId
-        );
+        logWorker(`Initialized ${winType} window ${normalizedWinId(winId)} environment 🎉`, winId);
       }
 
       environments[msgValue].$isInitialized$ = 1;

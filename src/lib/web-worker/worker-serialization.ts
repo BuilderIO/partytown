@@ -1,7 +1,9 @@
 import {
   ApplyPath,
+  InstanceId,
   PlatformInstanceId,
   RefHandlerCallbackData,
+  RefId,
   SerializedAttr,
   SerializedInstance,
   SerializedObject,
@@ -9,6 +11,7 @@ import {
   SerializedTransfer,
   SerializedType,
   WebWorkerEnvironment,
+  WinId,
   WorkerNode,
 } from '../types';
 import { callMethod } from './worker-proxy';
@@ -25,8 +28,8 @@ import { getOrCreateNodeInstance } from './worker-constructors';
 import { setWorkerRef } from './worker-state';
 
 export const serializeForMain = (
-  $winId$: number,
-  $instanceId$: number,
+  $winId$: WinId,
+  $instanceId$: InstanceId,
   value: any,
   added?: Set<any>,
   type?: string
@@ -55,7 +58,7 @@ export const serializeForMain = (
         );
       }
     } else if (type === 'object') {
-      if (typeof value[InstanceIdKey] === 'number') {
+      if (value[InstanceIdKey]) {
         return [
           SerializedType.Instance,
           {
@@ -92,8 +95,8 @@ export const serializeForMain = (
 const supportsTrustedHTML = typeof TrustedHTML !== 'undefined';
 
 const serializeObjectForMain = (
-  winId: number,
-  instanceId: number,
+  winId: WinId,
+  instanceId: RefId,
   obj: any,
   includeFunctions: boolean,
   added: Set<any>,
@@ -123,8 +126,8 @@ export const serializeInstanceForMain = (
     : [SerializedType.Primitive, value];
 
 export const deserializeFromMain = (
-  winId: number | undefined | null,
-  instanceId: number | undefined | null,
+  winId: WinId | undefined | null,
+  instanceId: InstanceId | undefined | null,
   applyPath: ApplyPath,
   serializedValueTransfer?: SerializedTransfer,
   serializedType?: SerializedType,
@@ -225,8 +228,8 @@ export const getOrCreateSerializedInstance = ({
   getOrCreateNodeInstance($winId$, $instanceId$!, $nodeName$!);
 
 export const getPlatformInstance = (
-  winId: number,
-  instanceId: number | undefined,
+  winId: WinId,
+  instanceId: InstanceId | undefined,
   env?: WebWorkerEnvironment
 ) => {
   if ((env = environments[winId]) && instanceId === PlatformInstanceId.window) {

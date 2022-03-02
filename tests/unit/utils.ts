@@ -1,5 +1,10 @@
 import { suite as uvuSuite } from 'uvu';
-import type { MainWindow, PartytownWebWorker, WebWorkerEnvironment } from '../../src/lib/types';
+import type {
+  MainWindow,
+  PartytownWebWorker,
+  WebWorkerEnvironment,
+  WinId,
+} from '../../src/lib/types';
 import { environments } from '../../src/lib/web-worker/worker-constants';
 import { createWindow } from 'domino';
 import { readFileSync } from 'fs';
@@ -14,7 +19,7 @@ export const suite = (title?: string) => {
   }
 
   s.before.each((ctx) => {
-    ctx.winId = Math.round(Math.random() * 10000);
+    ctx.winId = Math.round(Math.random() * Number.MAX_SAFE_INTEGER).toString(36);
     ctx.win = ctx.window = getWindow();
     ctx.top = ctx.win;
     ctx.doc = ctx.document = ctx.window.document;
@@ -35,7 +40,7 @@ export const suite = (title?: string) => {
 let _partytownSnippet: string | null = null;
 
 export interface TestContext {
-  winId: number;
+  winId: WinId;
   /**
    * Same as "win", but IS typed
    */
@@ -109,7 +114,7 @@ export interface TestNavigator extends Navigator {
   $serviceWorkerOptions?: any;
 }
 
-function createWorkerWindownEnvironment(winId: number) {
+function createWorkerWindownEnvironment(winId: WinId) {
   for (const winId in environments) {
     delete environments[winId];
   }

@@ -1,4 +1,4 @@
-import { ApplyPath, PlatformInstanceId, RandomId } from './types';
+import type { ApplyPath, RandomId } from './types';
 
 export const debug = !!(globalThis as any).partytownDebug;
 
@@ -40,11 +40,8 @@ if (debug) {
   /*#__PURE__*/ Object.freeze(EMPTY_ARRAY);
 }
 
-export const PT_INITIALIZED_EVENT = `pt0`;
-export const PT_IFRAME_APPENDED = `pt1`;
-
 export const randomId: RandomId = () =>
-  Math.round(Math.random() * 999999999 + PlatformInstanceId.body);
+  Math.round(Math.random() * Number.MAX_SAFE_INTEGER).toString(36);
 
 /**
  * The `type` attribute for Partytown scripts, which does two things:

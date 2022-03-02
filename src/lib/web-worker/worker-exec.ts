@@ -3,16 +3,18 @@ import { environments, partytownLibUrl, webWorkerCtx } from './worker-constants'
 import {
   EventHandler,
   InitializeScriptData,
+  InstanceId,
   NodeName,
   StateProp,
   WebWorkerEnvironment,
+  WinId,
   WorkerInstance,
   WorkerMessageType,
 } from '../types';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getOrCreateNodeInstance } from './worker-constructors';
 import { logWorker } from '../log';
-import { setter } from './worker-proxy';
+import { VERSION } from '../build-modules/version';
 
 export const initNextScriptsInWebWorker = async (initScript: InitializeScriptData) => {
   let winId = initScript.$winId$;
@@ -55,7 +57,7 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
     errorMsg = runScriptContent(env, instanceId, scriptContent, winId, errorMsg);
   }
 
-  env.$currentScriptId$ = -1;
+  env.$currentScriptId$ = '';
 
   webWorkerCtx.$postMessage$([
     WorkerMessageType.InitializedEnvironmentScript,
@@ -67,9 +69,9 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
 
 export const runScriptContent = (
   env: WebWorkerEnvironment,
-  instanceId: number,
+  instanceId: InstanceId,
   scriptContent: string,
-  winId: number,
+  winId: WinId,
   errorMsg: string
 ) => {
   try {
@@ -93,7 +95,7 @@ export const runScriptContent = (
     errorMsg = String(contentError.stack || contentError);
   }
 
-  env.$currentScriptId$ = -1;
+  env.$currentScriptId$ = '';
 
   return errorMsg;
 };
@@ -126,7 +128,7 @@ const runStateLoadHandlers = (
   }
 };
 
-export const insertIframe = (winId: number, iframe: WorkerInstance) => {
+export const insertIframe = (winId: WinId, iframe: WorkerInstance) => {
   // an iframe element's instanceId is also
   // the winId of its contentWindow
   let i = 0;
@@ -156,10 +158,6 @@ export const insertIframe = (winId: number, iframe: WorkerInstance) => {
       setTimeout(callback, 9);
     }
   };
-
-  if (debug) {
-    setter(iframe, ['dataset', 'ptwindow'], winId);
-  }
 
   callback();
 };
@@ -195,4 +193,4 @@ export const resolveUrl = (env: WebWorkerEnvironment, url: string, noUserHook?: 
   resolveToUrl(env, url, noUserHook) + '';
 
 export const getPartytownScript = () =>
-  `<script src="${partytownLibUrl('partytown.js')}"></script>`;
+  `<script src="${partytownLibUrl('partytown.js?v=' + VERSION)}"></script>`;

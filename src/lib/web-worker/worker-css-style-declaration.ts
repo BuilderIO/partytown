@@ -1,4 +1,4 @@
-import { ApplyPath, CallType, WorkerConstructor } from '../types';
+import { ApplyPath, CallType, InstanceId, WinId, WorkerConstructor } from '../types';
 import { cachedDimensions, InstanceDataKey } from './worker-constants';
 import { callMethod, getter, setter } from './worker-proxy';
 import { defineConstructorName } from '../utils';
@@ -11,7 +11,7 @@ export const createCSSStyleDeclarationCstr = (
 ) => {
   win[cstrName] = defineConstructorName(
     class extends WorkerBase {
-      constructor(winId: number, instanceId: number, applyPath: ApplyPath, styles: any) {
+      constructor(winId: WinId, instanceId: InstanceId, applyPath: ApplyPath, styles: any) {
         super(winId, instanceId, applyPath, styles || {});
 
         return new Proxy(this, {

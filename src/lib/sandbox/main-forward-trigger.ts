@@ -1,12 +1,8 @@
 import { len } from '../utils';
-import { MainWindow, PartytownWebWorker, WorkerMessageType } from '../types';
+import { MainWindow, PartytownWebWorker, WinId, WorkerMessageType } from '../types';
 import { serializeForWorker } from './main-serialization';
 
-export const mainForwardTrigger = (
-  worker: PartytownWebWorker,
-  $winId$: number,
-  win: MainWindow
-) => {
+export const mainForwardTrigger = (worker: PartytownWebWorker, $winId$: WinId, win: MainWindow) => {
   let queuedForwardCalls = win._ptf;
   let forwards = (win.partytown || {}).forward || [];
   let i: number;

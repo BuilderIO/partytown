@@ -1,4 +1,4 @@
-import { debug, PT_IFRAME_APPENDED } from '../utils';
+import { debug } from '../utils';
 import { getAndSetInstanceId } from './main-instances';
 import { libPath, mainWindow } from './main-globals';
 import { logMain } from '../log';
@@ -49,8 +49,8 @@ syncCreateMessenger(receiveMessage).then((onMessageHandler) => {
       worker.onerror = (ev) => console.error(`Web Worker Error`, ev);
     }
 
-    mainWindow.addEventListener<any>(PT_IFRAME_APPENDED, (ev: CustomEvent) =>
-      registerWindow(worker, getAndSetInstanceId(ev.detail.frameElement), ev.detail)
+    mainWindow.addEventListener<any>('pt1', (ev: CustomEvent) =>
+      registerWindow(worker, getAndSetInstanceId(ev.detail.frameElement)!, ev.detail)
     );
   }
 });

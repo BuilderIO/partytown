@@ -1,6 +1,5 @@
-import { debug, PT_IFRAME_APPENDED, PT_INITIALIZED_EVENT, SCRIPT_TYPE } from '../utils';
+import { debug } from '../utils';
 import type { MainWindow, PartytownConfig } from '../types';
-import { VERSION } from '../build-modules/version';
 
 export function snippet(
   win: MainWindow,
@@ -30,15 +29,15 @@ export function snippet(
 
       if (libPath[0] == '/') {
         // grab all the partytown scripts
-        scripts = doc.querySelectorAll(`script[type="${SCRIPT_TYPE}"]`);
+        scripts = doc.querySelectorAll('script[type="text/partytown"]');
 
         if (top != win) {
           // this is an iframe
-          top!.dispatchEvent(new CustomEvent(PT_IFRAME_APPENDED, { detail: win }));
+          top!.dispatchEvent(new CustomEvent('pt1', { detail: win }));
         } else if (scripts!.length) {
           // set a timeout to fire if PT hasn't initialized in Xms
           timeout = setTimeout(fallback, 10000);
-          doc.addEventListener(PT_INITIALIZED_EVENT, clearFallback);
+          doc.addEventListener('pt0', clearFallback);
 
           if (useAtomics) {
             // atomics support
@@ -84,7 +83,7 @@ export function snippet(
     sandbox.src =
       libPath +
       'partytown-' +
-      (isAtomics ? 'atomics.js?v=' + VERSION : 'sandbox-sw.html?' + Date.now());
+      (isAtomics ? 'atomics.js?v=_VERSION_' : 'sandbox-sw.html?' + Date.now());
     doc.body.appendChild(sandbox);
   }
 

@@ -20,7 +20,7 @@ export const onFetchServiceWorkerRequest = (ev: FetchEvent) => {
   }
 };
 
-const resolves = new Map<number, MessageResolve>();
+const resolves = new Map<string, MessageResolve>();
 
 export const receiveMessageFromSandboxToServiceWorker = (ev: ExtendableMessageEvent) => {
   const accessRsp: MainAccessResponse = ev.data;

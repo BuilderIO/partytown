@@ -10,11 +10,12 @@ import {
   SerializedRefTransferData,
   SerializedTransfer,
   SerializedType,
+  WinId,
   WorkerMessageType,
 } from '../types';
 
 export const serializeForWorker = (
-  $winId$: number,
+  $winId$: WinId,
   value: any,
   added?: Set<any>,
   type?: string,
@@ -71,7 +72,7 @@ export const serializeForWorker = (
           SerializedType.Instance,
           {
             $winId$,
-            $instanceId$: getAndSetInstanceId(value),
+            $instanceId$: getAndSetInstanceId(value)!,
             $nodeName$: value.nodeName,
           },
         ];
@@ -87,7 +88,7 @@ export const serializeForWorker = (
 };
 
 const serializeObjectForWorker = (
-  winId: number,
+  winId: WinId,
   obj: any,
   added: Set<any>,
   includeFunctions?: boolean,

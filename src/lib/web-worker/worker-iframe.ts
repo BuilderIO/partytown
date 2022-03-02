@@ -24,13 +24,10 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any) => {
     src: {
       get() {
         let src = getIframeEnv(this).$location$.href;
-        if (src.startsWith('about')) {
-          src = '';
-        }
-        return src;
+        return src.startsWith('about:') ? '' : src;
       },
       set(src: string) {
-        if (!src.startsWith('about')) {
+        if (!src.startsWith('about:')) {
           let xhr = new XMLHttpRequest();
           let xhrStatus: number;
           let env = getIframeEnv(this);

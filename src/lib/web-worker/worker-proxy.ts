@@ -6,6 +6,7 @@ import {
   ConstructGlobal,
   Getter,
   HookOptions,
+  InstanceId,
   MainAccessRequest,
   MainAccessResponse,
   MainAccessTask,
@@ -51,7 +52,7 @@ const queue = (
   instance: WorkerInstance,
   $applyPath$: ApplyPath,
   callType: CallType,
-  $assignInstanceId$?: number,
+  $assignInstanceId$?: InstanceId,
   $groupedGetters$?: string[],
   buffer?: ArrayBuffer | ArrayBufferView
 ) => {
@@ -193,7 +194,7 @@ export const callMethod: CallMethod = (
   applyPath: ApplyPath,
   args: any[],
   callType?: CallType,
-  assignInstanceId?: number,
+  assignInstanceId?: InstanceId,
   buffer?: ArrayBuffer | ArrayBufferView,
   rtnValue?: any,
   methodName?: string

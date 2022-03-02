@@ -5,6 +5,7 @@ import {
   MainAccessResponse,
   MainAccessTask,
   PartytownWebWorker,
+  WinId,
 } from '../types';
 import { debug, isPromise, len } from '../utils';
 import { deserializeFromWorker, serializeForWorker } from './main-serialization';
@@ -22,7 +23,7 @@ export const mainAccessHandler = async (
   let totalTasks = len(accessReq.$tasks$);
   let i = 0;
   let task: MainAccessTask;
-  let winId: number;
+  let winId: WinId;
   let applyPath: ApplyPath;
   let instance: any;
   let rtnValue: any;
@@ -78,7 +79,7 @@ export const mainAccessHandler = async (
           if (debug) {
             accessRsp.$error$ = `Error finding instance "${
               task.$instanceId$
-            }" on window ${normalizedWinId(winId)} (${winId})`;
+            }" on window ${normalizedWinId(winId)}`;
             console.error(accessRsp.$error$, task);
           } else {
             accessRsp.$error$ = task.$instanceId$ + ' not found';

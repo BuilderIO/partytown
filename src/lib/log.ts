@@ -1,4 +1,12 @@
-import { ApplyPath, CallType, InterfaceType, NodeName, PlatformInstanceId } from './types';
+import {
+  ApplyPath,
+  CallType,
+  InstanceId,
+  InterfaceType,
+  NodeName,
+  PlatformInstanceId,
+  WinId,
+} from './types';
 import {
   ApplyPathKey,
   InstanceDataKey,
@@ -18,7 +26,7 @@ export const logMain = (msg: string) => {
   }
 };
 
-export const logWorker = (msg: string, winId = -1) => {
+export const logWorker = (msg: string, winId?: WinId) => {
   if (debug) {
     try {
       const config = webWorkerCtx.$config$;
@@ -31,7 +39,7 @@ export const logWorker = (msg: string, winId = -1) => {
 
       let prefix: string;
       let color: string;
-      if (winId > -1) {
+      if (winId) {
         prefix = `Worker (${normalizedWinId(winId)}) 🎉`;
         color = winColor(winId);
       } else {
@@ -51,15 +59,15 @@ export const logWorker = (msg: string, winId = -1) => {
   }
 };
 
-const winIds: number[] = [];
-export const normalizedWinId = (winId: number) => {
+const winIds: WinId[] = [];
+export const normalizedWinId = (winId: WinId) => {
   if (!winIds.includes(winId)) {
     winIds.push(winId);
   }
   return winIds.indexOf(winId) + 1;
 };
 
-const winColor = (winId: number) => {
+const winColor = (winId: WinId) => {
   const colors = ['#00309e', '#ea3655', '#eea727'];
   const index = normalizedWinId(winId) - 1;
   return colors[index] || colors[colors.length - 1];
@@ -212,8 +220,8 @@ const getLogValue = (applyPath: ApplyPath, v: any): string => {
     return `[${v.map(getLogValue).join(', ')}]`;
   }
   if (type === 'object') {
-    const instanceId: number = v[InstanceIdKey];
-    if (typeof instanceId === 'number') {
+    const instanceId: InstanceId = v[InstanceIdKey];
+    if (typeof instanceId === 'string') {
       if (instanceId === PlatformInstanceId.body) {
         return `<body>`;
       }

@@ -16,7 +16,11 @@ export type MessengerHandler = (
 
 export type MessengerResponseCallback = (accessRsp: MainAccessResponse) => void;
 
-export type WinId = number;
+export type WinId = string;
+
+export type InstanceId = string;
+
+export type RefId = string;
 
 export type MessageFromWorkerToSandbox =
   | [type: WorkerMessageType.MainDataRequestFromWorker]
@@ -24,7 +28,7 @@ export type MessageFromWorkerToSandbox =
   | [
       type: WorkerMessageType.InitializedEnvironmentScript,
       winid: WinId,
-      instanceId: number,
+      instanceId: InstanceId,
       errorMsg: string
     ]
   | [type: WorkerMessageType.InitializeNextScript, winId: WinId]
@@ -32,13 +36,13 @@ export type MessageFromWorkerToSandbox =
   | [type: WorkerMessageType.AsyncAccessRequest, accessReq: MainAccessRequest];
 
 export type MessageFromSandboxToWorker =
-  | [WorkerMessageType.MainDataResponseToWorker, InitWebWorkerData]
-  | [WorkerMessageType.InitializeEnvironment, InitializeEnvironmentData]
-  | [WorkerMessageType.InitializeNextScript, InitializeScriptData]
-  | [WorkerMessageType.InitializedScripts, WinId]
-  | [WorkerMessageType.RefHandlerCallback, RefHandlerCallbackData]
-  | [WorkerMessageType.ForwardMainTrigger, ForwardMainTriggerData]
-  | [WorkerMessageType.LocationUpdate, number, string];
+  | [type: WorkerMessageType.MainDataResponseToWorker, initWebWorkerData: InitWebWorkerData]
+  | [type: WorkerMessageType.InitializeEnvironment, initEnvData: InitializeEnvironmentData]
+  | [type: WorkerMessageType.InitializeNextScript, initScriptData: InitializeScriptData]
+  | [type: WorkerMessageType.InitializedScripts, winId: WinId]
+  | [type: WorkerMessageType.RefHandlerCallback, callbackData: RefHandlerCallbackData]
+  | [type: WorkerMessageType.ForwardMainTrigger, triggerData: ForwardMainTriggerData]
+  | [type: WorkerMessageType.LocationUpdate, winId: WinId, documentBaseURI: string];
 
 export const enum WorkerMessageType {
   MainDataRequestFromWorker,
@@ -56,15 +60,15 @@ export const enum WorkerMessageType {
 }
 
 export interface ForwardMainTriggerData {
-  $winId$: number;
+  $winId$: WinId;
   $forward$: string[];
   $args$: SerializedTransfer | undefined;
 }
 
 export interface RefHandlerCallbackData {
-  $winId$: number;
-  $instanceId$: number;
-  $refId$: number;
+  $winId$: WinId;
+  $instanceId$: InstanceId;
+  $refId$: RefId;
   $thisArg$: SerializedTransfer | undefined;
   $args$: SerializedTransfer | undefined;
 }
@@ -72,7 +76,7 @@ export interface RefHandlerCallbackData {
 export type PostMessageToWorker = (msg: MessageFromSandboxToWorker) => void;
 
 export interface MainWindowContext {
-  $winId$: number;
+  $winId$: WinId;
   $isInitialized$?: number;
   $startTime$?: number;
   $window$: MainWindow;
@@ -89,6 +93,7 @@ export interface InitWebWorkerData {
   $sharedDataBuffer$?: SharedArrayBuffer;
   $localStorage$: StorageItem[];
   $sessionStorage$: StorageItem[];
+  $origin$: string;
 }
 
 /**
@@ -123,14 +128,15 @@ export interface WebWorkerContext {
   $indexedDB$: any;
   $isInitialized$?: number;
   $libPath$: string;
+  $origin$: string;
   $postMessage$: (msg: MessageFromWorkerToSandbox, arr?: any[]) => void;
   $sharedDataBuffer$?: SharedArrayBuffer;
   lastLog?: string;
 }
 
 export interface InitializeEnvironmentData {
-  $winId$: number;
-  $parentWinId$: number;
+  $winId$: WinId;
+  $parentWinId$: WinId;
   $url$: string;
 }
 
@@ -141,8 +147,8 @@ export interface WebWorkerEnvironment extends Omit<InitializeEnvironmentData, '$
   $head$: HTMLElement;
   $body$: HTMLElement;
   $location$: Location;
-  $createNode$: (nodeName: string, instanceId: number, namespace?: string) => WorkerNode;
-  $currentScriptId$?: number;
+  $createNode$: (nodeName: string, instanceId: InstanceId, namespace?: string) => WorkerNode;
+  $currentScriptId$?: InstanceId;
   $isInitialized$?: number;
   $isLoading$?: number;
   $runWindowLoadEvent$?: number;
@@ -177,37 +183,37 @@ export const enum InterfaceType {
 }
 
 export const enum PlatformInstanceId {
-  window,
-  document,
-  documentElement,
-  head,
-  body,
+  window = '0',
+  document = '1',
+  documentElement = '2',
+  head = '3',
+  body = '4',
 }
 
 export interface InitializeScriptData {
-  $winId$: number;
-  $instanceId$: number;
+  $winId$: WinId;
+  $instanceId$: InstanceId;
   $content$?: string;
   $url$?: string;
   $orgUrl$?: string;
 }
 
 export interface MainAccessRequest {
-  $msgId$: number;
+  $msgId$: string;
   $tasks$: MainAccessTask[];
 }
 
 export interface MainAccessTask {
-  $winId$: number;
-  $instanceId$: number;
+  $winId$: WinId;
+  $instanceId$: InstanceId;
   $applyPath$: ApplyPath;
   $groupedGetters$?: string[];
-  $assignInstanceId$?: number;
+  $assignInstanceId$?: InstanceId;
   $debug$?: string;
 }
 
 export interface MainAccessResponse {
-  $msgId$: number;
+  $msgId$: string;
   $error$?: string;
   $rtnValue$?: SerializedTransfer;
   $isPromise$?: any;
@@ -281,10 +287,10 @@ export type SerializedPrimitiveTransfer =
 export type SerializedRefTransfer = [SerializedType.Ref, SerializedRefTransferData];
 
 export interface SerializedRefTransferData {
-  $winId$: number;
-  $instanceId$: number;
+  $winId$: WinId;
+  $instanceId$: InstanceId;
+  $refId$: RefId;
   $nodeName$?: string;
-  $refId$: number;
 }
 
 export type SerializedTransfer =
@@ -310,8 +316,8 @@ export interface SerializedObject {
 }
 
 export interface SerializedInstance {
-  $winId$: number;
-  $instanceId$: number;
+  $winId$: WinId;
+  $instanceId$: InstanceId;
   /**
    * Node name for Node instances
    */
@@ -532,7 +538,7 @@ export type CallMethod = (
   applyPath: ApplyPath,
   args: any[],
   callType?: CallType,
-  assignInstanceId?: number,
+  assignInstanceId?: InstanceId,
   buffer?: ArrayBuffer | ArrayBufferView
 ) => any;
 
@@ -540,7 +546,7 @@ export type ConstructGlobal = (instance: any, cstrName: string, args: any[]) => 
 
 export type DefinePrototypePropertyDescriptor = (Cstr: any, propertyDescriptorMap: any) => void;
 
-export type RandomId = () => number;
+export type RandomId = () => string;
 
 import type {
   ApplyPathKey,
@@ -577,14 +583,14 @@ export interface MediaSelf {
 }
 
 export interface PostMessageData {
-  $winId$: number;
+  $winId$: WinId;
   $data$: string;
 }
 
 export interface WorkerConstructor {
   new (
-    instanceId: number,
-    winId: number,
+    instanceId: InstanceId,
+    winId: WinId,
     applyPath?: ApplyPath,
     instanceData?: any,
     namespace?: string
@@ -592,8 +598,8 @@ export interface WorkerConstructor {
 }
 
 export interface WorkerInstance {
-  [WinIdKey]: number;
-  [InstanceIdKey]: number;
+  [WinIdKey]: WinId;
+  [InstanceIdKey]: InstanceId;
   [ApplyPathKey]: string[];
   [InstanceDataKey]: string | undefined;
   [NamespaceKey]: string | undefined;

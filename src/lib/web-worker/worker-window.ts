@@ -2,9 +2,11 @@ import { addStorageApi } from './worker-storage';
 import {
   ApplyPath,
   CallType,
+  InstanceId,
   InterfaceType,
   NodeName,
   PlatformInstanceId,
+  WinId,
   WorkerConstructor,
   WorkerInstance,
   WorkerNode,
@@ -72,23 +74,23 @@ import { patchSvgElement } from './worker-svg';
 import { resolveUrl } from './worker-exec';
 
 export const createWindow = (
-  $winId$: number,
-  $parentWinId$: number,
+  $winId$: WinId,
+  $parentWinId$: WinId,
   url: string,
   isIframeWindow?: boolean
 ) => {
   // base class all Nodes/Elements/Global Constructors will extend
   const WorkerBase = class implements WorkerInstance {
-    [WinIdKey]: number;
-    [InstanceIdKey]: number;
+    [WinIdKey]: WinId;
+    [InstanceIdKey]: InstanceId;
     [ApplyPathKey]: string[];
     [InstanceDataKey]: any;
     [NamespaceKey]: string | undefined;
     [InstanceStateKey]: { [key: string]: any };
 
     constructor(
-      winId: number,
-      instanceId: number,
+      winId: WinId,
+      instanceId: InstanceId,
       applyPath?: ApplyPath,
       instanceData?: any,
       namespace?: string
@@ -120,17 +122,11 @@ export const createWindow = (
   );
 
   const $location$ = new WorkerLocation(url);
+  const isSameOrigin = $location$.origin === webWorkerCtx.$origin$;
 
   // window global eveything will live within
   const WorkerWindow = defineConstructorName(
     class extends WorkerBase implements WorkerWindow {
-      [WinIdKey]: number;
-      [InstanceIdKey]: number;
-      [ApplyPathKey]: string[];
-      [InstanceDataKey]: undefined;
-      [NamespaceKey]: string | undefined;
-      [InstanceStateKey]: { [key: string]: any };
-
       constructor() {
         super($winId$, PlatformInstanceId.window);
 
@@ -155,7 +151,7 @@ export const createWindow = (
         let nodeCstrs: { [nodeName: string]: WorkerConstructor } = {};
         let $createNode$ = (
           nodeName: string,
-          instanceId: number,
+          instanceId: InstanceId,
           namespace?: string
         ): WorkerNode => {
           if (htmlMedia.includes(nodeName)) {
@@ -312,7 +308,7 @@ export const createWindow = (
 
         // patch this window's global constructors with some additional props
         patchElement(win.Element);
-        patchDocument(win.Document);
+        patchDocument(win.Document, isSameOrigin);
         patchDocumentFragment(win.DocumentFragment);
         patchHTMLAnchorElement(win.HTMLAnchorElement);
         patchHTMLIFrameElement(win.HTMLIFrameElement);
@@ -371,8 +367,12 @@ export const createWindow = (
         win.cancelIdleCallback = (id: number) => clearTimeout(id);
 
         // add storage APIs to the window
-        addStorageApi(win, 'localStorage', webWorkerlocalStorage);
-        addStorageApi(win, 'sessionStorage', webWorkerSessionStorage);
+        addStorageApi(win, 'localStorage', webWorkerlocalStorage, isSameOrigin);
+        addStorageApi(win, 'sessionStorage', webWorkerSessionStorage, isSameOrigin);
+
+        if (!isSameOrigin) {
+          win.indexeddb = undefined;
+        }
 
         if (isIframeWindow) {
           historyState = {};
@@ -388,7 +388,6 @@ export const createWindow = (
             },
             length: 0,
           };
-          win.indexeddb = undefined;
         }
 
         win.Worker = undefined;
@@ -526,7 +525,7 @@ export const createWindow = (
 
   // extends WorkerBase, but also a proxy so certain constructors like style.color work
   const WorkerTrapProxy = class extends WorkerBase {
-    constructor(winId: number, instanceId: number, applyPath?: ApplyPath, nodeName?: string) {
+    constructor(winId: WinId, instanceId: InstanceId, applyPath?: ApplyPath, nodeName?: string) {
       super(winId, instanceId, applyPath, nodeName);
 
       return new Proxy(this, {
@@ -556,7 +555,7 @@ export const createWindow = (
   new WorkerWindow();
 };
 
-const proxyAncestorPostMessage = (parentWin: any, $winId$: number) =>
+const proxyAncestorPostMessage = (parentWin: any, $winId$: WinId) =>
   new Proxy<any>(parentWin, {
     get: (targetParent, propName) => {
       if (propName === 'postMessage') {

@@ -1,10 +1,13 @@
 import type {
+  InstanceId,
   InterfaceInfo,
   PostMessageData,
   RefHandler,
+  RefId,
   StorageItem,
   WebWorkerContext,
   WebWorkerEnvironment,
+  WinId,
   WorkerNode,
 } from '../types';
 
@@ -17,9 +20,9 @@ export const InstanceStateKey = /*#__PURE__*/ Symbol();
 export const HookContinue = /*#__PURE__*/ Symbol();
 export const HookPrevent = /*#__PURE__*/ Symbol();
 
-export const webWorkerInstances = /*#__PURE__*/ new Map<number, WorkerNode>();
-export const webWorkerRefsByRefId: { [refId: number]: RefHandler } = {};
-export const webWorkerRefIdsByRef = /*#__PURE__*/ new WeakMap<RefHandler, number>();
+export const webWorkerInstances = /*#__PURE__*/ new Map<InstanceId, WorkerNode>();
+export const webWorkerRefsByRefId: { [refId: RefId]: RefHandler } = {};
+export const webWorkerRefIdsByRef = /*#__PURE__*/ new WeakMap<RefHandler, RefId>();
 export const postMessages: PostMessageData[] = [];
 
 export const webWorkerCtx: WebWorkerContext = {} as any;
@@ -28,7 +31,7 @@ export const webWorkerInterfaces: InterfaceInfo[] = [];
 export const webWorkerlocalStorage = /*#__PURE__*/ new Map<string, StorageItem[]>();
 export const webWorkerSessionStorage = /*#__PURE__*/ new Map<string, StorageItem[]>();
 
-export const environments: { [winId: number]: WebWorkerEnvironment } = {};
+export const environments: { [winId: WinId]: WebWorkerEnvironment } = {};
 
 export const cachedDimensions = /*#__PURE__*/ new Map<string, any>();
 export const cachedStructure = /*#__PURE__*/ new Map<string, any>();
