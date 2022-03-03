@@ -68,6 +68,7 @@ import {
 } from './worker-document';
 import { patchElement } from './worker-element';
 import { patchHTMLAnchorElement } from './worker-anchor';
+import { patchHTMLFormElement } from './worker-form';
 import { patchHTMLIFrameElement } from './worker-iframe';
 import { patchHTMLScriptElement } from './worker-script';
 import { patchSvgElement } from './worker-svg';
@@ -311,6 +312,7 @@ export const createWindow = (
         patchDocument(win.Document, isSameOrigin);
         patchDocumentFragment(win.DocumentFragment);
         patchHTMLAnchorElement(win.HTMLAnchorElement);
+        patchHTMLFormElement(win.HTMLFormElement);
         patchHTMLIFrameElement(win.HTMLIFrameElement);
         patchHTMLScriptElement(win.HTMLScriptElement);
         patchSvgElement(win.SVGGraphicsElement);
