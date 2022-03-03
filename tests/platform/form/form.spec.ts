@@ -7,4 +7,7 @@ test('form', async ({ page }) => {
 
   const testFormMethod = page.locator('#testFormMethod');
   await expect(testFormMethod).toHaveText('get');
+
+  const testFormElements = page.locator('#testFormElements');
+  await expect(testFormElements).toHaveText('1');
 });

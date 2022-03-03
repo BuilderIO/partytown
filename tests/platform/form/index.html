@@ -68,6 +68,19 @@
         </script>
       </li>
 
+      <li>
+        <strong>form, elements</strong>
+        <code id="testFormElements"></code>
+        <script type="text/partytown">
+          (function () {
+            const form = document.createElement('form');
+            const input = document.createElement('input');
+            form.appendChild(input);
+            document.getElementById('testFormElements').textContent = form.elements.length;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');
