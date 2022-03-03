@@ -34,6 +34,6 @@
   - [Benchmark](/tests/benchmarks/)
 - [Community](https://github.com/BuilderIO/partytown)
   - [Github](https://github.com/BuilderIO/partytown)
-  - [Discord](https://discord.gg/tw5qMfgQ)
+  - [Discord](https://discord.gg/hbuEtxdEZ3)
   - [@QwikDev](https://twitter.com/QwikDev)
   - [@Builderio](https://twitter.com/builderio)

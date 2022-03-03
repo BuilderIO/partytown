@@ -22,7 +22,7 @@ The philosophy is that the main thread should be dedicated to your code, and any
 
 ## Community
 
-- [Partytown Discord](https://discord.gg/tw5qMfgQ)
+- [Partytown Discord](https://discord.gg/hbuEtxdEZ3)
 - [@QwikDev](https://twitter.com/QwikDev)
 - [@Builderio](https://twitter.com/builderio)
 - [Local Development](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#local-development)
