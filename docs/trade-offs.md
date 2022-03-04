@@ -37,3 +37,7 @@ For example, when a user clicks a link on the main thread, a third-party script 
 ## Service Worker
 
 For the Service Worker build, a total of three threads are used: Main Thread, Web Worker, and Service Worker. Note that the [Atomics](/atomics) build only uses two threads.
+
+## Not Always The Best Fit
+
+While Partytown works great for some third-party scripts, it may not be the best fit for every single script out there (and that's ok). For example, some third-party scripts have a `setInterval()` loop that continually reads through the entire `document` every X milliseconds. This is just bad practice to begin with, but when these scripts are ran from Partytown then it's visible that Partytown is overworked trying to keep up the script's layout thrashing code. Since every script is different, it's difficult to state exactly which scripts do and do not work well with Partytown. For this reason, Partytown is opt-in, and you can explicitly set which scripts to use it on.
