@@ -1,0 +1,1768 @@
+<!doctype html>
+<html class="no-js" lang="en">
+  <head>
+<script>
+  partytown = {
+    logCalls: true,
+    logGetters: true,
+    logSetters: true,
+    logImageRequests: true,
+    logMainAccess: true,
+    logSendBeaconRequests: true,
+    logStackTraces: false,
+    logScriptExecution: true,
+    forward: ["dataLayer.push","fbq","_"],
+    resolveUrl: function (url) {
+      if ([].includes(url.hostname)) {
+        var proxyUrl = new URL("https://cdn.builder.io/api/v1/proxy-api?apiKey=e514f5987eaf4fa1b17ff31a283fe2ad");
+        proxyUrl.searchParams.append('url', url.href);
+        return proxyUrl;
+      }
+      return url;
+    },
+  };
+</script>
+<script src="/~partytown/debug/partytown.js"></script>
+<script>
+  var urlSearchParams = new URLSearchParams(window.location.search);
+  var partytownConfig =  "default";
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(({ addedNodes }) => {
+      addedNodes.forEach(node => {
+        // For each added script tag
+        if (node.nodeType === 1 && node.tagName === "SCRIPT") {
+          const src = node.src || "";
+          const isAppBlessed = ["https://app.octaneai.com","https://d1o5e9vlirdalo.cloudfront.net","https://d3hw6dc1ow8pp2.cloudfront.net","https://d3hw6dc1ow8pp2.cloudfront.net","https://www.googletagmanager.com","https://searchanise-ef84.kxcdn.com","https://static-us.afterpay.com","https://cdn.static.kiwisizing.com","https://shopify-gtm-suite.getelevar.com","https://pixc.com","https://trackifyx.redretarget.com", "https://static.klaviyo.com"].find((url) => {
+            return src.includes(url);
+          });
+          if (isAppBlessed) {
+            node.type = "text/partytown";
+            console.debug("partytown: default");
+          }
+        }
+      });
+    });
+  });
+  // Starts the monitoring
+  observer.observe(document.documentElement, {
+    childList: true,
+    subtree: true
+  });
+</script>
+
+<script>
+window.KiwiSizing = window.KiwiSizing === undefined ? {} : window.KiwiSizing;
+KiwiSizing.shop = "shyam-partytown-tester.myshopify.com";
+
+
+KiwiSizing.data = {
+  collections: "288830324921",
+  tags: "",
+  product: "7250357846201",
+  vendor: "Shyam Partytown Tester",
+  type: "",
+  title: "T Shirt",
+  images: ["\/\/cdn.shopify.com\/s\/files\/1\/0617\/2678\/5721\/products\/61MSZWTT3IL._UY550.jpg?v=1646648764"],
+  options: [{"name":"Size","position":1,"values":["Small","Medium","Large"]}],
+  variants: [{"id":42036809138361,"title":"Small","option1":"Small","option2":null,"option3":null,"sku":"","requires_shipping":true,"taxable":true,"featured_image":null,"available":true,"name":"T Shirt - Small","public_title":"Small","options":["Small"],"price":12500,"weight":907,"compare_at_price":null,"inventory_management":null,"barcode":""},{"id":42036809171129,"title":"Medium","option1":"Medium","option2":null,"option3":null,"sku":"","requires_shipping":true,"taxable":true,"featured_image":null,"available":true,"name":"T Shirt - Medium","public_title":"Medium","options":["Medium"],"price":12500,"weight":907,"compare_at_price":null,"inventory_management":null,"barcode":""},{"id":42036809203897,"title":"Large","option1":"Large","option2":null,"option3":null,"sku":"","requires_shipping":true,"taxable":true,"featured_image":null,"available":true,"name":"T Shirt - Large","public_title":"Large","options":["Large"],"price":12500,"weight":907,"compare_at_price":null,"inventory_management":null,"barcode":""}],
+};
+
+</script>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="theme-color" content="">
+    <link rel="canonical" href="https://shyam-partytown-tester.myshopify.com/products/t-shirt">
+    <link rel="preconnect" href="https://cdn.shopify.com" crossorigin><link rel="preconnect" href="https://fonts.shopifycdn.com" crossorigin><title>
+      T Shirt
+ &ndash; Shyam Partytown Tester</title>
+
+    
+      <meta name="description" content="This is the most amazing t-shirt ever seen">
+    
+
+    
+
+<meta property="og:site_name" content="Shyam Partytown Tester">
+<meta property="og:url" content="https://shyam-partytown-tester.myshopify.com/products/t-shirt">
+<meta property="og:title" content="T Shirt">
+<meta property="og:type" content="product">
+<meta property="og:description" content="This is the most amazing t-shirt ever seen"><meta property="og:image" content="http://cdn.shopify.com/s/files/1/0617/2678/5721/products/61MSZWTT3IL._UY550.jpg?v=1646648764">
+  <meta property="og:image:secure_url" content="https://cdn.shopify.com/s/files/1/0617/2678/5721/products/61MSZWTT3IL._UY550.jpg?v=1646648764">
+  <meta property="og:image:width" content="550">
+  <meta property="og:image:height" content="550"><meta property="og:price:amount" content="125.00">
+  <meta property="og:price:currency" content="USD"><meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="T Shirt">
+<meta name="twitter:description" content="This is the most amazing t-shirt ever seen">
+
+
+    <script src="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/global.js?v=13896767922069093276" defer="defer"></script>
+    <script>window.performance && window.performance.mark && window.performance.mark('shopify.content_for_header.start');</script><meta id="shopify-digital-wallet" name="shopify-digital-wallet" content="/61726785721/digital_wallets/dialog">
+<link rel="alternate" type="application/json+oembed" href="https://shyam-partytown-tester.myshopify.com/products/t-shirt.oembed">
+<script id="shopify-features" type="application/json">{"accessToken":"3a857541a8ed3b74db7c1f087d47886d","betas":["rich-media-storefront-analytics"],"domain":"shyam-partytown-tester.myshopify.com","predictiveSearch":true,"shopId":61726785721,"smart_payment_buttons_url":"https:\/\/cdn.shopify.com\/shopifycloud\/payment-sheet\/assets\/latest\/spb.en.js","dynamic_checkout_cart_url":"https:\/\/cdn.shopify.com\/shopifycloud\/payment-sheet\/assets\/latest\/dynamic-checkout-cart.en.js","locale":"en"}</script>
+<script>var Shopify = Shopify || {};
+Shopify.shop = "shyam-partytown-tester.myshopify.com";
+Shopify.locale = "en";
+Shopify.currency = {"active":"USD","rate":"1.0"};
+Shopify.country = "US";
+Shopify.theme = {"name":"Dawn","id":129703411897,"theme_store_id":887,"role":"main"};
+Shopify.theme.handle = "null";
+Shopify.theme.style = {"id":null,"handle":null};
+Shopify.cdnHost = "cdn.shopify.com";
+Shopify.routes = Shopify.routes || {};
+Shopify.routes.root = "/";</script>
+<script type="module">!function(o){(o.Shopify=o.Shopify||{}).modules=!0}(window);</script>
+<script>!function(o){function n(){var o=[];function n(){o.push(Array.prototype.slice.apply(arguments))}return n.q=o,n}var t=o.Shopify=o.Shopify||{};t.loadFeatures=n(),t.autoloadFeatures=n()}(window);</script>
+<script>(function() {
+  function asyncLoad() {
+    var urls = ["https:\/\/static.klaviyo.com\/onsite\/js\/klaviyo.js?company_id=S8CRmN\u0026shop=shyam-partytown-tester.myshopify.com","https:\/\/static.klaviyo.com\/onsite\/js\/klaviyo.js?company_id=S8CRmN\u0026shop=shyam-partytown-tester.myshopify.com","https:\/\/cdn.builder.io\/js\/shopify\/track.js?apiKey=e514f5987eaf4fa1b17ff31a283fe2ad\u0026shop=shyam-partytown-tester.myshopify.com","https:\/\/cdn.static.kiwisizing.com\/SizingPlugin.prod.js?v=308\u0026shop=shyam-partytown-tester.myshopify.com","https:\/\/d3hw6dc1ow8pp2.cloudfront.net\/reviewsWidget.min.js?shop=shyam-partytown-tester.myshopify.com","https:\/\/pixc.com\/resize.js?shop=shyam-partytown-tester.myshopify.com"];
+    for (var i = 0; i < urls.length; i++) {
+      var s = document.createElement('script');
+      s.type = 'text/javascript';
+      s.async = true;
+      s.src = urls[i];
+      var x = document.getElementsByTagName('script')[0];
+      x.parentNode.insertBefore(s, x);
+    }
+  };
+  if(window.attachEvent) {
+    window.attachEvent('onload', asyncLoad);
+  } else {
+    window.addEventListener('load', asyncLoad, false);
+  }
+})();</script>
+<script id="__st">var __st={"a":61726785721,"offset":19800,"reqid":"304a9a04-522d-4c39-98b4-9a4ab29488d4","pageurl":"shyam-partytown-tester.myshopify.com\/products\/t-shirt","u":"27950feffabc","p":"product","rtyp":"product","rid":7250357846201};</script>
+<script>window.ShopifyPaypalV4VisibilityTracking = true;</script>
+<script>!function(o){o.addEventListener("DOMContentLoaded",function(){window.Shopify=window.Shopify||{},window.Shopify.recaptchaV3=window.Shopify.recaptchaV3||{siteKey:"6LcCR2cUAAAAANS1Gpq_mDIJ2pQuJphsSQaUEuc9"};var t=['form[action*="/contact"] input[name="form_type"][value="contact"]','form[action*="/comments"] input[name="form_type"][value="new_comment"]','form[action*="/account"] input[name="form_type"][value="customer_login"]','form[action*="/account"] input[name="form_type"][value="recover_customer_password"]','form[action*="/account"] input[name="form_type"][value="create_customer"]','form[action*="/contact"] input[name="form_type"][value="customer"]'].join(",");function n(e){e=e.target;null==e||null!=(e=function e(t,n){if(null==t.parentElement)return null;if("FORM"!=t.parentElement.tagName)return e(t.parentElement,n);for(var o=t.parentElement.action,r=0;r<n.length;r++)if(-1!==o.indexOf(n[r]))return t.parentElement;return null}(e,["/contact","/comments","/account"]))&&null!=e.querySelector(t)&&((e=o.createElement("script")).setAttribute("src","https://cdn.shopify.com/shopifycloud/storefront-recaptcha-v3/v0.6/index.js"),o.body.appendChild(e),o.removeEventListener("focus",n,!0),o.removeEventListener("change",n,!0),o.removeEventListener("click",n,!0))}o.addEventListener("click",n,!0),o.addEventListener("change",n,!0),o.addEventListener("focus",n,!0)})}(document);</script>
+<script integrity="sha256-jv2X6Wco+RqnTUpuisvoARrdoX0sC2zNhgChvdJFM5I=" data-source-attribution="shopify.loadfeatures" defer="defer" src="//cdn.shopify.com/shopifycloud/shopify/assets/storefront/load_feature-8efd97e96728f91aa74d4a6e8acbe8011adda17d2c0b6ccd8600a1bdd2453392.js" crossorigin="anonymous"></script>
+<script integrity="sha256-h+g5mYiIAULyxidxudjy/2wpCz/3Rd1CbrDf4NudHa4=" data-source-attribution="shopify.dynamic-checkout" defer="defer" src="//cdn.shopify.com/shopifycloud/shopify/assets/storefront/features-87e8399988880142f2c62771b9d8f2ff6c290b3ff745dd426eb0dfe0db9d1dae.js" crossorigin="anonymous"></script>
+<script id="sections-script" data-sections="main-product,product-recommendations,header,footer" defer="defer" src="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/compiled_assets/scripts.js?13"></script>
+<style id="shopify-dynamic-checkout">.shopify-payment-button__button--hidden {
+  visibility: hidden;
+}
+
+.shopify-payment-button__button {
+  border-radius: 4px;
+  border: none;
+  box-shadow: 0 0 0 0 transparent;
+  color: white;
+  cursor: pointer;
+  display: block;
+  font-size: 1em;
+  font-weight: 500;
+  line-height: 1;
+  text-align: center;
+  width: 100%;
+  transition: background 0.2s ease-in-out;
+}
+
+.shopify-payment-button__button[disabled] {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.shopify-payment-button__button--unbranded {
+  background-color: #1990c6;
+  padding: 1em 2em;
+}
+
+.shopify-payment-button__button--unbranded:hover:not([disabled]) {
+  background-color: #136f99;
+}
+
+.shopify-payment-button__more-options {
+  background: transparent;
+  border: 0 none;
+  cursor: pointer;
+  display: block;
+  font-size: 1em;
+  margin-top: 1em;
+  text-align: center;
+  width: 100%;
+}
+
+.shopify-payment-button__more-options:hover:not([disabled]) {
+  text-decoration: underline;
+}
+
+.shopify-payment-button__more-options[disabled] {
+  opacity: 0.6;
+  cursor: default;
+}
+
+.shopify-payment-button__button--branded {
+  display: flex;
+  flex-direction: column;
+  min-height: 44px;
+  position: relative;
+  z-index: 1;
+}
+
+.shopify-payment-button__button--branded .shopify-cleanslate {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+</style>
+<script>window.performance && window.performance.mark && window.performance.mark('shopify.content_for_header.end');</script>
+
+
+    <style data-shopify>
+      @font-face {
+  font-family: Assistant;
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("https://fonts.shopifycdn.com/assistant/assistant_n4.bcd3d09dcb631dec5544b8fb7b154ff234a44630.woff2?&hmac=0a2e92d6956b1312ef7d59f4850549a6e43a908ccf24df47f07b0b4c6da5837d") format("woff2"),
+       url("https://fonts.shopifycdn.com/assistant/assistant_n4.a2d012304becc2a26f1ded1acc136fcab85c9afd.woff?&hmac=b9c5a10fbc7928e1a963472ba312c273b8be3a9845294066178386bf5c965c98") format("woff");
+}
+
+      @font-face {
+  font-family: Assistant;
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+  src: url("https://fonts.shopifycdn.com/assistant/assistant_n7.3335c7bdaddf2501ddab87cdbd9be98f3870e10d.woff2?&hmac=4a26a065560c5b42e553d6a3ac6d6d1b8509ea32ff189d33eaa65dc7e528edb8") format("woff2"),
+       url("https://fonts.shopifycdn.com/assistant/assistant_n7.7c85f5c5cc1555de92cc7ef2790ee3cffe5237f5.woff?&hmac=573ae1899b1dd4bab0e67a872e79a96f2f3fa7c1a41fe26400f32bb4f6af5b2f") format("woff");
+}
+
+      
+      
+      @font-face {
+  font-family: Assistant;
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+  src: url("https://fonts.shopifycdn.com/assistant/assistant_n4.bcd3d09dcb631dec5544b8fb7b154ff234a44630.woff2?&hmac=0a2e92d6956b1312ef7d59f4850549a6e43a908ccf24df47f07b0b4c6da5837d") format("woff2"),
+       url("https://fonts.shopifycdn.com/assistant/assistant_n4.a2d012304becc2a26f1ded1acc136fcab85c9afd.woff?&hmac=b9c5a10fbc7928e1a963472ba312c273b8be3a9845294066178386bf5c965c98") format("woff");
+}
+
+
+      :root {
+        --font-body-family: Assistant, sans-serif;
+        --font-body-style: normal;
+        --font-body-weight: 400;
+
+        --font-heading-family: Assistant, sans-serif;
+        --font-heading-style: normal;
+        --font-heading-weight: 400;
+
+        --font-body-scale: 1.0;
+        --font-heading-scale: 1.0;
+
+        --color-base-text: 18, 18, 18;
+        --color-shadow: 18, 18, 18;
+        --color-base-background-1: 255, 255, 255;
+        --color-base-background-2: 243, 243, 243;
+        --color-base-solid-button-labels: 255, 255, 255;
+        --color-base-outline-button-labels: 18, 18, 18;
+        --color-base-accent-1: 18, 18, 18;
+        --color-base-accent-2: 51, 79, 180;
+        --payment-terms-background-color: #FFFFFF;
+
+        --gradient-base-background-1: #FFFFFF;
+        --gradient-base-background-2: #F3F3F3;
+        --gradient-base-accent-1: #121212;
+        --gradient-base-accent-2: #334FB4;
+
+        --media-padding: px;
+        --media-border-opacity: 0.05;
+        --media-border-width: 1px;
+        --media-radius: 0px;
+        --media-shadow-opacity: 0.0;
+        --media-shadow-horizontal-offset: 0px;
+        --media-shadow-vertical-offset: 0px;
+        --media-shadow-blur-radius: 0px;
+
+        --page-width: 120rem;
+        --page-width-margin: 0rem;
+
+        --card-image-padding: 0.0rem;
+        --card-corner-radius: 0.0rem;
+        --card-text-alignment: left;
+        --card-border-width: 0.0rem;
+        --card-border-opacity: 0.0;
+        --card-shadow-opacity: 0.1;
+        --card-shadow-horizontal-offset: 0.0rem;
+        --card-shadow-vertical-offset: 0.0rem;
+        --card-shadow-blur-radius: 0.0rem;
+
+        --badge-corner-radius: 4.0rem;
+
+        --popup-border-width: 1px;
+        --popup-border-opacity: 0.1;
+        --popup-corner-radius: 0px;
+        --popup-shadow-opacity: 0.0;
+        --popup-shadow-horizontal-offset: 0px;
+        --popup-shadow-vertical-offset: 0px;
+        --popup-shadow-blur-radius: 0px;
+
+        --drawer-border-width: 1px;
+        --drawer-border-opacity: 0.1;
+        --drawer-shadow-opacity: 0.0;
+        --drawer-shadow-horizontal-offset: 0px;
+        --drawer-shadow-vertical-offset: 0px;
+        --drawer-shadow-blur-radius: 0px;
+
+        --spacing-sections-desktop: 0px;
+        --spacing-sections-mobile: 0px;
+
+        --grid-desktop-vertical-spacing: 8px;
+        --grid-desktop-horizontal-spacing: 8px;
+        --grid-mobile-vertical-spacing: 4px;
+        --grid-mobile-horizontal-spacing: 4px;
+
+        --text-boxes-border-opacity: 0.0;
+        --text-boxes-border-width: 0px;
+        --text-boxes-radius: 0px;
+        --text-boxes-shadow-opacity: 0.0;
+        --text-boxes-shadow-horizontal-offset: 0px;
+        --text-boxes-shadow-vertical-offset: 0px;
+        --text-boxes-shadow-blur-radius: 0px;
+
+        --buttons-radius: 0px;
+        --buttons-radius-outset: 0px;
+        --buttons-border-width: 1px;
+        --buttons-border-opacity: 1.0;
+        --buttons-shadow-opacity: 0.0;
+        --buttons-shadow-horizontal-offset: 0px;
+        --buttons-shadow-vertical-offset: 0px;
+        --buttons-shadow-blur-radius: 0px;
+        --buttons-border-offset: 0px;
+
+        --inputs-radius: 0px;
+        --inputs-border-width: 1px;
+        --inputs-border-opacity: 0.55;
+        --inputs-shadow-opacity: 0.0;
+        --inputs-shadow-horizontal-offset: 0px;
+        --inputs-margin-offset: 0px;
+        --inputs-shadow-vertical-offset: 0px;
+        --inputs-shadow-blur-radius: 0px;
+        --inputs-radius-outset: 0px;
+
+        --variant-pills-radius: 40px;
+        --variant-pills-border-width: 1px;
+        --variant-pills-border-opacity: 0.55;
+        --variant-pills-shadow-opacity: 0.0;
+        --variant-pills-shadow-horizontal-offset: 0px;
+        --variant-pills-shadow-vertical-offset: 0px;
+        --variant-pills-shadow-blur-radius: 0px;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: inherit;
+      }
+
+      html {
+        box-sizing: border-box;
+        font-size: calc(var(--font-body-scale) * 62.5%);
+        height: 100%;
+      }
+
+      body {
+        display: grid;
+        grid-template-rows: auto auto 1fr auto;
+        grid-template-columns: 100%;
+        min-height: 100%;
+        margin: 0;
+        font-size: 1.5rem;
+        letter-spacing: 0.06rem;
+        line-height: calc(1 + 0.8 / var(--font-body-scale));
+        font-family: var(--font-body-family);
+        font-style: var(--font-body-style);
+        font-weight: var(--font-body-weight);
+      }
+
+      @media screen and (min-width: 750px) {
+        body {
+          font-size: 1.6rem;
+        }
+      }
+    </style>
+
+    <link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/base.css?v=3944066495242765409" rel="stylesheet" type="text/css" media="all" />
+<link rel="preload" as="font" href="https://fonts.shopifycdn.com/assistant/assistant_n4.bcd3d09dcb631dec5544b8fb7b154ff234a44630.woff2?&hmac=0a2e92d6956b1312ef7d59f4850549a6e43a908ccf24df47f07b0b4c6da5837d" type="font/woff2" crossorigin><link rel="preload" as="font" href="https://fonts.shopifycdn.com/assistant/assistant_n4.bcd3d09dcb631dec5544b8fb7b154ff234a44630.woff2?&hmac=0a2e92d6956b1312ef7d59f4850549a6e43a908ccf24df47f07b0b4c6da5837d" type="font/woff2" crossorigin><link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-predictive-search.css?v=16564466128908848865" media="print" onload="this.media='all'"><script>document.documentElement.className = document.documentElement.className.replace('no-js', 'js');
+    if (Shopify.designMode) {
+      document.documentElement.classList.add('shopify-design-mode');
+    }
+    </script>
+  <!-- BEGIN app block: shopify://apps/okendo-product-reviews-ugc/blocks/theme-settings/bb689e69-ea70-4661-8fb7-ad24a2e23c29 --><!-- BEGIN app snippet: header-metafields -->
+
+
+    <link href="https://d3hw6dc1ow8pp2.cloudfront.net/styles/main.min.css" rel="stylesheet" type="text/css">
+<style type="text/css">
+.okeReviews .okeReviews-reviewsWidget-header-controls-writeReview {
+        display: inline-block;
+    }
+    .okeReviews .okeReviews-reviewsWidget.is-okeReviews-empty {
+        display: block;
+    }
+</style>
+<script type="application/json" id="oke-reviews-settings">
+{"disableInitialReviewsFetchOnProducts":false,"omitMicrodata":true,"subscriberId":"e8215299-0c1e-4014-a1a4-37c82fb947db","isTestModeEnabled":true,"recorderPlus":true}
+</script>
+
+    
+
+<!-- END app snippet -->
+<!-- BEGIN app snippet: okendo-reviews-json-ld -->
+    <script type="application/ld+json">
+        {
+            "@context": "http://schema.org/",
+            "@type": "Product",
+            "name": "T Shirt",
+            "image": "https://cdn.shopify.com/s/files/1/0617/2678/5721/products/61MSZWTT3IL._UY550_450x450.jpg?v=1646648764",
+            "description": "This is the most amazing t-shirt ever seen",
+            "mpn": "7250357846201",
+            "brand": {
+                "@type": "Thing",
+                "name": "Shyam Partytown Tester"
+            },
+            "offers": {
+                "@type": "Offer",
+                "priceCurrency": "USD",
+                "price": "125.00",
+                "availability": "InStock",
+                "seller": {
+                    "@type": "Organization",
+                    "name": "Shyam Partytown Tester"
+                }
+            }
+            
+        }
+    </script>
+
+<!-- END app snippet -->
+<!-- BEGIN app snippet: widget-plus-initialisation-script -->
+
+
+
+
+<!-- END app snippet -->
+
+
+<!-- END app app block --><link href="https://monorail-edge.shopifysvc.com" rel="dns-prefetch">
+<script>(function(){if ("sendBeacon" in navigator && "performance" in window) {var session_token = document.cookie.match(/_shopify_s=([^;]*)/);function handle_abandonment_event(e) {var entries = performance.getEntries().filter(function(entry) {return /monorail-edge.shopifysvc.com/.test(entry.name);});if (!window.abandonment_tracked && entries.length === 0) {window.abandonment_tracked = true;var currentMs = Date.now();var navigation_start = performance.timing.navigationStart;var payload = {shop_id: 61726785721,url: window.location.href,navigation_start,duration: currentMs - navigation_start,session_token: session_token && session_token.length === 2 ? session_token[1] : "",page_type: "product"};window.navigator.sendBeacon("https://monorail-edge.shopifysvc.com/v1/produce", JSON.stringify({schema_id: "online_store_buyer_site_abandonment/1.1",payload: payload,metadata: {event_created_at_ms: currentMs,event_sent_at_ms: currentMs}}));}}window.addEventListener('pagehide', handle_abandonment_event);}}());</script>
+<script>window.ShopifyAnalytics = window.ShopifyAnalytics || {};
+window.ShopifyAnalytics.meta = window.ShopifyAnalytics.meta || {};
+window.ShopifyAnalytics.meta.currency = 'USD';
+var meta = {"product":{"id":7250357846201,"gid":"gid:\/\/shopify\/Product\/7250357846201","vendor":"Shyam Partytown Tester","type":"","variants":[{"id":42036809138361,"price":12500,"name":"T Shirt - Small","public_title":"Small","sku":""},{"id":42036809171129,"price":12500,"name":"T Shirt - Medium","public_title":"Medium","sku":""},{"id":42036809203897,"price":12500,"name":"T Shirt - Large","public_title":"Large","sku":""}]},"page":{"pageType":"product","resourceType":"product","resourceId":7250357846201}};
+for (var attr in meta) {
+  window.ShopifyAnalytics.meta[attr] = meta[attr];
+}</script>
+<script>window.ShopifyAnalytics.merchantGoogleAnalytics = function() {
+  
+};
+</script>
+<script class="analytics">(function () {
+  var customDocumentWrite = function(content) {
+    var jquery = null;
+
+    if (window.jQuery) {
+      jquery = window.jQuery;
+    } else if (window.Checkout && window.Checkout.$) {
+      jquery = window.Checkout.$;
+    }
+
+    if (jquery) {
+      jquery('body').append(content);
+    }
+  };
+
+  var hasLoggedConversion = function(token) {
+    if (token) {
+      return document.cookie.indexOf('loggedConversion=' + token) !== -1;
+    }
+    return false;
+  }
+
+  var setCookieIfConversion = function(token) {
+    if (token) {
+      var twoMonthsFromNow = new Date(Date.now());
+      twoMonthsFromNow.setMonth(twoMonthsFromNow.getMonth() + 2);
+
+      document.cookie = 'loggedConversion=' + token + '; expires=' + twoMonthsFromNow;
+    }
+  }
+
+  var trekkie = window.ShopifyAnalytics.lib = window.trekkie = window.trekkie || [];
+  if (trekkie.integrations) {
+    return;
+  }
+  trekkie.methods = [
+    'identify',
+    'page',
+    'ready',
+    'track',
+    'trackForm',
+    'trackLink'
+  ];
+  trekkie.factory = function(method) {
+    return function() {
+      var args = Array.prototype.slice.call(arguments);
+      args.unshift(method);
+      trekkie.push(args);
+      return trekkie;
+    };
+  };
+  for (var i = 0; i < trekkie.methods.length; i++) {
+    var key = trekkie.methods[i];
+    trekkie[key] = trekkie.factory(key);
+  }
+  trekkie.load = function(config) {
+    trekkie.config = config || {};
+    trekkie.config.initialDocumentCookie = document.cookie;
+    var first = document.getElementsByTagName('script')[0];
+    var script = document.createElement('script');
+    script.type = 'text/javascript';
+    script.onerror = function(e) {
+      var scriptFallback = document.createElement('script');
+      scriptFallback.type = 'text/javascript';
+      scriptFallback.onerror = function(error) {
+              var Monorail = {
+      produce: function produce(monorailDomain, schemaId, payload) {
+        var currentMs = new Date().getTime();
+        var event = {
+          schema_id: schemaId,
+          payload: payload,
+          metadata: {
+            event_created_at_ms: currentMs,
+            event_sent_at_ms: currentMs
+          }
+        };
+        return Monorail.sendRequest("https://" + monorailDomain + "/v1/produce", JSON.stringify(event));
+      },
+      sendRequest: function sendRequest(endpointUrl, payload) {
+        // Try the sendBeacon API
+        if (window && window.navigator && typeof window.navigator.sendBeacon === 'function' && typeof window.Blob === 'function' && !Monorail.isIos12()) {
+          var blobData = new window.Blob([payload], {
+            type: 'text/plain'
+          });
+    
+          if (window.navigator.sendBeacon(endpointUrl, blobData)) {
+            return true;
+          } // sendBeacon was not successful
+    
+        } // XHR beacon   
+    
+        var xhr = new XMLHttpRequest();
+    
+        try {
+          xhr.open('POST', endpointUrl);
+          xhr.setRequestHeader('Content-Type', 'text/plain');
+          xhr.send(payload);
+        } catch (e) {
+          console.log(e);
+        }
+    
+        return false;
+      },
+      isIos12: function isIos12() {
+        return window.navigator.userAgent.lastIndexOf('iPhone; CPU iPhone OS 12_') !== -1 || window.navigator.userAgent.lastIndexOf('iPad; CPU OS 12_') !== -1;
+      }
+    };
+    Monorail.produce('monorail-edge.shopifysvc.com',
+      'trekkie_storefront_load_errors/1.1',
+      {shop_id: 61726785721,
+      theme_id: 129703411897,
+      app_name: "storefront",
+      context_url: window.location.href,
+      source_url: "https://cdn.shopify.com/s/trekkie.storefront.6a93d7d0eebeebb777036b0098935be9cb2b573b.min.js"});
+
+      };
+      scriptFallback.async = true;
+      scriptFallback.src = 'https://cdn.shopify.com/s/trekkie.storefront.6a93d7d0eebeebb777036b0098935be9cb2b573b.min.js';
+      first.parentNode.insertBefore(scriptFallback, first);
+    };
+    script.async = true;
+    script.src = 'https://cdn.shopify.com/s/trekkie.storefront.6a93d7d0eebeebb777036b0098935be9cb2b573b.min.js';
+    first.parentNode.insertBefore(script, first);
+  };
+  trekkie.load(
+    {"Trekkie":{"appName":"storefront","development":false,"defaultAttributes":{"shopId":61726785721,"isMerchantRequest":null,"themeId":129703411897,"themeCityHash":"7512515344352060143","contentLanguage":"en","currency":"USD"},"isServerSideCookieWritingEnabled":true},"Session Attribution":{},"S2S":{"facebookCapiEnabled":false,"source":"trekkie-storefront-renderer"}}
+  );
+
+  var loaded = false;
+  trekkie.ready(function() {
+    if (loaded) return;
+    loaded = true;
+
+    window.ShopifyAnalytics.lib = window.trekkie;
+    
+
+    var originalDocumentWrite = document.write;
+    document.write = customDocumentWrite;
+    try { window.ShopifyAnalytics.merchantGoogleAnalytics.call(this); } catch(error) {};
+    document.write = originalDocumentWrite;
+      (function () {
+        if (window.BOOMR && (window.BOOMR.version || window.BOOMR.snippetExecuted)) {
+          return;
+        }
+        window.BOOMR = window.BOOMR || {};
+        window.BOOMR.snippetStart = new Date().getTime();
+        window.BOOMR.snippetExecuted = true;
+        window.BOOMR.snippetVersion = 12;
+        window.BOOMR.application = "storefront-renderer";
+        window.BOOMR.themeName = "Dawn";
+        window.BOOMR.themeVersion = "3.0.0";
+        window.BOOMR.shopId = 61726785721;
+        window.BOOMR.themeId = 129703411897;
+        window.BOOMR.url =
+          "https://cdn.shopify.com/shopifycloud/boomerang/shopify-boomerang-1.0.0.min.js";
+        var where = document.currentScript || document.getElementsByTagName("script")[0];
+        var parentNode = where.parentNode;
+        var promoted = false;
+        var LOADER_TIMEOUT = 3000;
+        function promote() {
+          if (promoted) {
+            return;
+          }
+          var script = document.createElement("script");
+          script.id = "boomr-scr-as";
+          script.src = window.BOOMR.url;
+          script.async = true;
+          parentNode.appendChild(script);
+          promoted = true;
+        }
+        function iframeLoader(wasFallback) {
+          promoted = true;
+          var dom, bootstrap, iframe, iframeStyle;
+          var doc = document;
+          var win = window;
+          window.BOOMR.snippetMethod = wasFallback ? "if" : "i";
+          bootstrap = function(parent, scriptId) {
+            var script = doc.createElement("script");
+            script.id = scriptId || "boomr-if-as";
+            script.src = window.BOOMR.url;
+            BOOMR_lstart = new Date().getTime();
+            parent = parent || doc.body;
+            parent.appendChild(script);
+          };
+          if (!window.addEventListener && window.attachEvent && navigator.userAgent.match(/MSIE [67]./)) {
+            window.BOOMR.snippetMethod = "s";
+            bootstrap(parentNode, "boomr-async");
+            return;
+          }
+          iframe = document.createElement("IFRAME");
+          iframe.src = "about:blank";
+          iframe.title = "";
+          iframe.role = "presentation";
+          iframe.loading = "eager";
+          iframeStyle = (iframe.frameElement || iframe).style;
+          iframeStyle.width = 0;
+          iframeStyle.height = 0;
+          iframeStyle.border = 0;
+          iframeStyle.display = "none";
+          parentNode.appendChild(iframe);
+          try {
+            win = iframe.contentWindow;
+            doc = win.document.open();
+          } catch (e) {
+            dom = document.domain;
+            iframe.src = "javascript:var d=document.open();d.domain='" + dom + "';void(0);";
+            win = iframe.contentWindow;
+            doc = win.document.open();
+          }
+          if (dom) {
+            doc._boomrl = function() {
+              this.domain = dom;
+              bootstrap();
+            };
+            doc.write("<body onload='document._boomrl();'>");
+          } else {
+            win._boomrl = function() {
+              bootstrap();
+            };
+            if (win.addEventListener) {
+              win.addEventListener("load", win._boomrl, false);
+            } else if (win.attachEvent) {
+              win.attachEvent("onload", win._boomrl);
+            }
+          }
+          doc.close();
+        }
+        var link = document.createElement("link");
+        if (link.relList &&
+          typeof link.relList.supports === "function" &&
+          link.relList.supports("preload") &&
+          ("as" in link)) {
+          window.BOOMR.snippetMethod = "p";
+          link.href = window.BOOMR.url;
+          link.rel = "preload";
+          link.as = "script";
+          link.addEventListener("load", promote);
+          link.addEventListener("error", function() {
+            iframeLoader(true);
+          });
+          setTimeout(function() {
+            if (!promoted) {
+              iframeLoader(true);
+            }
+          }, LOADER_TIMEOUT);
+          BOOMR_lstart = new Date().getTime();
+          parentNode.appendChild(link);
+        } else {
+          iframeLoader(false);
+        }
+        function boomerangSaveLoadTime(e) {
+          window.BOOMR_onload = (e && e.timeStamp) || new Date().getTime();
+        }
+        if (window.addEventListener) {
+          window.addEventListener("load", boomerangSaveLoadTime, false);
+        } else if (window.attachEvent) {
+          window.attachEvent("onload", boomerangSaveLoadTime);
+        }
+        if (document.addEventListener) {
+          document.addEventListener("onBoomerangLoaded", function(e) {
+            e.detail.BOOMR.init({
+              producer_url: "https://monorail-edge.shopifysvc.com/v1/produce",
+              ResourceTiming: {
+                enabled: true,
+                trackedResourceTypes: ["script", "img", "css"]
+              },
+            });
+            e.detail.BOOMR.t_end = new Date().getTime();
+          });
+        } else if (document.attachEvent) {
+          document.attachEvent("onpropertychange", function(e) {
+            if (!e) e=event;
+            if (e.propertyName === "onBoomerangLoaded") {
+              e.detail.BOOMR.init({
+                producer_url: "https://monorail-edge.shopifysvc.com/v1/produce",
+                ResourceTiming: {
+                  enabled: true,
+                  trackedResourceTypes: ["script", "img", "css"]
+                },
+              });
+              e.detail.BOOMR.t_end = new Date().getTime();
+            }
+          });
+        }
+      })();
+    
+
+    window.ShopifyAnalytics.lib.page(null,{"pageType":"product","resourceType":"product","resourceId":7250357846201});
+
+    var match = window.location.pathname.match(/checkouts\/(.+)\/(thank_you|post_purchase)/)
+    var token = match? match[1]: undefined;
+    if (!hasLoggedConversion(token)) {
+      setCookieIfConversion(token);
+      window.ShopifyAnalytics.lib.track("Viewed Product",{"currency":"USD","variantId":42036809138361,"productId":7250357846201,"productGid":"gid:\/\/shopify\/Product\/7250357846201","name":"T Shirt - Small","price":"125.00","sku":"","brand":"Shyam Partytown Tester","variant":"Small","category":"","nonInteraction":true});
+      window.ShopifyAnalytics.lib.track("monorail:\/\/trekkie_storefront_viewed_product\/1.1",{"currency":"USD","variantId":42036809138361,"productId":7250357846201,"productGid":"gid:\/\/shopify\/Product\/7250357846201","name":"T Shirt - Small","price":"125.00","sku":"","brand":"Shyam Partytown Tester","variant":"Small","category":"","nonInteraction":true,"referer":"https:\/\/shyam-partytown-tester.myshopify.com\/products\/t-shirt"});
+    }
+  });
+
+  
+      var eventsListenerScript = document.createElement('script');
+      eventsListenerScript.async = true;
+      eventsListenerScript.src = "//cdn.shopify.com/shopifycloud/shopify/assets/shop_events_listener-fa61fd11817b231631d2fe43dc869d0b1d14a06332792d42f1a1d94bda5aa31e.js";
+      document.getElementsByTagName('head')[0].appendChild(eventsListenerScript);
+    
+})();</script>
+</head>
+
+  <body class="gradient">
+    <a class="skip-to-content-link button visually-hidden" href="#MainContent">
+      Skip to content
+    </a>
+
+    <div id="shopify-section-announcement-bar" class="shopify-section"><div class="announcement-bar color-background-1 gradient" role="region" aria-label="Announcement" ><p class="announcement-bar__message h5">
+                Welcome to our store
+</p></div>
+</div>
+    <div id="shopify-section-header" class="shopify-section section-header"><link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-list-menu.css?v=12926705887708249657" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-search.css?v=9645568919885132178" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-menu-drawer.css?v=12673181874805599423" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-cart-notification.css?v=10701990056532666329" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-cart-items.css?v=4585880264449694554" media="print" onload="this.media='all'"><link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-price.css?v=11267386459242743818" media="print" onload="this.media='all'">
+  <link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-loading-overlay.css?v=16731047084359357984" media="print" onload="this.media='all'"><noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-list-menu.css?v=12926705887708249657" rel="stylesheet" type="text/css" media="all" /></noscript>
+<noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-search.css?v=9645568919885132178" rel="stylesheet" type="text/css" media="all" /></noscript>
+<noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-menu-drawer.css?v=12673181874805599423" rel="stylesheet" type="text/css" media="all" /></noscript>
+<noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-cart-notification.css?v=10701990056532666329" rel="stylesheet" type="text/css" media="all" /></noscript>
+<noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-cart-items.css?v=4585880264449694554" rel="stylesheet" type="text/css" media="all" /></noscript>
+
+<style>
+  header-drawer {
+    justify-self: start;
+    margin-left: -1.2rem;
+  }
+
+  @media screen and (min-width: 990px) {
+    header-drawer {
+      display: none;
+    }
+  }
+
+  .menu-drawer-container {
+    display: flex;
+  }
+
+  .list-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .list-menu--inline {
+    display: inline-flex;
+    flex-wrap: wrap;
+  }
+
+  summary.list-menu__item {
+    padding-right: 2.7rem;
+  }
+
+  .list-menu__item {
+    display: flex;
+    align-items: center;
+    line-height: calc(1 + 0.3 / var(--font-body-scale));
+  }
+
+  .list-menu__item--link {
+    text-decoration: none;
+    padding-bottom: 1rem;
+    padding-top: 1rem;
+    line-height: calc(1 + 0.8 / var(--font-body-scale));
+  }
+
+  @media screen and (min-width: 750px) {
+    .list-menu__item--link {
+      padding-bottom: 0.5rem;
+      padding-top: 0.5rem;
+    }
+  }
+</style><style data-shopify>.section-header {
+    margin-bottom: 0px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-header {
+      margin-bottom: 0px;
+    }
+  }</style><script src="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/details-disclosure.js?v=11862664082492452288" defer="defer"></script>
+<script src="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/details-modal.js?v=451176189667266969" defer="defer"></script>
+<script src="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/cart-notification.js?v=1877081553624793631" defer="defer"></script>
+
+<svg xmlns="http://www.w3.org/2000/svg" class="hidden">
+  <symbol id="icon-search" viewbox="0 0 18 19" fill="none">
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M11.03 11.68A5.784 5.784 0 112.85 3.5a5.784 5.784 0 018.18 8.18zm.26 1.12a6.78 6.78 0 11.72-.7l5.4 5.4a.5.5 0 11-.71.7l-5.41-5.4z" fill="currentColor"/>
+  </symbol>
+
+  <symbol id="icon-close" class="icon icon-close" fill="none" viewBox="0 0 18 17">
+    <path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="currentColor">
+  </symbol>
+</svg>
+<sticky-header class="header-wrapper color-background-1 gradient header-wrapper--border-bottom">
+  <header class="header header--middle-left page-width header--has-menu"><header-drawer data-breakpoint="tablet">
+        <details id="Details-menu-drawer-container" class="menu-drawer-container">
+          <summary class="header__icon header__icon--menu header__icon--summary link focus-inset" aria-label="Menu">
+            <span>
+              <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" role="presentation" class="icon icon-hamburger" fill="none" viewBox="0 0 18 16">
+  <path d="M1 .5a.5.5 0 100 1h15.71a.5.5 0 000-1H1zM.5 8a.5.5 0 01.5-.5h15.71a.5.5 0 010 1H1A.5.5 0 01.5 8zm0 7a.5.5 0 01.5-.5h15.71a.5.5 0 010 1H1a.5.5 0 01-.5-.5z" fill="currentColor">
+</svg>
+
+              <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" fill="none" viewBox="0 0 18 17">
+  <path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="currentColor">
+</svg>
+
+            </span>
+          </summary>
+          <div id="menu-drawer" class="menu-drawer motion-reduce" tabindex="-1">
+            <div class="menu-drawer__inner-container">
+              <div class="menu-drawer__navigation-container">
+                <nav class="menu-drawer__navigation">
+                  <ul class="menu-drawer__menu list-menu" role="list"><li><a href="/" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
+                            Home
+                          </a></li><li><a href="/collections/all" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
+                            Catalog
+                          </a></li><li><a href="/pages/contact" class="menu-drawer__menu-item list-menu__item link link--text focus-inset">
+                            Contact
+                          </a></li></ul>
+                </nav>
+                <div class="menu-drawer__utility-links"><ul class="list list-social list-unstyled" role="list"></ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </details>
+      </header-drawer><a href="/" class="header__heading-link link link--text focus-inset"><span class="h2">Shyam Partytown Tester</span></a><nav class="header__inline-menu">
+        <ul class="list-menu list-menu--inline" role="list"><li><a href="/" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset">
+                  <span>Home</span>
+                </a></li><li><a href="/collections/all" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset">
+                  <span>Catalog</span>
+                </a></li><li><a href="/pages/contact" class="header__menu-item header__menu-item list-menu__item link link--text focus-inset">
+                  <span>Contact</span>
+                </a></li></ul>
+      </nav><div class="header__icons">
+      <details-modal class="header__search">
+        <details>
+          <summary class="header__icon header__icon--search header__icon--summary link focus-inset modal__toggle" aria-haspopup="dialog" aria-label="Search">
+            <span>
+              <svg class="modal__toggle-open icon icon-search" aria-hidden="true" focusable="false" role="presentation">
+                <use href="#icon-search">
+              </svg>
+              <svg class="modal__toggle-close icon icon-close" aria-hidden="true" focusable="false" role="presentation">
+                <use href="#icon-close">
+              </svg>
+            </span>
+          </summary>
+          <div class="search-modal modal__content" role="dialog" aria-modal="true" aria-label="Search">
+            <div class="modal-overlay"></div>
+            <div class="search-modal__content search-modal__content-bottom" tabindex="-1"><predictive-search class="search-modal__form" data-loading-text="Loading..."><form action="/search" method="get" role="search" class="search search-modal__form">
+                  <div class="field">
+                    <input class="search__input field__input"
+                      id="Search-In-Modal"
+                      type="search"
+                      name="q"
+                      value=""
+                      placeholder="Search"role="combobox"
+                        aria-expanded="false"
+                        aria-owns="predictive-search-results-list"
+                        aria-controls="predictive-search-results-list"
+                        aria-haspopup="listbox"
+                        aria-autocomplete="list"
+                        autocorrect="off"
+                        autocomplete="off"
+                        autocapitalize="off"
+                        spellcheck="false">
+                    <label class="field__label" for="Search-In-Modal">Search</label>
+                    <input type="hidden" name="options[prefix]" value="last">
+                    <button class="search__button field__button" aria-label="Search">
+                      <svg class="icon icon-search" aria-hidden="true" focusable="false" role="presentation">
+                        <use href="#icon-search">
+                      </svg>
+                    </button>
+                  </div><div class="predictive-search predictive-search--header" tabindex="-1" data-predictive-search>
+                      <div class="predictive-search__loading-state">
+                        <svg aria-hidden="true" focusable="false" role="presentation" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                          <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                        </svg>
+                      </div>
+                    </div>
+
+                    <span class="predictive-search-status visually-hidden" role="status" aria-hidden="true"></span></form></predictive-search><button type="button" class="search-modal__close-button modal__close-button link link--text focus-inset" aria-label="Close">
+                <svg class="icon icon-close" aria-hidden="true" focusable="false" role="presentation">
+                  <use href="#icon-close">
+                </svg>
+              </button>
+            </div>
+          </div>
+        </details>
+      </details-modal><a href="/cart" class="header__icon header__icon--cart link focus-inset" id="cart-icon-bubble"><svg class="icon icon-cart-empty" aria-hidden="true" focusable="false" role="presentation" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40" fill="none">
+  <path d="m15.75 11.8h-3.16l-.77 11.6a5 5 0 0 0 4.99 5.34h7.38a5 5 0 0 0 4.99-5.33l-.78-11.61zm0 1h-2.22l-.71 10.67a4 4 0 0 0 3.99 4.27h7.38a4 4 0 0 0 4-4.27l-.72-10.67h-2.22v.63a4.75 4.75 0 1 1 -9.5 0zm8.5 0h-7.5v.63a3.75 3.75 0 1 0 7.5 0z" fill="currentColor" fill-rule="evenodd"/>
+</svg>
+<span class="visually-hidden">Cart</span></a>
+    </div>
+  </header>
+</sticky-header>
+
+<cart-notification>
+  <div class="cart-notification-wrapper page-width color-background-1">
+    <div id="cart-notification" class="cart-notification focus-inset" aria-modal="true" aria-label="Item added to your cart" role="dialog" tabindex="-1">
+      <div class="cart-notification__header">
+        <h2 class="cart-notification__heading caption-large text-body"><svg class="icon icon-checkmark color-foreground-text" aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 9" fill="none">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M11.35.643a.5.5 0 01.006.707l-6.77 6.886a.5.5 0 01-.719-.006L.638 4.845a.5.5 0 11.724-.69l2.872 3.011 6.41-6.517a.5.5 0 01.707-.006h-.001z" fill="currentColor"/>
+</svg>
+Item added to your cart</h2>
+        <button type="button" class="cart-notification__close modal__close-button link link--text focus-inset" aria-label="Close">
+          <svg class="icon icon-close" aria-hidden="true" focusable="false"><use href="#icon-close"></svg>
+        </button>
+      </div>
+      <div id="cart-notification-product" class="cart-notification-product"></div>
+      <div class="cart-notification__links">
+        <a href="/cart" id="cart-notification-button" class="button button--secondary button--full-width"></a>
+        <form action="/cart" method="post" id="cart-notification-form">
+          <button class="button button--primary button--full-width" name="checkout">Check out</button>
+        </form>
+        <button type="button" class="link button-label">Continue shopping</button>
+      </div>
+    </div>
+  </div>
+</cart-notification>
+<style data-shopify>
+  .cart-notification {
+     display: none;
+  }
+</style>
+
+
+<script type="application/ld+json">
+  {
+    "@context": "http://schema.org",
+    "@type": "Organization",
+    "name": "Shyam Partytown Tester",
+    
+    "sameAs": [
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      "",
+      ""
+    ],
+    "url": "https:\/\/shyam-partytown-tester.myshopify.com"
+  }
+</script>
+</div>
+    <main id="MainContent" class="content-for-layout focus-none" role="main" tabindex="-1">
+      <section id="shopify-section-template--15508258291897__main" class="shopify-section section">
+<link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/section-main-product.css?v=16283366984038470926" rel="stylesheet" type="text/css" media="all" />
+<link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-accordion.css?v=18096420431887486381" rel="stylesheet" type="text/css" media="all" />
+<link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-price.css?v=11267386459242743818" rel="stylesheet" type="text/css" media="all" />
+<link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-rte.css?v=6991943663851532978" rel="stylesheet" type="text/css" media="all" />
+<link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-slider.css?v=15498204633630277491" rel="stylesheet" type="text/css" media="all" />
+<link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-rating.css?v=2457308526394124043" rel="stylesheet" type="text/css" media="all" />
+<link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-loading-overlay.css?v=16731047084359357984" rel="stylesheet" type="text/css" media="all" />
+
+<link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-deferred-media.css?v=10521143794169714120" media="print" onload="this.media='all'"><style data-shopify>.section-template--15508258291897__main-padding {
+    padding-top: 27px;
+    padding-bottom: 9px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-template--15508258291897__main-padding {
+      padding-top: 36px;
+      padding-bottom: 12px;
+    }
+  }</style><script src="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/product-form.js?v=142905211600823001" defer="defer"></script><section class="page-width section-template--15508258291897__main-padding">
+  <div class="product product--large product--stacked grid grid--1-col grid--2-col-tablet">
+    <div class="grid__item product__media-wrapper">
+      <media-gallery id="MediaGallery-template--15508258291897__main" role="region" class="product__media-gallery" aria-label="Gallery Viewer" data-desktop-layout="stacked">
+        <div id="GalleryStatus-template--15508258291897__main" class="visually-hidden" role="status"></div>
+        <slider-component id="GalleryViewer-template--15508258291897__main" class="slider-mobile-gutter">
+          <a class="skip-to-content-link button visually-hidden" href="#ProductInfo-template--15508258291897__main">
+            Skip to product information
+          </a>
+          <ul id="Slider-Gallery-template--15508258291897__main" class="product__media-list grid grid--peek list-unstyled slider slider--mobile" role="list"><li id="Slide-template--15508258291897__main-24394414555321" class="product__media-item grid__item slider__slide is-active" data-media-id="template--15508258291897__main-24394414555321">
+
+<noscript><div class="product__media media gradient global-media-settings" style="padding-top: 100.0%;">
+      <img
+        srcset="//cdn.shopify.com/s/files/1/0617/2678/5721/products/61MSZWTT3IL._UY550_493x.jpg?v=1646648764 493w,
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          
+          //cdn.shopify.com/s/files/1/0617/2678/5721/products/61MSZWTT3IL._UY550.jpg?v=1646648764 550w"
+        src="//cdn.shopify.com/s/files/1/0617/2678/5721/products/61MSZWTT3IL._UY550_1946x.jpg?v=1646648764"
+        sizes="(min-width: 1200px) 715px, (min-width: 990px) calc(65.0vw - 10rem), (min-width: 750px) calc((100vw - 11.5rem) / 2), calc(100vw - 4rem)"
+        loading="lazy"
+        width="973"
+        height="973"
+        alt=""
+      >
+    </div></noscript>
+
+<modal-opener class="product__modal-opener product__modal-opener--image no-js-hidden" data-modal="#ProductModal-template--15508258291897__main">
+  <span class="product__media-icon motion-reduce" aria-hidden="true"><svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-plus" width="19" height="19" viewBox="0 0 19 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M4.66724 7.93978C4.66655 7.66364 4.88984 7.43922 5.16598 7.43853L10.6996 7.42464C10.9758 7.42395 11.2002 7.64724 11.2009 7.92339C11.2016 8.19953 10.9783 8.42395 10.7021 8.42464L5.16849 8.43852C4.89235 8.43922 4.66793 8.21592 4.66724 7.93978Z" fill="currentColor"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M7.92576 4.66463C8.2019 4.66394 8.42632 4.88723 8.42702 5.16337L8.4409 10.697C8.44159 10.9732 8.2183 11.1976 7.94215 11.1983C7.66601 11.199 7.44159 10.9757 7.4409 10.6995L7.42702 5.16588C7.42633 4.88974 7.64962 4.66532 7.92576 4.66463Z" fill="currentColor"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M12.8324 3.03011C10.1255 0.323296 5.73693 0.323296 3.03011 3.03011C0.323296 5.73693 0.323296 10.1256 3.03011 12.8324C5.73693 15.5392 10.1255 15.5392 12.8324 12.8324C15.5392 10.1256 15.5392 5.73693 12.8324 3.03011ZM2.32301 2.32301C5.42035 -0.774336 10.4421 -0.774336 13.5395 2.32301C16.6101 5.39361 16.6366 10.3556 13.619 13.4588L18.2473 18.0871C18.4426 18.2824 18.4426 18.599 18.2473 18.7943C18.0521 18.9895 17.7355 18.9895 17.5402 18.7943L12.8778 14.1318C9.76383 16.6223 5.20839 16.4249 2.32301 13.5395C-0.774335 10.4421 -0.774335 5.42035 2.32301 2.32301Z" fill="currentColor"/>
+</svg>
+</span>
+
+  <div class="product__media media media--transparent gradient global-media-settings" style="padding-top: 100.0%;">
+    <img
+      srcset="//cdn.shopify.com/s/files/1/0617/2678/5721/products/61MSZWTT3IL._UY550_493x.jpg?v=1646648764 493w,
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        //cdn.shopify.com/s/files/1/0617/2678/5721/products/61MSZWTT3IL._UY550.jpg?v=1646648764 550w"
+      src="//cdn.shopify.com/s/files/1/0617/2678/5721/products/61MSZWTT3IL._UY550_1946x.jpg?v=1646648764"
+      sizes="(min-width: 1200px) 715px, (min-width: 990px) calc(65.0vw - 10rem), (min-width: 750px) calc((100vw - 11.5rem) / 2), calc(100vw - 4rem)"
+      loading="lazy"
+      width="973"
+      height="973"
+      alt=""
+    >
+  </div>
+  <button class="product__media-toggle" type="button" aria-haspopup="dialog" data-media-id="24394414555321">
+    <span class="visually-hidden">
+      Open media 1 in modal
+    </span>
+  </button>
+</modal-opener>
+                </li></ul>
+          <div class="slider-buttons no-js-hidden">
+            <button type="button" class="slider-button slider-button--prev" name="previous" aria-label="Slide left"><svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret" viewBox="0 0 10 6">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+</svg>
+</button>
+            <div class="slider-counter caption">
+              <span class="slider-counter--current">1</span>
+              <span aria-hidden="true"> / </span>
+              <span class="visually-hidden">of</span>
+              <span class="slider-counter--total">2</span>
+            </div>
+            <button type="button" class="slider-button slider-button--next" name="next" aria-label="Slide right"><svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret" viewBox="0 0 10 6">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+</svg>
+</button>
+          </div>
+        </slider-component></media-gallery>
+    </div>
+    <div class="product__info-wrapper grid__item">
+      <div id="ProductInfo-template--15508258291897__main" class="product__info-container product__info-container--sticky"><p class="product__text caption-with-letter-spacing" >Shyam Partytown Tester</p><h1 class="product__title" >
+              T Shirt
+            </h1><p class="product__text subtitle" ></p><div class="no-js-hidden" id="price-template--15508258291897__main" role="status" >
+<div class="price price--large price--show-badge">
+  <div class="price__container"><div class="price__regular">
+      <span class="visually-hidden visually-hidden--inline">Regular price</span>
+      <span class="price-item price-item--regular">
+        $125.00 USD
+      </span>
+    </div>
+    <div class="price__sale">
+        <span class="visually-hidden visually-hidden--inline">Regular price</span>
+        <span>
+          <s class="price-item price-item--regular">
+            
+              
+            
+          </s>
+        </span><span class="visually-hidden visually-hidden--inline">Sale price</span>
+      <span class="price-item price-item--sale price-item--last">
+        $125.00 USD
+      </span>
+    </div>
+    <small class="unit-price caption hidden">
+      <span class="visually-hidden">Unit price</span>
+      <span class="price-item price-item--last">
+        <span></span>
+        <span aria-hidden="true">/</span>
+        <span class="visually-hidden">&nbsp;per&nbsp;</span>
+        <span>
+        </span>
+      </span>
+    </small>
+  </div><span class="badge price__badge-sale color-accent-2">
+      Sale
+    </span>
+
+    <span class="badge price__badge-sold-out color-inverse">
+      Sold out
+    </span></div>
+</div><div ><form method="post" action="/cart/add" id="product-form-installment" accept-charset="UTF-8" class="installment caption-large" enctype="multipart/form-data"><input type="hidden" name="form_type" value="product" /><input type="hidden" name="utf8" value="✓" /><input type="hidden" name="id" value="42036809138361">
+                
+</form></div><variant-radios class="no-js-hidden" data-section="template--15508258291897__main" data-url="/products/t-shirt" ><fieldset class="js product-form__input">
+                        <legend class="form__label">Size</legend><input type="radio" id="template--15508258291897__main-1-0"
+                                name="Size"
+                                value="Small"
+                                form="product-form-template--15508258291897__main"
+                                checked
+                          >
+                          <label for="template--15508258291897__main-1-0">
+                            Small
+                          </label><input type="radio" id="template--15508258291897__main-1-1"
+                                name="Size"
+                                value="Medium"
+                                form="product-form-template--15508258291897__main"
+                                
+                          >
+                          <label for="template--15508258291897__main-1-1">
+                            Medium
+                          </label><input type="radio" id="template--15508258291897__main-1-2"
+                                name="Size"
+                                value="Large"
+                                form="product-form-template--15508258291897__main"
+                                
+                          >
+                          <label for="template--15508258291897__main-1-2">
+                            Large
+                          </label></fieldset><script type="application/json">
+                    [{"id":42036809138361,"title":"Small","option1":"Small","option2":null,"option3":null,"sku":"","requires_shipping":true,"taxable":true,"featured_image":null,"available":true,"name":"T Shirt - Small","public_title":"Small","options":["Small"],"price":12500,"weight":907,"compare_at_price":null,"inventory_management":null,"barcode":""},{"id":42036809171129,"title":"Medium","option1":"Medium","option2":null,"option3":null,"sku":"","requires_shipping":true,"taxable":true,"featured_image":null,"available":true,"name":"T Shirt - Medium","public_title":"Medium","options":["Medium"],"price":12500,"weight":907,"compare_at_price":null,"inventory_management":null,"barcode":""},{"id":42036809203897,"title":"Large","option1":"Large","option2":null,"option3":null,"sku":"","requires_shipping":true,"taxable":true,"featured_image":null,"available":true,"name":"T Shirt - Large","public_title":"Large","options":["Large"],"price":12500,"weight":907,"compare_at_price":null,"inventory_management":null,"barcode":""}]
+                  </script>
+                </variant-radios><noscript class="product-form__noscript-wrapper-template--15508258291897__main">
+              <div class="product-form__input">
+                <label class="form__label" for="Variants-template--15508258291897__main">Product variants</label>
+                <div class="select">
+                  <select name="id" id="Variants-template--15508258291897__main" class="select__select" form="product-form-template--15508258291897__main"><option
+                        selected="selected"
+                        
+                        value="42036809138361"
+                      >
+                        Small
+
+                        - $125.00
+                      </option><option
+                        
+                        
+                        value="42036809171129"
+                      >
+                        Medium
+
+                        - $125.00
+                      </option><option
+                        
+                        
+                        value="42036809203897"
+                      >
+                        Large
+
+                        - $125.00
+                      </option></select>
+                  <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret" viewBox="0 0 10 6">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+</svg>
+
+                </div>
+              </div>
+            </noscript><div class="product-form__input product-form__quantity" >
+              <label class="form__label" for="Quantity-template--15508258291897__main">
+                Quantity
+              </label>
+
+              <quantity-input class="quantity">
+                <button class="quantity__button no-js-hidden" name="minus" type="button">
+                  <span class="visually-hidden">Decrease quantity for T Shirt</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" role="presentation" class="icon icon-minus" fill="none" viewBox="0 0 10 2">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M.5 1C.5.7.7.5 1 .5h8a.5.5 0 110 1H1A.5.5 0 01.5 1z" fill="currentColor">
+</svg>
+
+                </button>
+                <input class="quantity__input"
+                    type="number"
+                    name="quantity"
+                    id="Quantity-template--15508258291897__main"
+                    min="1"
+                    value="1"
+                    form="product-form-template--15508258291897__main"
+                  >
+                <button class="quantity__button no-js-hidden" name="plus" type="button">
+                  <span class="visually-hidden">Increase quantity for T Shirt</span>
+                  <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" role="presentation" class="icon icon-plus" fill="none" viewBox="0 0 10 10">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M1 4.51a.5.5 0 000 1h3.5l.01 3.5a.5.5 0 001-.01V5.5l3.5-.01a.5.5 0 00-.01-1H5.5L5.49.99a.5.5 0 00-1 .01v3.5l-3.5.01H1z" fill="currentColor">
+</svg>
+
+                </button>
+              </quantity-input>
+            </div><div >
+              <product-form class="product-form">
+                <div class="product-form__error-message-wrapper" role="alert" hidden>
+                  <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-error" viewBox="0 0 13 13">
+                    <circle cx="6.5" cy="6.50049" r="5.5" stroke="white" stroke-width="2"/>
+                    <circle cx="6.5" cy="6.5" r="5.5" fill="#EB001B" stroke="#EB001B" stroke-width="0.7"/>
+                    <path d="M5.87413 3.52832L5.97439 7.57216H7.02713L7.12739 3.52832H5.87413ZM6.50076 9.66091C6.88091 9.66091 7.18169 9.37267 7.18169 9.00504C7.18169 8.63742 6.88091 8.34917 6.50076 8.34917C6.12061 8.34917 5.81982 8.63742 5.81982 9.00504C5.81982 9.37267 6.12061 9.66091 6.50076 9.66091Z" fill="white"/>
+                    <path d="M5.87413 3.17832H5.51535L5.52424 3.537L5.6245 7.58083L5.63296 7.92216H5.97439H7.02713H7.36856L7.37702 7.58083L7.47728 3.537L7.48617 3.17832H7.12739H5.87413ZM6.50076 10.0109C7.06121 10.0109 7.5317 9.57872 7.5317 9.00504C7.5317 8.43137 7.06121 7.99918 6.50076 7.99918C5.94031 7.99918 5.46982 8.43137 5.46982 9.00504C5.46982 9.57872 5.94031 10.0109 6.50076 10.0109Z" fill="white" stroke="#EB001B" stroke-width="0.7">
+                  </svg>
+                  <span class="product-form__error-message"></span>
+                </div><form method="post" action="/cart/add" id="product-form-template--15508258291897__main" accept-charset="UTF-8" class="form" enctype="multipart/form-data" novalidate="novalidate" data-type="add-to-cart-form"><input type="hidden" name="form_type" value="product" /><input type="hidden" name="utf8" value="✓" /><input type="hidden" name="id" value="42036809138361" disabled>
+                  <div class="product-form__buttons">
+                    <button
+                      type="submit"
+                      name="add"
+                      class="product-form__submit button button--full-width button--secondary"
+                    
+                    >
+                        <span>Add to cart
+</span>
+                        <div class="loading-overlay__spinner hidden">
+                          <svg aria-hidden="true" focusable="false" role="presentation" class="spinner" viewBox="0 0 66 66" xmlns="http://www.w3.org/2000/svg">
+                            <circle class="path" fill="none" stroke-width="6" cx="33" cy="33" r="30"></circle>
+                          </svg>
+                        </div>
+                    </button><div data-shopify="payment-button" data-has-selling-plan="false" class="shopify-payment-button"><button class="shopify-payment-button__button shopify-payment-button__button--unbranded shopify-payment-button__button--hidden" disabled="disabled" aria-hidden="true"> </button><button class="shopify-payment-button__more-options shopify-payment-button__button--hidden" disabled="disabled" aria-hidden="true"> </button></div>
+</div></form></product-form>
+
+              <link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-pickup-availability.css?v=2302742736192769326" rel="stylesheet" type="text/css" media="all" />
+<pickup-availability class="product__pickup-availabilities no-js-hidden"
+                
+                data-root-url="/"
+                data-variant-id="42036809138361"
+                data-has-only-default-variant="false"
+              >
+                <template>
+                  <pickup-availability-preview class="pickup-availability-preview">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" aria-hidden="true" focusable="false" role="presentation" class="icon icon-unavailable" fill="none" viewBox="0 0 20 20">
+  <path fill="#DE3618" stroke="#fff" d="M13.94 3.94L10 7.878l-3.94-3.94A1.499 1.499 0 103.94 6.06L7.88 10l-3.94 3.94a1.499 1.499 0 102.12 2.12L10 12.12l3.94 3.94a1.497 1.497 0 002.12 0 1.499 1.499 0 000-2.12L12.122 10l3.94-3.94a1.499 1.499 0 10-2.121-2.12z"/>
+</svg>
+
+                    <div class="pickup-availability-info">
+                      <p class="caption-large">Couldn&#39;t load pickup availability</p>
+                      <button class="pickup-availability-button link link--text underlined-link">Refresh</button>
+                    </div>
+                  </pickup-availability-preview>
+                </template>
+              </pickup-availability>
+            </div>
+
+            <script src="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/pickup-availability.js?v=9534521698898523963" defer="defer"></script><div class="product__description rte">
+                This is the most amazing t-shirt ever seen
+              </div><div class="product__accordion accordion" >
+              <details id="Details-collapsible-row-0-template--15508258291897__main">
+                <summary>
+                  <div class="summary__title">
+                    <svg class="icon icon-accordion color-foreground-text" aria-hidden="true" focusable="false" role="presentation" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M7.97895 1.55555C7.75602 1.55555 7.55049 1.71237 7.49305 1.94762L7.49123 1.95509C7.42498 2.21019 7.33959 2.53757 7.21755 2.85227C7.09741 3.16208 6.92519 3.50498 6.66011 3.77111C5.94871 4.49525 4.9347 4.58069 4.15302 4.58069C3.86517 4.58069 3.57871 4.54519 3.29458 4.47515C3.24995 4.46626 3.17168 4.45029 3.08678 4.41925C3.02446 4.40156 2.97878 4.39485 2.93608 4.39485C2.85763 4.39485 2.77367 4.41506 2.69931 4.45229C2.58049 4.51177 2.49244 4.61426 2.45245 4.74393L2.08187 5.96006C1.99969 6.23376 2.14791 6.5108 2.40926 6.59694C3.06631 6.80864 3.64401 7.16273 4.12596 7.64524C5.79603 9.31728 5.79603 12.0249 4.12596 13.697L4.1207 13.7022C3.70656 14.1053 3.22471 14.4375 2.66344 14.653C2.42776 14.7449 2.29223 15.0137 2.37026 15.2777L2.3694 15.275L2.37085 15.2797L2.37026 15.2777L2.92436 17.0653L2.92291 17.061L2.92626 17.0715L2.92436 17.0653C2.97736 17.22 3.1002 17.3437 3.23664 17.3938C3.23134 17.3924 3.22591 17.3909 3.22032 17.3894L3.24853 17.3979C3.24455 17.3966 3.24059 17.3952 3.23664 17.3938C3.31908 17.4155 3.36721 17.4222 3.41048 17.4222C3.49912 17.4222 3.60995 17.3887 3.70246 17.3233C3.98945 17.1198 4.30448 16.9574 4.6125 16.8318L4.61978 16.8288C5.10547 16.639 5.61461 16.5446 6.14334 16.5446C7.11309 16.5446 8.05549 16.8874 8.79764 17.4889L8.80712 17.4966L8.81955 17.5076C8.90806 17.5864 9.00821 17.6755 9.10985 17.7768C9.10724 17.7743 9.10462 17.7719 9.10199 17.7695L9.11722 17.7841C9.11476 17.7817 9.11231 17.7792 9.10985 17.7768C9.26909 17.925 9.40178 18.0826 9.51863 18.2455L9.51488 18.2407L9.52415 18.2532C9.52231 18.2507 9.52048 18.2481 9.51863 18.2455C9.61654 18.3713 9.76885 18.4444 9.91772 18.4444V19.4999C9.42913 19.4999 8.96472 19.2651 8.67058 18.8776L8.66585 18.8714L8.66131 18.865C8.57515 18.7443 8.48502 18.6386 8.38216 18.5436L8.3744 18.5364L8.36693 18.5289C8.28943 18.4513 8.21077 18.3808 8.12058 18.3006C8.12363 18.303 8.12667 18.3055 8.12971 18.3079L8.11112 18.2921C8.11428 18.295 8.11744 18.2978 8.12058 18.3006C7.56475 17.8535 6.86093 17.6002 6.14334 17.6002C5.74527 17.6002 5.36861 17.6705 5.00975 17.8102L5.01345 17.8087L5.00616 17.8116L5.00975 17.8102C4.7622 17.9115 4.52249 18.0371 4.31551 18.1839C4.05739 18.3663 3.73435 18.4778 3.41048 18.4778C3.22966 18.4778 3.07494 18.4441 2.94062 18.4074L2.9264 18.4036L2.91241 18.3989C2.43607 18.2399 2.07057 17.8518 1.91799 17.3935L1.91453 17.3831L1.35631 15.5819C1.12631 14.8143 1.50604 13.9695 2.27996 13.6691L2.28202 13.6683C2.68845 13.5124 3.05095 13.2676 3.37829 12.9495L3.37567 12.9522L3.38096 12.9469L3.37829 12.9495C4.63437 11.6891 4.6335 9.64934 3.37567 8.39003C3.01234 8.02628 2.57987 7.76103 2.08252 7.60098L2.08001 7.60016C1.26969 7.33494 0.820566 6.47637 1.06787 5.6562L1.06832 5.65473L1.43956 4.43642L1.43993 4.43521C1.565 4.02823 1.84814 3.69722 2.22417 3.50898C2.43856 3.40166 2.68453 3.3393 2.93608 3.3393C3.11661 3.3393 3.27314 3.37268 3.40855 3.41335L3.43121 3.42015L3.45248 3.42867C3.45248 3.42867 3.45629 3.42989 3.46231 3.4314C3.47374 3.43427 3.48719 3.43707 3.51473 3.44259L3.52713 3.44507L3.5394 3.44814C3.746 3.49985 3.95026 3.52514 4.15302 3.52514C4.91759 3.52514 5.52295 3.42089 5.9046 3.03158L5.90806 3.02805C6.02355 2.91242 6.13155 2.72544 6.22996 2.47166C6.32632 2.22316 6.39772 1.95396 6.46528 1.69386L6.46427 1.69798L6.46615 1.69052L6.46528 1.69386C6.63616 1.00201 7.25456 0.5 7.97895 0.5H11.609C12.3348 0.5 12.9542 1.00401 13.1237 1.69798L13.1242 1.70013C13.1834 1.94725 13.2587 2.21702 13.359 2.46369C13.4616 2.71581 13.5762 2.90808 13.696 3.02807C14.1211 3.45365 14.7781 3.68003 15.4455 3.68003C15.5631 3.68003 15.6809 3.67176 15.7991 3.65507C16.0139 3.6203 16.225 3.56054 16.415 3.47834C16.6179 3.38568 16.8361 3.3393 17.0543 3.3393C17.2747 3.3393 17.4951 3.38664 17.6997 3.48119C18.0942 3.66348 18.4093 4.00233 18.5392 4.44215L18.9305 5.59736L18.9334 5.60717C19.0547 6.01723 19.0121 6.46746 18.7906 6.84757C18.5695 7.22709 18.1953 7.48993 17.7778 7.58282L17.7709 7.58435C17.5695 7.62636 17.3676 7.69501 17.1451 7.78185C16.7638 7.95199 16.4097 8.19235 16.1092 8.49326C15.4747 9.1285 15.1188 9.97588 15.1188 10.8775C15.1188 11.7824 15.4665 12.6274 16.1066 13.2593L16.1092 13.2619C16.4842 13.6374 16.929 13.9137 17.4287 14.0838C18.1828 14.3325 18.7843 15.188 18.5193 16.05L18.0759 17.4952L18.0752 17.4976C17.9207 17.9926 17.544 18.3705 17.0476 18.5259L17.0418 18.5277C16.9097 18.5673 16.7524 18.6017 16.5797 18.6017C16.2411 18.6017 15.898 18.4939 15.6144 18.273L15.6108 18.2702C15.3991 18.1024 15.1801 17.9708 14.9427 17.865L14.9447 17.8659L14.9408 17.8641L14.9427 17.865C14.5354 17.688 14.1132 17.6002 13.6715 17.6002C12.9507 17.6002 12.2587 17.8453 11.7065 18.2988L11.7141 18.2921L11.6994 18.3047C11.7018 18.3028 11.7041 18.3008 11.7065 18.2988L11.4477 18.5292C11.4511 18.5257 11.4547 18.5221 11.4582 18.5186L11.4356 18.5399L11.4477 18.5292C11.3396 18.6384 11.2492 18.7459 11.1669 18.8609C11.1682 18.8589 11.1695 18.857 11.1708 18.8551L11.1639 18.865L11.1669 18.8609C10.8858 19.2703 10.4109 19.4975 9.92545 19.4999L9.92546 18.4444H9.91772C10.0873 18.4444 10.2255 18.3642 10.2941 18.2632L10.3009 18.2532C10.4214 18.0843 10.5538 17.9281 10.7079 17.7738L10.7189 17.7628L11.0162 17.4983L11.0237 17.4921C11.7696 16.8756 12.7042 16.5446 13.6715 16.5446C14.2604 16.5446 14.8275 16.663 15.3684 16.8985L15.3723 16.9002C15.6902 17.0416 15.9855 17.219 16.2676 17.4422L16.2662 17.4411L16.2698 17.444L16.2676 17.4422C16.355 17.5098 16.4651 17.5461 16.5797 17.5461C16.6128 17.5461 16.6607 17.5394 16.7332 17.5179L16.7305 17.5187L16.7363 17.517L16.7332 17.5179C16.895 17.4664 17.0122 17.3494 17.0638 17.185L17.5069 15.741C17.5716 15.5306 17.412 15.1893 17.0951 15.0856L17.0895 15.0838C16.4357 14.8617 15.8506 14.4986 15.3602 14.008L15.3615 14.0093L15.3589 14.0067L15.3602 14.008C14.5161 13.1739 14.0599 12.0577 14.0599 10.8775C14.0599 9.69362 14.529 8.57933 15.3589 7.74846C15.7569 7.34998 16.2242 7.03443 16.7259 6.81248L16.7363 6.80786L16.747 6.80369C16.9934 6.70716 17.2611 6.61261 17.5499 6.55201L17.5472 6.55261L17.5541 6.55113L17.5499 6.55201C17.6881 6.52047 17.8079 6.43273 17.875 6.3174C17.9411 6.20409 17.9608 6.05889 17.9202 5.91414L17.924 5.92537L17.9178 5.90587C17.9187 5.90862 17.9195 5.91138 17.9202 5.91414L17.5282 4.75688L17.5247 4.74458C17.4871 4.61282 17.3921 4.50249 17.2544 4.43887C17.1909 4.40952 17.1226 4.39485 17.0543 4.39485C16.9859 4.39485 16.9176 4.40953 16.8541 4.43887L16.8433 4.44383C16.5614 4.56653 16.2601 4.6503 15.9626 4.69796L15.9538 4.69937C15.7847 4.72356 15.6152 4.73559 15.4455 4.73559C14.5661 4.73559 13.6138 4.4417 12.9457 3.77286C12.684 3.51084 12.5047 3.17239 12.3778 2.86025C12.2488 2.54315 12.1592 2.21564 12.0947 1.94676C12.037 1.71199 11.8317 1.55555 11.609 1.55555H7.97895Z"/></svg>
+                    <h2 class="h4 accordion__title">
+                      Materials
+                    </h2>
+                  </div>
+                  <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret" viewBox="0 0 10 6">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+</svg>
+
+                </summary>
+                <div class="accordion__content rte" id="ProductAccordion-collapsible-row-0-template--15508258291897__main">
+                  
+                  
+                </div>
+              </details>
+            </div><div class="product__accordion accordion" >
+              <details id="Details-collapsible-row-1-template--15508258291897__main">
+                <summary>
+                  <div class="summary__title">
+                    <svg class="icon icon-accordion color-foreground-text" aria-hidden="true" focusable="false" role="presentation" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M0 3.75156C0 3.47454 0.224196 3.24997 0.500755 3.24997H10.647C10.9235 3.24997 11.1477 3.47454 11.1477 3.75156V5.07505V5.63362V6.10938V13.6616C10.9427 14.0067 10.8813 14.1101 10.5516 14.6648L7.22339 14.6646V13.6614H10.1462V4.25316H1.00151V13.6614H2.6842V14.6646H0.500755C0.224196 14.6646 0 14.44 0 14.163V3.75156Z"/>
+      <path d="M18.9985 8.08376L11.1477 6.10938V5.07505L19.6212 7.20603C19.8439 7.26203 20 7.46255 20 7.69253V14.1631C20 14.4401 19.7758 14.6647 19.4992 14.6647H17.3071V13.6615H18.9985V8.08376ZM11.1477 13.6616L13.3442 13.6615L13.3443 14.6647L10.5516 14.6648L11.1477 13.6616Z"/>
+      <path d="M7.71269 14.1854C7.71269 15.6018 6.56643 16.75 5.15245 16.75C3.73847 16.75 2.59221 15.6018 2.59221 14.1854C2.59221 12.7691 3.73847 11.6209 5.15245 11.6209C6.56643 11.6209 7.71269 12.7691 7.71269 14.1854ZM5.15245 15.7468C6.01331 15.7468 6.71118 15.0478 6.71118 14.1854C6.71118 13.3231 6.01331 12.6241 5.15245 12.6241C4.29159 12.6241 3.59372 13.3231 3.59372 14.1854C3.59372 15.0478 4.29159 15.7468 5.15245 15.7468Z"/>
+      <path d="M17.5196 14.1854C17.5196 15.6018 16.3733 16.75 14.9593 16.75C13.5454 16.75 12.3991 15.6018 12.3991 14.1854C12.3991 12.7691 13.5454 11.6209 14.9593 11.6209C16.3733 11.6209 17.5196 12.7691 17.5196 14.1854ZM14.9593 15.7468C15.8202 15.7468 16.5181 15.0478 16.5181 14.1854C16.5181 13.3231 15.8202 12.6241 14.9593 12.6241C14.0985 12.6241 13.4006 13.3231 13.4006 14.1854C13.4006 15.0478 14.0985 15.7468 14.9593 15.7468Z"/></svg>
+                    <h2 class="h4 accordion__title">
+                      Shipping & Returns
+                    </h2>
+                  </div>
+                  <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret" viewBox="0 0 10 6">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+</svg>
+
+                </summary>
+                <div class="accordion__content rte" id="ProductAccordion-collapsible-row-1-template--15508258291897__main">
+                  
+                  
+                </div>
+              </details>
+            </div><div class="product__accordion accordion" >
+              <details id="Details-collapsible-row-2-template--15508258291897__main">
+                <summary>
+                  <div class="summary__title">
+                    <svg class="icon icon-accordion color-foreground-text" aria-hidden="true" focusable="false" role="presentation" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M18.9836 5.32852L14.6715 1.01638L1.01638 14.6715L5.32852 18.9836L18.9836 5.32852ZM15.3902 0.297691C14.9933 -0.0992303 14.3497 -0.0992303 13.9528 0.297691L0.297691 13.9528C-0.0992301 14.3497 -0.0992305 14.9932 0.297691 15.3902L4.60983 19.7023C5.00675 20.0992 5.65029 20.0992 6.04721 19.7023L19.7023 6.04721C20.0992 5.65029 20.0992 5.00675 19.7023 4.60983L15.3902 0.297691Z" fill-rule="evenodd"/>
+      <path d="M11.7863 2.67056C11.9848 2.4721 12.3065 2.4721 12.505 2.67056L14.4237 4.58927C14.6222 4.78774 14.6222 5.1095 14.4237 5.30796C14.2252 5.50642 13.9035 5.50642 13.705 5.30796L11.7863 3.38925C11.5878 3.19079 11.5878 2.86902 11.7863 2.67056Z"/>
+      <path d="M8.93891 5.36331C9.13737 5.16485 9.45914 5.16485 9.6576 5.36331L11.5763 7.28202C11.7748 7.48048 11.7748 7.80225 11.5763 8.00071C11.3779 8.19917 11.0561 8.19917 10.8576 8.00071L8.93891 6.082C8.74045 5.88354 8.74045 5.56177 8.93891 5.36331Z"/>
+      <path d="M6.24307 8.20742C6.44153 8.00896 6.76329 8.00896 6.96175 8.20742L8.88047 10.1261C9.07893 10.3246 9.07893 10.6464 8.88047 10.8448C8.68201 11.0433 8.36024 11.0433 8.16178 10.8448L6.24307 8.92611C6.0446 8.72765 6.0446 8.40588 6.24307 8.20742Z"/>
+      <path d="M3.37296 10.8776C3.57142 10.6791 3.89319 10.6791 4.09165 10.8776L6.01036 12.7963C6.20882 12.9948 6.20882 13.3165 6.01036 13.515C5.8119 13.7134 5.49013 13.7134 5.29167 13.515L3.37296 11.5963C3.1745 11.3978 3.1745 11.076 3.37296 10.8776Z"/></svg>
+                    <h2 class="h4 accordion__title">
+                      Dimensions
+                    </h2>
+                  </div>
+                  <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret" viewBox="0 0 10 6">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+</svg>
+
+                </summary>
+                <div class="accordion__content rte" id="ProductAccordion-collapsible-row-2-template--15508258291897__main">
+                  
+                  
+                </div>
+              </details>
+            </div><div class="product__accordion accordion" >
+              <details id="Details-collapsible-row-3-template--15508258291897__main">
+                <summary>
+                  <div class="summary__title">
+                    <svg class="icon icon-accordion color-foreground-text" aria-hidden="true" focusable="false" role="presentation" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20"><path d="M10 5.2393L8.5149 3.77392C6.79996 2.08174 4.01945 2.08174 2.30451 3.77392C0.589562 5.4661 0.589563 8.2097 2.30451 9.90188L10 17.4952L17.6955 9.90188C19.4104 8.2097 19.4104 5.4661 17.6955 3.77392C15.9805 2.08174 13.2 2.08174 11.4851 3.77392L10 5.2393ZM10.765 3.06343C12.8777 0.978857 16.3029 0.978856 18.4155 3.06343C20.5282 5.148 20.5282 8.52779 18.4155 10.6124L10.72 18.2057C10.3224 18.5981 9.67763 18.5981 9.27996 18.2057L1.58446 10.6124C-0.528154 8.52779 -0.528154 5.14801 1.58446 3.06343C3.69708 0.978859 7.12233 0.978858 9.23495 3.06343L10 3.81832L10.765 3.06343Z" fill-rule="evenodd"/></svg>
+                    <h2 class="h4 accordion__title">
+                      Care Instructions
+                    </h2>
+                  </div>
+                  <svg aria-hidden="true" focusable="false" role="presentation" class="icon icon-caret" viewBox="0 0 10 6">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M9.354.646a.5.5 0 00-.708 0L5 4.293 1.354.646a.5.5 0 00-.708.708l4 4a.5.5 0 00.708 0l4-4a.5.5 0 000-.708z" fill="currentColor">
+</svg>
+
+                </summary>
+                <div class="accordion__content rte" id="ProductAccordion-collapsible-row-3-template--15508258291897__main">
+                  
+                  
+                </div>
+              </details>
+            </div><share-button id="Share-template--15508258291897__main" class="share-button" >
+              <button class="share-button__button hidden">
+                <svg width="13" height="12" viewBox="0 0 13 12" class="icon icon-share" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <path d="M1.625 8.125V10.2917C1.625 10.579 1.73914 10.8545 1.9423 11.0577C2.14547 11.2609 2.42102 11.375 2.70833 11.375H10.2917C10.579 11.375 10.8545 11.2609 11.0577 11.0577C11.2609 10.8545 11.375 10.579 11.375 10.2917V8.125" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M6.14775 1.27137C6.34301 1.0761 6.65959 1.0761 6.85485 1.27137L9.56319 3.9797C9.75845 4.17496 9.75845 4.49154 9.56319 4.6868C9.36793 4.88207 9.05135 4.88207 8.85609 4.6868L6.5013 2.33203L4.14652 4.6868C3.95126 4.88207 3.63468 4.88207 3.43942 4.6868C3.24415 4.49154 3.24415 4.17496 3.43942 3.9797L6.14775 1.27137Z" fill="currentColor"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M6.5 1.125C6.77614 1.125 7 1.34886 7 1.625V8.125C7 8.40114 6.77614 8.625 6.5 8.625C6.22386 8.625 6 8.40114 6 8.125V1.625C6 1.34886 6.22386 1.125 6.5 1.125Z" fill="currentColor"/>
+</svg>
+
+                Share
+              </button>
+              <details id="Details-share-template--15508258291897__main">
+                <summary class="share-button__button">
+                  <svg width="13" height="12" viewBox="0 0 13 12" class="icon icon-share" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <path d="M1.625 8.125V10.2917C1.625 10.579 1.73914 10.8545 1.9423 11.0577C2.14547 11.2609 2.42102 11.375 2.70833 11.375H10.2917C10.579 11.375 10.8545 11.2609 11.0577 11.0577C11.2609 10.8545 11.375 10.579 11.375 10.2917V8.125" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M6.14775 1.27137C6.34301 1.0761 6.65959 1.0761 6.85485 1.27137L9.56319 3.9797C9.75845 4.17496 9.75845 4.49154 9.56319 4.6868C9.36793 4.88207 9.05135 4.88207 8.85609 4.6868L6.5013 2.33203L4.14652 4.6868C3.95126 4.88207 3.63468 4.88207 3.43942 4.6868C3.24415 4.49154 3.24415 4.17496 3.43942 3.9797L6.14775 1.27137Z" fill="currentColor"/>
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M6.5 1.125C6.77614 1.125 7 1.34886 7 1.625V8.125C7 8.40114 6.77614 8.625 6.5 8.625C6.22386 8.625 6 8.40114 6 8.125V1.625C6 1.34886 6.22386 1.125 6.5 1.125Z" fill="currentColor"/>
+</svg>
+
+                  Share
+                </summary>
+                <div id="Product-share-template--15508258291897__main" class="share-button__fallback motion-reduce">
+                  <div class="field">
+                    <span id="ShareMessage-template--15508258291897__main" class="share-button__message hidden" role="status">
+                    </span>
+                    <input type="text"
+                          class="field__input"
+                          id="url"
+                          value="https://shyam-partytown-tester.myshopify.com/products/t-shirt"
+                          placeholder="Link"
+                          onclick="this.select();"
+                          readonly
+                    >
+                    <label class="field__label" for="url">Link</label>
+                  </div>
+                  <button class="share-button__close hidden no-js-hidden">
+                    <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" fill="none" viewBox="0 0 18 17">
+  <path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="currentColor">
+</svg>
+
+                    <span class="visually-hidden">Close share</span>
+                  </button>
+                  <button class="share-button__copy no-js-hidden">
+                    <svg class="icon icon-clipboard" width="11" height="13" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" viewBox="0 0 11 13">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M2 1a1 1 0 011-1h7a1 1 0 011 1v9a1 1 0 01-1 1V1H2zM1 2a1 1 0 00-1 1v9a1 1 0 001 1h7a1 1 0 001-1V3a1 1 0 00-1-1H1zm0 10V3h7v9H1z" fill="currentColor"/>
+</svg>
+
+                    <span class="visually-hidden">Copy link</span>
+                  </button>
+                </div>
+              </details>
+            </share-button>
+            <script src="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/share.js?v=2305955673173102667" defer="defer"></script></div>
+    </div>
+  </div>
+
+  <product-modal id="ProductModal-template--15508258291897__main" class="product-media-modal media-modal">
+    <div class="product-media-modal__dialog" role="dialog" aria-label="Media gallery" aria-modal="true" tabindex="-1">
+      <button id="ModalClose-template--15508258291897__main" type="button" class="product-media-modal__toggle" aria-label="Close"><svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false" role="presentation" class="icon icon-close" fill="none" viewBox="0 0 18 17">
+  <path d="M.865 15.978a.5.5 0 00.707.707l7.433-7.431 7.579 7.282a.501.501 0 00.846-.37.5.5 0 00-.153-.351L9.712 8.546l7.417-7.416a.5.5 0 10-.707-.708L8.991 7.853 1.413.573a.5.5 0 10-.693.72l7.563 7.268-7.418 7.417z" fill="currentColor">
+</svg>
+</button>
+
+      <div class="product-media-modal__content" role="document" aria-label="Media gallery" tabindex="0">
+<img
+    class="global-media-settings global-media-settings--no-shadow"
+    srcset="//cdn.shopify.com/s/files/1/0617/2678/5721/products/61MSZWTT3IL._UY550_550x.jpg?v=1646648764 550w,//cdn.shopify.com/s/files/1/0617/2678/5721/products/61MSZWTT3IL._UY550.jpg?v=1646648764 550w"
+    sizes="(min-width: 750px) calc(100vw - 22rem), 1100px"
+    src="//cdn.shopify.com/s/files/1/0617/2678/5721/products/61MSZWTT3IL._UY550_1445x.jpg?v=1646648764"
+    alt="T Shirt"
+    loading="lazy"
+    width="1100"
+    height="1100"
+    data-media-id="24394414555321"
+    
+  ></div>
+    </div>
+  </product-modal>
+
+  
+</section>
+
+
+
+
+  <script src="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/media-gallery.js?v=15290251574944647840" defer="defer"></script>
+
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    function isIE() {
+      const ua = window.navigator.userAgent;
+      const msie = ua.indexOf('MSIE ');
+      const trident = ua.indexOf('Trident/');
+
+      return (msie > 0 || trident > 0);
+    }
+
+    if (!isIE()) return;
+    const hiddenInput = document.querySelector('#product-form-template--15508258291897__main input[name="id"]');
+    const noScriptInputWrapper = document.createElement('div');
+    const variantSwitcher = document.querySelector('variant-radios[data-section="template--15508258291897__main"]') || document.querySelector('variant-selects[data-section="template--15508258291897__main"]');
+    noScriptInputWrapper.innerHTML = document.querySelector('.product-form__noscript-wrapper-template--15508258291897__main').textContent;
+    variantSwitcher.outerHTML = noScriptInputWrapper.outerHTML;
+
+    document.querySelector('#Variants-template--15508258291897__main').addEventListener('change', function(event) {
+      hiddenInput.value = event.currentTarget.value;
+    });
+  });
+</script><script type="application/ld+json">
+  {
+    "@context": "http://schema.org/",
+    "@type": "Product",
+    "name": "T Shirt",
+    "url": "https:\/\/shyam-partytown-tester.myshopify.com\/products\/t-shirt",
+    "image": [
+        "https:\/\/cdn.shopify.com\/s\/files\/1\/0617\/2678\/5721\/products\/61MSZWTT3IL._UY550_550x.jpg?v=1646648764"
+      ],
+    "description": "This is the most amazing t-shirt ever seen",
+    
+    "brand": {
+      "@type": "Thing",
+      "name": "Shyam Partytown Tester"
+    },
+    "offers": [{
+          "@type" : "Offer","availability" : "http://schema.org/InStock",
+          "price" : 125.0,
+          "priceCurrency" : "USD",
+          "url" : "https:\/\/shyam-partytown-tester.myshopify.com\/products\/t-shirt?variant=42036809138361"
+        },
+{
+          "@type" : "Offer","availability" : "http://schema.org/InStock",
+          "price" : 125.0,
+          "priceCurrency" : "USD",
+          "url" : "https:\/\/shyam-partytown-tester.myshopify.com\/products\/t-shirt?variant=42036809171129"
+        },
+{
+          "@type" : "Offer","availability" : "http://schema.org/InStock",
+          "price" : 125.0,
+          "priceCurrency" : "USD",
+          "url" : "https:\/\/shyam-partytown-tester.myshopify.com\/products\/t-shirt?variant=42036809203897"
+        }
+]
+  }
+</script>
+
+
+</section><div id="shopify-section-template--15508258291897__image-with-text" class="shopify-section section"><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-image-with-text.css?v=9929569255394345675" rel="stylesheet" type="text/css" media="all" />
+<style data-shopify>.section-template--15508258291897__image-with-text-padding {
+    padding-top: 27px;
+    padding-bottom: 27px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-template--15508258291897__image-with-text-padding {
+      padding-top: 36px;
+      padding-bottom: 36px;
+    }
+  }</style><div class="image-with-text image-with-text--no-overlap page-width isolate collapse-corners section-template--15508258291897__image-with-text-padding">
+  <div class="image-with-text__grid grid grid--gapless grid--1-col grid--2-col-tablet image-with-text__grid--reverse">
+    <div class="image-with-text__media-item image-with-text__media-item--medium image-with-text__media-item--top grid__item">
+      <div class="image-with-text__media image-with-text__media--small gradient color-background-2 global-media-settings image-with-text__media--placeholder placeholder"
+        
+      ><svg class="placeholder-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 525.5 525.5"><path d="M324.5 212.7H203c-1.6 0-2.8 1.3-2.8 2.8V308c0 1.6 1.3 2.8 2.8 2.8h121.6c1.6 0 2.8-1.3 2.8-2.8v-92.5c0-1.6-1.3-2.8-2.9-2.8zm1.1 95.3c0 .6-.5 1.1-1.1 1.1H203c-.6 0-1.1-.5-1.1-1.1v-92.5c0-.6.5-1.1 1.1-1.1h121.6c.6 0 1.1.5 1.1 1.1V308z"/><path d="M210.4 299.5H240v.1s.1 0 .2-.1h75.2v-76.2h-105v76.2zm1.8-7.2l20-20c1.6-1.6 3.8-2.5 6.1-2.5s4.5.9 6.1 2.5l1.5 1.5 16.8 16.8c-12.9 3.3-20.7 6.3-22.8 7.2h-27.7v-5.5zm101.5-10.1c-20.1 1.7-36.7 4.8-49.1 7.9l-16.9-16.9 26.3-26.3c1.6-1.6 3.8-2.5 6.1-2.5s4.5.9 6.1 2.5l27.5 27.5v7.8zm-68.9 15.5c9.7-3.5 33.9-10.9 68.9-13.8v13.8h-68.9zm68.9-72.7v46.8l-26.2-26.2c-1.9-1.9-4.5-3-7.3-3s-5.4 1.1-7.3 3l-26.3 26.3-.9-.9c-1.9-1.9-4.5-3-7.3-3s-5.4 1.1-7.3 3l-18.8 18.8V225h101.4z"/><path d="M232.8 254c4.6 0 8.3-3.7 8.3-8.3s-3.7-8.3-8.3-8.3-8.3 3.7-8.3 8.3 3.7 8.3 8.3 8.3zm0-14.9c3.6 0 6.6 2.9 6.6 6.6s-2.9 6.6-6.6 6.6-6.6-2.9-6.6-6.6 3-6.6 6.6-6.6z"/></svg>
+</div>
+    </div>
+    <div class="image-with-text__text-item grid__item">
+      <div id="ImageWithText--template--15508258291897__image-with-text" class="image-with-text__content image-with-text__content--top image-with-text__content--desktop-left image-with-text__content--mobile-left image-with-text__content--small gradient color-background-2 content-container"><h2 class="image-with-text__heading h1" >
+                Image with text
+              </h2><div class="image-with-text__text rte body" ><p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p></div></div>
+    </div>
+  </div>
+</div>
+
+
+</div><section id="shopify-section-template--15508258291897__multicolumn" class="shopify-section section"><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/section-multicolumn.css?v=987976022702778122" rel="stylesheet" type="text/css" media="all" />
+<link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-slider.css?v=15498204633630277491" media="print" onload="this.media='all'">
+<noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-slider.css?v=15498204633630277491" rel="stylesheet" type="text/css" media="all" /></noscript><style data-shopify>.section-template--15508258291897__multicolumn-padding {
+    padding-top: 27px;
+    padding-bottom: 27px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-template--15508258291897__multicolumn-padding {
+      padding-top: 36px;
+      padding-bottom: 36px;
+    }
+  }</style><div class="multicolumn color-background-1 gradient background-none no-heading">
+  <div class="page-width section-template--15508258291897__multicolumn-padding isolate">
+    
+    <slider-component class="slider-mobile-gutter">
+      <ul class="multicolumn-list grid grid--1-col grid--3-col-tablet"
+        id="Slider-template--15508258291897__multicolumn"
+        role="list"
+      ><li id="Slide-template--15508258291897__multicolumn-1" class="multicolumn-list__item grid__item" >
+            <div class="multicolumn-card content-container"><div class="multicolumn-card__info"><h3>Free Shipping</h3><div class="rte"><p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p></div></div>
+            </div>
+          </li><li id="Slide-template--15508258291897__multicolumn-2" class="multicolumn-list__item grid__item" >
+            <div class="multicolumn-card content-container"><div class="multicolumn-card__info"><h3>Hassle-Free Exchanges</h3><div class="rte"><p>Pair text with an image to focus on your chosen product, collection, or blog post. Add details on availability, style, or even provide a review.</p></div></div>
+            </div>
+          </li></ul></slider-component>
+    <div class="center"></div>
+  </div>
+</div>
+
+
+</section><section id="shopify-section-template--15508258291897__product-recommendations" class="shopify-section section"><link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-card.css?v=12741305300284413781" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-price.css?v=11267386459242743818" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/section-product-recommendations.css?v=8105679949027425152" media="print" onload="this.media='all'">
+
+<noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-card.css?v=12741305300284413781" rel="stylesheet" type="text/css" media="all" /></noscript>
+<noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-price.css?v=11267386459242743818" rel="stylesheet" type="text/css" media="all" /></noscript>
+<noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/section-product-recommendations.css?v=8105679949027425152" rel="stylesheet" type="text/css" media="all" /></noscript><style data-shopify>.section-template--15508258291897__product-recommendations-padding {
+    padding-top: 27px;
+    padding-bottom: 21px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .section-template--15508258291897__product-recommendations-padding {
+      padding-top: 36px;
+      padding-bottom: 28px;
+    }
+  }</style><div class="color-background-1 gradient">
+  <product-recommendations class="product-recommendations page-width section-template--15508258291897__product-recommendations-padding isolate" data-url="/recommendations/products?section_id=template--15508258291897__product-recommendations&product_id=7250357846201&limit=4">
+    
+  </product-recommendations>
+</div>
+
+
+
+
+</section><section id="shopify-section-template--15508258291897__1646648363991e1a82" class="shopify-section section"><div class="page-width"><div id="shopify-block-329891c5-29a6-45fa-a993-effda54e1e04" class="shopify-block shopify-app-block">
+
+
+
+
+<div
+            class="okeReviews-widget-holder"
+            data-oke-reviews-widget
+            data-oke-reviews-product-id="shopify-7250357846201"
+        >
+            
+        </div>
+
+
+</div>
+</div>
+
+
+</section>
+    </main>
+
+    <div id="shopify-section-footer" class="shopify-section">
+<link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/section-footer.css?v=17184357164760674477" rel="stylesheet" type="text/css" media="all" />
+<link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-newsletter.css?v=10347248205600305355" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-list-menu.css?v=12926705887708249657" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-list-payment.css?v=6925396141077183850" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-list-social.css?v=5221166315372665906" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-rte.css?v=6991943663851532978" media="print" onload="this.media='all'">
+<link rel="stylesheet" href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/disclosure.css?v=14942775301193888460" media="print" onload="this.media='all'">
+
+<noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-newsletter.css?v=10347248205600305355" rel="stylesheet" type="text/css" media="all" /></noscript>
+<noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-list-menu.css?v=12926705887708249657" rel="stylesheet" type="text/css" media="all" /></noscript>
+<noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-list-payment.css?v=6925396141077183850" rel="stylesheet" type="text/css" media="all" /></noscript>
+<noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-list-social.css?v=5221166315372665906" rel="stylesheet" type="text/css" media="all" /></noscript>
+<noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/component-rte.css?v=6991943663851532978" rel="stylesheet" type="text/css" media="all" /></noscript>
+<noscript><link href="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/disclosure.css?v=14942775301193888460" rel="stylesheet" type="text/css" media="all" /></noscript><style data-shopify>.footer {
+    margin-top: 36px;
+  }
+
+  .section-footer-padding {
+    padding-top: 27px;
+    padding-bottom: 27px;
+  }
+
+  @media screen and (min-width: 750px) {
+    .footer {
+      margin-top: 48px;
+    }
+
+    .section-footer-padding {
+      padding-top: 36px;
+      padding-bottom: 36px;
+    }
+  }</style><footer class="footer color-background-1 gradient section-footer-padding"><div class="footer__content-top page-width"><div class="footer__blocks-wrapper grid grid--1-col grid--2-col grid--4-col-tablet "><div class="footer-block grid__item footer-block--menu" ><h2 class="footer-block__heading">Quick links</h2><ul class="footer-block__details-content list-unstyled"><li>
+                          <a href="/search" class="link link--text list-menu__item list-menu__item--link">
+                            Search
+                          </a>
+                        </li></ul></div><div class="footer-block grid__item footer-block--menu" ><h2 class="footer-block__heading">Info</h2><ul class="footer-block__details-content list-unstyled"><li>
+                          <a href="/search" class="link link--text list-menu__item list-menu__item--link">
+                            Search
+                          </a>
+                        </li></ul></div><div class="footer-block grid__item" ><h2 class="footer-block__heading">Our mission</h2><div class="footer-block__details-content rte">
+                    <p>Share contact information, store details, and brand content with your customers.</p>
+                  </div></div></div><div class="footer-block--newsletter"><div class="footer-block__newsletter"><h2 class="footer-block__heading">Subscribe to our emails</h2><form method="post" action="/contact#ContactFooter" id="ContactFooter" accept-charset="UTF-8" class="footer__newsletter newsletter-form"><input type="hidden" name="form_type" value="customer" /><input type="hidden" name="utf8" value="✓" /><input type="hidden" name="contact[tags]" value="newsletter">
+              <div class="newsletter-form__field-wrapper">
+                <div class="field">
+                  <input
+                    id="NewsletterForm--footer"
+                    type="email"
+                    name="contact[email]"
+                    class="field__input"
+                    value=""
+                    aria-required="true"
+                    autocorrect="off"
+                    autocapitalize="off"
+                    autocomplete="email"
+                    
+                    placeholder="Email"
+                    required
+                  >
+                  <label class="field__label" for="NewsletterForm--footer">
+                    Email
+                  </label>
+                  <button type="submit" class="newsletter-form__button field__button" name="commit" id="Subscribe" aria-label="Subscribe">
+                    <svg viewBox="0 0 14 10" fill="none" aria-hidden="true" focusable="false" role="presentation" class="icon icon-arrow" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M8.537.808a.5.5 0 01.817-.162l4 4a.5.5 0 010 .708l-4 4a.5.5 0 11-.708-.708L11.793 5.5H1a.5.5 0 010-1h10.793L8.646 1.354a.5.5 0 01-.109-.546z" fill="currentColor">
+</svg>
+
+                  </button>
+                </div></div></form></div><ul class="footer__list-social list-unstyled list-social" role="list"></ul></div>
+    </div><div class="footer__content-bottom">
+    <div class="footer__content-bottom-wrapper page-width">
+      <div class="footer__column footer__localization isolate"></div>
+      <div class="footer__column footer__column--info"><div class="footer__payment">
+            <span class="visually-hidden">Payment methods</span>
+            <ul class="list list-payment" role="list"></ul>
+          </div><div class="footer__copyright caption">
+          <small class="copyright__content">&copy; 2022, <a href="/" title="">Shyam Partytown Tester</a></small>
+          <small class="copyright__content"><a target="_blank" rel="nofollow" href="https://www.shopify.com?utm_campaign=poweredby&amp;utm_medium=shopify&amp;utm_source=onlinestore">Powered by Shopify</a></small>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+
+
+
+</div>
+
+    <ul hidden>
+      <li id="a11y-refresh-page-message">Choosing a selection results in a full page refresh.</li>
+    </ul>
+
+    <script>
+      window.shopUrl = 'https://shyam-partytown-tester.myshopify.com';
+      window.routes = {
+        cart_add_url: '/cart/add',
+        cart_change_url: '/cart/change',
+        cart_update_url: '/cart/update',
+        predictive_search_url: '/search/suggest'
+      };
+
+      window.cartStrings = {
+        error: `There was an error while updating your cart. Please try again.`,
+        quantityError: `You can only add [quantity] of this item to your cart.`
+      }
+
+      window.variantStrings = {
+        addToCart: `Add to cart`,
+        soldOut: `Sold out`,
+        unavailable: `Unavailable`,
+      }
+
+      window.accessibilityStrings = {
+        imageAvailable: `Image [index] is now available in gallery view`,
+        shareSuccess: `Link copied to clipboard`,
+        pauseSlideshow: `Pause slideshow`,
+        playSlideshow: `Play slideshow`,
+      }
+    </script><script src="//cdn.shopify.com/s/files/1/0617/2678/5721/t/1/assets/predictive-search.js?v=3127871086358158403" defer="defer"></script>
+    
+    <hr />
+    <p><a href="/tests/integrations/shopify/standard.html">Standard Shopify</a></p>
+    <p><a href="/tests/">All Tests</a></p>
+  
+  </body>
+</html>
