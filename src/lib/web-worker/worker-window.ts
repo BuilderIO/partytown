@@ -373,8 +373,8 @@ export const createWindow = (
         win.cancelIdleCallback = (id: number) => clearTimeout(id);
 
         // add storage APIs to the window
-        addStorageApi(win, 'localStorage', webWorkerlocalStorage, isSameOrigin);
-        addStorageApi(win, 'sessionStorage', webWorkerSessionStorage, isSameOrigin);
+        addStorageApi(win, 'localStorage', webWorkerlocalStorage, isSameOrigin, env);
+        addStorageApi(win, 'sessionStorage', webWorkerSessionStorage, isSameOrigin, env);
 
         if (!isSameOrigin) {
           win.indexeddb = undefined;

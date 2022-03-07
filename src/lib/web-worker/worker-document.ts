@@ -20,7 +20,7 @@ import { elementStructurePropNames, IS_TAG_REG, WinIdKey } from './worker-consta
 import { getInstanceStateValue } from './worker-state';
 import { getPartytownScript } from './worker-exec';
 import { isScriptJsType } from './worker-script';
-import { logWorker } from '../log';
+import { warnCrossOrgin } from '../log';
 
 export const patchDocument = (
   WorkerDocument: any,
@@ -40,9 +40,7 @@ export const patchDocument = (
         if (isSameOrigin) {
           return getter(this, ['cookie']);
         } else {
-          if (debug) {
-            logWorker(`Partytown unable to get cross-origin cookie`);
-          }
+          warnCrossOrgin('get', 'cookie', env);
           return '';
         }
       },
@@ -50,7 +48,7 @@ export const patchDocument = (
         if (isSameOrigin) {
           setter(this, ['cookie'], value);
         } else if (debug) {
-          logWorker(`Partytown unable to set cross-origin cookie`);
+          warnCrossOrgin('set', 'cookie', env);
         }
       },
     },

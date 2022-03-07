@@ -1,4 +1,12 @@
-import { ApplyPath, CallType, InstanceId, InterfaceType, NodeName, WinId } from './types';
+import {
+  ApplyPath,
+  CallType,
+  InstanceId,
+  InterfaceType,
+  NodeName,
+  WebWorkerEnvironment,
+  WinId,
+} from './types';
 import {
   ApplyPathKey,
   InstanceDataKey,
@@ -7,6 +15,12 @@ import {
   WinIdKey,
 } from './web-worker/worker-constants';
 import { debug, getConstructorName, isPromise } from './utils';
+
+export const warnCrossOrgin = (
+  apiType: 'get' | 'set' | 'remove' | 'clear',
+  apiName: string,
+  env: WebWorkerEnvironment
+) => console.warn(`Partytown unable to ${apiType} cross-origin ${apiName}: ` + env.$location$);
 
 export const logMain = (msg: string) => {
   if (debug) {

@@ -1,12 +1,14 @@
 import { callMethod } from './worker-proxy';
-import { CallType, StorageItem } from '../types';
+import { CallType, StorageItem, WebWorkerEnvironment } from '../types';
 import { EMPTY_ARRAY } from '../utils';
+import { warnCrossOrgin } from '../log';
 
 export const addStorageApi = (
   win: any,
   storageName: 'localStorage' | 'sessionStorage',
   storages: Map<string, StorageItem[]>,
-  isSameOrigin: boolean
+  isSameOrigin: boolean,
+  env: WebWorkerEnvironment
 ) => {
   let getItems = (items?: StorageItem[]) => {
     items = storages.get(win.origin);
@@ -34,6 +36,8 @@ export const addStorageApi = (
       }
       if (isSameOrigin) {
         callMethod(win, [storageName, 'setItem'], [key, value], CallType.NonBlocking);
+      } else {
+        warnCrossOrgin('set', storageName, env);
       }
     },
 
@@ -44,6 +48,8 @@ export const addStorageApi = (
       }
       if (isSameOrigin) {
         callMethod(win, [storageName, 'removeItem'], [key], CallType.NonBlocking);
+      } else {
+        warnCrossOrgin('remove', storageName, env);
       }
     },
 
@@ -56,6 +62,8 @@ export const addStorageApi = (
       getItems().length = 0;
       if (isSameOrigin) {
         callMethod(win, [storageName, 'clear'], EMPTY_ARRAY, CallType.NonBlocking);
+      } else {
+        warnCrossOrgin('clear', storageName, env);
       }
     },
 
