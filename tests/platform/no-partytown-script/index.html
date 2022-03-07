@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>No Partytown Script</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        font-size: 12px;
+      }
+      h1 {
+        margin: 0 0 15px 0;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        display: block;
+        padding: 16px 8px;
+      }
+      a:link,
+      a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover {
+        background-color: #eee;
+      }
+      strong a {
+        display: inline-block;
+      }
+      li {
+        display: flex;
+        margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button,
+      li a {
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
+        padding: 0;
+      }
+    </style>
+    <script>
+      window.pageErrors = [];
+      window.addEventListener('error', (ev) => {
+        window.pageErrors.push(ev.message);
+      });
+    </script>
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+      };
+    </script>
+    <script src="/~partytown/debug/partytown.js"></script>
+  </head>
+  <body>
+    <h1>No Partytown Script</h1>
+
+    <p>
+      Tests initializing Partytown, however, the page has no text/partytown scripts. Ensure there's
+      no runtime errors.
+    </p>
+
+    <ul>
+      <li>
+        <strong>Page Errors</strong>
+        <code id="testPageErrors">--</code>
+        <script>
+          // used for e2e testing a page w/out Partytown
+          if (window.pageErrors.length > 0) {
+            document.getElementById('testPageErrors').textContent = window.pageErrors.join('<br>');
+          }
+        </script>
+      </li>
+    </ul>
+
+    <hr />
+    <p><a href="/tests/">All Tests</a></p>
+  </body>
+</html>
