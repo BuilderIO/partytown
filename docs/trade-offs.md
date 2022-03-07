@@ -34,6 +34,14 @@ Events handled by third-party scripts that call `event.preventDefault()` will ha
 
 For example, when a user clicks a link on the main thread, a third-party script may have an event handler on that same link, which may have [event.preventDefault()](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault). By the time the web worker receives and event that the link was clicked, it is no longer a synchronous operation and calling `preventDefault()` has no effect. As a side note, you could also see this as a feature when third-party scripts are abusing `scroll` events without using passive event listeners.
 
+## Cross-Origin IFrame Cookies And Storage
+
+If an iframe was created with Partytown, and the _iframe is cross-origin_, then Partytown is unable to get or set the origin's `document.cookie`, `localStorage` or `sessionStorage`. The code will continue to work, however, cookies and storage will not persist.
+
+Setting `document.cookie` is a noop and will not assign anything, and getting a cookie will always return an empty string. Both `localStorage` and `sessionStorage` work as expected, however, the `localStorage` data is not saved across browser sessions. In these scenarios a `console.warn` will be logged.
+
+Note this is only an issue for iframes, created from within a Partytown script, and the created iframe is cross-origin. Partytown scripts, and iframes that have the same origin, do not have this issue.
+
 ## Service Worker
 
 For the Service Worker build, a total of three threads are used: Main Thread, Web Worker, and Service Worker. Note that the [Atomics](/atomics) build only uses two threads.
