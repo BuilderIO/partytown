@@ -78,6 +78,7 @@ export const createWindow = (
   $winId$: WinId,
   $parentWinId$: WinId,
   url: string,
+  $visibilityState$?: string,
   isIframeWindow?: boolean,
   isDocumentImplementation?: boolean
 ) => {
@@ -344,6 +345,7 @@ export const createWindow = (
           $head$: $createNode$(NodeName.Head, $winId$ + WinDocId.head) as any,
           $body$: $createNode$(NodeName.Body, $winId$ + WinDocId.body) as any,
           $location$,
+          $visibilityState$,
           $createNode$,
         });
 

@@ -42,7 +42,8 @@ export type MessageFromSandboxToWorker =
   | [type: WorkerMessageType.InitializedScripts, winId: WinId]
   | [type: WorkerMessageType.RefHandlerCallback, callbackData: RefHandlerCallbackData]
   | [type: WorkerMessageType.ForwardMainTrigger, triggerData: ForwardMainTriggerData]
-  | [type: WorkerMessageType.LocationUpdate, winId: WinId, documentBaseURI: string];
+  | [type: WorkerMessageType.LocationUpdate, winId: WinId, documentBaseURI: string]
+  | [type: WorkerMessageType.DocumentVisibilityState, winId: WinId, visibilityState: string];
 
 export const enum WorkerMessageType {
   MainDataRequestFromWorker,
@@ -57,6 +58,7 @@ export const enum WorkerMessageType {
   ForwardWorkerAccessRequest,
   AsyncAccessRequest,
   LocationUpdate,
+  DocumentVisibilityState,
 }
 
 export interface ForwardMainTriggerData {
@@ -138,6 +140,7 @@ export interface InitializeEnvironmentData {
   $winId$: WinId;
   $parentWinId$: WinId;
   $url$: string;
+  $visibilityState$?: string;
 }
 
 export interface WebWorkerEnvironment {
@@ -149,6 +152,7 @@ export interface WebWorkerEnvironment {
   $head$: HTMLElement;
   $body$: HTMLElement;
   $location$: Location;
+  $visibilityState$?: string;
   $createNode$: (nodeName: string, instanceId: InstanceId, namespace?: string) => WorkerNode;
   $currentScriptId$?: InstanceId;
   $isInitialized$?: number;

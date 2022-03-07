@@ -36,13 +36,15 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
 
       environments[msgValue].$isInitialized$ = 1;
       environments[msgValue].$isLoading$ = 0;
+    } else if (msgType === WorkerMessageType.DocumentVisibilityState) {
+      environments[msgValue].$visibilityState$ = msg[2];
     } else if (msgType === WorkerMessageType.LocationUpdate) {
-      environments[msg[1]].$location$.href = msg[2];
+      environments[msgValue].$location$.href = msg[2];
     }
   } else if (msgType === WorkerMessageType.MainDataResponseToWorker) {
     // received initial main data
     // initialize the web worker with the received the main data
-    initWebWorker(msg[1]);
+    initWebWorker(msgValue);
 
     // send to the main thread that the web worker has been initialized
     webWorkerCtx.$postMessage$([WorkerMessageType.InitializedWebWorker]);

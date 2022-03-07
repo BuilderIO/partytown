@@ -185,7 +185,7 @@ export const patchDocument = (
               CallType.Blocking,
               docId
             );
-            const docEnv = createWindow(winId, winId, env.$location$ + '', true, true);
+            const docEnv = createWindow(winId, winId, env.$location$ + '', 'hidden', true, true);
             return docEnv.$document$;
           },
         };
@@ -215,6 +215,10 @@ export const patchDocument = (
 
     readyState: {
       value: 'complete',
+    },
+
+    visibilityState: {
+      get: () => env.$visibilityState$ || 'visible',
     },
   };
 
