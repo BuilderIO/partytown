@@ -1,6 +1,6 @@
 import { deserializeFromMain } from './worker-serialization';
 import { environments } from './worker-constants';
-import { ForwardMainTriggerData, PlatformInstanceId } from '../types';
+import type { ForwardMainTriggerData } from '../types';
 import { len } from '../utils';
 
 export const workerForwardedTriggerHandle = ({
@@ -18,10 +18,7 @@ export const workerForwardedTriggerHandle = ({
       if (i + 1 < l) {
         target = target[$forward$[i]];
       } else {
-        target[$forward$[i]].apply(
-          target,
-          deserializeFromMain(null, PlatformInstanceId.window, [], $args$)
-        );
+        target[$forward$[i]].apply(target, deserializeFromMain(null, $winId$, [], $args$));
       }
     }
   } catch (e) {

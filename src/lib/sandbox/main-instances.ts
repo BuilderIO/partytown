@@ -1,33 +1,12 @@
-import { CreatedKey, InstanceIdKey, instances, winCtxs } from './main-constants';
-import {
-  InstanceId,
-  MainWindow,
-  MainWindowContext,
-  NodeName,
-  PlatformInstanceId,
-  WinId,
-} from '../types';
+import { CreatedKey, InstanceIdKey, instances, winCtxs, windowIds } from './main-constants';
+import type { InstanceId, WinId } from '../types';
 import { randomId } from '../utils';
 
-export const getAndSetInstanceId = (instance: any, instanceId?: InstanceId, nodeName?: string) => {
+export const getAndSetInstanceId = (instance: any, instanceId?: InstanceId) => {
   if (instance) {
-    if (instance === (instance as any).window) {
-      return PlatformInstanceId.window;
+    if ((instanceId = windowIds.get(instance))) {
+      return instanceId;
     }
-
-    if ((nodeName = (instance as any as Node).nodeName) === NodeName.Document) {
-      return PlatformInstanceId.document;
-    }
-    if (nodeName === NodeName.DocumentElement) {
-      return PlatformInstanceId.documentElement;
-    }
-    if (nodeName === NodeName.Head) {
-      return PlatformInstanceId.head;
-    }
-    if (nodeName === NodeName.Body) {
-      return PlatformInstanceId.body;
-    }
-
     if (!(instanceId = instance[InstanceIdKey])) {
       setInstanceId(instance, (instanceId = randomId()));
     }
@@ -38,30 +17,15 @@ export const getAndSetInstanceId = (instance: any, instanceId?: InstanceId, node
 export const getInstance = <T = any>(
   winId: WinId,
   instanceId: InstanceId,
-  winCtx?: MainWindowContext,
-  win?: MainWindow,
-  doc?: Document
+  docId?: string
 ): T | undefined => {
-  winCtx = winCtxs[winId]!;
-  if (winCtx) {
-    win = winCtx.$window$;
-    if (win) {
-      doc = win.document;
-      if (instanceId === PlatformInstanceId.window) {
-        return win as any;
-      }
-      if (instanceId === PlatformInstanceId.document) {
-        return doc as any;
-      }
-      if (instanceId === PlatformInstanceId.documentElement) {
-        return doc.documentElement as any;
-      }
-      if (instanceId === PlatformInstanceId.head) {
-        return doc.head as any;
-      }
-      if (instanceId === PlatformInstanceId.body) {
-        return doc.body as any;
-      }
+  if (winId === instanceId && winCtxs[winId] && winCtxs[winId]!.$window$) {
+    return winCtxs[winId]!.$window$ as any;
+  } else {
+    [instanceId, docId] = instanceId.split('.');
+    if (docId) {
+      return instances.get(instanceId)[docId];
+    } else {
       return instances.get(instanceId);
     }
   }

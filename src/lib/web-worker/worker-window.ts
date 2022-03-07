@@ -5,7 +5,8 @@ import {
   InstanceId,
   InterfaceType,
   NodeName,
-  PlatformInstanceId,
+  WebWorkerEnvironment,
+  WinDocId,
   WinId,
   WorkerConstructor,
   WorkerInstance,
@@ -52,7 +53,6 @@ import {
   len,
   randomId,
 } from '../utils';
-import { getEnv } from './worker-environment';
 import {
   getInstanceStateValue,
   hasInstanceStateValue,
@@ -78,7 +78,8 @@ export const createWindow = (
   $winId$: WinId,
   $parentWinId$: WinId,
   url: string,
-  isIframeWindow?: boolean
+  isIframeWindow?: boolean,
+  isDocumentImplementation?: boolean
 ) => {
   // base class all Nodes/Elements/Global Constructors will extend
   const WorkerBase = class implements WorkerInstance {
@@ -96,7 +97,7 @@ export const createWindow = (
       instanceData?: any,
       namespace?: string
     ) {
-      this[WinIdKey] = winId!;
+      this[WinIdKey] = winId;
       this[InstanceIdKey] = instanceId!;
       this[ApplyPathKey] = applyPath || [];
       this[InstanceDataKey] = instanceData;
@@ -125,11 +126,13 @@ export const createWindow = (
   const $location$ = new WorkerLocation(url);
   const isSameOrigin = $location$.origin === webWorkerCtx.$origin$;
 
+  const env: WebWorkerEnvironment = {} as any;
+
   // window global eveything will live within
   const WorkerWindow = defineConstructorName(
     class extends WorkerBase implements WorkerWindow {
       constructor() {
-        super($winId$, PlatformInstanceId.window);
+        super($winId$, $winId$);
 
         let win: WorkerWindow = this;
         let value: any;
@@ -141,7 +144,7 @@ export const createWindow = (
             getInitWindowMedia()(
               WorkerBase,
               WorkerEventTargetProxy,
-              environments[$winId$],
+              env,
               win,
               windowMediaConstructors
             );
@@ -168,7 +171,7 @@ export const createWindow = (
 
         win.Window = WorkerWindow;
 
-        createNodeCstr(win, WorkerBase);
+        createNodeCstr(win, env, WorkerBase);
         createCSSStyleDeclarationCstr(win, WorkerBase, 'CSSStyleDeclaration');
         createPerformanceConstructor(win, WorkerBase, 'Performance');
 
@@ -208,7 +211,6 @@ export const createWindow = (
                   definePrototypeProperty(Cstr, memberName, {
                     get(this: WorkerInstance) {
                       if (!hasInstanceStateValue(this, memberName)) {
-                        const winId = this[WinIdKey];
                         const instanceId = this[InstanceIdKey];
                         const applyPath = [...this[ApplyPathKey], memberName];
                         const PropCstr: typeof WorkerBase = win[memberType];
@@ -217,7 +219,7 @@ export const createWindow = (
                           setInstanceStateValue(
                             this,
                             memberName,
-                            new PropCstr(winId, instanceId, applyPath)
+                            new PropCstr($winId$, instanceId, applyPath)
                           );
                         }
                       }
@@ -309,22 +311,22 @@ export const createWindow = (
 
         // patch this window's global constructors with some additional props
         patchElement(win.Element);
-        patchDocument(win.Document, isSameOrigin);
+        patchDocument(win.Document, env, isSameOrigin, isDocumentImplementation);
         patchDocumentFragment(win.DocumentFragment);
-        patchHTMLAnchorElement(win.HTMLAnchorElement);
+        patchHTMLAnchorElement(win.HTMLAnchorElement, env);
         patchHTMLFormElement(win.HTMLFormElement);
-        patchHTMLIFrameElement(win.HTMLIFrameElement);
-        patchHTMLScriptElement(win.HTMLScriptElement);
+        patchHTMLIFrameElement(win.HTMLIFrameElement, env);
+        patchHTMLScriptElement(win.HTMLScriptElement, env);
         patchSvgElement(win.SVGGraphicsElement);
-        patchDocumentElementChild(win.HTMLHeadElement);
-        patchDocumentElementChild(win.HTMLBodyElement);
-        patchHTMLHtmlElement(win.HTMLHtmlElement);
+        patchDocumentElementChild(win.HTMLHeadElement, env);
+        patchDocumentElementChild(win.HTMLBodyElement, env);
+        patchHTMLHtmlElement(win.HTMLHtmlElement, env);
         createCSSStyleSheetConstructor(win, 'CSSStyleSheet');
 
         definePrototypeNodeType(win.Comment, 8);
         definePrototypeNodeType(win.DocumentType, 10);
 
-        environments[$winId$] = {
+        Object.assign(env, {
           $winId$,
           $parentWinId$,
           $window$: new Proxy(win, {
@@ -334,16 +336,16 @@ export const createWindow = (
               // like: <script>globalProp = true</script>
               true,
           }) as any,
-          $document$: $createNode$(NodeName.Document, PlatformInstanceId.document) as any,
+          $document$: $createNode$(NodeName.Document, $winId$ + WinDocId.document) as any,
           $documentElement$: $createNode$(
             NodeName.DocumentElement,
-            PlatformInstanceId.documentElement
+            $winId$ + WinDocId.documentElement
           ) as any,
-          $head$: $createNode$(NodeName.Head, PlatformInstanceId.head) as any,
-          $body$: $createNode$(NodeName.Body, PlatformInstanceId.body) as any,
+          $head$: $createNode$(NodeName.Head, $winId$ + WinDocId.head) as any,
+          $body$: $createNode$(NodeName.Body, $winId$ + WinDocId.body) as any,
           $location$,
           $createNode$,
-        };
+        });
 
         // requestAnimationFrame() is provided by Chrome in a web worker, but not Safari
         win.requestAnimationFrame = (cb: (ts: number) => void) =>
@@ -397,7 +399,7 @@ export const createWindow = (
 
       addEventListener(...args: any[]) {
         if (args[0] === 'load') {
-          if (getEnv(this).$runWindowLoadEvent$) {
+          if (env.$runWindowLoadEvent$) {
             setTimeout(() => args[1]({ type: 'load' }));
           }
         } else {
@@ -406,35 +408,31 @@ export const createWindow = (
       }
 
       get body() {
-        return getEnv(this).$body$;
+        return env.$body$;
       }
 
       get document() {
-        return getEnv(this).$document$;
+        return env.$document$;
       }
 
       get documentElement() {
-        return getEnv(this).$documentElement$;
+        return env.$documentElement$;
       }
 
       fetch(input: string | URL | Request, init: any) {
         input = typeof input === 'string' || input instanceof URL ? String(input) : input.url;
-        return fetch(resolveUrl(getEnv(this), input), init);
+        return fetch(resolveUrl(env, input), init);
       }
 
       get frameElement() {
-        const env = getEnv(this);
-        const parentWinId = env.$parentWinId$;
-        const winId = env.$winId$;
-
-        if (winId === parentWinId) {
+        if ($winId$ === $parentWinId$) {
           // this is the top window, not in an iframe
           return null;
         }
 
         // the winId of an iframe's window is the same
         // as the instanceId of the containing iframe element
-        return getOrCreateNodeInstance(parentWinId, winId, NodeName.IFrame);
+        return getOrCreateNodeInstance($parentWinId$, $winId$, NodeName.IFrame);
       }
 
       get globalThis() {
@@ -442,7 +440,7 @@ export const createWindow = (
       }
 
       get head() {
-        return getEnv(this).$head$;
+        return env.$head$;
       }
 
       get location() {
@@ -453,20 +451,15 @@ export const createWindow = (
       }
 
       get Image() {
-        return createImageConstructor(getEnv(this));
+        return createImageConstructor(env);
       }
 
       get name() {
-        return (
-          name +
-          (debug
-            ? `${normalizedWinId(this[WinIdKey])} (${this[WinIdKey]})`
-            : (this[WinIdKey] as any))
-        );
+        return name + (debug ? `${normalizedWinId($winId$)} (${$winId$})` : ($winId$ as any));
       }
 
       get navigator() {
-        return createNavigator(getEnv(this));
+        return createNavigator(env);
       }
 
       get origin() {
@@ -475,10 +468,7 @@ export const createWindow = (
       set origin(_) {}
 
       get parent() {
-        return proxyAncestorPostMessage(
-          environments[getEnv(this).$parentWinId$].$window$,
-          this[WinIdKey]
-        );
+        return proxyAncestorPostMessage(environments[$parentWinId$].$window$, $winId$);
       }
 
       postMessage(...args: any[]) {
@@ -492,7 +482,7 @@ export const createWindow = (
       get top(): any {
         for (let envWinId in environments) {
           if (environments[envWinId].$winId$ === environments[envWinId].$parentWinId$) {
-            return proxyAncestorPostMessage(environments[envWinId].$window$, this[WinIdKey]);
+            return proxyAncestorPostMessage(environments[envWinId].$window$, $winId$);
           }
         }
       }
@@ -502,7 +492,6 @@ export const createWindow = (
       }
 
       get XMLHttpRequest() {
-        const env = getEnv(this);
         const Xhr = XMLHttpRequest;
         const str = String(Xhr);
         const ExtendedXhr = defineConstructorName(
@@ -555,6 +544,8 @@ export const createWindow = (
   cachedDimensionMethods(WorkerWindow, ['getComputedStyle']);
 
   new WorkerWindow();
+
+  return env;
 };
 
 const proxyAncestorPostMessage = (parentWin: any, $winId$: WinId) =>

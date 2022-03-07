@@ -3,7 +3,6 @@ import { getInstance, getAndSetInstanceId } from './main-instances';
 import { mainRefs } from './main-constants';
 import {
   PartytownWebWorker,
-  PlatformInstanceId,
   SerializedCSSRule,
   SerializedInstance,
   SerializedObject,
@@ -42,13 +41,7 @@ export const serializeForWorker = (
         // error reading this object, probably "DOMException: Blocked from accessing a cross-origin frame."
         return [SerializedType.Object, {}];
       } else if (cstrName === 'Window') {
-        return [
-          SerializedType.Instance,
-          {
-            $winId$,
-            $instanceId$: PlatformInstanceId.window,
-          },
-        ];
+        return [SerializedType.Instance, [$winId$, $winId$]];
       } else if (cstrName === 'HTMLCollection' || cstrName === 'NodeList') {
         return [
           SerializedType.NodeList,
@@ -68,14 +61,7 @@ export const serializeForWorker = (
       } else if (cstrName === 'Attr') {
         return [SerializedType.Attr, [(value as Attr).name, (value as Attr).value]];
       } else if (value.nodeType) {
-        return [
-          SerializedType.Instance,
-          {
-            $winId$,
-            $instanceId$: getAndSetInstanceId(value)!,
-            $nodeName$: value.nodeName,
-          },
-        ];
+        return [SerializedType.Instance, [$winId$, getAndSetInstanceId(value)!, value.nodeName]];
       } else {
         return [SerializedType.Object, serializeObjectForWorker($winId$, value, added, true, true)];
       }
@@ -133,7 +119,7 @@ export const deserializeFromWorker = (
 ): any => {
   if (serializedTransfer) {
     serializedType = serializedTransfer[0];
-    serializedValue = serializedTransfer[1] as any;
+    serializedValue = serializedTransfer[1];
 
     if (serializedType === SerializedType.Primitive) {
       return serializedValue;
@@ -143,8 +129,8 @@ export const deserializeFromWorker = (
       return (serializedValue as SerializedTransfer[]).map((v) => deserializeFromWorker(worker, v));
     } else if (serializedType === SerializedType.Instance) {
       return getInstance(
-        (serializedValue as SerializedInstance).$winId$,
-        (serializedValue as SerializedInstance).$instanceId$!
+        (serializedValue as SerializedInstance)[0],
+        (serializedValue as SerializedInstance)[1]
       );
     } else if (serializedType === SerializedType.Event) {
       return constructEvent(deserializeObjectFromWorker(worker, serializedValue));

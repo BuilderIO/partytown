@@ -1,12 +1,4 @@
-import {
-  ApplyPath,
-  CallType,
-  InstanceId,
-  InterfaceType,
-  NodeName,
-  PlatformInstanceId,
-  WinId,
-} from './types';
+import { ApplyPath, CallType, InstanceId, InterfaceType, NodeName, WinId } from './types';
 import {
   ApplyPathKey,
   InstanceDataKey,
@@ -144,16 +136,8 @@ const getTargetProp = (target: any, applyPath: ApplyPath) => {
   if (target) {
     const instanceId = target[InstanceIdKey];
     const cstrName = getConstructorName(target);
-    if (instanceId === PlatformInstanceId.window) {
+    if (cstrName === 'Window') {
       n = '';
-    } else if (instanceId === PlatformInstanceId.document) {
-      n = 'document.';
-    } else if (instanceId === PlatformInstanceId.documentElement) {
-      n = 'document.documentElement.';
-    } else if (instanceId === PlatformInstanceId.head) {
-      n = 'document.head.';
-    } else if (instanceId === PlatformInstanceId.body) {
-      n = 'document.body.';
     } else if (typeof target[InstanceDataKey] === 'string') {
       let nodeName: string = target[InstanceDataKey];
       if (nodeName === NodeName.Text) {
@@ -221,20 +205,9 @@ const getLogValue = (applyPath: ApplyPath, v: any): string => {
   }
   if (type === 'object') {
     const instanceId: InstanceId = v[InstanceIdKey];
+    const cstrName = getConstructorName(v);
     if (typeof instanceId === 'string') {
-      if (instanceId === PlatformInstanceId.body) {
-        return `<body>`;
-      }
-      if (instanceId === PlatformInstanceId.document) {
-        return NodeName.Document;
-      }
-      if (instanceId === PlatformInstanceId.documentElement) {
-        return `<html>`;
-      }
-      if (instanceId === PlatformInstanceId.head) {
-        return `<head>`;
-      }
-      if (instanceId === PlatformInstanceId.window) {
+      if (cstrName === 'Window') {
         return `window`;
       }
 

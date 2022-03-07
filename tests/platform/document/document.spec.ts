@@ -87,4 +87,7 @@ test('document', async ({ page }) => {
 
   const testCreateElementError = page.locator('#testCreateElementError');
   await expect(testCreateElementError).toHaveText('errored');
+
+  const testCreateHTMLDocument = page.locator('#testCreateHTMLDocument');
+  await expect(testCreateHTMLDocument).toHaveText('88mph');
 });

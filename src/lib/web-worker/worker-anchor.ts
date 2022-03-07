@@ -1,18 +1,16 @@
 import { commaSplit } from './worker-constants';
 import { definePrototypePropertyDescriptor } from '../utils';
-import { getEnv } from './worker-environment';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getter, setter } from './worker-proxy';
 import { resolveToUrl } from './worker-exec';
-import { StateProp, WorkerNode, WorkerWindow } from '../types';
+import { StateProp, WebWorkerEnvironment, WorkerNode } from '../types';
 
-export const patchHTMLAnchorElement = (WorkerHTMLAnchorElement: any) => {
+export const patchHTMLAnchorElement = (WorkerHTMLAnchorElement: any, env: WebWorkerEnvironment) => {
   const HTMLAnchorDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {};
 
   commaSplit('hash,host,hostname,href,origin,pathname,port,protocol,search').map((anchorProp) => {
     HTMLAnchorDescriptorMap[anchorProp] = {
       get(this: any) {
-        let env = getEnv(this);
         let value = getInstanceStateValue(this, StateProp.url);
         let href: string;
 
@@ -26,7 +24,6 @@ export const patchHTMLAnchorElement = (WorkerHTMLAnchorElement: any) => {
       },
 
       set(this: any, value) {
-        let env = getEnv(this);
         let href = getInstanceStateValue(this, StateProp.url);
         let url: any = resolveToUrl(env, href);
 

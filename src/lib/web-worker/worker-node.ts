@@ -4,6 +4,7 @@ import {
   CallType,
   NodeName,
   StateProp,
+  WebWorkerEnvironment,
   WorkerConstructor,
   WorkerMessageType,
   WorkerNode,
@@ -16,12 +17,15 @@ import {
   WinIdKey,
 } from './worker-constants';
 import { defineConstructorName, SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
-import { getEnv } from './worker-environment';
 import { getInstanceStateValue } from './worker-state';
 import { insertIframe, runScriptContent } from './worker-exec';
 import { isScriptJsType } from './worker-script';
 
-export const createNodeCstr = (win: any, WorkerBase: WorkerConstructor) => {
+export const createNodeCstr = (
+  win: any,
+  env: WebWorkerEnvironment,
+  WorkerBase: WorkerConstructor
+) => {
   const WorkerNode = defineConstructorName(
     class extends WorkerBase {
       appendChild(node: WorkerNode) {
@@ -50,13 +54,7 @@ export const createNodeCstr = (win: any, WorkerBase: WorkerConstructor) => {
 
           if (scriptContent) {
             if (isScriptJsType(scriptType)) {
-              const errorMsg = runScriptContent(
-                getEnv(newNode),
-                instanceId,
-                scriptContent,
-                winId,
-                ''
-              );
+              const errorMsg = runScriptContent(env, instanceId, scriptContent, winId, '');
               const datasetType = errorMsg ? 'pterror' : 'ptid';
               const datasetValue = errorMsg || instanceId;
               setter(newNode, ['type'], SCRIPT_TYPE + SCRIPT_TYPE_EXEC);
@@ -90,7 +88,7 @@ export const createNodeCstr = (win: any, WorkerBase: WorkerConstructor) => {
       }
 
       get ownerDocument(): Document {
-        return getEnv(this).$document$;
+        return env.$document$;
       }
     },
     'Node'

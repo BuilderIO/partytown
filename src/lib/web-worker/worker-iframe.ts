@@ -1,13 +1,19 @@
-import { createEnvironment, getEnv } from './worker-environment';
+import { createEnvironment } from './worker-environment';
 import { definePrototypePropertyDescriptor, SCRIPT_TYPE } from '../utils';
 import { environments, InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
 import { getPartytownScript, resolveUrl } from './worker-exec';
 import { getter, sendToMain, setter } from './worker-proxy';
 import { HTMLSrcElementDescriptorMap } from './worker-src-element';
 import { setInstanceStateValue } from './worker-state';
-import { StateProp, WorkerInstance, WorkerMessageType, WorkerNode } from '../types';
+import {
+  StateProp,
+  WebWorkerEnvironment,
+  WorkerInstance,
+  WorkerMessageType,
+  WorkerNode,
+} from '../types';
 
-export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any) => {
+export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any, env: WebWorkerEnvironment) => {
   const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
     contentDocument: {
       get() {
@@ -32,7 +38,7 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any) => {
           let xhrStatus: number;
           let env = getIframeEnv(this);
 
-          env.$location$.href = src = resolveUrl(getEnv(this), src);
+          env.$location$.href = src = resolveUrl(env, src);
           env.$isLoading$ = 1;
 
           setInstanceStateValue(this, StateProp.loadErrorStatus, undefined);
