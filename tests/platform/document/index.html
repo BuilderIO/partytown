@@ -416,10 +416,21 @@
         <script type="text/partytown">
           (function () {
             const doc = document.implementation.createHTMLDocument();
-            doc.body.textContent = '88mph';
+            doc.body.textContent = '88mph ' + doc.visibilityState;
 
             const elm = document.getElementById('testCreateHTMLDocument');
             elm.textContent = doc.body.textContent;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>visibilityState</strong>
+        <code id="testVisibilityState"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testVisibilityState');
+            elm.textContent = document.visibilityState;
           })();
         </script>
       </li>

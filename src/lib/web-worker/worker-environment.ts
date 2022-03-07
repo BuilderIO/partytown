@@ -5,13 +5,19 @@ import { InitializeEnvironmentData, WorkerMessageType } from '../types';
 import { logWorker, normalizedWinId } from '../log';
 
 export const createEnvironment = (
-  { $winId$, $parentWinId$, $url$ }: InitializeEnvironmentData,
+  { $winId$, $parentWinId$, $url$, $visibilityState$ }: InitializeEnvironmentData,
   isIframeWindow?: boolean
 ) => {
   if (!environments[$winId$]) {
     // create a simulated global environment for this window
     // if it hasn't already been created (like an iframe)
-    environments[$winId$] = createWindow($winId$, $parentWinId$, $url$, isIframeWindow);
+    environments[$winId$] = createWindow(
+      $winId$,
+      $parentWinId$,
+      $url$,
+      $visibilityState$,
+      isIframeWindow
+    );
 
     if (debug) {
       const winType = $winId$ === $parentWinId$ ? 'top' : 'iframe';

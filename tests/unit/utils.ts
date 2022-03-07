@@ -128,6 +128,7 @@ function createWorkerWindownEnvironment(winId: WinId) {
     $head$: {} as any,
     $body$: {} as any,
     $location$: {} as any,
+    $visibilityState$: 'visible',
     $createNode$: () => null as any,
   };
 

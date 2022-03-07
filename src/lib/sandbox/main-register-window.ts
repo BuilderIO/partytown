@@ -23,6 +23,7 @@ export const registerWindow = (
           $winId$,
           $parentWinId$,
           $url$: doc.baseURI,
+          $visibilityState$: doc.visibilityState,
         },
       ]);
 
@@ -48,6 +49,9 @@ export const registerWindow = (
 
     $window$.addEventListener('popstate', onLocationChange);
     $window$.addEventListener('hashchange', onLocationChange);
+    doc.addEventListener('visibilitychange', () =>
+      worker.postMessage([WorkerMessageType.DocumentVisibilityState, $winId$, doc.visibilityState])
+    );
 
     winCtxs[$winId$] = {
       $winId$,

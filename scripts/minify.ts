@@ -102,6 +102,7 @@ function managlePropsPlugin(): Plugin {
     $tasks$: '',
     $thisArg$: '',
     $url$: '',
+    $visibilityState$: '',
     $window$: '',
     $winId$: '',
   };
