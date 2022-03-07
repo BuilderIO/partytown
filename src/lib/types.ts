@@ -140,7 +140,9 @@ export interface InitializeEnvironmentData {
   $url$: string;
 }
 
-export interface WebWorkerEnvironment extends Omit<InitializeEnvironmentData, '$url$'> {
+export interface WebWorkerEnvironment {
+  $winId$: WinId;
+  $parentWinId$: WinId;
   $window$: Window;
   $document$: Document;
   $documentElement$: HTMLElement;
@@ -182,12 +184,11 @@ export const enum InterfaceType {
   EnvGlobalConstructor = 12,
 }
 
-export const enum PlatformInstanceId {
-  window = '0',
-  document = '1',
-  documentElement = '2',
-  head = '3',
-  body = '4',
+export const enum WinDocId {
+  document = 'd',
+  documentElement = 'd.documentElement',
+  head = 'd.head',
+  body = 'd.body',
 }
 
 export interface InitializeScriptData {
@@ -315,18 +316,16 @@ export interface SerializedObject {
   [key: string]: SerializedTransfer | undefined;
 }
 
-export interface SerializedInstance {
-  $winId$: WinId;
-  $instanceId$: InstanceId;
-  /**
-   * Node name for Node instances
-   */
-  $nodeName$?: string;
-  /**
-   * Instance data
-   */
-  $data$?: any;
-}
+export type SerializedInstance =
+  | [type: WinId, type: InstanceId]
+  | [
+      type: WinId,
+      type: InstanceId,
+      /**
+       * Node name for Node instances
+       */
+      type: string
+    ];
 
 /**
  * https://partytown.builder.io/configuration

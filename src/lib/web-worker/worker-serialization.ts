@@ -1,7 +1,6 @@
 import {
   ApplyPath,
   InstanceId,
-  PlatformInstanceId,
   RefHandlerCallbackData,
   RefId,
   SerializedAttr,
@@ -59,13 +58,7 @@ export const serializeForMain = (
       }
     } else if (type === 'object') {
       if (value[InstanceIdKey]) {
-        return [
-          SerializedType.Instance,
-          {
-            $winId$: value[WinIdKey],
-            $instanceId$: value[InstanceIdKey],
-          },
-        ];
+        return [SerializedType.Instance, [value[WinIdKey], value[InstanceIdKey]]];
       } else if (value instanceof Event) {
         return [
           SerializedType.Event,
@@ -219,31 +212,15 @@ export const deserializeFromMain = (
   }
 };
 
-export const getOrCreateSerializedInstance = ({
-  $winId$,
-  $instanceId$,
-  $nodeName$,
-}: SerializedInstance): any =>
-  getPlatformInstance($winId$, $instanceId$) ||
-  getOrCreateNodeInstance($winId$, $instanceId$!, $nodeName$!);
-
-export const getPlatformInstance = (
-  winId: WinId,
-  instanceId: InstanceId | undefined,
-  env?: WebWorkerEnvironment
-) => {
-  if ((env = environments[winId]) && instanceId === PlatformInstanceId.window) {
-    return env.$window$;
-  } else if (instanceId === PlatformInstanceId.document) {
-    return env.$document$;
-  } else if (instanceId === PlatformInstanceId.documentElement) {
-    return env.$documentElement$;
-  } else if (instanceId === PlatformInstanceId.head) {
-    return env.$head$;
-  } else if (instanceId === PlatformInstanceId.body) {
-    return env.$body$;
+export const getOrCreateSerializedInstance = ([
+  winId,
+  instanceId,
+  nodeName,
+]: SerializedInstance): any => {
+  if (instanceId === winId && environments[winId]) {
+    return environments[winId].$window$;
   } else {
-    return;
+    return getOrCreateNodeInstance(winId, instanceId, nodeName!);
   }
 };
 

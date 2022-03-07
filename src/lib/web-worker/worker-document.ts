@@ -1,12 +1,20 @@
 import { callMethod, getter, setter } from './worker-proxy';
-import { CallType, NodeName, StateProp, WorkerNode } from '../types';
-import { createEnvironment, getEnv, getEnvWindow } from './worker-environment';
+import {
+  CallType,
+  NodeName,
+  StateProp,
+  WebWorkerEnvironment,
+  WinDocId,
+  WorkerNode,
+} from '../types';
 import {
   cachedProps,
   cachedTreeProps,
   definePrototypeNodeType,
   getOrCreateNodeInstance,
 } from './worker-constructors';
+import { createEnvironment } from './worker-environment';
+import { createWindow } from './worker-window';
 import { debug, definePrototypePropertyDescriptor, randomId, SCRIPT_TYPE } from '../utils';
 import { elementStructurePropNames, IS_TAG_REG, WinIdKey } from './worker-constants';
 import { getInstanceStateValue } from './worker-state';
@@ -14,11 +22,16 @@ import { getPartytownScript } from './worker-exec';
 import { isScriptJsType } from './worker-script';
 import { logWorker } from '../log';
 
-export const patchDocument = (WorkerDocument: any, isSameOrigin: boolean) => {
+export const patchDocument = (
+  WorkerDocument: any,
+  env: WebWorkerEnvironment,
+  isSameOrigin: boolean,
+  isDocumentImplementation?: boolean
+) => {
   const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
     body: {
       get() {
-        return getEnv(this).$body$;
+        return env.$body$;
       },
     },
 
@@ -49,13 +62,14 @@ export const patchDocument = (WorkerDocument: any, isSameOrigin: boolean) => {
           throw tagName + ' not valid';
         }
 
+        const isIframe = tagName === NodeName.IFrame;
         const winId = this[WinIdKey];
-        const instanceId = randomId();
+        const instanceId = (isIframe ? 'f_' : '') + randomId();
         const elm = getOrCreateNodeInstance(winId, instanceId, tagName);
 
         callMethod(this, ['createElement'], [tagName], CallType.NonBlocking, instanceId);
 
-        if (tagName === NodeName.IFrame) {
+        if (isIframe) {
           // an iframe element's instanceId is the same as its contentWindow's winId
           // and the contentWindow's parentWinId is the iframe element's winId
           const env = createEnvironment(
@@ -74,7 +88,7 @@ export const patchDocument = (WorkerDocument: any, isSameOrigin: boolean) => {
 
           setter(elm, ['srcdoc'], getPartytownScript());
         } else if (tagName === NodeName.Script) {
-          const scriptType = getInstanceStateValue(elm, StateProp.type);
+          const scriptType = getInstanceStateValue(elm!, StateProp.type);
           if (isScriptJsType(scriptType)) {
             setter(elm, ['type'], SCRIPT_TYPE);
           }
@@ -119,10 +133,8 @@ export const patchDocument = (WorkerDocument: any, isSameOrigin: boolean) => {
 
     currentScript: {
       get() {
-        const winId = this[WinIdKey];
-        const currentScriptId = getEnv(this).$currentScriptId$!;
-        if (currentScriptId) {
-          return getOrCreateNodeInstance(winId, currentScriptId, NodeName.Script);
+        if (env.$currentScriptId$) {
+          return getOrCreateNodeInstance(this[WinIdKey], env.$currentScriptId$, NodeName.Script);
         }
         return null;
       },
@@ -130,13 +142,13 @@ export const patchDocument = (WorkerDocument: any, isSameOrigin: boolean) => {
 
     defaultView: {
       get() {
-        return getEnvWindow(this);
+        return !isDocumentImplementation ? env.$window$ : null;
       },
     },
 
     documentElement: {
       get() {
-        return getEnv(this).$documentElement$;
+        return env.$documentElement$;
       },
     },
 
@@ -144,9 +156,9 @@ export const patchDocument = (WorkerDocument: any, isSameOrigin: boolean) => {
       value(tagName: string) {
         tagName = tagName.toUpperCase();
         if (tagName === NodeName.Body) {
-          return [getEnv(this).$body$];
+          return [env.$body$];
         } else if (tagName === NodeName.Head) {
-          return [getEnv(this).$head$];
+          return [env.$head$];
         } else {
           return callMethod(this, ['getElementsByTagName'], [tagName]);
         }
@@ -155,22 +167,37 @@ export const patchDocument = (WorkerDocument: any, isSameOrigin: boolean) => {
 
     head: {
       get() {
-        return getEnv(this).$head$;
+        return env.$head$;
       },
     },
 
     implementation: {
-      value: {
-        hasFeature: () => true,
+      get() {
+        return {
+          hasFeature: () => true,
+          createHTMLDocument: (title: string) => {
+            const winId = randomId();
+            const docId = winId + WinDocId.document;
+            callMethod(
+              this,
+              ['implementation', 'createHTMLDocument'],
+              [title],
+              CallType.Blocking,
+              docId
+            );
+            const docEnv = createWindow(winId, winId, env.$location$ + '', true, true);
+            return docEnv.$document$;
+          },
+        };
       },
     },
 
     location: {
       get() {
-        return getEnv(this).$location$;
+        return env.$location$;
       },
       set(url) {
-        getEnv(this).$location$.href = url + '';
+        env.$location$.href = url + '';
       },
     },
 
@@ -196,7 +223,10 @@ export const patchDocument = (WorkerDocument: any, isSameOrigin: boolean) => {
   cachedProps(WorkerDocument, 'compatMode,referrer,forms');
 };
 
-export const patchDocumentElementChild = (WokerDocumentElementChild: any) => {
+export const patchDocumentElementChild = (
+  WokerDocumentElementChild: any,
+  env: WebWorkerEnvironment
+) => {
   const DocumentElementChildDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
     parentElement: {
       get() {
@@ -205,21 +235,21 @@ export const patchDocumentElementChild = (WokerDocumentElementChild: any) => {
     },
     parentNode: {
       get() {
-        return getEnv(this).$documentElement$;
+        return env.$documentElement$;
       },
     },
   };
   definePrototypePropertyDescriptor(WokerDocumentElementChild, DocumentElementChildDescriptorMap);
 };
 
-export const patchHTMLHtmlElement = (WorkerHTMLHtmlElement: any) => {
+export const patchHTMLHtmlElement = (WorkerHTMLHtmlElement: any, env: WebWorkerEnvironment) => {
   const DocumentElementDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
     parentElement: {
       value: null,
     },
     parentNode: {
       get() {
-        return getEnv(this).$document$;
+        return env.$document$;
       },
     },
   };

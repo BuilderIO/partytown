@@ -20,12 +20,12 @@ import type { InstanceId, WinId, WorkerInstance, WorkerNode } from '../types';
 export const getOrCreateNodeInstance = (
   winId: WinId,
   instanceId: InstanceId,
-  nodeName: string,
+  nodeName?: string,
   namespace?: string,
   instance?: WorkerNode
 ) => {
   instance = webWorkerInstances.get(instanceId);
-  if (!instance) {
+  if (!instance && nodeName && environments[winId]) {
     instance = environments[winId].$createNode$(nodeName, instanceId, namespace);
     webWorkerInstances.set(instanceId, instance!);
   }

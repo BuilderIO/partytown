@@ -35,7 +35,7 @@ export const mainAccessHandler = async (
       winId = task.$winId$;
       applyPath = task.$applyPath$;
 
-      if (!winCtxs[winId]) {
+      if (winId.startsWith('f_') && !winCtxs[winId]) {
         // window (iframe) hasn't finished loading yet
         await new Promise<void>((resolve) => {
           let check = 0;

@@ -34,7 +34,7 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
       setInstanceStateValue(instance!, StateProp.url, scriptSrc);
 
       if (debug && webWorkerCtx.$config$.logScriptExecution) {
-        logWorker(`Execute script (${instanceId}) src: ${scriptOrgSrc}`, winId);
+        logWorker(`Execute script src: ${scriptOrgSrc}`, winId);
       }
 
       rsp = await fetch(scriptSrc);
@@ -77,7 +77,7 @@ export const runScriptContent = (
   try {
     if (debug && webWorkerCtx.$config$.logScriptExecution) {
       logWorker(
-        `Execute script (${instanceId}): ${scriptContent
+        `Execute script: ${scriptContent
           .substring(0, 100)
           .split('\n')
           .map((l) => l.trim())

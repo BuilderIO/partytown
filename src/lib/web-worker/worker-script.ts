@@ -1,12 +1,11 @@
 import { definePrototypePropertyDescriptor } from '../utils';
-import { getEnv } from './worker-environment';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getter, setter } from './worker-proxy';
 import { HTMLSrcElementDescriptorMap } from './worker-src-element';
 import { resolveUrl } from './worker-exec';
-import { StateProp, WorkerNode } from '../types';
+import { StateProp, WebWorkerEnvironment, WorkerNode } from '../types';
 
-export const patchHTMLScriptElement = (WorkerHTMLScriptElement: any) => {
+export const patchHTMLScriptElement = (WorkerHTMLScriptElement: any, env: WebWorkerEnvironment) => {
   const HTMLScriptDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
     innerHTML: innerHTMLDescriptor,
     innerText: innerHTMLDescriptor,
@@ -16,7 +15,6 @@ export const patchHTMLScriptElement = (WorkerHTMLScriptElement: any) => {
         return getInstanceStateValue<string>(this, StateProp.url) || '';
       },
       set(url: string) {
-        const env = getEnv(this);
         const orgUrl = resolveUrl(env, url, true);
         url = resolveUrl(env, url);
         setInstanceStateValue(this, StateProp.url, url);

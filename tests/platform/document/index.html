@@ -410,6 +410,20 @@
         </script>
       </li>
 
+      <li>
+        <strong>implementation.createHTMLDocument("")</strong>
+        <code id="testCreateHTMLDocument"></code>
+        <script type="text/partytown">
+          (function () {
+            const doc = document.implementation.createHTMLDocument();
+            doc.body.textContent = '88mph';
+
+            const elm = document.getElementById('testCreateHTMLDocument');
+            elm.textContent = doc.body.textContent;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');
