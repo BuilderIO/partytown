@@ -710,6 +710,32 @@
         </script>
       </li>
 
+      <li>
+        <strong>CustomElements</strong>
+        <code id="testWindowCustomElements"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testWindowCustomElements');
+            class MyTitle extends HTMLElement {
+              connectedCallback() {
+                this.innerHTML = `
+                  <style>
+                    h1 {
+                      font-size: 2.5rem;
+                      color: hotpink;
+                    }
+                  </style>
+                  <h1>Hello Alligator!</h1>
+                `;
+              }
+            }
+
+            customElements.define('my-title', MyTitle);
+            elm.textContent = typeof customElements.get('my-title');
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

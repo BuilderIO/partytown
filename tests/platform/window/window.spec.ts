@@ -142,4 +142,7 @@ test('window', async ({ page }) => {
 
   const testWorkerGlobalScope = page.locator('#testWorkerGlobalScope');
   await expect(testWorkerGlobalScope).toHaveText('false');
+
+  const testCustomElements = page.locator('#testCustomElements');
+  await expect(testCustomElements).toHaveText('');
 });
