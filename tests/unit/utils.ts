@@ -1,14 +1,16 @@
 import { suite as uvuSuite } from 'uvu';
 import type {
   MainWindow,
+  PartytownConfig,
   PartytownWebWorker,
   WebWorkerEnvironment,
   WinId,
 } from '../../src/lib/types';
-import { environments } from '../../src/lib/web-worker/worker-constants';
+import { environments, webWorkerCtx } from '../../src/lib/web-worker/worker-constants';
 import { createWindow } from 'domino';
 import { readFileSync } from 'fs';
 import { join } from 'path';
+import { randomId } from '../../src/lib/utils';
 
 export const suite = (title?: string) => {
   const s = uvuSuite<TestContext>(title);
@@ -19,13 +21,15 @@ export const suite = (title?: string) => {
   }
 
   s.before.each((ctx) => {
-    ctx.winId = Math.round(Math.random() * Number.MAX_SAFE_INTEGER).toString(36);
+    ctx.winId = randomId();
     ctx.win = ctx.window = getWindow();
     ctx.top = ctx.win;
     ctx.doc = ctx.document = ctx.window.document;
     ctx.nav = ctx.navigator = getNavigator();
+    ctx.loc = ctx.location = ctx.window.location;
     ctx.worker = getWorker();
-    ctx.env = createWorkerWindownEnvironment(ctx.winId);
+    webWorkerCtx.$config$ = ctx.config = {};
+    ctx.env = createWorkerWindownEnvironment(ctx);
     ctx.snippetCode = _partytownSnippet!;
     ctx.doc.addEventListener = (_: any, cb: any) => cb();
     ctx.run = (code) => {
@@ -66,7 +70,10 @@ export interface TestContext {
    * Same as "navigator", but NOT typed
    */
   nav: any;
+  location: Location;
+  loc: any;
   worker: TestWorker;
+  config: PartytownConfig;
   env: WebWorkerEnvironment;
   snippetCode: string;
   run: (code: string) => any;
@@ -114,23 +121,23 @@ export interface TestNavigator extends Navigator {
   $serviceWorkerOptions?: any;
 }
 
-function createWorkerWindownEnvironment(winId: WinId) {
+function createWorkerWindownEnvironment(ctx: TestContext) {
   for (const winId in environments) {
     delete environments[winId];
   }
 
-  environments[winId] = {
-    $winId$: winId,
-    $parentWinId$: winId,
-    $window$: {} as any,
-    $document$: {} as any,
-    $documentElement$: {} as any,
-    $head$: {} as any,
-    $body$: {} as any,
-    $location$: {} as any,
+  environments[ctx.winId] = {
+    $winId$: ctx.winId,
+    $parentWinId$: ctx.winId,
+    $window$: ctx.window,
+    $document$: ctx.document,
+    $documentElement$: ctx.document.documentElement,
+    $head$: ctx.document.head,
+    $body$: ctx.document.body,
+    $location$: ctx.window.location,
     $visibilityState$: 'visible',
     $createNode$: () => null as any,
   };
 
-  return environments[winId];
+  return environments[ctx.winId];
 }
