@@ -36,7 +36,7 @@ export function snippet(
           top!.dispatchEvent(new CustomEvent('pt1', { detail: win }));
         } else {
           // set a timeout to fire if PT hasn't initialized in Xms
-          timeout = setTimeout(fallback, 10000);
+          timeout = setTimeout(fallback, 10000000000);
           doc.addEventListener('pt0', clearFallback);
 
           if (useAtomics) {
