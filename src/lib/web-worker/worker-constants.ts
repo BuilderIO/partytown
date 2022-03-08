@@ -36,6 +36,8 @@ export const environments: { [winId: WinId]: WebWorkerEnvironment } = {};
 export const cachedDimensions = /*#__PURE__*/ new Map<string, any>();
 export const cachedStructure = /*#__PURE__*/ new Map<string, any>();
 
+export const ABOUT_BLANK = 'about:blank';
+
 export const commaSplit = (str: string) => str.split(',');
 
 export const partytownLibUrl = (url: string) => {

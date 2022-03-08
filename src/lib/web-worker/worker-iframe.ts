@@ -1,6 +1,12 @@
 import { createEnvironment } from './worker-environment';
 import { definePrototypePropertyDescriptor, SCRIPT_TYPE } from '../utils';
-import { environments, InstanceIdKey, webWorkerCtx, WinIdKey } from './worker-constants';
+import {
+  ABOUT_BLANK,
+  environments,
+  InstanceIdKey,
+  webWorkerCtx,
+  WinIdKey,
+} from './worker-constants';
 import { getPartytownScript, resolveUrl } from './worker-exec';
 import { getter, sendToMain, setter } from './worker-proxy';
 import { HTMLSrcElementDescriptorMap } from './worker-src-element';
@@ -86,7 +92,7 @@ const getIframeEnv = (iframe: WorkerInstance) => {
         $winId$,
         // iframe contentWindow parent winId is the iframe element's winId
         $parentWinId$: iframe[WinIdKey],
-        $url$: getter(iframe, ['src']) || 'about:blank',
+        $url$: getter(iframe, ['src']) || ABOUT_BLANK,
       },
       true
     );

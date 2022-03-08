@@ -90,7 +90,7 @@
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testTop');
-            elm.textContent = window.top.name === window.name;
+            elm.textContent = String(window.top === window);
           })();
         </script>
       </li>
@@ -101,7 +101,7 @@
         <script type="text/partytown">
           (function () {
             const elm = document.getElementById('testParent');
-            elm.textContent = window.parent.name === window.name;
+            elm.textContent = String(window.parent === window);
           })();
         </script>
       </li>

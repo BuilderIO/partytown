@@ -14,6 +14,7 @@ import {
   WorkerWindow,
 } from '../types';
 import {
+  ABOUT_BLANK,
   ApplyPathKey,
   commaSplit,
   environments,
@@ -125,7 +126,8 @@ export const createWindow = (
   );
 
   const $location$ = new WorkerLocation(url);
-  const isSameOrigin = $location$.origin === webWorkerCtx.$origin$;
+  const $isSameOrigin$ =
+    $location$.origin === webWorkerCtx.$origin$ || $location$.origin === ABOUT_BLANK;
 
   const env: WebWorkerEnvironment = {} as any;
 
@@ -312,7 +314,7 @@ export const createWindow = (
 
         // patch this window's global constructors with some additional props
         patchElement(win.Element);
-        patchDocument(win.Document, env, isSameOrigin, isDocumentImplementation);
+        patchDocument(win.Document, env, isDocumentImplementation);
         patchDocumentFragment(win.DocumentFragment);
         patchHTMLAnchorElement(win.HTMLAnchorElement, env);
         patchHTMLFormElement(win.HTMLFormElement);
@@ -346,6 +348,7 @@ export const createWindow = (
           $body$: $createNode$(NodeName.Body, $winId$ + WinDocId.body) as any,
           $location$,
           $visibilityState$,
+          $isSameOrigin$,
           $createNode$,
         });
 
@@ -373,10 +376,10 @@ export const createWindow = (
         win.cancelIdleCallback = (id: number) => clearTimeout(id);
 
         // add storage APIs to the window
-        addStorageApi(win, 'localStorage', webWorkerlocalStorage, isSameOrigin, env);
-        addStorageApi(win, 'sessionStorage', webWorkerSessionStorage, isSameOrigin, env);
+        addStorageApi(win, 'localStorage', webWorkerlocalStorage, $isSameOrigin$, env);
+        addStorageApi(win, 'sessionStorage', webWorkerSessionStorage, $isSameOrigin$, env);
 
-        if (!isSameOrigin) {
+        if (!$isSameOrigin$) {
           win.indexeddb = undefined;
         }
 
@@ -469,11 +472,26 @@ export const createWindow = (
       }
       set origin(_) {}
 
-      get parent() {
-        return proxyAncestorPostMessage(environments[$parentWinId$].$window$, $winId$);
+      get parent(): any {
+        for (let envWinId in environments) {
+          if (environments[envWinId].$winId$ === $parentWinId$) {
+            return environments[envWinId].$window$;
+          }
+        }
+        return this;
       }
 
       postMessage(...args: any[]) {
+        if (environments[args[0]]) {
+          if (len(postMessages) > 50) {
+            postMessages.splice(0, 5);
+          }
+          postMessages.push({
+            $winId$: args[0],
+            $data$: JSON.stringify(args[1]),
+          });
+          args = args.slice(1);
+        }
         callMethod(this, ['postMessage'], args, CallType.NonBlockingNoSideEffect);
       }
 
@@ -484,9 +502,11 @@ export const createWindow = (
       get top(): any {
         for (let envWinId in environments) {
           if (environments[envWinId].$winId$ === environments[envWinId].$parentWinId$) {
-            return proxyAncestorPostMessage(environments[envWinId].$window$, $winId$);
+            // when winId and parentWinId are the same it's the top window
+            return environments[envWinId].$window$;
           }
         }
+        return this;
       }
 
       get window() {
@@ -549,26 +569,6 @@ export const createWindow = (
 
   return env;
 };
-
-const proxyAncestorPostMessage = (parentWin: any, $winId$: WinId) =>
-  new Proxy<any>(parentWin, {
-    get: (targetParent, propName) => {
-      if (propName === 'postMessage') {
-        return (...args: any[]) => {
-          if (len(postMessages) > 20) {
-            postMessages.splice(0, 5);
-          }
-          postMessages.push({
-            $data$: JSON.stringify(args[0]),
-            $winId$,
-          });
-          targetParent.postMessage(...args);
-        };
-      } else {
-        return targetParent[propName];
-      }
-    },
-  });
 
 // Trap Constructors are ones where all properties have
 // proxy traps, such as dataset.name

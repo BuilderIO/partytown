@@ -137,6 +137,7 @@ function createWorkerWindownEnvironment(ctx: TestContext) {
     $location$: ctx.window.location,
     $visibilityState$: 'visible',
     $createNode$: () => null as any,
+    $isSameOrigin$: true,
   };
 
   return environments[ctx.winId];

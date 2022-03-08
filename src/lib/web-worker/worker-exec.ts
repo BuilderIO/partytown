@@ -103,15 +103,20 @@ export const runScriptContent = (
 export const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) => {
   env.$runWindowLoadEvent$ = 1;
 
-  new Function(
+  scriptContent =
     `with(this){${
       (webWorkerCtx.$config$.globalFns || [])
         .filter((globalFnName) => /[a-zA-Z_$][0-9a-zA-Z_$]*/.test(globalFnName))
         .map((g) => `(typeof ${g}=='function'&&(window.${g}=${g}))`)
         .join(';') +
       scriptContent.replace(/\bthis\b/g, '(thi$(this)?window:this)').replace(/\/\/# so/g, '//Xso')
-    }\n;function thi$(t){return t===this}}` + (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '')
-  ).call(env.$window$);
+    }\n;function thi$(t){return t===this}}` + (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '');
+
+  if (!env.$isSameOrigin$) {
+    scriptContent = scriptContent.replace(/.postMessage\(/g, `.postMessage('${env.$winId$}',`);
+  }
+
+  new Function(scriptContent).call(env.$window$);
 
   env.$runWindowLoadEvent$ = 0;
 };

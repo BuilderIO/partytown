@@ -16,7 +16,7 @@ import {
 import { createEnvironment } from './worker-environment';
 import { createWindow } from './worker-window';
 import { debug, definePrototypePropertyDescriptor, randomId, SCRIPT_TYPE } from '../utils';
-import { elementStructurePropNames, IS_TAG_REG, WinIdKey } from './worker-constants';
+import { ABOUT_BLANK, elementStructurePropNames, IS_TAG_REG, WinIdKey } from './worker-constants';
 import { getInstanceStateValue } from './worker-state';
 import { getPartytownScript } from './worker-exec';
 import { isScriptJsType } from './worker-script';
@@ -25,7 +25,6 @@ import { warnCrossOrgin } from '../log';
 export const patchDocument = (
   WorkerDocument: any,
   env: WebWorkerEnvironment,
-  isSameOrigin: boolean,
   isDocumentImplementation?: boolean
 ) => {
   const DocumentDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
@@ -37,7 +36,7 @@ export const patchDocument = (
 
     cookie: {
       get() {
-        if (isSameOrigin) {
+        if (env.$isSameOrigin$) {
           return getter(this, ['cookie']);
         } else {
           warnCrossOrgin('get', 'cookie', env);
@@ -45,7 +44,7 @@ export const patchDocument = (
         }
       },
       set(value) {
-        if (isSameOrigin) {
+        if (env.$isSameOrigin$) {
           setter(this, ['cookie'], value);
         } else if (debug) {
           warnCrossOrgin('set', 'cookie', env);
@@ -74,7 +73,7 @@ export const patchDocument = (
             {
               $winId$: instanceId,
               $parentWinId$: winId,
-              $url$: 'about:blank',
+              $url$: ABOUT_BLANK,
             },
             true
           );
