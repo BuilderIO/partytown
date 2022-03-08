@@ -1,7 +1,6 @@
 import { debug } from '../utils';
 import { logMain, normalizedWinId } from '../log';
-import { MainWindow, PartytownWebWorker, WinDocId, WinId, WorkerMessageType } from '../types';
-import { setInstanceId } from './main-instances';
+import { MainWindow, PartytownWebWorker, WinId, WorkerMessageType } from '../types';
 import { winCtxs, windowIds } from './main-constants';
 
 export const registerWindow = (
@@ -44,8 +43,6 @@ export const registerWindow = (
       replaceState(data, _, url);
       onLocationChange();
     };
-
-    setInstanceId(doc, $winId$ + WinDocId.document);
 
     $window$.addEventListener('popstate', onLocationChange);
     $window$.addEventListener('hashchange', onLocationChange);

@@ -67,7 +67,16 @@ export const mainAccessHandler = async (
           rtnValue = applyToInstance(worker, instance, applyPath, isLast, task.$groupedGetters$);
 
           if (task.$assignInstanceId$) {
-            setInstanceId(rtnValue, task.$assignInstanceId$);
+            if (typeof task.$assignInstanceId$ === 'string') {
+              setInstanceId(rtnValue, task.$assignInstanceId$);
+            } else {
+              winCtxs[task.$assignInstanceId$.$winId$] = {
+                $winId$: task.$assignInstanceId$.$winId$,
+                $window$: {
+                  document: rtnValue,
+                } as any,
+              };
+            }
           }
 
           if (isPromise(rtnValue)) {

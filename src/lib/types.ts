@@ -22,6 +22,12 @@ export type InstanceId = string;
 
 export type RefId = string;
 
+export interface AssignWinInstanceId {
+  $winId$: WinId;
+}
+
+export type AssignInstanceId = InstanceId | AssignWinInstanceId;
+
 export type MessageFromWorkerToSandbox =
   | [type: WorkerMessageType.MainDataRequestFromWorker]
   | [type: WorkerMessageType.InitializedWebWorker]
@@ -191,9 +197,9 @@ export const enum InterfaceType {
 
 export const enum WinDocId {
   document = 'd',
-  documentElement = 'd.documentElement',
-  head = 'd.head',
-  body = 'd.body',
+  documentElement = 'e',
+  head = 'h',
+  body = 'b',
 }
 
 export interface InitializeScriptData {
@@ -214,7 +220,7 @@ export interface MainAccessTask {
   $instanceId$: InstanceId;
   $applyPath$: ApplyPath;
   $groupedGetters$?: string[];
-  $assignInstanceId$?: InstanceId;
+  $assignInstanceId$?: AssignInstanceId;
   $debug$?: string;
 }
 
@@ -542,7 +548,7 @@ export type CallMethod = (
   applyPath: ApplyPath,
   args: any[],
   callType?: CallType,
-  assignInstanceId?: InstanceId,
+  assignInstanceId?: AssignInstanceId,
   buffer?: ArrayBuffer | ArrayBufferView
 ) => any;
 

@@ -173,16 +173,18 @@ export const patchDocument = (
         return {
           hasFeature: () => true,
           createHTMLDocument: (title: string) => {
-            const winId = randomId();
-            const docId = winId + WinDocId.document;
-            callMethod(
-              this,
-              ['implementation', 'createHTMLDocument'],
-              [title],
-              CallType.Blocking,
-              docId
+            const $winId$ = randomId();
+            callMethod(this, ['implementation', 'createHTMLDocument'], [title], CallType.Blocking, {
+              $winId$,
+            });
+            const docEnv = createWindow(
+              $winId$,
+              $winId$,
+              env.$location$ + '',
+              'hidden',
+              true,
+              true
             );
-            const docEnv = createWindow(winId, winId, env.$location$ + '', 'hidden', true, true);
             return docEnv.$document$;
           },
         };

@@ -1,5 +1,5 @@
 import { CreatedKey, InstanceIdKey, instances, winCtxs, windowIds } from './main-constants';
-import type { InstanceId, WinId } from '../types';
+import { InstanceId, MainWindowContext, WinDocId, WinId } from '../types';
 import { randomId } from '../utils';
 
 export const getAndSetInstanceId = (instance: any, instanceId?: InstanceId) => {
@@ -17,18 +17,32 @@ export const getAndSetInstanceId = (instance: any, instanceId?: InstanceId) => {
 export const getInstance = <T = any>(
   winId: WinId,
   instanceId: InstanceId,
+  win?: MainWindowContext,
+  doc?: Document,
   docId?: string
 ): T | undefined => {
-  if (winId === instanceId && winCtxs[winId] && winCtxs[winId]!.$window$) {
-    return winCtxs[winId]!.$window$ as any;
-  } else {
-    [instanceId, docId] = instanceId.split('.');
-    if (docId) {
-      return instances.get(instanceId)[docId];
-    } else {
-      return instances.get(instanceId);
+  if ((win = winCtxs[winId]) && win.$window$) {
+    if (winId === instanceId) {
+      return win.$window$ as any;
+    }
+
+    doc = win.$window$.document;
+    docId = instanceId.split('.').pop();
+    if (docId === WinDocId.document) {
+      return doc as any;
+    }
+    if (docId === WinDocId.documentElement) {
+      return doc.documentElement as any;
+    }
+    if (docId === WinDocId.head) {
+      return doc.head as any;
+    }
+    if (docId === WinDocId.body) {
+      return doc.body as any;
     }
   }
+
+  return instances.get(instanceId);
 };
 
 export const setInstanceId = (instance: any, instanceId: InstanceId, now?: number) => {

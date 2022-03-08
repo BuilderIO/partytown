@@ -1,12 +1,12 @@
 import {
   ApplyPath,
   ApplyPathType,
+  AssignInstanceId,
   CallMethod,
   CallType,
   ConstructGlobal,
   Getter,
   HookOptions,
-  InstanceId,
   MainAccessRequest,
   MainAccessResponse,
   MainAccessTask,
@@ -52,7 +52,7 @@ const queue = (
   instance: WorkerInstance,
   $applyPath$: ApplyPath,
   callType: CallType,
-  $assignInstanceId$?: InstanceId,
+  $assignInstanceId$?: AssignInstanceId,
   $groupedGetters$?: string[],
   buffer?: ArrayBuffer | ArrayBufferView
 ) => {
@@ -194,7 +194,7 @@ export const callMethod: CallMethod = (
   applyPath: ApplyPath,
   args: any[],
   callType?: CallType,
-  assignInstanceId?: InstanceId,
+  assignInstanceId?: AssignInstanceId,
   buffer?: ArrayBuffer | ArrayBufferView,
   rtnValue?: any,
   methodName?: string

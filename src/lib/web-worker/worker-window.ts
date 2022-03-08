@@ -339,13 +339,13 @@ export const createWindow = (
               // like: <script>globalProp = true</script>
               true,
           }) as any,
-          $document$: $createNode$(NodeName.Document, $winId$ + WinDocId.document) as any,
+          $document$: $createNode$(NodeName.Document, $winId$ + '.' + WinDocId.document) as any,
           $documentElement$: $createNode$(
             NodeName.DocumentElement,
-            $winId$ + WinDocId.documentElement
+            $winId$ + '.' + WinDocId.documentElement
           ) as any,
-          $head$: $createNode$(NodeName.Head, $winId$ + WinDocId.head) as any,
-          $body$: $createNode$(NodeName.Body, $winId$ + WinDocId.body) as any,
+          $head$: $createNode$(NodeName.Head, $winId$ + '.' + WinDocId.head) as any,
+          $body$: $createNode$(NodeName.Body, $winId$ + '.' + WinDocId.body) as any,
           $location$,
           $visibilityState$,
           $isSameOrigin$,
