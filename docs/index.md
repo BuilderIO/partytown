@@ -7,7 +7,7 @@ Partytown is a lazy-loaded library to help relocate resource intensive scripts i
 
 Even with a fast and highly tuned following all of today's best practices, it's all too common for your performance wins to be erased the moment third-party scripts are added. By third-party scripts we mean code that is embedded within your site, but not directly under your control. A few examples include: analytics, metrics, ads, A/B testing, trackers, etc.
 
-Partytown is maintained by [builder.io](https://www.builder.io/) and is currently in [Beta](https://www.builder.io/blog/partytown-is-now-in-beta).
+Partytown is maintained by [Builder.io](https://www.builder.io/) and is currently in [Beta](https://www.builder.io/blog/partytown-is-now-in-beta).
 
 ## Goals
 
