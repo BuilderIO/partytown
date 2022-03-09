@@ -82,4 +82,4 @@ export const nonBlockingMethods = /*#__PURE__*/ eventTargetMethods.concat(
   /*#__PURE__*/ commaSplit('add,observe,remove,unobserve')
 );
 
-export const IS_TAG_REG = /^[A-Z]([A-Z0-9-]*[A-Z0-9])?$/;
+export const IS_TAG_REG = /^[A-Z_]([A-Z0-9-]*[A-Z0-9])?$/;

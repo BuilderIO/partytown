@@ -411,6 +411,22 @@
       </li>
 
       <li>
+        <strong>createElement _ error</strong>
+        <code id="testCreateElementError_"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testCreateElementError_');
+            try {
+              document.createElement('_');
+              elm.textContent = 'no error';
+            } catch (e) {
+              elm.textContent = 'errored';
+            }
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>implementation.createHTMLDocument("")</strong>
         <code id="testCreateHTMLDocument"></code>
         <script type="text/partytown">
