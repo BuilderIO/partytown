@@ -88,6 +88,9 @@ test('document', async ({ page }) => {
   const testCreateElementError = page.locator('#testCreateElementError');
   await expect(testCreateElementError).toHaveText('errored');
 
+  const testCreateElementError_ = page.locator('#testCreateElementError_');
+  await expect(testCreateElementError_).toHaveText('no error');
+
   const testCreateHTMLDocument = page.locator('#testCreateHTMLDocument');
   await expect(testCreateHTMLDocument).toHaveText('88mph hidden');
 
