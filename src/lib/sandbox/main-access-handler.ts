@@ -35,15 +35,15 @@ export const mainAccessHandler = async (
       winId = task.$winId$;
       applyPath = task.$applyPath$;
 
-      if (winId.startsWith('f_') && !winCtxs[winId]) {
+      if (!winCtxs[winId] && winId.startsWith('f_')) {
         // window (iframe) hasn't finished loading yet
         await new Promise<void>((resolve) => {
           let check = 0;
           let callback = () => {
-            if (winCtxs[winId] || check++ > 999) {
+            if (winCtxs[winId] || check++ > 1000) {
               resolve();
             } else {
-              setTimeout(callback, 9);
+              requestAnimationFrame(callback);
             }
           };
           callback();
