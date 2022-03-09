@@ -710,6 +710,18 @@
         </script>
       </li>
 
+      <li>
+        <strong>visualViewport</strong>
+        <code id="testVisualViewport"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testVisualViewport');
+            const vp = window.visualViewport;
+            elm.textContent = 'scale:' + vp.scale + ' ' + vp.constructor.name;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

@@ -142,4 +142,7 @@ test('window', async ({ page }) => {
 
   const testWorkerGlobalScope = page.locator('#testWorkerGlobalScope');
   await expect(testWorkerGlobalScope).toHaveText('false');
+
+  const testVisualViewport = page.locator('#testVisualViewport');
+  await expect(testVisualViewport).toHaveText('scale:1 VisualViewport');
 });

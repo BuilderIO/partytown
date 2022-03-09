@@ -45,6 +45,7 @@ export const readMainPlatform = () => {
     [perf.timing],
     [screen],
     [screen.orientation],
+    [mainWindow.visualViewport],
 
     // global constructors
     [intersectionObserver, InterfaceType.EnvGlobalConstructor],
