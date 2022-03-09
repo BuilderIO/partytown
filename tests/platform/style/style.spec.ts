@@ -25,4 +25,7 @@ test('style', async ({ page }) => {
 
   const testDeleteRule = page.locator('#testDeleteRule');
   await expect(testDeleteRule).toHaveText('rgb(0, 128, 0) 2');
+
+  const testMediaQuery = page.locator('#testMediaQuery');
+  await expect(testMediaQuery).toHaveText('only screen and (min-width: 600px)');
 });

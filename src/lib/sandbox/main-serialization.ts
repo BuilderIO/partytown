@@ -105,7 +105,7 @@ const serializeCssRuleForWorker = (cssRule: any) => {
   let key: string;
   for (key in cssRule) {
     if (validCssRuleProps.includes(key)) {
-      obj[key] = cssRule[key];
+      obj[key] = String(cssRule[key]);
     }
   }
   return obj;

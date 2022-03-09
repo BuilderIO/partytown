@@ -164,6 +164,27 @@
         </script>
       </li>
 
+      <li>
+        <strong>@media query</strong>
+        <code id="testMediaQuery"></code>
+        <script type="text/partytown">
+          (function () {
+            const style = document.createElement('style');
+            style.innerHTML = `
+              @media only screen and (min-width: 600px) { #testMediaQuery { color: red; } }
+            `;
+            document.head.appendChild(style);
+
+            const sheet = style.sheet;
+            const cssRules = sheet.cssRules;
+            const cssRule = cssRules[0];
+
+            const elm = document.getElementById('testMediaQuery');
+            elm.textContent = cssRule.conditionText;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');
