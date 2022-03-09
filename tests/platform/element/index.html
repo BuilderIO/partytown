@@ -358,13 +358,25 @@
           (function () {
             const li = document.getElementById('liDimensions');
 
+            // grouped getter
             // should only be one main access
             li.clientWidth;
+            li.offsetLeft;
             li.clientWidth;
             li.clientHeight;
             li.clientHeight;
+            li.clientTop;
+            li.clientTop;
+            li.clientLeft;
+            li.clientLeft;
             li.offsetWidth;
             li.offsetHeight;
+            li.offsetTop;
+            li.offsetLeft;
+            li.scrollWidth;
+            li.scrollHeight;
+            li.scrollTop;
+            li.scrollLeft;
 
             const dimensions = li.clientWidth + 'x' + li.clientHeight
             const elm = document.getElementById('testDimensions');
@@ -373,7 +385,7 @@
         </script>
       </li>
 
-      <li>
+      <!-- <li>
         <strong>node === node</strong>
         <code id="testElementEquality"></code>
         <script type="text/partytown">
@@ -411,7 +423,7 @@
         (function () {
           document.body.classList.add('completed');
         })();
-      </script>
+      </script> -->
     </ul>
 
     <hr />

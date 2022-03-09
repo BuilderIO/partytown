@@ -313,7 +313,7 @@ export const createWindow = (
         }
 
         // patch this window's global constructors with some additional props
-        patchElement(win.Element);
+        patchElement(win.Element, win.HTMLElement);
         patchDocument(win.Document, env, isDocumentImplementation);
         patchDocumentFragment(win.DocumentFragment);
         patchHTMLAnchorElement(win.HTMLAnchorElement, env);

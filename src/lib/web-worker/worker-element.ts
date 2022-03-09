@@ -13,7 +13,7 @@ import {
 import { definePrototypePropertyDescriptor } from '../utils';
 import type { WorkerNode } from '../types';
 
-export const patchElement = (WorkerElement: any) => {
+export const patchElement = (WorkerElement: any, WorkerHTMLElement: any) => {
   const ElementDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
     localName: {
       get() {
@@ -37,9 +37,11 @@ export const patchElement = (WorkerElement: any) => {
 
   definePrototypePropertyDescriptor(WorkerElement, ElementDescriptorMap);
 
+  // Element
   cachedTreeProps(WorkerElement, elementStructurePropNames);
-
-  cachedDimensionProps(WorkerElement);
-  cachedDimensionMethods(WorkerElement, commaSplit('getClientRects,getBoundingClientRect'));
   cachedProps(WorkerElement, 'id');
+
+  // HTMLElement
+  cachedDimensionProps(WorkerHTMLElement);
+  cachedDimensionMethods(WorkerHTMLElement, commaSplit('getClientRects,getBoundingClientRect'));
 };
