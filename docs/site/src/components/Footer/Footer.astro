@@ -1,22 +1,22 @@
----
-const { path } = Astro.props;
----
-
+ 
 <footer>
-	<nav>
-		<a href="https://github.com/BuilderIO/partytown" aria-current="false" class="astro-T2MLJ6Q3">
+	<div class="social">
+		<a href="https://github.com/BuilderIO/partytown">
 			Github
 		</a>
-		<a href="https://discord.gg/hbuEtxdEZ3" aria-current="false" class="astro-T2MLJ6Q3">
+		<a href="https://discord.gg/hbuEtxdEZ3">
 			Discord
 		</a>
-		<a href="https://twitter.com/QwikDev" aria-current="false" class="astro-T2MLJ6Q3">
+		<a href="https://twitter.com/QwikDev">
 			@QwikDev
 		</a>
-		<a href="https://twitter.com/builderio" aria-current="false" class="astro-T2MLJ6Q3">
+		<a href="https://twitter.com/builderio">
 			@Builderio
 		</a> 
-	</nav>
+	</div>
+	<div class="builder">
+		Made with 💜 by the <a href="https://www.builder.io/">Builder.io</a> team
+	</div>
 </footer>
 
 <style>
@@ -26,7 +26,7 @@ const { path } = Astro.props;
 		border-top: 2px solid var(--theme-divider);
 		text-align: center;
 	}
-	footer a {
+	footer .social a {
 		margin: 0 4px;
 		padding: 4px 12px;
 		text-decoration: none;
@@ -34,7 +34,14 @@ const { path } = Astro.props;
 		display: inline-block;
 		border-radius: 4px;
 	}
-	footer a:hover {
+	footer .social a:hover {
 		background-color: var(--theme-bg-hover);
+	}
+	footer .builder {
+		font-size: 12px;
+		margin: 15px 0;
+	}
+	footer .builder a:hover {
+		text-decoration: none; 
 	}
 </style>
