@@ -20,7 +20,7 @@ export const readMainPlatform = () => {
   const startTime = debug ? performance.now() : 0;
 
   const docImpl = doc.implementation.createHTMLDocument();
-  const elm = docImpl.head;
+  const elm = docImpl.createElement('i');
   const textNode = docImpl.createTextNode('');
   const comment = docImpl.createComment('');
   const frag = docImpl.createDocumentFragment();
