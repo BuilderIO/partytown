@@ -80,6 +80,28 @@
       </li>
 
       <li>
+        <strong>no re-define</strong>
+        <div id="testNoReDefine"></div>
+        <script type="text/partytown">
+          (function () {
+            class TestNoReDefineElement extends HTMLElement {}
+
+            customElements.get('test-no-redefine') ||
+              customElements.define('test-no-redefine', TestNoReDefineElement);
+            customElements.get('test-no-redefine') ||
+              customElements.define('test-no-redefine', TestNoReDefineElement);
+            customElements.get('test-no-redefine') ||
+              customElements.define('test-no-redefine', TestNoReDefineElement);
+
+            const elm = document.getElementById('testNoReDefine');
+            const Cstr = customElements.get('test-no-redefine');
+            elm.textContent = Cstr.name;
+            elm.className = 'testNoReDefine';
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>connectedCallback</strong>
         <div id="testConnectedCallback"></div>
         <script type="text/partytown">
