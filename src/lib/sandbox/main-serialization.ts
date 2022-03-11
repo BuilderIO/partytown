@@ -1,4 +1,4 @@
-import { getConstructorName, isValidMemberName, startsWith } from '../utils';
+import { getConstructorName, getNodeName, isValidMemberName, startsWith } from '../utils';
 import { getInstance, getAndSetInstanceId } from './main-instances';
 import { mainRefs } from './main-constants';
 import {
@@ -61,7 +61,10 @@ export const serializeForWorker = (
       } else if (cstrName === 'Attr') {
         return [SerializedType.Attr, [(value as Attr).name, (value as Attr).value]];
       } else if (value.nodeType) {
-        return [SerializedType.Instance, [$winId$, getAndSetInstanceId(value)!, value.nodeName]];
+        return [
+          SerializedType.Instance,
+          [$winId$, getAndSetInstanceId(value)!, getNodeName(value)],
+        ];
       } else {
         return [SerializedType.Object, serializeObjectForWorker($winId$, value, added, true, true)];
       }

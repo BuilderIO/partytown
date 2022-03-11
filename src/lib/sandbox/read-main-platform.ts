@@ -2,6 +2,7 @@ import {
   createElementFromConstructor,
   debug,
   getConstructorName,
+  getNodeName,
   isValidMemberName,
   len,
   noop,
@@ -24,6 +25,7 @@ export const readMainPlatform = () => {
   const textNode = docImpl.createTextNode('');
   const comment = docImpl.createComment('');
   const frag = docImpl.createDocumentFragment();
+  const shadowRoot = docImpl.createElement('p').attachShadow({ mode: 'open' });
   const intersectionObserver = getGlobalConstructor(mainWindow, 'IntersectionObserver');
   const mutationObserver = getGlobalConstructor(mainWindow, 'MutationObserver');
   const resizeObserver = getGlobalConstructor(mainWindow, 'ResizeObserver');
@@ -56,6 +58,7 @@ export const readMainPlatform = () => {
     [textNode],
     [comment],
     [frag],
+    [shadowRoot],
     [elm],
     [elm.attributes],
     [elm.classList],
@@ -140,13 +143,7 @@ const readOwnImplementation = (
       readImplementationMember(interfaceMembers, impl, memberName)
     );
 
-    interfaces.push([
-      cstrName,
-      superCstrName,
-      interfaceMembers,
-      interfaceType,
-      (impl as Node).nodeName,
-    ]);
+    interfaces.push([cstrName, superCstrName, interfaceMembers, interfaceType, getNodeName(impl)]);
   }
 };
 

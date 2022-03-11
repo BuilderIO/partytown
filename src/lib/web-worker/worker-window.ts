@@ -8,9 +8,9 @@ import {
   WebWorkerEnvironment,
   WinDocId,
   WinId,
-  WorkerConstructor,
   WorkerInstance,
   WorkerNode,
+  WorkerNodeConstructors,
   WorkerWindow,
 } from '../types';
 import {
@@ -29,6 +29,7 @@ import {
   webWorkerSessionStorage,
   WinIdKey,
 } from './worker-constants';
+import { createCustomElementRegistry } from './worker-custom-elements';
 import {
   cachedDimensionMethods,
   cachedDimensionProps,
@@ -49,7 +50,6 @@ import {
   defineProperty,
   definePrototypeProperty,
   definePrototypeValue,
-  EMPTY_ARRAY,
   getConstructorName,
   len,
   randomId,
@@ -83,6 +83,10 @@ export const createWindow = (
   isIframeWindow?: boolean,
   isDocumentImplementation?: boolean
 ) => {
+  let cstrInstanceId: InstanceId | undefined;
+  let cstrNodeName: string | undefined;
+  let cstrNamespace: string | undefined;
+
   // base class all Nodes/Elements/Global Constructors will extend
   const WorkerBase = class implements WorkerInstance {
     [WinIdKey]: WinId;
@@ -93,20 +97,19 @@ export const createWindow = (
     [InstanceStateKey]: { [key: string]: any };
 
     constructor(
-      winId: WinId,
-      instanceId: InstanceId,
+      winId?: WinId,
+      instanceId?: InstanceId,
       applyPath?: ApplyPath,
       instanceData?: any,
       namespace?: string
     ) {
-      this[WinIdKey] = winId;
-      this[InstanceIdKey] = instanceId!;
+      this[WinIdKey] = winId || $winId$;
+      this[InstanceIdKey] = instanceId || cstrInstanceId || randomId();
       this[ApplyPathKey] = applyPath || [];
-      this[InstanceDataKey] = instanceData;
+      this[InstanceDataKey] = instanceData || cstrNodeName;
+      this[NamespaceKey] = namespace || cstrNamespace;
       this[InstanceStateKey] = {};
-      if (namespace) {
-        this[NamespaceKey] = namespace;
-      }
+      cstrInstanceId = cstrNodeName = cstrNamespace = undefined;
     }
   };
 
@@ -155,7 +158,7 @@ export const createWindow = (
           }
         };
 
-        let nodeCstrs: { [nodeName: string]: WorkerConstructor } = {};
+        let nodeCstrs: WorkerNodeConstructors = {};
         let $createNode$ = (
           nodeName: string,
           instanceId: InstanceId,
@@ -168,8 +171,12 @@ export const createWindow = (
             ? nodeCstrs[nodeName]
             : nodeName.includes('-')
             ? nodeCstrs.UNKNOWN
-            : nodeCstrs.DIV;
-          return new NodeCstr($winId$, instanceId, EMPTY_ARRAY, nodeName, namespace) as any;
+            : nodeCstrs.I;
+
+          cstrInstanceId = instanceId;
+          cstrNodeName = nodeName;
+          cstrNamespace = namespace;
+          return new NodeCstr() as any;
         };
 
         win.Window = WorkerWindow;
@@ -177,6 +184,7 @@ export const createWindow = (
         createNodeCstr(win, env, WorkerBase);
         createCSSStyleDeclarationCstr(win, WorkerBase, 'CSSStyleDeclaration');
         createPerformanceConstructor(win, WorkerBase, 'Performance');
+        createCustomElementRegistry(win, nodeCstrs);
 
         // define all of the global constructors that should live on window
         webWorkerCtx.$interfaces$.map(
@@ -194,7 +202,7 @@ export const createWindow = (
                 ? class extends WorkerBase {
                     // create the constructor and set as a prop on window
                     constructor(...args: any[]) {
-                      super($winId$, randomId());
+                      super();
                       constructGlobal(this, cstrName, args);
                     }
                   }

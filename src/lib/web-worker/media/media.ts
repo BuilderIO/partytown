@@ -322,14 +322,14 @@ export const initMedia = (
     },
   };
 
-  const WorkerMediaSource = defineCstr(
+  defineCstr(
     win,
     'MediaSource',
     class extends WorkerEventTargetProxy {
       [SourceBuffersKey]: typeof WorkerSourceBufferList;
 
       constructor() {
-        super(env.$winId$, randomId());
+        super(env.$winId$);
         this[SourceBuffersKey] = new WorkerSourceBufferList(this as any);
         constructGlobal(this, 'MediaSource', EMPTY_ARRAY);
       }

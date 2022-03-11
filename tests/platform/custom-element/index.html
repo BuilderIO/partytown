@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>Custom Element</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        font-size: 12px;
+      }
+      h1 {
+        margin: 0 0 15px 0;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        display: block;
+        padding: 16px 8px;
+      }
+      a:link,
+      a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover {
+        background-color: #eee;
+      }
+      strong a {
+        display: inline-block;
+      }
+      li {
+        display: flex;
+        margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button,
+      li a {
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
+        padding: 0;
+      }
+    </style>
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+      };
+    </script>
+    <script src="/~partytown/debug/partytown.js"></script>
+  </head>
+  <body>
+    <h1>Custom Element</h1>
+
+    <ul>
+      <li>
+        <strong>define/get</strong>
+        <div id="testDefine"></div>
+        <script type="text/partytown">
+          (function () {
+            class TestDefineElement extends HTMLElement {}
+            customElements.define('test-define', TestDefineElement);
+
+            const elm = document.getElementById('testDefine');
+            const Cstr = customElements.get('test-define');
+            elm.textContent = Cstr.name;
+            elm.className = 'testDefine';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>connectedCallback</strong>
+        <div id="testConnectedCallback"></div>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testConnectedCallback');
+
+            class TestConnectedCallbackElement extends HTMLElement {
+              connectedCallback() {
+                elm.textContent = this.localName;
+                elm.className = 'testConnectedCallback';
+              }
+            }
+            customElements.define('test-connected-callback', TestConnectedCallbackElement);
+
+            const ce = document.createElement('test-connected-callback');
+            elm.appendChild(ce);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>disconnectedCallback</strong>
+        <div id="testDisconnectedCallback"></div>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDisconnectedCallback');
+
+            class TestDisconnectedCallbackElement extends HTMLElement {
+              disconnectedCallback() {
+                elm.textContent = this.localName;
+                elm.className = 'testDisconnectedCallback';
+              }
+            }
+            customElements.define('test-disconnected-callback', TestDisconnectedCallbackElement);
+
+            const ce = document.createElement('test-disconnected-callback');
+            elm.appendChild(ce);
+            ce.remove();
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>attributeChangedCallback</strong>
+        <div id="testAttributeChangedCallback"></div>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testAttributeChangedCallback');
+
+            class TestAttributeChangedCallback extends HTMLElement {
+              attributeChangedCallback(attrName, oldValue, newValue) {
+                elm.textContent = `${attrName} ${oldValue} ${newValue}`;
+                elm.className = 'testAttributeChangedCallback';
+              }
+              static get observedAttributes() {
+                return ['mph'];
+              }
+            }
+            customElements.define('test-attribute-changed-callback', TestAttributeChangedCallback);
+
+            const ce = document.createElement('test-attribute-changed-callback');
+            elm.appendChild(ce);
+            setTimeout(() => {
+              ce.setAttribute('mph', '87');
+              ce.setAttribute('mph', '88');
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>constructor</strong>
+        <div id="testConstructor"></div>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testConstructor');
+
+            class TestConstructor extends HTMLElement {
+              constructor() {
+                super();
+                elm.textContent = this.localName;
+                elm.className = 'testConstructor';
+              }
+            }
+            customElements.define('test-constructor', TestConstructor);
+
+            document.createElement('test-constructor');
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>shadowRoot</strong>
+        <div id="testShadowRoot"></div>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testShadowRoot');
+
+            class TestShadowRoot extends HTMLElement {
+              constructor() {
+                super();
+
+                const shadow = this.attachShadow({ mode: 'open' });
+
+                shadow.innerHTML = `
+                  <style>
+                    div { color: red }
+                  </style>
+                  <div>shadow</div>
+                `;
+              }
+
+              connectedCallback() {
+                const shadowRoot = this.shadowRoot;
+                const sdDiv = shadowRoot.querySelector('div');
+                elm.textContent = sdDiv.textContent + ' ' + shadowRoot.nodeName;
+                elm.className = 'testShadowRoot';
+              }
+            }
+            customElements.define('test-shadow-root', TestShadowRoot);
+
+            const ce = document.createElement('test-shadow-root');
+            elm.parentNode.appendChild(ce);
+          })();
+        </script>
+      </li>
+    </ul>
+
+    <hr />
+    <p><a href="/tests/">All Tests</a></p>
+  </body>
+</html>

@@ -49,7 +49,14 @@ export type MessageFromSandboxToWorker =
   | [type: WorkerMessageType.RefHandlerCallback, callbackData: RefHandlerCallbackData]
   | [type: WorkerMessageType.ForwardMainTrigger, triggerData: ForwardMainTriggerData]
   | [type: WorkerMessageType.LocationUpdate, winId: WinId, documentBaseURI: string]
-  | [type: WorkerMessageType.DocumentVisibilityState, winId: WinId, visibilityState: string];
+  | [type: WorkerMessageType.DocumentVisibilityState, winId: WinId, visibilityState: string]
+  | [
+      type: WorkerMessageType.CustomElementCallback,
+      winId: WinId,
+      instanceId: InstanceId,
+      callbackName: string,
+      args: any[]
+    ];
 
 export const enum WorkerMessageType {
   MainDataRequestFromWorker,
@@ -65,6 +72,7 @@ export const enum WorkerMessageType {
   AsyncAccessRequest,
   LocationUpdate,
   DocumentVisibilityState,
+  CustomElementCallback,
 }
 
 export interface ForwardMainTriggerData {
@@ -599,8 +607,8 @@ export interface PostMessageData {
 
 export interface WorkerConstructor {
   new (
-    instanceId: InstanceId,
-    winId: WinId,
+    winId?: WinId,
+    instanceId?: InstanceId,
     applyPath?: ApplyPath,
     instanceData?: any,
     namespace?: string
@@ -621,3 +629,9 @@ export interface WorkerNode extends WorkerInstance, Node {}
 export interface WorkerWindow extends WorkerInstance {
   [key: string]: any;
 }
+
+export interface WorkerNodeConstructors {
+  [tagName: string]: WorkerConstructor;
+}
+
+export type CustomElementData = [cstrName: string, observedAttributes: string[]];

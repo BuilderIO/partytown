@@ -80,7 +80,7 @@ export const createNodeCstr = (
       }
 
       get nodeName() {
-        return this[InstanceDataKey];
+        return this[InstanceDataKey] === '#s' ? '#document-fragment' : this[InstanceDataKey];
       }
 
       get nodeType() {

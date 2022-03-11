@@ -35,6 +35,9 @@ export const getLastMemberName = (applyPath: ApplyPath, i?: number) => {
   return applyPath[0] as string;
 };
 
+export const getNodeName = (node: Node) =>
+  node.nodeType === 11 && (node as any).host ? '#s' : node.nodeName;
+
 export const EMPTY_ARRAY = [];
 if (debug) {
   /*#__PURE__*/ Object.freeze(EMPTY_ARRAY);

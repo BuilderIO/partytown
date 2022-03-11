@@ -1,3 +1,4 @@
+import { callCustomElementCallback } from './worker-custom-elements';
 import { callWorkerRefHandler } from './worker-serialization';
 import { createEnvironment } from './worker-environment';
 import { debug } from '../utils';
@@ -40,6 +41,8 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
       environments[msgValue].$visibilityState$ = msg[2];
     } else if (msgType === WorkerMessageType.LocationUpdate) {
       environments[msgValue].$location$.href = msg[2];
+    } else if (msgType === WorkerMessageType.CustomElementCallback) {
+      callCustomElementCallback(...msg);
     }
   } else if (msgType === WorkerMessageType.MainDataResponseToWorker) {
     // received initial main data

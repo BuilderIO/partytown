@@ -62,9 +62,10 @@ export const patchDocument = (
         const isIframe = tagName === NodeName.IFrame;
         const winId = this[WinIdKey];
         const instanceId = (isIframe ? 'f_' : '') + randomId();
-        const elm = getOrCreateNodeInstance(winId, instanceId, tagName);
 
         callMethod(this, ['createElement'], [tagName], CallType.NonBlocking, instanceId);
+
+        const elm = getOrCreateNodeInstance(winId, instanceId, tagName);
 
         if (isIframe) {
           // an iframe element's instanceId is the same as its contentWindow's winId

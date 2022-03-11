@@ -7,7 +7,8 @@ import {
   PartytownWebWorker,
   WinId,
 } from '../types';
-import { debug, isPromise, len } from '../utils';
+import { debug, getConstructorName, isPromise, len } from '../utils';
+import { defineCustomElement } from './main-custom-element';
 import { deserializeFromWorker, serializeForWorker } from './main-serialization';
 import { getInstance, setInstanceId } from './main-instances';
 import { normalizedWinId } from '../log';
@@ -64,7 +65,14 @@ export const mainAccessHandler = async (
         // get the existing instance
         instance = getInstance(winId, task.$instanceId$);
         if (instance) {
-          rtnValue = applyToInstance(worker, instance, applyPath, isLast, task.$groupedGetters$);
+          rtnValue = applyToInstance(
+            worker,
+            winId,
+            instance,
+            applyPath,
+            isLast,
+            task.$groupedGetters$
+          );
 
           if (task.$assignInstanceId$) {
             if (typeof task.$assignInstanceId$ === 'string') {
@@ -81,9 +89,13 @@ export const mainAccessHandler = async (
 
           if (isPromise(rtnValue)) {
             rtnValue = await rtnValue;
-            accessRsp.$isPromise$ = true;
+            if (isLast) {
+              accessRsp.$isPromise$ = true;
+            }
           }
-          accessRsp.$rtnValue$ = serializeForWorker(winId, rtnValue);
+          if (isLast) {
+            accessRsp.$rtnValue$ = serializeForWorker(winId, rtnValue);
+          }
         } else {
           if (debug) {
             accessRsp.$error$ = `Error finding instance "${
@@ -112,6 +124,7 @@ export const mainAccessHandler = async (
 
 const applyToInstance = (
   worker: PartytownWebWorker,
+  winId: WinId,
   instance: any,
   applyPath: ApplyPath,
   isLast: boolean,
@@ -158,6 +171,10 @@ const applyToInstance = (
           // current is the method args
           // previous is the method name
           args = deserializeFromWorker(worker, current);
+
+          if (previous === 'define' && getConstructorName(instance) === 'CustomElementRegistry') {
+            args[1] = defineCustomElement(winId, worker, args[1]);
+          }
 
           if (previous === 'insertRule') {
             // possible that the async insertRule has thrown an error
