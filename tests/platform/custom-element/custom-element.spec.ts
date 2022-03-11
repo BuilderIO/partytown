@@ -11,6 +11,10 @@ test('custom-element', async ({ page }) => {
   const testNoReDefine = page.locator('#testNoReDefine');
   await expect(testNoReDefine).toHaveText('TestNoReDefineElement');
 
+  await page.waitForSelector('.testNoMainReDefine');
+  const testNoMainReDefine = page.locator('#testNoMainReDefine');
+  await expect(testNoMainReDefine).toHaveText('true');
+
   await page.waitForSelector('.testConnectedCallback');
   const testConnectedCallback = page.locator('#testConnectedCallback');
   await expect(testConnectedCallback).toHaveText('test-connected-callback');

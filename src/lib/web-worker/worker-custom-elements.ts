@@ -20,7 +20,8 @@ export const createCustomElementRegistry = (win: any, nodeCstrs: WorkerNodeConst
       callMethod(win, [customElements, 'define'], [tagName, ceData, opts]);
     },
 
-    get: (tagName: string) => registry.get(tagName),
+    get: (tagName: string) =>
+      registry.get(tagName) || callMethod(win, [customElements, 'get'], [tagName]),
 
     whenDefined: (tagName: string) =>
       registry.has(tagName)

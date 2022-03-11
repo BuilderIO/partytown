@@ -80,7 +80,7 @@
       </li>
 
       <li>
-        <strong>no re-define</strong>
+        <strong>no worker re-define</strong>
         <div id="testNoReDefine"></div>
         <script type="text/partytown">
           (function () {
@@ -97,6 +97,30 @@
             const Cstr = customElements.get('test-no-redefine');
             elm.textContent = Cstr.name;
             elm.className = 'testNoReDefine';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>no main re-define</strong>
+        <div id="testNoMainReDefine"></div>
+        <script type="text/javascript">
+          (function () {
+            class TestNoMainReDefineElement extends HTMLElement {}
+            customElements.define('test-no-main-redefine', TestNoMainReDefineElement);
+          })();
+        </script>
+        <script type="text/partytown">
+          (function () {
+            class TestNoMainReDefineElement extends HTMLElement {}
+
+            customElements.get('test-no-main-redefine') ||
+              customElements.define('test-no-main-redefine', TestNoMainReDefineElement);
+
+            const elm = document.getElementById('testNoMainReDefine');
+            const Cstr = customElements.get('test-no-main-redefine');
+            elm.textContent = String(Cstr !== undefined);
+            elm.className = 'testNoMainReDefine';
           })();
         </script>
       </li>
