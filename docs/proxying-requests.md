@@ -48,6 +48,7 @@ Please see the [integration guides](/integrations) and [configuration](/configur
 Below are a few examples of [reverse proxies](https://en.wikipedia.org/wiki/Reverse_proxy) that could be used.
 
 - [Apache](https://httpd.apache.org/docs/2.4/howto/reverse_proxy.html)
+- [AWS: Creating a Reverse Proxy for Partytown with AWS Cloudfront](https://nystudio107.com/blog/creating-a-reverse-proxy-for-partytown-with-aws-cloudfront)
 - [Cloudflare](https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/)
 - [Netlify: Proxy to another service](https://docs.netlify.com/routing/redirects/rewrites-proxies/#proxy-to-another-service)
 - [NGINX](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/)
