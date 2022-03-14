@@ -61,3 +61,4 @@ Below are just a few examples of third-party scripts that might be a good candid
 - <a href="https://dev.to/adamdbradley/how-partytown-s-sync-communication-works-4244" target="_blank" rel="noopener">How Partytown's Sync Communication Works</a>
 - <a href="https://www.builder.io/blog/how-we-cut-99-percent-js-with-qwik-and-partytown" target="_blank" rel="noopener">How we cut 99% of our JavaScript with Qwik + Partytown</a>
 - <a href="https://www.builder.io/blog/partytown-is-now-in-beta" target="_blank" rel="noopener">Partytown is now in Beta</a>
+- <a href="https://www.patterns.dev/posts/third-party/" target="_blank" rel="noopener">Patterns: Optimize loading third-parties</a>
