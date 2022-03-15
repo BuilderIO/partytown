@@ -19,6 +19,22 @@ Follow the [manual testing](#manual-testing) directions on how to start the loca
 
 If the PR fixes the issue, then creating an [end-to-end test](#e2e-testing) would help ensure no regressions happen over time.
 
+## Plugin Authors / Developers
+
+If you are the author / developer of any 3rd party plugin / library, and want to ensure that your library works with Partytown, we would love to work with you to ensure it does!
+
+The easiest way to verify is to create a small, standalone replica in our [integration tests directory](https://github.com/BuilderIO/partytown/tree/main/tests/integrations). Our standard practice is to:
+
+- Create a `standard.html` which loads your library / plugin as it normally is loaded, as a `<script type="text/javascript">`. This file basically is your normal, happy case, with no partytown in sight
+- Create an `index.html` which loads your library, but also sets up partytown. This file should
+  - Setup the `partytown` configuration
+  - Load the `partytown.js` file
+  - Mark the library / plugin that you want to test as `text/partytown` instead of `text/javascript`
+
+To get a sense of this, you can take a look at some examples in the `tests/integrations` folder like [Twitter](https://github.com/BuilderIO/partytown/tree/main/tests/integrations/twitter/index.html).
+
+If it works, great! Send us a PR and we'd love to merge it in and highlight it as a working integration. If for any reason it does not work, we would love to help you figure out why it might not be working and figure out a way forward.
+
 ## Manual Testing
 
 Tests to be manually ran on a browser are located in the `tests` directory. These pages can help to test out DOM apis and individual services.
