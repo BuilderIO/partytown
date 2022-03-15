@@ -53,6 +53,7 @@ Below are a few examples of [reverse proxies](https://en.wikipedia.org/wiki/Reve
 - [Netlify: Proxy to another service](https://docs.netlify.com/routing/redirects/rewrites-proxies/#proxy-to-another-service)
 - [NGINX](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/)
 - [Vercel: Rewrites](https://vercel.com/docs/cli#project-configuration/rewrites)
+- [Gatsby Cloud: Redirects and Rewrites](https://support.gatsbyjs.com/hc/en-us/articles/1500003051241-Working-with-Redirects)
 
 ## Serving Resources Locally
 
