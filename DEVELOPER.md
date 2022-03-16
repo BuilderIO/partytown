@@ -31,9 +31,9 @@ The easiest way to verify is to create a small, standalone replica in our [integ
   - Load the `partytown.js` file
   - Mark the library / plugin that you want to test as `text/partytown` instead of `text/javascript`
 
-To get a sense of this, you can take a look at some examples in the `tests/integrations` folder like [Twitter](https://github.com/BuilderIO/partytown/tree/main/tests/integrations/twitter/index.html).
+To get a sense of this, you can take a look at some examples in the `tests/integrations` folder like [Twitter](https://github.com/BuilderIO/partytown/tree/main/tests/integrations/twitter/index.html). Usually, creating a copy of one of these folders and modifying it for a new plugin is the easiest way to get these to setup.
 
-If it works, great! Send us a PR and we'd love to merge it in and highlight it as a working integration. If for any reason it does not work, we would love to help you figure out why it might not be working and figure out a way forward.
+If it works, great! Send us a PR and we'd love to merge it in and highlight it as a working integration on our [Common Services page](https://partytown.builder.io/common-services) . If for any reason it does not work, we would love to help you figure out why it might not be working and figure out a way forward.
 
 ## Manual Testing
 
