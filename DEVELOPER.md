@@ -9,11 +9,11 @@ npm install
 npm run dev
 ```
 
-See the [distribution](https://github.com/BuilderIO/partytown#distribution) section about the various files created. Note that both the root directory, and the `tests` directory receive a copy of the build files, such as `tests/~partytown/partytown.js`.
+See the [distribution](https://partytown.builder.io/distribution) section about the various files created. Note that both the root directory, and the `tests` directory receive a copy of the build files, such as `tests/~partytown/partytown.js`.
 
 ## Submitting Issues And Writing Tests
 
-We need your help! If you found a bug, it's best to create a [Pull Request](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) that replicates the issue using a test page. In the [tests directory](https://github.com/BuilderIO/partytown/tree/main/tests), copy one of the directories, such as `tests/document`, and recreate the issue you've found.
+We need your help! If you found a bug, it's best to create a [Pull Request](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) that replicates the issue using a test page. In the [tests directory](https://github.com/BuilderIO/partytown/tree/main/tests), copy one of the directories, such as `tests/platform/document`, and recreate the issue you've found.
 
 Follow the [manual testing](#manual-testing) directions on how to start the local dev server. Next, the more you can describe the debug and pin-point the issue the better, and any fixes to the runtime to solve the problem would be awesome. 🎉
 
@@ -25,8 +25,8 @@ If you are the author / developer of any 3rd party plugin / library, and want to
 
 The easiest way to verify is to create a small, standalone replica in our [integration tests directory](https://github.com/BuilderIO/partytown/tree/main/tests/integrations). Our standard practice is to:
 
-- Create a `standard.html` which loads your library / plugin as it normally is loaded, as a `<script type="text/javascript">`. This file basically is your normal, happy case, with no partytown in sight
-- Create an `index.html` which loads your library, but also sets up partytown. This file should
+- Create a `standard.html` which loads your library / plugin as it normally is loaded, as a `<script type="text/javascript">`. This file basically is your normal, happy case, with no Partytown in sight.
+- Create an `index.html` which loads your library, but also sets up Partytown. This file should:
   - Setup the `partytown` configuration
   - Load the `partytown.js` file
   - Mark the library / plugin that you want to test as `text/partytown` instead of `text/javascript`
@@ -43,18 +43,17 @@ Tests to be manually ran on a browser are located in the `tests` directory. Thes
 npm run serve
 ```
 
-http://localhost:4000/
+http://localhost:4000/tests/
 
 ## E2E Testing
 
-E2E tests use [@playwright/test](https://playwright.dev/docs/intro#writing-assertions), which allows us to test on Chromium, Firefox and WebKit browsers.
-These pages are also tested on every commit within the project's [CI Workflow](https://github.com/BuilderIO/partytown/actions/workflows/ci.yml).
+E2E tests use [@playwright/test](https://playwright.dev/docs/intro#writing-assertions), which allows us to test on Chromium, Firefox and WebKit browsers. These pages are also tested on every commit within the project's [CI Workflow](https://github.com/BuilderIO/partytown/actions/workflows/ci.yml).
 
 ```
 npm test
 ```
 
-[Test Results](https://github.com/BuilderIO/partytown/actions/workflows/ci.yml)
+[CI Test Results](https://github.com/BuilderIO/partytown/actions/workflows/ci.yml)
 
 ## Deployed Tests
 
