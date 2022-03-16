@@ -32,6 +32,7 @@
   - [End-to-end Tests](/tests/)
   - [Services](/tests/benchmarks/services/)
   - [Benchmark](/tests/benchmarks/)
+  - [Local Development](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md)
 - [Community](https://github.com/BuilderIO/partytown)
   - [Github](https://github.com/BuilderIO/partytown)
   - [Discord](https://discord.gg/hbuEtxdEZ3)
