@@ -26,7 +26,7 @@ const Home = () => {
       <Head>
         <title>My App</title>
         <Partytown debug={true} forward={['dataLayer.push']} />
-        <script src="https://example.com/analytics.js" type="text/partytown"> />
+        <script src="https://example.com/analytics.js" type="text/partytown" />
       </Head>
       <main>...</main>
     </>
