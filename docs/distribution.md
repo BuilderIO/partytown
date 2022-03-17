@@ -25,7 +25,7 @@ The `lib` directory contains the static files that should be hosted from the sam
 └── partytown.js
 ```
 
-The `partyown.js` file must be in the `<head>` before all other third-party scripts, and should _not_ have the `async` or `defer` attributes. Because the script must be executed immediately, and since it's such a small file, it's always preferred to inline the `partytown.js` script content, rather than it being an additional http request.
+The `partytown.js` file must be in the `<head>` before all other third-party scripts, and should _not_ have the `async` or `defer` attributes. Because the script must be executed immediately, and since it's such a small file, it's always preferred to inline the `partytown.js` script content, rather than it being an additional http request.
 
 ### `lib/debug/`
 
