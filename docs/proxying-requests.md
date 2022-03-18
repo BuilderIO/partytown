@@ -50,10 +50,10 @@ Below are a few examples of [reverse proxies](https://en.wikipedia.org/wiki/Reve
 - [Apache](https://httpd.apache.org/docs/2.4/howto/reverse_proxy.html)
 - [AWS: Creating a Reverse Proxy for Partytown with AWS Cloudfront](https://nystudio107.com/blog/creating-a-reverse-proxy-for-partytown-with-aws-cloudfront)
 - [Cloudflare](https://www.cloudflare.com/learning/cdn/glossary/reverse-proxy/)
+- [Gatsby Cloud: Redirects and Rewrites](https://support.gatsbyjs.com/hc/en-us/articles/1500003051241-Working-with-Redirects)
 - [Netlify: Proxy to another service](https://docs.netlify.com/routing/redirects/rewrites-proxies/#proxy-to-another-service)
 - [NGINX](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/)
 - [Vercel: Rewrites](https://vercel.com/docs/cli#project-configuration/rewrites)
-- [Gatsby Cloud: Redirects and Rewrites](https://support.gatsbyjs.com/hc/en-us/articles/1500003051241-Working-with-Redirects)
 
 ## Serving Resources Locally
 

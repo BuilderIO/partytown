@@ -47,9 +47,9 @@ Copy library files to `static/~partytown`. How the files are copied or served fr
 
 ```jsx
 const path = require("path");
+const { copyLibFiles } = require('@builder.io/partytown/utils');
 
 exports.onPreBuild = async ({ actions: { createRedirect } }) => {
-  const { copyLibFiles } = await import("@builder.io/partytown/utils");
   copyLibFiles(path.join(__dirname, "static", "~partytown"));
 };
 ```
