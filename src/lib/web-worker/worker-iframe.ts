@@ -35,10 +35,18 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any, env: WebWor
 
     src: {
       get() {
-        let src = getIframeEnv(this).$location$.href;
+        let src = getter(this, ['src']);
+        if (src.startsWith('javascript:')) {
+          return src;
+        }
+        src = getIframeEnv(this).$location$.href;
         return src.startsWith('about:') ? '' : src;
       },
       set(src: string) {
+        if (src.startsWith('javascript:')) {
+          setter(this, ['src'], src);
+          return;
+        }
         if (!src.startsWith('about:')) {
           let xhr = new XMLHttpRequest();
           let xhrStatus: number;
