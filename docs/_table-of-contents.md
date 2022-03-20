@@ -12,6 +12,7 @@
   - [Distribution](/distribution)
 - [Integrations](/integrations)
   - [Astro](/astro)
+  - [Gatsby](/gatsby)
   - [HTML](/html)
   - [NextJS](/nextjs)
   - [Nuxt](/nuxt)
