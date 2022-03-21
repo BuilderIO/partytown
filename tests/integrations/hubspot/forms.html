@@ -64,6 +64,19 @@
         margin: 0 5px;
       }
     </style>
+    <script>
+      setTimeout(() => {
+        let errors = document.querySelector('[data-pterror]');
+        let elm = document.createElement('div');
+        elm.id = 'pterrors';
+        if (errors) {
+          elm.textContent = 'ERROR';
+        } else {
+          elm.textContent = 'NO ERROR';
+        }
+        document.body.appendChild(elm);
+      }, 3000);
+    </script>
   </head>
   <body>
     <h1>Hubspot Forms 🎉</h1>

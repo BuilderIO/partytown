@@ -1,81 +1,142 @@
 <!DOCTYPE html>
-<html lang='en'>
-<head>
-  <meta charset='UTF-8' />
-  <meta name='viewport' content='width=device-width, initial-scale=1' />
-  <meta name='description' content='Partytown Test Page' />
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
 
-  <title>Kiwisizing 🎉</title>
+    <title>Kiwisizing 🎉</title>
 
-  <script>
-    partytown = {
-      forward: ['dataLayer.push'],
-      logCalls: true,
-      logGetters: true,
-      logSetters: true,
-      logImageRequests: true,
-      logMainAccess: true,
-      logSendBeaconRequests: true,
-      logStackTraces: false,
-      logScriptExecution: true,
-    };
-  </script>
-  <script src='/~partytown/debug/partytown.js'></script>
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logImageRequests: true,
+        logMainAccess: true,
+        logSendBeaconRequests: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+        forward: ['dataLayer.push', 'fbq', '_', 'customElements'],
+        resolveUrl: function (url) {
+          if (
+            [
+              'static-tracking.klaviyo.com',
+              'static.klaviyo.com',
+              'cdn.static.kiwisizing.com',
+              'd3hw6dc1ow8pp2.cloudfront.net',
+              'pixc.com',
+            ].includes(url.hostname)
+          ) {
+            var proxyUrl = new URL(
+              'https://cdn.builder.io/api/v1/proxy-api?apiKey=e514f5987eaf4fa1b17ff31a283fe2ad'
+            );
+            proxyUrl.searchParams.append('url', url.href);
+            return proxyUrl;
+          }
+          return url;
+        },
+      };
+    </script>
+    <script src="/~partytown/debug/partytown.js"></script>
 
-  <style>
+    <script>
+      window.KiwiSizing = window.KiwiSizing === undefined ? {} : window.KiwiSizing;
+      KiwiSizing.shop = 'shyam-partytown-tester.myshopify.com';
+    </script>
+
+    <style>
       body {
-          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
           Apple Color Emoji, Segoe UI Emoji;
-          font-size: 12px;
+        font-size: 12px;
       }
 
       h1 {
-          margin: 0 0 15px 0;
+        margin: 0 0 15px 0;
       }
 
       ul {
-          list-style-type: none;
-          margin: 0;
-          padding: 0;
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
       }
 
       a {
-          display: block;
-          padding: 16px 8px;
+        display: block;
+        padding: 16px 8px;
       }
 
       a:link,
       a:visited {
-          text-decoration: none;
-          color: blue;
+        text-decoration: none;
+        color: blue;
       }
 
       a:hover {
-          background-color: #eee;
+        background-color: #eee;
       }
 
       li {
-          display: flex;
-          margin: 15px 0;
+        display: flex;
+        margin: 15px 0;
       }
 
       li strong,
       li code,
       li button {
-          white-space: nowrap;
-          flex: 1;
-          margin: 0 5px;
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
       }
-  </style>
+    </style>
 
-  <script type='text/partytown' src="./kiwisizing.SizingPlugin.js">
-  </script>
+    <script id="shopify-features" type="application/json">
+      {
+        "accessToken": "3a857541a8ed3b74db7c1f087d47886d",
+        "betas": ["rich-media-storefront-analytics"],
+        "domain": "shyam-partytown-tester.myshopify.com",
+        "predictiveSearch": true,
+        "shopId": 61726785721,
+        "smart_payment_buttons_url": "https:\/\/cdn.shopify.com\/shopifycloud\/payment-sheet\/assets\/latest\/spb.en.js",
+        "dynamic_checkout_cart_url": "https:\/\/cdn.shopify.com\/shopifycloud\/payment-sheet\/assets\/latest\/dynamic-checkout-cart.en.js",
+        "locale": "en"
+      }
+    </script>
 
-</head>
-<h1>Kiwisizing</h1>
+    <script
+      data-source-attribution="shopify.dynamic-checkout"
+      defer="defer"
+      src="./shopify-dynamic-checkout.js"
+      crossorigin="anonymous"
+    ></script>
 
-<hr />
-<p><a href='/tests/integrations/kiwisizing/standard.html'>Standard Kiwisizing</a></p>
-<p><a href='/tests/'>All Tests</a></p>
-</body>
+    <script
+      src="./kiwisizing.SizingPlugin.js?v=308\u0026shop=shyam-partytown-tester.myshopify.com"
+      type="text/partytown"
+    ></script>
+
+    <script>
+      setTimeout(() => {
+        let errors = document.querySelector('[data-pterror]');
+        let elm = document.createElement('div');
+        elm.id = 'pterrors';
+        if (errors) {
+          elm.textContent = 'ERROR';
+        } else {
+          elm.textContent = 'NO ERROR';
+        }
+        document.body.appendChild(elm);
+      }, 3000);
+    </script>
+  </head>
+  <body>
+    <h1>Kiwisizing</h1>
+
+    <div data-shopify="payment-button"></div>
+
+    <hr />
+    <p><a href="/tests/integrations/kiwisizing/standard.html">Standard Kiwisizing</a></p>
+    <p><a href="/tests/">All Tests</a></p>
+  </body>
 </html>
