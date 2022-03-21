@@ -49,7 +49,9 @@ Copy library files to `static/~partytown`. How the files are copied or served fr
 const path = require("path");
 const { copyLibFiles } = require('@builder.io/partytown/utils');
 
-exports.onPreBuild = async ({ actions: { createRedirect } }) => {
-  copyLibFiles(path.join(__dirname, "static", "~partytown"));
+exports.onPreBuild = async () => {
+  await copyLibFiles(path.join(__dirname, "static", "~partytown"));
 };
 ```
+
+It's worth noting `onPreBuild` is only called during the build process. If you need to use `copyLibFiles` while in development you can use [onPreBootstrap](https://www.gatsbyjs.com/docs/reference/config-files/gatsby-node/#onPreBootstrap) which is called when running both `gatsby build` or `gatsby develop`.
