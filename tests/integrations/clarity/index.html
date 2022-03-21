@@ -98,6 +98,20 @@
       })(window, document, "clarity", "script", "avd6npx8xb");
   </script>
 
+  <script>
+    setTimeout(() => {
+      let errors = document.querySelector('[data-pterror]');
+      let elm = document.createElement('div');
+      elm.id = 'pterrors';
+      if (errors) {
+        elm.textContent = 'ERROR';
+      } else {
+        elm.textContent = 'NO ERROR';
+      }
+      document.body.appendChild(elm);
+    }, 2000);
+  </script>
+
 </head>
 <h1>Clarity</h1>
 

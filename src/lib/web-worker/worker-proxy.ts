@@ -56,6 +56,9 @@ const queue = (
   $groupedGetters$?: string[],
   buffer?: ArrayBuffer | ArrayBufferView
 ) => {
+  if (!instance[ApplyPathKey]) {
+    return;
+  }
   taskQueue.push({
     $winId$: instance[WinIdKey],
     $instanceId$: instance[InstanceIdKey],
