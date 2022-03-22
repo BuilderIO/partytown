@@ -210,9 +210,9 @@ const getLogValue = (applyPath: ApplyPath, v: any): string => {
   }
   if (type === 'string') {
     if (applyPath.includes('cookie')) {
-      return JSON.stringify(v.substr(0, 10) + '...');
+      return JSON.stringify(v.slice(0, 10) + '...');
     }
-    return JSON.stringify(v.length > 50 ? v.substr(0, 40) + '...' : v);
+    return JSON.stringify(v.length > 50 ? v.slice(0, 40) + '...' : v);
   }
   if (Array.isArray(v)) {
     return `[${v.map(getLogValue).join(', ')}]`;
