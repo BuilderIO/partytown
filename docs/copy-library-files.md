@@ -113,3 +113,14 @@ module.exports = {
   ],
 };
 ```
+## Laravel Mix
+
+Below is an example of using [Mix's copy()](https://laravel-mix.com/docs/6.0/copying-files/) to copy the source `lib` directory found in the [@builder.io/partytown](https://www.npmjs.com/package/@builder.io/partytown) package, to the `public/~partytown/` directory:
+
+```js
+// webpack.mix.js
+const mix = require('laravel-mix');
+const partytown = require('@builder.io/partytown/utils');
+
+mix.copy(partytown.libDirPath(), 'dist/~partytown');
+```
