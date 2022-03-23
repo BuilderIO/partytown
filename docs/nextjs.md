@@ -4,13 +4,21 @@ title: NextJS
 
 The Next.js setup is largely the same as the [React integration guide](/react), except it goes further into how to add to the [NextJS](https://nextjs.org/) framework's `<Head/>` component.
 
+## Worker Strategy
+
+As of Next.js `v12.1.1-canary.11`, the `<Script/>` component now provides an experimental `worker` strategy. Please see the Next.js [Script documentation](https://nextjs.org/docs/basic-features/script#off-loading-scripts-to-a-web-worker-experimental) for more information. 
+
 ## Install
+
+> Below are the instructions if you are not using the experimental [Worker Strategy](#worker-strategy).
 
 ```bash
 npm install @builder.io/partytown
 ```
 
 ## Configure
+
+> Below are the instructions if you are not using the experimental [Worker Strategy](#worker-strategy).
 
 The `<Partytown/>` component is imported from the `@builder.io/partytown/react` submodule. The [config properties](/configuration) are JSX props.
 
@@ -50,6 +58,8 @@ Add the `type="text/partytown"` [prop](/partytown-scripts) for each script that 
 ```
 
 ## Copy Library Files
+
+> Below are the instructions if you are not using the experimental [Worker Strategy](#worker-strategy).
 
 Copy library files to `public/~partytown`. How the files are copied or served from your site is up to each site's setup. A `partytown copylib` CLI [copy task](/copy-library-files) has been provided for convenience which helps copy the Partytown library files to the public directory. Below is an example of creating a "partytown" NPM script which could run before the build:
 
