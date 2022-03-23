@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test('nextjs', async ({ page }) => {
-  await page.goto('/tests/');
+  await page.goto('/');
 
   await page.waitForSelector('.completed');
 
