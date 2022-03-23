@@ -27,6 +27,8 @@ The `lib` directory contains the static files that should be hosted from the sam
 
 The `partytown.js` file must be in the `<head>` before all other third-party scripts, and should _not_ have the `async` or `defer` attributes. Because the script must be executed immediately, and since it's such a small file, it's always preferred to inline the `partytown.js` script content, rather than it being an additional http request.
 
+> Note: When the service worker is correctly installed, the service worker itself handles the request to the `partytown-sandbox-sw.html` file and provides the content. The network tab will show `partytown-sandbox-sw.html`, and the service worker provides the response, but the file itself is not in the distribution. If you receive a 404 for this file then it means the service worker is not installed correctly. Please try uninstalling any existing Partytown service workers and ensure the Partytown files are loading correctly.
+
 ### `lib/debug/`
 
 The `lib/debug` directory has the same purpose as the `lib`, but instead will console log more information and the files themselves are not minified. Additionally, you'll notice there are more debug files than the production lib files, and that's because the production lib files inline many scripts. For example, the web worker script is inlined, rather than being a separate request.
