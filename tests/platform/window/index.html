@@ -118,6 +118,53 @@
       </li>
 
       <li>
+        <strong>frames === window</strong>
+        <code id="testFrames"></code>
+        <script type="text/partytown">
+          (function () {
+            const framesList = window.frames;
+            const elm = document.getElementById('testFrames');
+            elm.textContent = String(window === framesList);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>frames['notfound'] === undefined</strong>
+        <code id="testFramesIndexNotFound"></code>
+        <script type="text/partytown">
+          (function () {
+            const frame = window.frames['notfound'];
+            const elm = document.getElementById('testFramesIndexNotFound');
+            elm.textContent = String(frame);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>frame by name, not found</strong>
+        <code id="testGetFrameByNameNotFound"></code>
+        <script type="text/partytown">
+          (function () {
+            function getFrameByName(frameName) {
+              for (var n = window, t = null; !t; ) {
+                // accessing window.frames[frameName] previous caused this to crash
+                n.frames[frameName];
+                if (n === window.top) {
+                  break;
+                }
+                n = n.parent;
+              }
+              return t;
+            }
+            const frame = getFrameByName('some-name');
+            const elm = document.getElementById('testGetFrameByNameNotFound');
+            elm.textContent = String(frame);
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>self === window</strong>
         <code id="testSelfWindow"></code>
         <script type="text/partytown">

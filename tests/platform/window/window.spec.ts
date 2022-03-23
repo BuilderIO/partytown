@@ -20,6 +20,15 @@ test('window', async ({ page }) => {
   const testThisWindow = page.locator('#testThisWindow');
   await expect(testThisWindow).toHaveText('true');
 
+  const testFrames = page.locator('#testFrames');
+  await expect(testFrames).toHaveText('true');
+
+  const testFramesIndexNotFound = page.locator('#testFramesIndexNotFound');
+  await expect(testFramesIndexNotFound).toHaveText('undefined');
+
+  const testGetFrameByNameNotFound = page.locator('#testGetFrameByNameNotFound');
+  await expect(testGetFrameByNameNotFound).toHaveText('null');
+
   const testSelfWindow = page.locator('#testSelfWindow');
   await expect(testSelfWindow).toHaveText('true');
 

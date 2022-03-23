@@ -437,6 +437,10 @@ export const createWindow = (
         return fetch(resolveUrl(env, input), init);
       }
 
+      get frames() {
+        return this;
+      }
+
       get frameElement() {
         if ($winId$ === $parentWinId$) {
           // this is the top window, not in an iframe
