@@ -122,5 +122,5 @@ Below is an example of using [Mix's copy()](https://laravel-mix.com/docs/6.0/cop
 const mix = require('laravel-mix');
 const partytown = require('@builder.io/partytown/utils');
 
-mix.copy(partytown.libDirPath(), 'dist/~partytown');
+mix.copy(partytown.libDirPath(), 'public/~partytown');
 ```
