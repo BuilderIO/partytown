@@ -85,7 +85,7 @@
     "gzip-size": "^6.0.0",
     "np": "^7.6.1",
     "playwright": "^1.17.2",
-    "prettier": "^2.5.1",
+    "prettier": "^2.6.0",
     "rollup": "^2.70.1",
     "rollup-plugin-terser": "^7.0.2",
     "tslib": "^2.3.1",
