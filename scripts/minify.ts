@@ -86,6 +86,7 @@ function managlePropsPlugin(): Plugin {
     $isLoading$: '',
     $isPromise$: '',
     $isSameOrigin$: '',
+    $isTopWindow$: '',
     $libPath$: '',
     $localStorage$: '',
     $location$: '',

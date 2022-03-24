@@ -173,6 +173,7 @@ export interface WebWorkerEnvironment {
   $isLoading$?: number;
   $runWindowLoadEvent$?: number;
   $isSameOrigin$?: boolean;
+  $isTopWindow$?: boolean;
 }
 
 export interface MembersInterfaceTypeInfo {

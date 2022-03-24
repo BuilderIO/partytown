@@ -132,7 +132,22 @@ export const createWindow = (
   const $isSameOrigin$ =
     $location$.origin === webWorkerCtx.$origin$ || $location$.origin === ABOUT_BLANK;
 
+  const $isTopWindow$ = $parentWinId$ === $winId$;
+
   const env: WebWorkerEnvironment = {} as any;
+
+  const getChildEnvs = () => {
+    let childEnv: WebWorkerEnvironment[] = [];
+    let envWinId: string;
+    let otherEnv: WebWorkerEnvironment;
+    for (envWinId in environments) {
+      otherEnv = environments[envWinId];
+      if (otherEnv.$parentWinId$ === $winId$ && !otherEnv.$isTopWindow$) {
+        childEnv.push(otherEnv);
+      }
+    }
+    return childEnv;
+  };
 
   // window global eveything will live within
   const WorkerWindow = defineConstructorName(
@@ -180,6 +195,7 @@ export const createWindow = (
         };
 
         win.Window = WorkerWindow;
+        win.name = name + (debug ? `${normalizedWinId($winId$)} (${$winId$})` : ($winId$ as any));
 
         createNodeCstr(win, env, WorkerBase);
         createCSSStyleDeclarationCstr(win, WorkerBase, 'CSSStyleDeclaration');
@@ -341,6 +357,15 @@ export const createWindow = (
           $winId$,
           $parentWinId$,
           $window$: new Proxy(win, {
+            get: (win, propName: any) => {
+              if (typeof propName === 'string' && !isNaN(propName as any)) {
+                // https://developer.mozilla.org/en-US/docs/Web/API/Window/frames
+                let frame = getChildEnvs()[propName as any];
+                return frame ? frame.$window$ : undefined;
+              } else {
+                return win[propName];
+              }
+            },
             has: () =>
               // window "has" any and all props, this is especially true for global variables
               // that are meant to be assigned to window, but without "window." prefix,
@@ -357,6 +382,7 @@ export const createWindow = (
           $location$,
           $visibilityState$,
           $isSameOrigin$,
+          $isTopWindow$,
           $createNode$,
         });
 
@@ -438,26 +464,33 @@ export const createWindow = (
       }
 
       get frames() {
-        return this;
+        // this is actually just the window, which is what handles "length" and window[0]
+        // https://developer.mozilla.org/en-US/docs/Web/API/Window/frames
+        return env.$window$;
       }
 
       get frameElement() {
-        if ($winId$ === $parentWinId$) {
+        if ($isTopWindow$) {
           // this is the top window, not in an iframe
           return null;
+        } else {
+          // the winId of an iframe's window is the same
+          // as the instanceId of the containing iframe element
+          return getOrCreateNodeInstance($parentWinId$, $winId$, NodeName.IFrame);
         }
-
-        // the winId of an iframe's window is the same
-        // as the instanceId of the containing iframe element
-        return getOrCreateNodeInstance($parentWinId$, $winId$, NodeName.IFrame);
       }
 
       get globalThis() {
-        return this;
+        return env.$window$;
       }
 
       get head() {
         return env.$head$;
+      }
+
+      get length() {
+        // https://developer.mozilla.org/en-US/docs/Web/API/Window/length
+        return getChildEnvs().length;
       }
 
       get location() {
@@ -469,10 +502,6 @@ export const createWindow = (
 
       get Image() {
         return createImageConstructor(env);
-      }
-
-      get name() {
-        return name + (debug ? `${normalizedWinId($winId$)} (${$winId$})` : ($winId$ as any));
       }
 
       get navigator() {
@@ -490,7 +519,7 @@ export const createWindow = (
             return environments[envWinId].$window$;
           }
         }
-        return this;
+        return env.$window$;
       }
 
       postMessage(...args: any[]) {
@@ -508,21 +537,20 @@ export const createWindow = (
       }
 
       get self() {
-        return this;
+        return env.$window$;
       }
 
       get top(): any {
         for (let envWinId in environments) {
-          if (environments[envWinId].$winId$ === environments[envWinId].$parentWinId$) {
-            // when winId and parentWinId are the same it's the top window
+          if (environments[envWinId].$isTopWindow$) {
             return environments[envWinId].$window$;
           }
         }
-        return this;
+        return env.$window$;
       }
 
       get window() {
-        return this;
+        return env.$window$;
       }
 
       get XMLHttpRequest() {

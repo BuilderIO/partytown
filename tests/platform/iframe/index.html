@@ -831,6 +831,29 @@
           })();
         </script>
       </li>
+
+      <li>
+        <strong>window.frames</strong>
+        <code id="testWindowFrames"></code>
+        <iframe id="window-frames"></iframe>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testWindowFrames');
+            const iframe = document.getElementById('window-frames');
+            iframe.contentWindow.name = 'window-frames';
+            const framesLength = frames.length;
+
+            for (let i = 0; i < framesLength; i++) {
+              const frame = frames[i];
+              if (frame.name === 'window-frames') {
+                elm.textContent = frame.name;
+                elm.className = 'testWindowFrames';
+                break;
+              }
+            }
+          })();
+        </script>
+      </li>
     </ul>
 
     <hr />

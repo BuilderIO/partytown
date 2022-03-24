@@ -131,4 +131,8 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testGetIframeSrc');
   const testGetIframeSrc = page.locator('#testGetIframeSrc');
   await expect(testGetIframeSrc).toHaveText('/tests/platform/iframe/content.html');
+
+  await page.waitForSelector('.testWindowFrames');
+  const testWindowFrames = page.locator('#testWindowFrames');
+  await expect(testWindowFrames).toHaveText('window-frames');
 });
