@@ -525,6 +525,7 @@ export const enum NodeName {
 export const enum StateProp {
   errorHandlers = 'error',
   loadHandlers = 'load',
+  src = 0,
   loadErrorStatus = 1,
   cssRules = 2,
   innerHTML = 3,

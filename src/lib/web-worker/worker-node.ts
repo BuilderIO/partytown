@@ -1,5 +1,5 @@
 import { cachedTreeProps } from './worker-constructors';
-import { callMethod, setter, getter, sendToMain } from './worker-proxy';
+import { callMethod, setter, sendToMain } from './worker-proxy';
 import {
   CallType,
   NodeName,
@@ -69,8 +69,8 @@ export const createNodeCstr = (
         if (isIFrame) {
           // an iframe element's instanceId is also
           // the winId of its contentWindow
-          const src = getter(newNode, ['src']);
-          if (src.startsWith('javascript:')) {
+          const src = getInstanceStateValue<string>(newNode, StateProp.src);
+          if (src && src.startsWith('javascript:')) {
             const scriptContent = src.split('javascript:')[1];
             runScriptContent(env, instanceId, scriptContent, winId, '');
           }
