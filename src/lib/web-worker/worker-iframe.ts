@@ -43,6 +43,9 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any, env: WebWor
         return src.startsWith('about:') ? '' : src;
       },
       set(src: string) {
+        if (!src) {
+          return;
+        }
         if (src.startsWith('javascript:')) {
           setInstanceStateValue(this, StateProp.src, src);
           return;
