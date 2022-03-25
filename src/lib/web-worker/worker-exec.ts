@@ -109,7 +109,7 @@ export const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?
         .filter((globalFnName) => /[a-zA-Z_$][0-9a-zA-Z_$]*/.test(globalFnName))
         .map((g) => `(typeof ${g}=='function'&&(window.${g}=${g}))`)
         .join(';') +
-      scriptContent.replace(/\bthis\b/g, '(thi$(this)?window:this)').replace(/\/\/# so/g, '//Xso')
+      scriptContent.replace(/(?<!\$)\bthis\b/g, '(thi$(this)?window:this)').replace(/\/\/# so/g, '//Xso')
     }\n;function thi$(t){return t===this}}` + (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '');
 
   if (!env.$isSameOrigin$) {
