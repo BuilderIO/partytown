@@ -1,12 +1,12 @@
 import {
   createElementFromConstructor,
-  debug,
   getConstructorName,
   getNodeName,
   isValidMemberName,
   len,
   noop,
 } from '../utils';
+import { config, docImpl, libPath, mainWindow } from './main-globals';
 import {
   InterfaceType,
   InterfaceInfo,
@@ -14,13 +14,8 @@ import {
   InitWebWorkerData,
   StorageItem,
 } from '../types';
-import { logMain } from '../log';
-import { config, doc, libPath, mainWindow } from './main-globals';
 
 export const readMainPlatform = () => {
-  const startTime = debug ? performance.now() : 0;
-
-  const docImpl = doc.implementation.createHTMLDocument();
   const elm = docImpl.createElement('i');
   const textNode = docImpl.createTextNode('');
   const comment = docImpl.createComment('');
@@ -31,13 +26,6 @@ export const readMainPlatform = () => {
   const resizeObserver = getGlobalConstructor(mainWindow, 'ResizeObserver');
   const perf = mainWindow.performance;
   const screen = mainWindow.screen;
-
-  // get all HTML*Element constructors on window
-  // and create each element to get their implementation
-  const elms = Object.getOwnPropertyNames(mainWindow)
-    .map((interfaceName) => createElementFromConstructor(docImpl, interfaceName))
-    .filter((elm) => elm)
-    .map((elm) => [elm]);
 
   const impls: any[] = [
     // window implementations
@@ -66,18 +54,9 @@ export const readMainPlatform = () => {
     [elm.style],
     [docImpl],
     [docImpl.doctype!],
-    ...elms,
-  ]
-    .filter((implData) => implData[0])
-    .map((implData) => {
-      const impl = implData[0];
-      const interfaceType: InterfaceType = implData[1] as any;
-      const cstrName = getConstructorName(impl);
-      const CstrPrototype = (mainWindow as any)[cstrName].prototype;
-      return [cstrName, CstrPrototype, impl, interfaceType];
-    });
+  ];
 
-  const $interfaces$: InterfaceInfo[] = [
+  const initialInterfaces: InterfaceInfo[] = [
     readImplementation('Window', mainWindow),
     readImplementation('Node', textNode),
   ];
@@ -94,26 +73,51 @@ export const readMainPlatform = () => {
 
   const initWebWorkerData: InitWebWorkerData = {
     $config$,
+    $interfaces$: readImplementations(impls, initialInterfaces),
     $libPath$: new URL(libPath, mainWindow.location as any) + '',
-    $interfaces$,
     $origin$: origin,
     $localStorage$: readStorage('localStorage'),
     $sessionStorage$: readStorage('sessionStorage'),
   };
 
-  impls.map(([cstrName, CstrPrototype, impl, intefaceType]) =>
-    readOwnImplementation($interfaces$, cstrName, CstrPrototype, impl, intefaceType)
+  addGlobalConstructorUsingPrototype(
+    initWebWorkerData.$interfaces$,
+    mainWindow,
+    'IntersectionObserverEntry'
   );
 
-  addGlobalConstructorUsingPrototype($interfaces$, mainWindow, 'IntersectionObserverEntry');
-
-  if (debug) {
-    logMain(
-      `Read ${$interfaces$.length} interfaces in ${(performance.now() - startTime).toFixed(1)}ms`
-    );
-  }
-
   return initWebWorkerData;
+};
+
+export const readMainInterfaces = () => {
+  // get all HTML*Element constructors on window
+  // and create each element to get their implementation
+  const elms = Object.getOwnPropertyNames(mainWindow)
+    .map((interfaceName) => createElementFromConstructor(docImpl, interfaceName))
+    .filter((elm) => elm)
+    .map((elm) => [elm]);
+
+  return readImplementations(elms, []);
+};
+
+const cstrs = new Set(['Object']);
+
+const readImplementations = (impls: any[], interfaces: InterfaceInfo[]) => {
+  const cstrImpls = impls
+    .filter((implData) => implData[0])
+    .map((implData) => {
+      const impl = implData[0];
+      const interfaceType: InterfaceType = implData[1] as any;
+      const cstrName = getConstructorName(impl);
+      const CstrPrototype = (mainWindow as any)[cstrName].prototype;
+      return [cstrName, CstrPrototype, impl, interfaceType];
+    });
+
+  cstrImpls.map(([cstrName, CstrPrototype, impl, intefaceType]) =>
+    readOwnImplementation(cstrs, interfaces, cstrName, CstrPrototype, impl, intefaceType)
+  );
+
+  return interfaces;
 };
 
 const readImplementation = (cstrName: string, impl: any, memberName?: string) => {
@@ -126,22 +130,25 @@ const readImplementation = (cstrName: string, impl: any, memberName?: string) =>
 };
 
 const readOwnImplementation = (
+  cstrs: Set<string>,
   interfaces: InterfaceInfo[],
   cstrName: string,
   CstrPrototype: any,
   impl: any,
   interfaceType: InterfaceType
 ) => {
-  if (cstrName !== 'Object' && !interfaces.some((i) => i[0] === cstrName)) {
+  if (!cstrs.has(cstrName)) {
+    cstrs.add(cstrName);
     const SuperCstr = Object.getPrototypeOf(CstrPrototype);
     const superCstrName = getConstructorName(SuperCstr);
     const interfaceMembers: InterfaceMember[] = [];
+    const propDescriptors = Object.getOwnPropertyDescriptors(CstrPrototype);
 
-    readOwnImplementation(interfaces, superCstrName, SuperCstr, impl, interfaceType);
+    readOwnImplementation(cstrs, interfaces, superCstrName, SuperCstr, impl, interfaceType);
 
-    Object.keys(Object.getOwnPropertyDescriptors(CstrPrototype)).map((memberName) =>
-      readImplementationMember(interfaceMembers, impl, memberName)
-    );
+    for (const memberName in propDescriptors) {
+      readImplementationMember(interfaceMembers, impl, memberName);
+    }
 
     interfaces.push([cstrName, superCstrName, interfaceMembers, interfaceType, getNodeName(impl)]);
   }
