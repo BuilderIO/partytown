@@ -59,17 +59,21 @@ export const patchDocument = (
           throw tagName + ' not valid';
         }
 
+        console.log('createElement', tagName, 1);
         const isIframe = tagName === NodeName.IFrame;
         const winId = this[WinIdKey];
         const instanceId = (isIframe ? 'f_' : '') + randomId();
 
+        console.log('createElement', tagName, 2);
         callMethod(this, ['createElement'], [tagName], CallType.NonBlocking, instanceId);
 
+        console.log('createElement', tagName, 3);
         const elm = getOrCreateNodeInstance(winId, instanceId, tagName);
 
         if (isIframe) {
           // an iframe element's instanceId is the same as its contentWindow's winId
           // and the contentWindow's parentWinId is the iframe element's winId
+          console.log('createElement', tagName, 4);
           const env = createEnvironment(
             {
               $winId$: instanceId,
@@ -78,6 +82,7 @@ export const patchDocument = (
             },
             true
           );
+          console.log('createElement', tagName, 5);
 
           // iframe's get the native fetch
           // common for analytics to use "const fetch = iframe.contentWindow.fetch"
@@ -85,6 +90,7 @@ export const patchDocument = (
           env.$window$.fetch = fetch;
 
           setter(elm, ['srcdoc'], getPartytownScript());
+          console.log('createElement', tagName, 6);
         } else if (tagName === NodeName.Script) {
           const scriptType = getInstanceStateValue(elm!, StateProp.type);
           if (isScriptJsType(scriptType)) {

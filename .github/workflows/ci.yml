@@ -2,49 +2,49 @@ name: Partytown CI
 on: [push, pull_request]
 
 jobs:
-  test-chromium:
-    name: Test Chromium (Ubuntu)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  # test-chromium:
+  #   name: Test Chromium (Ubuntu)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 14.x
 
-      - name: Cache NPM Dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-
+  #     - name: Cache NPM Dependencies
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: ~/.npm
+  #         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+  #         restore-keys: ${{ runner.os }}-node-
 
-      - name: Install NPM Dependencies
-        run: npm ci
+  #     - name: Install NPM Dependencies
+  #       run: npm ci
 
-      - name: Build
-        run: npm run build
+  #     - name: Build
+  #       run: npm run build
 
-      - name: Install Chromium Playwright
-        run: npx playwright install chromium && npx playwright install-deps chromium
+  #     - name: Install Chromium Playwright
+  #       run: npx playwright install chromium && npx playwright install-deps chromium
 
-      - name: Run Chromium E2E Tests (Service Worker)
-        run: npm run test.chromium
+  #     - name: Run Chromium E2E Tests (Service Worker)
+  #       run: npm run test.chromium
 
-      - name: Run Chromium E2E Tests (Atomics)
-        run: npm run test.atomics
+  #     - name: Run Chromium E2E Tests (Atomics)
+  #       run: npm run test.atomics
 
-      - name: Run Unit Tests
-        run: npm run test.unit
+  #     - name: Run Unit Tests
+  #       run: npm run test.unit
 
-      - name: Upload Chromium E2E Test Videos
-        uses: actions/upload-artifact@v1
-        if: always()
-        with:
-          name: Chromium E2E Test Videos
-          path: tests/videos
+  #     - name: Upload Chromium E2E Test Videos
+  #       uses: actions/upload-artifact@v1
+  #       if: always()
+  #       with:
+  #         name: Chromium E2E Test Videos
+  #         path: tests/videos
 
   test-webkit:
     name: Test WebKit (MacOS)
@@ -77,47 +77,47 @@ jobs:
       - name: Run WebKit E2E Tests
         run: npm run test.webkit
 
-      - name: Upload WebKit E2E Test Videos
-        uses: actions/upload-artifact@v1
-        if: always()
-        with:
-          name: WebKit E2E Test Videos Videos
-          path: tests/videos
+      # - name: Upload WebKit E2E Test Videos
+      #   uses: actions/upload-artifact@v1
+      #   if: always()
+      #   with:
+      #     name: WebKit E2E Test Videos Videos
+      #     path: tests/videos
 
-  benchmark-chromium:
-    name: Benchmark Chromium (Ubuntu)
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+  # benchmark-chromium:
+  #   name: Benchmark Chromium (Ubuntu)
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - name: Checkout
+  #       uses: actions/checkout@v2
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v1
-        with:
-          node-version: 14.x
+  #     - name: Setup Node.js
+  #       uses: actions/setup-node@v1
+  #       with:
+  #         node-version: 14.x
 
-      - name: Cache NPM Dependencies
-        uses: actions/cache@v2
-        with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-
+  #     - name: Cache NPM Dependencies
+  #       uses: actions/cache@v2
+  #       with:
+  #         path: ~/.npm
+  #         key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+  #         restore-keys: ${{ runner.os }}-node-
 
-      - name: Install NPM Dependencies
-        run: npm ci
+  #     - name: Install NPM Dependencies
+  #       run: npm ci
 
-      - name: Build
-        run: npm run build
+  #     - name: Build
+  #       run: npm run build
 
-      - name: Install Chromium Playwright
-        run: npx playwright install chromium && npx playwright install-deps chromium
+  #     - name: Install Chromium Playwright
+  #       run: npx playwright install chromium && npx playwright install-deps chromium
 
-      - name: Run Chromium Benchmark
-        run: npm run benchmark
+  #     - name: Run Chromium Benchmark
+  #       run: npm run benchmark
 
-      - name: Upload Chromium Benchmark Screenshots
-        uses: actions/upload-artifact@v1
-        if: always()
-        with:
-          name: Chromium Benchmark Screenshots
-          path: tests/benchmarks/screenshots
+  #     - name: Upload Chromium Benchmark Screenshots
+  #       uses: actions/upload-artifact@v1
+  #       if: always()
+  #       with:
+  #         name: Chromium Benchmark Screenshots
+  #         path: tests/benchmarks/screenshots

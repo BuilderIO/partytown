@@ -289,19 +289,19 @@ const objToString = (obj: any) => {
 
 export const logDimensionCacheClearSetter = (target: any, propName: string) => {
   if (debug && (webWorkerCtx.$config$.logGetters || webWorkerCtx.$config$.logSetters)) {
-    logWorker(`Dimension cache cleared from setter "${propName}"`, target[WinIdKey]);
+    // logWorker(`Dimension cache cleared from setter "${propName}"`, target[WinIdKey]);
   }
 };
 
 export const logDimensionCacheClearStyle = (target: any, propName: any) => {
   if (debug && (webWorkerCtx.$config$.logGetters || webWorkerCtx.$config$.logSetters)) {
-    logWorker(`Dimension cache cleared from style.${propName} setter`, target[WinIdKey]);
+    // logWorker(`Dimension cache cleared from style.${propName} setter`, target[WinIdKey]);
   }
 };
 
 export const logDimensionCacheClearMethod = (target: any, methodName?: string) => {
   if (debug && (webWorkerCtx.$config$.logGetters || webWorkerCtx.$config$.logCalls)) {
-    logWorker(`Dimension cache cleared from method call ${methodName}()`, target[WinIdKey]);
+    // logWorker(`Dimension cache cleared from method call ${methodName}()`, target[WinIdKey]);
   }
 };
 
