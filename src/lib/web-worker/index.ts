@@ -49,6 +49,15 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
     // initialize the web worker with the received the main data
     initWebWorker(msgValue);
 
+    // request from main that the worker needs the interfaces
+    webWorkerCtx.$postMessage$([WorkerMessageType.MainInterfacesRequestFromWorker]);
+  } else if (msgType === WorkerMessageType.MainInterfacesResponseToWorker) {
+    // received more main thread interfaces, append them to the array
+    webWorkerCtx.$interfaces$ = [...webWorkerCtx.$interfaces$, ...msgValue];
+    webWorkerCtx.$isInitialized$ = 1;
+
+    logWorker(`Initialized web worker`);
+
     // send to the main thread that the web worker has been initialized
     webWorkerCtx.$postMessage$([WorkerMessageType.InitializedWebWorker]);
 

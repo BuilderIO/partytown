@@ -5,7 +5,6 @@ import {
   webWorkerSessionStorage,
 } from './worker-constants';
 import type { InitWebWorkerData } from '../types';
-import { logWorker } from '../log';
 import type { PartytownConfig } from '@builder.io/partytown/integration';
 
 export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
@@ -30,8 +29,4 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
       config[configName] = new Function('return ' + config[configName])();
     }
   });
-
-  webWorkerCtx.$isInitialized$ = 1;
-
-  logWorker(`Initialized web worker`);
 };

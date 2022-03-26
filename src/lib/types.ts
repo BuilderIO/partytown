@@ -30,6 +30,7 @@ export type AssignInstanceId = InstanceId | AssignWinInstanceId;
 
 export type MessageFromWorkerToSandbox =
   | [type: WorkerMessageType.MainDataRequestFromWorker]
+  | [type: WorkerMessageType.MainInterfacesRequestFromWorker]
   | [type: WorkerMessageType.InitializedWebWorker]
   | [
       type: WorkerMessageType.InitializedEnvironmentScript,
@@ -43,6 +44,7 @@ export type MessageFromWorkerToSandbox =
 
 export type MessageFromSandboxToWorker =
   | [type: WorkerMessageType.MainDataResponseToWorker, initWebWorkerData: InitWebWorkerData]
+  | [type: WorkerMessageType.MainInterfacesResponseToWorker, interfaces: InterfaceInfo[]]
   | [type: WorkerMessageType.InitializeEnvironment, initEnvData: InitializeEnvironmentData]
   | [type: WorkerMessageType.InitializeNextScript, initScriptData: InitializeScriptData]
   | [type: WorkerMessageType.InitializedScripts, winId: WinId]
@@ -61,6 +63,8 @@ export type MessageFromSandboxToWorker =
 export const enum WorkerMessageType {
   MainDataRequestFromWorker,
   MainDataResponseToWorker,
+  MainInterfacesRequestFromWorker,
+  MainInterfacesResponseToWorker,
   InitializedWebWorker,
   InitializeEnvironment,
   InitializedEnvironmentScript,
