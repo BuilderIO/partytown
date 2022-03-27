@@ -8,6 +8,7 @@ export const registerWindow = (
   $winId$: WinId,
   $window$: MainWindow
 ) => {
+  console.log('registerWindow', 1);
   if (!windowIds.has($window$)) {
     windowIds.set($window$, $winId$);
 
@@ -15,7 +16,8 @@ export const registerWindow = (
     const history = $window$.history;
     const $parentWinId$ = windowIds.get($window$.parent)!;
 
-    const sendInitEnvData = () =>
+    const sendInitEnvData = () => {
+      console.log('registerWindow', 2);
       worker.postMessage([
         WorkerMessageType.InitializeEnvironment,
         {
@@ -25,6 +27,7 @@ export const registerWindow = (
           $visibilityState$: doc.visibilityState,
         },
       ]);
+    };
 
     const pushState = history.pushState.bind(history);
     const replaceState = history.replaceState.bind(history);
@@ -65,8 +68,10 @@ export const registerWindow = (
     }
 
     if (doc.readyState === 'complete') {
+      console.log('registerWindow', 3);
       sendInitEnvData();
     } else {
+      console.log('registerWindow', 4);
       $window$.addEventListener('load', sendInitEnvData);
     }
   }

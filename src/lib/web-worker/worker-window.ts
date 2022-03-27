@@ -110,6 +110,7 @@ export const createWindow = (
       this[NamespaceKey] = namespace || cstrNamespace;
       this[InstanceStateKey] = {};
       cstrInstanceId = cstrNodeName = cstrNamespace = undefined;
+      console.log('WorkerBase constructor');
     }
   };
 
@@ -607,6 +608,7 @@ export const createWindow = (
 
   new WorkerWindow();
 
+  console.log('create window');
   return env;
 };
 

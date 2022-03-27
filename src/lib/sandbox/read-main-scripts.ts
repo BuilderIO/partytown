@@ -11,6 +11,7 @@ import { mainForwardTrigger } from './main-forward-trigger';
 import { logMain, normalizedWinId } from '../log';
 
 export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowContext) => {
+  console.log('readNextScript', 1);
   let $winId$ = winCtx.$winId$;
   let win = winCtx.$window$;
   let doc = win.document;
@@ -21,6 +22,7 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
   let scriptData: InitializeScriptData;
 
   if (doc && doc.body) {
+    console.log('readNextScript', 2);
     // check the document and document.body exist because
     // it's possible for an iframe that's been appended
     // to the DOM to not be ready yet
@@ -35,6 +37,7 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
     }
 
     if (scriptElm) {
+      console.log('readNextScript', 3);
       // read the next script found
       scriptElm.dataset.ptid = $instanceId$ = getAndSetInstanceId(scriptElm, $winId$) as any;
 
@@ -50,6 +53,7 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
         scriptData.$content$ = scriptElm.innerHTML;
       }
 
+      console.log('readNextScript', 4);
       worker.postMessage([WorkerMessageType.InitializeNextScript, scriptData]);
     } else {
       if (!winCtx.$isInitialized$) {
@@ -70,6 +74,7 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
         }
       }
 
+      console.log('readNextScript', 5);
       worker.postMessage([WorkerMessageType.InitializedScripts, $winId$]);
     }
   } else {

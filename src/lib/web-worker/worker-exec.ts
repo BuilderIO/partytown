@@ -27,6 +27,7 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
   let env = environments[winId];
   let rsp: Response;
 
+  console.log('script', 1);
   if (scriptSrc) {
     try {
       scriptSrc = resolveToUrl(env, scriptSrc) + '';
@@ -38,8 +39,10 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
       }
 
       rsp = await fetch(scriptSrc);
+      console.log('script', 2);
       if (rsp.ok) {
         scriptContent = await rsp.text();
+        console.log('script', 3);
 
         env.$currentScriptId$ = instanceId;
         run(env, scriptContent, scriptOrgSrc || scriptSrc);
@@ -59,6 +62,7 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
 
   env.$currentScriptId$ = '';
 
+  console.log('script', 4);
   webWorkerCtx.$postMessage$([
     WorkerMessageType.InitializedEnvironmentScript,
     winId,

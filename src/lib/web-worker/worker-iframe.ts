@@ -23,12 +23,14 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any, env: WebWor
   const HTMLIFrameDescriptorMap: PropertyDescriptorMap & ThisType<WorkerNode> = {
     contentDocument: {
       get() {
+        console.log('contentDocument', 1);
         return getIframeEnv(this).$document$;
       },
     },
 
     contentWindow: {
       get() {
+        console.log('contentWindow', 1);
         return getIframeEnv(this).$window$;
       },
     },

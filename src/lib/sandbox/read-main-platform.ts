@@ -16,6 +16,7 @@ import {
 } from '../types';
 
 export const readMainPlatform = () => {
+  console.log('readMainPlatform', 1);
   const elm = docImpl.createElement('i');
   const textNode = docImpl.createTextNode('');
   const comment = docImpl.createComment('');
@@ -85,13 +86,14 @@ export const readMainPlatform = () => {
     mainWindow,
     'IntersectionObserverEntry'
   );
-
+  console.log('readMainPlatform', 2);
   return initWebWorkerData;
 };
 
 export const readMainInterfaces = () => {
   // get all HTML*Element constructors on window
   // and create each element to get their implementation
+  console.log('readMainInterfaces', 1);
   const elms = Object.getOwnPropertyNames(mainWindow)
     .map((interfaceName) => createElementFromConstructor(docImpl, interfaceName))
     .filter((elm) => elm)

@@ -29,6 +29,7 @@ export const mainAccessHandler = async (
   let instance: any;
   let rtnValue: any;
   let isLast: boolean;
+
   for (; i < totalTasks; i++) {
     try {
       isLast = i === totalTasks - 1;
@@ -36,7 +37,10 @@ export const mainAccessHandler = async (
       winId = task.$winId$;
       applyPath = task.$applyPath$;
 
+      console.log('mainAccessHandler', applyPath, 1);
+
       if (!winCtxs[winId] && winId.startsWith('f_')) {
+        console.log('mainAccessHandler', applyPath, 2);
         // window (iframe) hasn't finished loading yet
         await new Promise<void>((resolve) => {
           let check = 0;
@@ -49,12 +53,14 @@ export const mainAccessHandler = async (
           };
           callback();
         });
+        console.log('mainAccessHandler', applyPath, 3);
       }
 
       if (
         applyPath[0] === ApplyPathType.GlobalConstructor &&
         applyPath[1] in winCtxs[winId]!.$window$
       ) {
+        console.log('mainAccessHandler', applyPath, 4);
         setInstanceId(
           new (winCtxs[winId]!.$window$ as any)[applyPath[1]](
             ...deserializeFromWorker(worker, applyPath[2])
@@ -62,6 +68,7 @@ export const mainAccessHandler = async (
           task.$instanceId$
         );
       } else {
+        console.log('mainAccessHandler', applyPath, 5);
         // get the existing instance
         instance = getInstance(winId, task.$instanceId$);
         if (instance) {
@@ -75,9 +82,12 @@ export const mainAccessHandler = async (
           );
 
           if (task.$assignInstanceId$) {
+            console.log('mainAccessHandler', applyPath, 6);
             if (typeof task.$assignInstanceId$ === 'string') {
+              console.log('mainAccessHandler', applyPath, 7);
               setInstanceId(rtnValue, task.$assignInstanceId$);
             } else {
+              console.log('mainAccessHandler', applyPath, 8);
               winCtxs[task.$assignInstanceId$.$winId$] = {
                 $winId$: task.$assignInstanceId$.$winId$,
                 $window$: {
@@ -88,12 +98,14 @@ export const mainAccessHandler = async (
           }
 
           if (isPromise(rtnValue)) {
+            console.log('mainAccessHandler', applyPath, 9);
             rtnValue = await rtnValue;
             if (isLast) {
               accessRsp.$isPromise$ = true;
             }
           }
           if (isLast) {
+            console.log('mainAccessHandler', applyPath, 10);
             accessRsp.$rtnValue$ = serializeForWorker(winId, rtnValue);
           }
         } else {
@@ -156,13 +168,16 @@ const applyToInstance = (
           }
 
           // current is the member name, but not a method
+          console.log('applyToInstance', instance[current], 1);
           instance = instance[current];
         } else if (next === ApplyPathType.SetValue) {
           // setter
           // previous is the setter name
           // current is the setter value
           // next tells us this was a setter
+          console.log('applyToInstance', current, 2);
           instance[previous] = deserializeFromWorker(worker, current);
+          console.log('applyToInstance', current, 3);
 
           // setters never return a value
           return;
@@ -184,7 +199,10 @@ const applyToInstance = (
             }
           }
 
+          console.log('applyToInstance', current, 4);
+
           instance = instance[previous].apply(instance, args);
+          console.log('applyToInstance', current, 5);
           if (previous === 'play') {
             return Promise.resolve();
           }

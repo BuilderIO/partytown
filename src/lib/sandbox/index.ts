@@ -35,11 +35,14 @@ syncCreateMessenger(receiveMessage).then((onMessageHandler) => {
 
     worker.onmessage = (ev: MessageEvent<MessageFromWorkerToSandbox>) => {
       const msg: MessageFromWorkerToSandbox = ev.data;
+      console.log('worker.onmessage', msg, 1);
       if (msg[0] === WorkerMessageType.AsyncAccessRequest) {
         // fire and forget async call within web worker
+        console.log('worker.onmessage', msg, 2);
         mainAccessHandler(worker, msg[1]);
       } else {
         // blocking call within web worker
+        console.log('worker.onmessage', msg, 3);
         onMessageHandler(worker, msg);
       }
     };
