@@ -10,7 +10,7 @@ import {
 import { getPartytownScript, resolveUrl } from './worker-exec';
 import { getter, sendToMain, setter } from './worker-proxy';
 import { HTMLSrcElementDescriptorMap } from './worker-src-element';
-import { setInstanceStateValue } from './worker-state';
+import { setInstanceStateValue, getInstanceStateValue } from './worker-state';
 import {
   StateProp,
   WebWorkerEnvironment,
@@ -35,10 +35,21 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any, env: WebWor
 
     src: {
       get() {
-        let src = getIframeEnv(this).$location$.href;
+        let src = getInstanceStateValue(this, StateProp.src);
+        if (src && src.startsWith('javascript:')) {
+          return src;
+        }
+        src = getIframeEnv(this).$location$.href;
         return src.startsWith('about:') ? '' : src;
       },
       set(src: string) {
+        if (!src) {
+          return;
+        }
+        if (src.startsWith('javascript:')) {
+          setInstanceStateValue(this, StateProp.src, src);
+          return;
+        }
         if (!src.startsWith('about:')) {
           let xhr = new XMLHttpRequest();
           let xhrStatus: number;

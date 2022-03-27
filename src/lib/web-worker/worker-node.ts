@@ -69,6 +69,11 @@ export const createNodeCstr = (
         if (isIFrame) {
           // an iframe element's instanceId is also
           // the winId of its contentWindow
+          const src = getInstanceStateValue<string>(newNode, StateProp.src);
+          if (src && src.startsWith('javascript:')) {
+            const scriptContent = src.split('javascript:')[1];
+            runScriptContent(env, instanceId, scriptContent, winId, '');
+          }
           insertIframe(instanceId, newNode);
         }
         if (isScript) {
