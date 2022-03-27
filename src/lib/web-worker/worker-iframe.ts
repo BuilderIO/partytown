@@ -43,26 +43,23 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any, env: WebWor
       },
       set(src: string) {
         if (!src.startsWith('about:')) {
-          console.log('iframe set src', 1);
+          console.log('iframe set src', 1, src);
           let xhr = new XMLHttpRequest();
           let xhrStatus: number;
           let env = getIframeEnv(this);
 
-          console.log('iframe set src', 2);
+          console.log('iframe set src', 2, src);
           env.$location$.href = src = resolveUrl(env, src);
           env.$isLoading$ = 1;
 
-          console.log('iframe set src', 3);
           setInstanceStateValue(this, StateProp.loadErrorStatus, undefined);
 
-          console.log('iframe set src', 4);
           xhr.open('GET', src, false);
           xhr.send();
           xhrStatus = xhr.status;
 
-          console.log('iframe set src', 5);
+          console.log('iframe set src', 5, src);
           if (xhrStatus > 199 && xhrStatus < 300) {
-            console.log('iframe set src', 6);
             setter(
               this,
               ['srcdoc'],
@@ -73,13 +70,11 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any, env: WebWor
                   .replace(/text\/javascript/g, SCRIPT_TYPE) +
                 getPartytownScript()
             );
-            console.log('iframe set src', 7);
             sendToMain(true);
-            console.log('iframe set src', 8);
+            console.log('iframe set src', 8, src);
             webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextScript, env.$winId$]);
-            console.log('iframe set src', 9);
           } else {
-            console.log('iframe set src', 10);
+            console.log('iframe set src', 10, src);
             setInstanceStateValue(this, StateProp.loadErrorStatus, xhrStatus);
             env.$isLoading$ = 0;
           }

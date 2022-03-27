@@ -186,7 +186,7 @@ const applyToInstance = (
           }
 
           instance = instance[previous].apply(instance, args);
-          console.log('applyToInstance', current, 5);
+          console.log('applyToInstance', current, args, 5);
           if (previous === 'play') {
             return Promise.resolve();
           }
