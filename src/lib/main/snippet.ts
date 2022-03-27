@@ -17,7 +17,7 @@ export function snippet(
 ) {
   // ES5 just so IE11 doesn't choke on arrow fns
   function ready() {
-    console.log('ready', 1);
+    console.log('ready', 1, location.href);
     if (!isReady) {
       isReady = 1;
       if (debug) {
@@ -34,7 +34,7 @@ export function snippet(
 
         if (top != win) {
           // this is an iframe
-          console.log('ready', 2);
+          console.log('ready', 2, location.href);
           top!.dispatchEvent(new CustomEvent('pt1', { detail: win }));
         } else {
           // set a timeout to fire if PT hasn't initialized in Xms
@@ -43,7 +43,7 @@ export function snippet(
 
           if (useAtomics) {
             // atomics support
-            console.log('ready', 8);
+            console.log('ready', 8, location.href);
             loadSandbox(1);
           } else if (nav.serviceWorker) {
             // service worker support
@@ -52,27 +52,27 @@ export function snippet(
                 scope: libPath,
               })
               .then(function (swRegistration) {
-                console.log('ready', 9);
+                console.log('ready', 9, location.href);
                 if (swRegistration.active) {
-                  console.log('ready', 10);
+                  console.log('ready', 10, location.href);
                   loadSandbox();
                 } else if (swRegistration.installing) {
-                  console.log('ready', 11);
+                  console.log('ready', 11, location.href);
                   swRegistration.installing.addEventListener('statechange', function (ev) {
-                    console.log('ready', 12);
+                    console.log('ready', 12, location.href);
                     if ((ev.target as any as ServiceWorker).state == 'activated') {
-                      console.log('ready', 13);
+                      console.log('ready', 13, location.href);
                       loadSandbox();
                     }
                   });
                 } else if (debug) {
-                  console.log('ready', 14);
+                  console.log('ready', 14, location.href);
                   console.warn(swRegistration);
                 }
               }, console.error);
           } else {
             // no support for atomics or service worker
-            console.log('ready', 15);
+            console.log('ready', 15, location.href);
             fallback();
           }
         }
@@ -83,7 +83,7 @@ export function snippet(
   }
 
   function loadSandbox(isAtomics?: number) {
-    console.log('ready', 16);
+    console.log('ready', 16, location.href);
     sandbox = doc.createElement(isAtomics ? 'script' : 'iframe');
     if (!isAtomics) {
       sandbox.setAttribute('style', 'display:block;width:0;height:0;border:0;visibility:hidden');
@@ -94,14 +94,14 @@ export function snippet(
       'partytown-' +
       (isAtomics ? 'atomics.js?v=_VERSION_' : 'sandbox-sw.html?' + Date.now());
     doc.body.appendChild(sandbox);
-    console.log('ready', 7);
+    console.log('ready', 7, location.href);
   }
 
   function fallback(i?: number, script?: HTMLScriptElement) {
     // no support or timeout reached
     // basically "undo" all of the text/partytown scripts
     // so they act as normal scripts
-    console.log('ready', 3);
+    console.log('ready', 3, location.href);
     if (debug) {
       console.warn(`Partytown script fallback`);
     }
@@ -114,21 +114,21 @@ export function snippet(
     }
 
     if (sandbox) {
-      console.log('ready', 6);
+      console.log('ready', 6, location.href);
       sandbox.parentNode!.removeChild(sandbox);
     }
   }
 
   function clearFallback() {
     // Partytown has initialized, clear the fallback timeout
-    console.log('ready', 4);
+    console.log('ready', 4, location.href);
     clearTimeout(timeout);
   }
 
   config = win.partytown || {};
 
   if (top == win) {
-    console.log('ready', 5);
+    console.log('ready', 5, location.href);
     // this is the top window
     // patch the functions that'll be forwarded to the worker
     (config.forward || []).map(function (forwardProps) {
@@ -148,10 +148,10 @@ export function snippet(
   }
 
   if (doc.readyState == 'complete') {
-    console.log('ready', 18);
+    console.log('ready', 18, location.href);
     ready();
   } else {
-    console.log('ready', 19);
+    console.log('ready', 19, location.href);
     win.addEventListener('DOMContentLoaded', ready);
     win.addEventListener('load', ready);
   }

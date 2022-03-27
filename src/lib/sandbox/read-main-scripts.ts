@@ -37,7 +37,6 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
     }
 
     if (scriptElm) {
-      console.log('readNextScript', 3);
       // read the next script found
       scriptElm.dataset.ptid = $instanceId$ = getAndSetInstanceId(scriptElm, $winId$) as any;
 
@@ -47,13 +46,14 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
       };
 
       if (scriptElm.src) {
+        console.log('readNextScript', 3, scriptElm.src);
         scriptData.$url$ = scriptElm.src;
         scriptData.$orgUrl$ = scriptElm.dataset.ptsrc || scriptElm.src;
       } else {
+        console.log('readNextScript', 4, scriptElm.innerHTML);
         scriptData.$content$ = scriptElm.innerHTML;
       }
 
-      console.log('readNextScript', 4);
       worker.postMessage([WorkerMessageType.InitializeNextScript, scriptData]);
     } else {
       if (!winCtx.$isInitialized$) {
@@ -78,8 +78,12 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
       worker.postMessage([WorkerMessageType.InitializedScripts, $winId$]);
     }
   } else {
+    console.log('readNextScript', 6);
     // document not ready yet, retry a frame later
-    requestAnimationFrame(() => readNextScript(worker, winCtx));
+    requestAnimationFrame(() => {
+      console.log('readNextScript', 7);
+      readNextScript(worker, winCtx);
+    });
   }
 };
 
@@ -103,5 +107,6 @@ export const initializedWorkerScript = (
     delete scriptElm.dataset.ptid;
   }
 
+  console.log('initializedWorkerScript');
   readNextScript(worker, winCtx);
 };
