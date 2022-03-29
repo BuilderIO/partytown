@@ -23,9 +23,11 @@ const createMessengerServiceWorker: Messenger = (receiveMessage) => {
         // web worker has requested the initial data from the main thread
         // collect up info about the main thread interfaces
         // send the main thread interface data to the web worker
+        console.log('MainDataRequestFromWorker');
         worker.postMessage([WorkerMessageType.MainDataResponseToWorker, readMainPlatform()]);
       } else if (msg[0] === WorkerMessageType.MainInterfacesRequestFromWorker) {
         // web worker has requested the rest of the html/svg interfaces
+        console.log('MainInterfacesRequestFromWorker');
         worker.postMessage([
           WorkerMessageType.MainInterfacesResponseToWorker,
           readMainInterfaces(),

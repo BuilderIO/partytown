@@ -35,20 +35,19 @@ syncCreateMessenger(receiveMessage).then((onMessageHandler) => {
 
     worker.onmessage = (ev: MessageEvent<MessageFromWorkerToSandbox>) => {
       const msg: MessageFromWorkerToSandbox = ev.data;
-      console.log('worker.onmessage', msg, 1);
       if (msg[0] === WorkerMessageType.AsyncAccessRequest) {
         // fire and forget async call within web worker
-        console.log('worker.onmessage', msg, 2);
+        console.log('worker.onmessage', msg[0], 1);
         mainAccessHandler(worker, msg[1]);
       } else {
         // blocking call within web worker
-        console.log('worker.onmessage', msg, 3);
+        console.log('worker.onmessage', msg[0], 2);
         onMessageHandler(worker, msg);
       }
     };
 
     if (debug) {
-      logMain(`Created Partytown web worker (${VERSION})`);
+      // logMain(`Created Partytown web worker (${VERSION})`);
       worker.onerror = (ev) => console.error(`Web Worker Error`, ev);
     }
 

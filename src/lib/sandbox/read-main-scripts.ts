@@ -11,7 +11,7 @@ import { mainForwardTrigger } from './main-forward-trigger';
 import { logMain, normalizedWinId } from '../log';
 
 export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowContext) => {
-  console.log('readNextScript', 1);
+  console.trace('readNextScript');
   let $winId$ = winCtx.$winId$;
   let win = winCtx.$window$;
   let doc = win.document;
@@ -57,6 +57,7 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
       worker.postMessage([WorkerMessageType.InitializeNextScript, scriptData]);
     } else {
       if (!winCtx.$isInitialized$) {
+        console.log('readNextScript', '!winCtx.$isInitialized$');
         // finished environment initialization
         winCtx.$isInitialized$ = 1;
 
@@ -64,14 +65,14 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
 
         doc.dispatchEvent(new CustomEvent('pt0'));
 
-        if (debug) {
-          const winType = win === win.top ? 'top' : 'iframe';
-          logMain(
-            `Executed ${winType} window ${normalizedWinId($winId$)} environment scripts in ${(
-              performance.now() - winCtx.$startTime$!
-            ).toFixed(1)}ms`
-          );
-        }
+        // if (debug) {
+        //   const winType = win === win.top ? 'top' : 'iframe';
+        //   logMain(
+        //     `Executed ${winType} window ${normalizedWinId($winId$)} environment scripts in ${(
+        //       performance.now() - winCtx.$startTime$!
+        //     ).toFixed(1)}ms`
+        //   );
+        // }
       }
 
       console.log('readNextScript', 5);
