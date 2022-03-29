@@ -11,6 +11,7 @@ import { readMainInterfaces, readMainPlatform } from '../sandbox/read-main-platf
 const createMessengerServiceWorker: Messenger = (receiveMessage) => {
   const swContainer = window.navigator.serviceWorker;
   return swContainer.getRegistration().then((swRegistration) => {
+    console.log('swRegistration');
     swContainer.addEventListener('message', (ev: MessageEvent<MainAccessRequest>) =>
       receiveMessage(
         ev.data,
