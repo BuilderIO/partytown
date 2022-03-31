@@ -607,7 +607,7 @@ export const createWindow = (
 
   new WorkerWindow();
 
-  console.log('create window');
+  console.trace('create window');
   return env;
 };
 

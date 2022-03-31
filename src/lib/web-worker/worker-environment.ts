@@ -21,7 +21,7 @@ export const createEnvironment = (
 
     if (debug) {
       const winType = $winId$ === $parentWinId$ ? 'top' : 'iframe';
-      logWorker(`Created ${winType} window ${normalizedWinId($winId$)} environment`, $winId$);
+      console.trace(`Created ${winType} window ${normalizedWinId($winId$)} environment`, $winId$);
     }
   }
 
