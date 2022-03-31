@@ -8,7 +8,9 @@ export const createEnvironment = (
   { $winId$, $parentWinId$, $url$, $visibilityState$ }: InitializeEnvironmentData,
   isIframeWindow?: boolean
 ) => {
+  console.log('createEnvironment', 1);
   if (!environments[$winId$]) {
+    console.log('createEnvironment', 2);
     // create a simulated global environment for this window
     // if it hasn't already been created (like an iframe)
     environments[$winId$] = createWindow(
@@ -25,6 +27,7 @@ export const createEnvironment = (
     }
   }
 
+  console.log('createEnvironment', 3);
   webWorkerCtx.$postMessage$([WorkerMessageType.InitializeNextScript, $winId$]);
 
   return environments[$winId$];

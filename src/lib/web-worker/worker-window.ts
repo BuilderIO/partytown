@@ -607,7 +607,7 @@ export const createWindow = (
 
   new WorkerWindow();
 
-  console.trace('create window');
+  console.trace('create window, isIframeWindow:', isIframeWindow);
   return env;
 };
 

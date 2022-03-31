@@ -89,11 +89,13 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any, env: WebWor
 };
 
 const getIframeEnv = (iframe: WorkerInstance) => {
+  console.log('getIframeEnv', 1);
   // the winId of an iframe's contentWindow is the same
   // as the instanceId of the containing iframe element
   const $winId$ = iframe[InstanceIdKey];
 
   if (!environments[$winId$]) {
+    console.log('getIframeEnv', 2);
     createEnvironment(
       {
         $winId$,
@@ -104,6 +106,6 @@ const getIframeEnv = (iframe: WorkerInstance) => {
       true
     );
   }
-
+  console.log('getIframeEnv', 3);
   return environments[$winId$];
 };
