@@ -11,7 +11,7 @@ import { mainForwardTrigger } from './main-forward-trigger';
 import { logMain, normalizedWinId } from '../log';
 
 export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowContext) => {
-  console.trace('readNextScript');
+  console.log('readNextScript');
   let $winId$ = winCtx.$winId$;
   let win = winCtx.$window$;
   let doc = win.document;

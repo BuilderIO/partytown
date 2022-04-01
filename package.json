@@ -62,7 +62,7 @@
     "serve.test": "node scripts/serve.cjs 4001",
     "serve.atomics": "node scripts/serve.cjs 4002 --atomics",
     "serve.atomics.test": "node scripts/serve.cjs 4003 --atomics",
-    "test": "npm run test.unit && npm run test.chromium",
+    "test": "npm run test.webkit",
     "test.atomics": "playwright test tests/integrations tests/platform --config playwright.atomics.config.ts --browser=chromium",
     "test.chromium": "playwright test tests/integrations tests/platform --browser=chromium",
     "test.webkit": "playwright test tests/platform/iframe --browser=webkit",

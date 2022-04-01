@@ -200,5 +200,17 @@ export const resolveToUrl = (
 export const resolveUrl = (env: WebWorkerEnvironment, url: string, noUserHook?: boolean) =>
   resolveToUrl(env, url, noUserHook) + '';
 
-export const getPartytownScript = () =>
-  `<script src="${partytownLibUrl('partytown.js?v=' + VERSION)}"></script>`;
+// export const getPartytownScript = () =>
+//   `<script src="${partytownLibUrl('partytown.js?v=' + VERSION)}"></script>`;
+
+let partytownLibScript = '';
+export const getPartytownScript = () => {
+  console.log('getPartytownScript');
+  if (!partytownLibScript) {
+    const xhr = new XMLHttpRequest();
+    xhr.open('GET', partytownLibUrl('partytown.js?v=' + VERSION), false);
+    xhr.send();
+    partytownLibScript = xhr.responseText;
+  }
+  return `<script>${partytownLibScript}</script>`;
+};
