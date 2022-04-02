@@ -89,6 +89,10 @@
               console.log('test', 5);
               iframe.src = 'src-change2.html?delay=100';
               console.log('test', 6);
+
+              setTimeout(() => {
+                document.body.className = 'completed';
+              }, 100)
             }, 500);
           })();
         </script>

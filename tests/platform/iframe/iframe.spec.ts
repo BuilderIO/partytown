@@ -3,6 +3,8 @@ import { test, expect } from '@playwright/test';
 test('iframe', async ({ page }) => {
   await page.goto('/tests/platform/iframe/');
 
+  await page.waitForSelector('.completed');
+
   page.on('console', (msg) => {
     let text = msg.text();
     const splt = text.split(';');
