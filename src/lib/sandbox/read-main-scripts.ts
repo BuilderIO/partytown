@@ -46,11 +46,11 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
       };
 
       if (scriptElm.src) {
-        console.log('readNextScript', 3, scriptElm.src);
+        console.log('readNextScript', 3);
         scriptData.$url$ = scriptElm.src;
         scriptData.$orgUrl$ = scriptElm.dataset.ptsrc || scriptElm.src;
       } else {
-        console.log('readNextScript', 4, scriptElm.innerHTML);
+        console.log('readNextScript', 4);
         scriptData.$content$ = scriptElm.innerHTML;
       }
 

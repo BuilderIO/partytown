@@ -10,9 +10,10 @@ test('iframe', async ({ page }) => {
     console.log(text);
   });
 
-  await page.waitForSelector('.testSrcChange');
-  const testSrcChange1 = page.locator('#testSrcChange1');
-  await expect(testSrcChange1).toHaveText('src-change1');
-  const testSrcChange2 = page.locator('#testSrcChange2');
-  await expect(testSrcChange2).toHaveText('src-change2');
+  expect(false);
+  // await page.waitForSelector('.testSrcChange');
+  // const testSrcChange1 = page.locator('#testSrcChange1');
+  // await expect(testSrcChange1).toHaveText('src-change1');
+  // const testSrcChange2 = page.locator('#testSrcChange2');
+  // await expect(testSrcChange2).toHaveText('src-change2');
 });
