@@ -10,7 +10,7 @@ test('iframe', async ({ page }) => {
     console.log(text);
   });
 
-  expect(false);
+  expect(true).toBe(false);
   // await page.waitForSelector('.testSrcChange');
   // const testSrcChange1 = page.locator('#testSrcChange1');
   // await expect(testSrcChange1).toHaveText('src-change1');
