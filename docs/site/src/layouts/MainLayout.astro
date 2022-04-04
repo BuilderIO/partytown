@@ -9,14 +9,14 @@ import RightSidebar from '../components/RightSidebar/RightSidebar.astro';
 import * as CONFIG from '../config';
 
 const { content = {} } = Astro.props;
-const currentPage = Astro.request.url.pathname;
+const currentPage = new URL(Astro.request.url).pathname;
 const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}${currentPage === '/' ? '/index' : currentPage}.md`;
 ---
 
 <html dir={content.dir ?? 'ltr'} lang={content.lang ?? 'en-us'} class="initial">
 	<head>
 		<HeadCommon />
-		<HeadSEO {content} canonicalURL={Astro.request.canonicalURL} />
+		<HeadSEO {content} canonicalURL={Astro.canonicalURL} />
 		{ currentPage === '/' ? (
 			<title>Welcome To Partytown</title>
 		) : (
