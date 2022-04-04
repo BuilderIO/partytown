@@ -125,6 +125,6 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}${currentPage === '/' ? '/index'
 				<RightSidebar {content} {githubEditUrl} />
 			</aside>
 		</main>
-		<script src="//cdn.jsdelivr.net/npm/@builder.io/persist-attribution@latest/dist/persist-attribution.min.js" async></script>
+		<script src="//cdn.jsdelivr.net/npm/@builder.io/persist-attribution@latest/dist/persist-attribution.min.js" async defer id="persist-attribution-init" data-send-page-view-events="true"></script>
 	</body>
 </html>
