@@ -6,42 +6,15 @@ There is a first-class [Astro integration for partytown](https://github.com/with
 
 ## Automatic Setup
 
-Use the `astro add` command to automatically configure your project and install necessary dependencies.
+Astro includes a CLI tool for adding integrations. Using the `astro add` command will automatically install Partytown and configure your project.
 
 ```bash
 yarn astro add partytown # or npx astro add partytown
 ```
 
-Skip down to [Partytown Script](#partytown-script) for usage instructions.
-
-## Install
-
-> Below are the instructions if you are not using the [Automatic Setup](#automatic-setup).
-
-Add `@astrojs/partytown` dependency to your project.
-
-```bash
-yarn add @astrojs/partytown # or npm install @astrojs/partytown
-```
-
-## Manual Configuration
-
-> Below are the instructions if you are not using the [Automatic Setup](#automatic-setup).
-
-Add `@astrojs/partytown` to the `integrations` section of `astro.config.mjs`.
-
-```js
-import { defineConfig } from 'astro/config';
-import partytown from '@astrojs/partytown';
-
-export default defineConfig({
-  integrations: [partytown()],
-});
-```
-
 ## Partytown Script
 
-Add `type: 'text/partytown'` [attribute](/partytown-scripts) to any scripts you want to be handled by partytown.
+Add `type: 'text/partytown'` [attribute](/partytown-scripts) to any scripts you want to be handled by Partytown.
 
 ```html
 <script type="text/partytown" src="https://example.com/analytics.js"></script>
