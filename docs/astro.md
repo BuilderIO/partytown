@@ -44,9 +44,7 @@ export default defineConfig({
 Add `type: 'text/partytown'` [attribute](/partytown-scripts) to any scripts you want to be handled by partytown.
 
 ```html
-<div>
-  <script type="text/partytown" src="https://example.com/analytics.js" />
-</div>
+<script type="text/partytown" src="https://example.com/analytics.js"></script>
 ```
 
 Note that the [Astro Partytown](https://github.com/withastro/astro/tree/main/packages/integrations/partytown) integration already handles copying the library files to the correct location.
