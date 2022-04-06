@@ -2,49 +2,51 @@
 title: Astro
 ---
 
-The easiest way to add Partytown to an [Astro](https://astro.build/) site is adding the snippet to a `<script>` in the `<head>` using the `partytownSnippet(config)` function.
+There is a first-class [Astro integration for partytown](https://github.com/withastro/astro/tree/main/packages/integrations/partytown).
+
+## Automatic Setup
+
+Use the `astro add` command to automatically configure your project and install necessary dependencies.
+
+```bash
+yarn astro add partytown # or npx astro add partytown
+```
+
+Skip down to [Partytown Script](#partytown-script) for usage instructions.
 
 ## Install
 
+> Below are the instructions if you are not using the [Automatic Setup](#automatic-setup).
+
+Add `@astrojs/partytown` dependency to your project.
+
 ```bash
-npm install @builder.io/partytown
+yarn add @astrojs/partytown # or npm install @astrojs/partytown
 ```
 
-## Configure
+## Manual Configuration
 
-Import the `@builder.io/partytown/integration` submodule into the header of the `.astro` file, and create the snippet HTML with the `partytownSnippet(config)` function. The optional Partytown [configuration](/configuration) is the first argument.
+> Below are the instructions if you are not using the [Automatic Setup](#automatic-setup).
 
-```tsx
----
-import { partytownSnippet } from '@builder.io/partytown/integration';
-const partytownSnippetHtml = partytownSnippet({
-  debug: true,
-  forward: ['dataLayer.push']
+Add `@astrojs/partytown` to the `integrations` section of `astro.config.mjs`.
+
+```js
+import { defineConfig } from 'astro/config';
+import partytown from '@astrojs/partytown';
+
+export default defineConfig({
+  integrations: [partytown()],
 });
----
 ```
 
 ## Partytown Script
 
-Add the scripts to the body of the same `.astro` file. (Note that the `set:html` attribute is current available in `astro@next`.)
+Add `type: 'text/partytown'` [attribute](/partytown-scripts) to any scripts you want to be handled by partytown.
 
-Add the `type="text/partytown"` [attribute](/partytown-scripts) for each script that should run from a web worker.
-
-```jsx
-<script set:html={partytownSnippetHtml}></script>
-
-<script type="text/partytown">
-  /* Inlined Third-Party Script */
-</script>
+```html
+<div>
+  <script type="text/partytown" src="https://example.com/analytics.js" />
+</div>
 ```
 
-## Copy Library Files
-
-Copy library files to `public/~partytown`. How the files are copied or served from your site is up to each site's setup. A `partytown copylib` CLI [copy task](/copy-library-files) has been provided for convenience which helps copy the Partytown library files to the public directory. Below is an example of creating a "partytown" NPM script which runs before the `astro build` command:
-
-```json
-"scripts": {
-  "build": "npm run partytown && astro build",
-  "partytown": "partytown copylib public/~partytown"
-}
-```
+Note that the [Astro Partytown](https://github.com/withastro/astro/tree/main/packages/integrations/partytown) integration already handles copying the library files to the correct location.
