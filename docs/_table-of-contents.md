@@ -36,6 +36,6 @@
   - [Local Development](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md)
 - [Community](https://github.com/BuilderIO/partytown)
   - [Github](https://github.com/BuilderIO/partytown)
-  - [Discord](https://discord.gg/hbuEtxdEZ3)
+  - [Discord](https://discord.gg/bNVSQmPzqy)
   - [@QwikDev](https://twitter.com/QwikDev)
   - [@Builderio](https://twitter.com/builderio)
