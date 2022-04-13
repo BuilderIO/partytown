@@ -6,7 +6,7 @@
     window.KiwiSizing = window.KiwiSizing === undefined ? {} : window.KiwiSizing;
     KiwiSizing.shop = "underoutfit.myshopify.com";
 
-    console.log("KiwiSizing", KiwiSizing, this);
+    console.debug("KiwiSizing main thread", KiwiSizing, this);
 
     KiwiSizing.data = {
       collections: "211448987800,235754225816,188280078471,398420705513,398916288745,186977419399,188280209543,188280045703,188280144007",
@@ -25,7 +25,7 @@
   <script>
     partytown = {
       debug: true,
-      forward: ["KiwiSizing"],
+      forward: ["KiwiSizing", "Shopify"],
       resolveUrl: function (url) {
         if (["kiwisizing"].some((hostname)=>url.hostname.toLowerCase().includes(hostname))) {
           console.log("INSIDE resolveUrl");
@@ -38,6 +38,9 @@
     };
   </script>
   <script src='/~partytown/debug/partytown.js'></script>
+  <script type='text/partytown'>
+    window.Shopify = window.Shopify || {}
+  </script>
   <script>
     function isAcceptableScriptTagType(node) {
       var javaScriptNodeTypes = ["application/javascript", "text/javascript"];

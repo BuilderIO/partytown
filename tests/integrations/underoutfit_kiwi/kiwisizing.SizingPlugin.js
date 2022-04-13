@@ -5265,6 +5265,8 @@
     function M(t, e, n) {
       Object(i.a)('input', { productData: t, overrideConfig: e });
       var o = I(t, e);
+      console.log('window.KiwiSizing 02', window.KiwiSizing);
+
       if (
         (u.a.cookie.get('_ks_scriptVersionChecked') ||
           p.a.ajax({ url: k, method: 'get' }, function (t, e, n) {
@@ -5278,15 +5280,16 @@
               } catch (t) {}
           }),
         0 === o.length)
-      )
+      ) {
         return (
           Object(i.a)('No sizing request params found'),
-          void (
-            window.Shopify &&
-            !window.KiwiSizing &&
-            Object(c.b)('loadSizeChart.productMetaSnippet.notFound')
-          )
+            void (
+              window.Shopify &&
+              !window.KiwiSizing &&
+              Object(c.b)('loadSizeChart.productMetaSnippet.notFound')
+            )
         );
+      }
       if ((Object(i.a)('Found request params', o), !window._ks_setTempCSS)) {
         window._ks_setTempCSS = !0;
         var a = document.createElement('style');
@@ -5468,8 +5471,7 @@
         }
       });
     }
-    if (
-      ((window.ks = window.ks || {}),
+    var sanyam = ((window.ks = window.ks || {}),
       (window.ks.setUserID = function (t) {
         t && (window._ks_userID = t);
       }),
@@ -5502,9 +5504,9 @@
           case 'modal_tab_change':
             v.a.addEventListener('refresh_modal_tab', function (t, n) {
               n ||
-                e({
-                  tabID: 'ks-calculator-tab-container' === t ? 'size-chart-layout' : 'recommender',
-                });
+              e({
+                tabID: 'ks-calculator-tab-container' === t ? 'size-chart-layout' : 'recommender',
+              });
             });
             break;
           case 'on_size_recommendation':
@@ -5519,8 +5521,10 @@
             throw new Error('Undefined Kiwi Sizing events');
         }
       }),
-      window.Shopify || window.ShopifyAPI)
-    ) {
+    window.Shopify || window.ShopifyAPI)
+    console.log("sanyam", window.Shopify);
+    if (sanyam) {
+      console.log("window.KiwiSizing 03 04", window.KiwiSizing)
       var F,
         z,
         H,
