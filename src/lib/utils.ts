@@ -12,6 +12,9 @@ export const getConstructorName = (obj: { constructor: { name: string } } | unde
   try {
     return obj!.constructor.name;
   } catch (e) {}
+  try {
+    return obj.__zone_symbol__originalInstance.constructor.name;
+  } catch (e) {}
   return '';
 };
 
