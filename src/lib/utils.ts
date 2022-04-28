@@ -10,10 +10,10 @@ export const len = (obj: { length: number }) => obj.length;
 
 export const getConstructorName = (obj: { constructor: { name: string } } | undefined | null) => {
   try {
-    return obj!.constructor.name;
+    if(obj!.constructor.name) return obj!.constructor.name;
   } catch (e) {}
   try {
-    return obj.__zone_symbol__originalInstance.constructor.name;
+    if(obj.__zone_symbol__originalInstance.constructor.name) return obj.__zone_symbol__originalInstance.constructor.name;
   } catch (e) {}
   return '';
 };
