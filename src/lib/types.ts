@@ -392,6 +392,7 @@ export interface PartytownConfig {
    * https://partytown.builder.io/forwarding-events
    */
   forward?: PartytownForwardProperty[];
+  mainWindowAccessors?: string[];
   /**
    * Rarely, a script will add a named function to the global scope with the
    * intent that other scripts can call the named function (like Adobe Launch).

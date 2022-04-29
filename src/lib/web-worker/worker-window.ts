@@ -362,6 +362,8 @@ export const createWindow = (
                 // https://developer.mozilla.org/en-US/docs/Web/API/Window/frames
                 let frame = getChildEnvs()[propName as any];
                 return frame ? frame.$window$ : undefined;
+              } else if (webWorkerCtx.$config$.mainWindowAccessors?.includes(propName)) {
+                return getter(this, [propName]);
               } else {
                 return win[propName];
               }
