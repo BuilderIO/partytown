@@ -9,6 +9,8 @@ Even with a fast and highly tuned following all of today's best practices, it's 
 
 Partytown is maintained by [Builder.io](https://www.builder.io/) and is currently in [Beta](https://www.builder.io/blog/partytown-is-now-in-beta).
 
+<a href="https://www.smashingmagazine.com/2022/04/partytown-eliminates-website-bloat-third-party-apps/" target="_blank" rel="noopener">Smashing Magazine: How Partytown Eliminates Website Bloat From Third-Party Scripts</a>
+
 ## Goals
 
 We set out to solve this situation, so that apps of all sizes will be able to continue to use third-party scripts without the performance hit. Some of Partytown's goals include:
@@ -63,6 +65,7 @@ We have [some documentation](https://github.com/BuilderIO/partytown/blob/main/DE
 
 ## Articles
 
+- <a href="https://www.smashingmagazine.com/2022/04/partytown-eliminates-website-bloat-third-party-apps/" target="_blank" rel="noopener">Smashing Magazine: How Partytown Eliminates Website Bloat From Third-Party Scripts</a>
 - <a href="https://dev.to/adamdbradley/introducing-partytown-run-third-party-scripts-from-a-web-worker-2cnp" target="_blank" rel="noopener">Introducing Partytown: Run Third-Party Scripts From a Web Worker</a>
 - <a href="https://dev.to/adamdbradley/how-partytown-s-sync-communication-works-4244" target="_blank" rel="noopener">How Partytown's Sync Communication Works</a>
 - <a href="https://www.builder.io/blog/how-we-cut-99-percent-js-with-qwik-and-partytown" target="_blank" rel="noopener">How we cut 99% of our JavaScript with Qwik + Partytown</a>
