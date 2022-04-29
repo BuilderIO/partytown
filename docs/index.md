@@ -9,7 +9,7 @@ Even with a fast and highly tuned following all of today's best practices, it's 
 
 Partytown is maintained by [Builder.io](https://www.builder.io/) and is currently in [Beta](https://www.builder.io/blog/partytown-is-now-in-beta).
 
-<a href="https://www.smashingmagazine.com/2022/04/partytown-eliminates-website-bloat-third-party-apps/" target="_blank" rel="noopener">Smashing Magazine: How Partytown Eliminates Website Bloat From Third-Party Scripts</a>
+[Smashing Magazine: How Partytown Eliminates Website Bloat From Third-Party Scripts](https://www.smashingmagazine.com/2022/04/partytown-eliminates-website-bloat-third-party-apps/)
 
 ## Goals
 
