@@ -29,7 +29,7 @@ export function partytownVite(opts: PartytownViteOptions) {
       server.middlewares.use(
         async (req: IncomingMessage, res: ServerResponse, next: () => void) => {
           try {
-            const url = req.url ?? ''
+            const url = req.url ?? '';
             // drop query
             const [pathname] = url.split('?');
             if (pathname.includes('partytown')) {

@@ -9,18 +9,19 @@ export const noop = () => {};
 export const len = (obj: { length: number }) => obj.length;
 
 type ObjectWithConstructor = { constructor?: Function };
-type ObjectWithZoneJsConstructor = { __zone_symbol__originalInstance?: ObjectWithConstructor }
+type ObjectWithZoneJsConstructor = { __zone_symbol__originalInstance?: ObjectWithConstructor };
 
 export const getConstructorName = (obj: Object) => {
   try {
     const constructorName = obj?.constructor?.name;
-    if(constructorName) return constructorName;
+    if (constructorName) return constructorName;
   } catch (e) {}
   try {
-    const zoneJsConstructorName = (obj as ObjectWithZoneJsConstructor)?.__zone_symbol__originalInstance?.constructor?.name
-    if(zoneJsConstructorName) return zoneJsConstructorName;
+    const zoneJsConstructorName = (obj as ObjectWithZoneJsConstructor)
+      ?.__zone_symbol__originalInstance?.constructor?.name;
+    if (zoneJsConstructorName) return zoneJsConstructorName;
   } catch (e) {}
-  
+
   return '';
 };
 
