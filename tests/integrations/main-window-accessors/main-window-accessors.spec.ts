@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.only('integration window accessor', async ({ page }) => {
+test('integration window accessor', async ({ page }) => {
   await page.goto('/tests/integrations/main-window-accessors/');
   await page.waitForSelector('.completed');
 
