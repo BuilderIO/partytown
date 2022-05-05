@@ -1,6 +1,6 @@
 import { debug } from '../utils';
 import { logMain, normalizedWinId } from '../log';
-import { MainWindow, PartytownWebWorker, WinId, WorkerMessageType } from '../types';
+import { MainWindow, PartytownWebWorker, WinId, WorkerMessageType, LocationUpdateType } from '../types';
 import { winCtxs, windowIds } from './main-constants';
 
 export const registerWindow = (
@@ -29,23 +29,38 @@ export const registerWindow = (
     const pushState = history.pushState.bind(history);
     const replaceState = history.replaceState.bind(history);
 
-    const onLocationChange = () =>
-      setTimeout(() =>
-        worker.postMessage([WorkerMessageType.LocationUpdate, $winId$, doc.baseURI])
+    const onLocationChange = (type: LocationUpdateType, state: object, newUrl?: string, oldUrl?: string) =>
+      setTimeout(() =>{
+        worker.postMessage([WorkerMessageType.LocationUpdate, {
+          $winId$,
+          type,
+          state,
+          newUrl,
+          oldUrl
+        }])
+
+      });
+
+    history.pushState = (state, _, newUrl) => {
+      pushState(state, _, newUrl);
+      onLocationChange(
+        LocationUpdateType.PushState,
+        state,
+        newUrl?.toString()
       );
-
-    history.pushState = (data, _, url) => {
-      pushState(data, _, url);
-      onLocationChange();
     };
 
-    history.replaceState = (data, _, url) => {
-      replaceState(data, _, url);
-      onLocationChange();
+    history.replaceState = (state, _, newUrl) => {
+      replaceState(state, _, newUrl);
+      onLocationChange(LocationUpdateType.ReplaceState, state, newUrl?.toString());
     };
 
-    $window$.addEventListener('popstate', onLocationChange);
-    $window$.addEventListener('hashchange', onLocationChange);
+    $window$.addEventListener('popstate', (event) => {
+      onLocationChange(LocationUpdateType.PopState, event.state);
+    });
+    $window$.addEventListener('hashchange', (event) => {
+      onLocationChange(LocationUpdateType.HashChange, {}, event.newURL, event.oldURL);
+    });
     doc.addEventListener('visibilitychange', () =>
       worker.postMessage([WorkerMessageType.DocumentVisibilityState, $winId$, doc.visibilityState])
     );

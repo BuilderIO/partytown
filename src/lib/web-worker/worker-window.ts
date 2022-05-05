@@ -19,6 +19,7 @@ import {
   commaSplit,
   environments,
   eventTargetMethods,
+  HistoryChangePrevent,
   InstanceDataKey,
   InstanceIdKey,
   InstanceStateKey,
@@ -433,6 +434,21 @@ export const createWindow = (
             },
             length: 0,
           };
+          win.indexeddb = undefined;
+        } else {
+          const originalPushState: Window['history']['pushState'] = win.history.pushState;
+          const originalReplaceState: Window['history']['replaceState'] = win.history.replaceState;
+
+          win.history.pushState = (stateObj: any, _: string, newUrl?: string) => {
+            if (stateObj[HistoryChangePrevent] !== true) {
+              originalPushState(stateObj, _, newUrl)
+            }
+          }
+          win.history.replaceState = (stateObj: any, _: string, newUrl?: string) => {
+            if (stateObj[HistoryChangePrevent] !== true) {
+              originalReplaceState(stateObj, _, newUrl)
+            }
+          }
         }
 
         win.Worker = undefined;

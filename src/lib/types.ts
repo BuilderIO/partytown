@@ -50,7 +50,7 @@ export type MessageFromSandboxToWorker =
   | [type: WorkerMessageType.InitializedScripts, winId: WinId]
   | [type: WorkerMessageType.RefHandlerCallback, callbackData: RefHandlerCallbackData]
   | [type: WorkerMessageType.ForwardMainTrigger, triggerData: ForwardMainTriggerData]
-  | [type: WorkerMessageType.LocationUpdate, winId: WinId, documentBaseURI: string]
+  | [type: WorkerMessageType.LocationUpdate, locationChangeData: LocationUpdateData]
   | [type: WorkerMessageType.DocumentVisibilityState, winId: WinId, visibilityState: string]
   | [
       type: WorkerMessageType.CustomElementCallback,
@@ -77,6 +77,21 @@ export const enum WorkerMessageType {
   LocationUpdate,
   DocumentVisibilityState,
   CustomElementCallback,
+}
+
+export const enum LocationUpdateType {
+  PushState,
+  ReplaceState,
+  PopState,
+  HashChange
+}
+
+export interface LocationUpdateData {
+  $winId$: WinId;
+  type: LocationUpdateType,
+  state: object;
+  newUrl?: string;
+  oldUrl?: string;
 }
 
 export interface ForwardMainTriggerData {

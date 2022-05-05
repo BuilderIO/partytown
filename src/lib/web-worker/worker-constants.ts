@@ -19,6 +19,7 @@ export const ApplyPathKey = /*#__PURE__*/ Symbol();
 export const InstanceStateKey = /*#__PURE__*/ Symbol();
 export const HookContinue = /*#__PURE__*/ Symbol();
 export const HookPrevent = /*#__PURE__*/ Symbol();
+export const HistoryChangePrevent = /*#__PURE__*/ Symbol();
 
 export const webWorkerInstances = /*#__PURE__*/ new Map<InstanceId, WorkerNode>();
 export const webWorkerRefsByRefId: { [refId: RefId]: RefHandler } = {};
