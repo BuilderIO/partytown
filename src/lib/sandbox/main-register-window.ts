@@ -29,17 +29,18 @@ export const registerWindow = (
     const pushState = history.pushState.bind(history);
     const replaceState = history.replaceState.bind(history);
 
-    const onLocationChange = (type: LocationUpdateType, state: object, newUrl?: string, oldUrl?: string) =>
+    const onLocationChange = (type: LocationUpdateType, state: object, newUrl?: string, oldUrl?: string) => {
       setTimeout(() =>{
         worker.postMessage([WorkerMessageType.LocationUpdate, {
           $winId$,
           type,
           state,
+          url: doc.baseURI,
           newUrl,
           oldUrl
         }])
-
       });
+    }
 
     history.pushState = (state, _, newUrl) => {
       pushState(state, _, newUrl);

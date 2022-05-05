@@ -90,6 +90,7 @@ export interface LocationUpdateData {
   $winId$: WinId;
   type: LocationUpdateType,
   state: object;
+  url: string;
   newUrl?: string;
   oldUrl?: string;
 }
