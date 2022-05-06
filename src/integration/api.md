@@ -32,6 +32,8 @@ export interface PartytownConfig {
     logSendBeaconRequests?: boolean;
     logSetters?: boolean;
     logStackTraces?: boolean;
+    // (undocumented)
+    mainWindowAccessors?: string[];
     resolveUrl?(url: URL, location: Location): URL | undefined | null;
     // (undocumented)
     set?: SetHook;

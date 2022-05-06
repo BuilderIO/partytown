@@ -32,7 +32,7 @@ export function partytownVite(opts: PartytownViteOptions) {
             const url = req.url ?? '';
             // drop query
             const [pathname] = url.split('?');
-            if (pathname.includes('partytown')) {
+            if (pathname.includes('partytown') && !pathname.includes('.vite')) {
               const fileName = pathname.split('/').pop();
               if (fileName && fileName.endsWith('.js')) {
                 const libDir = libDirPath({ debugDir: pathname.includes('/debug/') });
