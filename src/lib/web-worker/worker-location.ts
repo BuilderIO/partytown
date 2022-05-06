@@ -6,13 +6,17 @@ export function forwardLocationChange($winId$: number, env: WebWorkerEnvironment
   switch (data.type) {
     case LocationUpdateType.PushState: {
       env.$propagateHistoryChange$ = false;
-      history.pushState(data.state, '', data.newUrl)
+      try {
+        history.pushState(data.state, '', data.newUrl)
+      } catch (e) {}
       env.$propagateHistoryChange$ = true;
       break;
     }
     case LocationUpdateType.ReplaceState: {
       env.$propagateHistoryChange$ = false;
-      history.replaceState(data.state, '', data.newUrl)
+      try {
+        history.replaceState(data.state, '', data.newUrl)
+      } catch (e) {}
       env.$propagateHistoryChange$ = true;
       break;
     }
