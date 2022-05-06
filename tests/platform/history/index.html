@@ -185,9 +185,11 @@
         <script type="text/partytown">
           (function () {
             const buttonPatchPushState = document.getElementById('buttonPatchPushState');
+            const originalPushState = history.pushState.bind(history);
             buttonPatchPushState.addEventListener('click', () => {
-              history.pushState = function (data, title) {
+              history.pushState = function (data, title, url) {
                 document.getElementById('testPatchPushState').textContent = data + ' Valley';
+                originalPushState(data, title, url);
               };
               history.pushState('Hill', '');
             });
@@ -211,6 +213,57 @@
             buttonIframeReplaceState.addEventListener('click', () => {
               iframe.contentWindow.history.replaceState('88', '');
               elm.textContent = iframe.contentWindow.history.state;
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>main pushState</strong>
+        <button id="buttonMainPushState">main pushState</button>
+        <code id="testMainPushStateEcho"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testMainPushStateEcho');
+
+            const originalPushState = history.pushState.bind(history);
+            history.pushState = function(state, _, url) {
+              originalPushState(state, _, url);
+              elm.textContent = JSON.stringify({ state, url });
+            }
+          })();
+        </script>
+        <script type="text/javascript">
+          (function () {
+            const buttonMainPushState = document.getElementById('buttonMainPushState');
+            buttonMainPushState.addEventListener('click', () => {
+              history.pushState(42, '', '/tests/platform/history/pushed-state');
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>main replaceState</strong>
+        <button id="buttonMainReplaceState">main replaceState</button>
+        <code id="testMainReplaceStateEcho"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testMainReplaceStateEcho');
+
+            const originalReplaceState = history.replaceState.bind(history);
+            history.replaceState = function(state, _, url) {
+              originalReplaceState(state, _, url);
+              elm.textContent = JSON.stringify({ state, url });
+            }
+          })();
+        </script>
+        <script type="text/javascript">
+          (function () {
+            const buttonMainReplaceState = document.getElementById('buttonMainReplaceState');
+
+            buttonMainReplaceState.addEventListener('click', () => {
+              history.replaceState(23, '', '/tests/platform/history');
             });
           })();
         </script>
