@@ -349,7 +349,6 @@ export type SerializedTransfer =
   | SerializedNodeListTransfer
   | SerializedObjectTransfer
   | SerializedPrimitiveTransfer
-  | SerializedPrimitiveTransfer
   | SerializedRefTransfer
   | [];
 
