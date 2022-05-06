@@ -194,6 +194,7 @@ export interface WebWorkerEnvironment {
   $runWindowLoadEvent$?: number;
   $isSameOrigin$?: boolean;
   $isTopWindow$?: boolean;
+  $propagateHistoryChange$?: boolean;
 }
 
 export interface MembersInterfaceTypeInfo {

@@ -19,7 +19,6 @@ import {
   commaSplit,
   environments,
   eventTargetMethods,
-  HistoryChangePrevent,
   InstanceDataKey,
   InstanceIdKey,
   InstanceStateKey,
@@ -436,16 +435,16 @@ export const createWindow = (
           };
           win.indexeddb = undefined;
         } else {
-          const originalPushState: Window['history']['pushState'] = win.history.pushState;
-          const originalReplaceState: Window['history']['replaceState'] = win.history.replaceState;
+          const originalPushState: Window['history']['pushState'] = win.history.pushState.bind(win.history);
+          const originalReplaceState: Window['history']['replaceState'] = win.history.replaceState.bind(win.history);
 
           win.history.pushState = (stateObj: any, _: string, newUrl?: string) => {
-            if (stateObj[HistoryChangePrevent] !== true) {
+            if (env.$propagateHistoryChange$ !== false) {
               originalPushState(stateObj, _, newUrl)
             }
           }
           win.history.replaceState = (stateObj: any, _: string, newUrl?: string) => {
-            if (stateObj[HistoryChangePrevent] !== true) {
+            if (env.$propagateHistoryChange$ !== false) {
               originalReplaceState(stateObj, _, newUrl)
             }
           }
