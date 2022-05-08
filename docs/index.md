@@ -16,7 +16,7 @@ Partytown is maintained by [Builder.io](https://www.builder.io/) and is currentl
 We set out to solve this situation, so that apps of all sizes will be able to continue to use third-party scripts without the performance hit. Some of Partytown's goals include:
 
 - Free up main thread resources to be used only for the primary web app execution.
-- Sandbox third-party scripts and allow or deny their access main thread APIs.
+- Sandbox third-party scripts and allow or deny their access to main thread APIs.
 - Isolate long-running tasks within the web worker thread.
 - Reduce layout thrashing coming from third-party scripts by batching DOM setters/getter into group updates.
 - Throttle third-party scripts' access to the main thread.
