@@ -432,9 +432,13 @@
         <script type="text/partytown">
           (function () {
             const doc = document.implementation.createHTMLDocument();
-            doc.body.textContent = '88mph ' + doc.visibilityState;
 
             const elm = document.getElementById('testCreateHTMLDocument');
+
+            const addlElm = doc.createElement('base');
+            const addlElmType = typeof addlElm;
+
+            doc.body.textContent = '88mph ' + doc.visibilityState + ' ' + addlElmType;
             elm.textContent = doc.body.textContent;
           })();
         </script>

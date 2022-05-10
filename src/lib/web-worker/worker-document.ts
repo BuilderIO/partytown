@@ -178,11 +178,12 @@ export const patchDocument = (
             callMethod(this, ['implementation', 'createHTMLDocument'], [title], CallType.Blocking, {
               $winId$,
             });
-            const docEnv = createWindow(
-              $winId$,
-              $winId$,
-              env.$location$ + '',
-              'hidden',
+            const docEnv = createEnvironment({
+                $winId$,
+                $parentWinId$: $winId$,
+                $url$: env.$location$ + '',
+                $visibilityState$: 'hidden',
+              },
               true,
               true
             );

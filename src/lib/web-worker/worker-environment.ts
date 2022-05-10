@@ -6,7 +6,7 @@ import { logWorker, normalizedWinId } from '../log';
 
 export const createEnvironment = (
   { $winId$, $parentWinId$, $url$, $visibilityState$ }: InitializeEnvironmentData,
-  isIframeWindow?: boolean
+  isIframeWindow?: boolean, isDocumentImplementation?: boolean
 ) => {
   if (!environments[$winId$]) {
     // create a simulated global environment for this window
@@ -16,7 +16,8 @@ export const createEnvironment = (
       $parentWinId$,
       $url$,
       $visibilityState$,
-      isIframeWindow
+      isIframeWindow,
+      isDocumentImplementation
     );
 
     if (debug) {
