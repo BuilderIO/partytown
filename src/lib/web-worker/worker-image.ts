@@ -24,6 +24,8 @@ export const createImageConstructor = (env: WebWorkerEnvironment) =>
         logWorker(`Image() request: ${resolveUrl(env, src)}`, env.$winId$);
       }
 
+      this.s = src;
+
       fetch(resolveUrl(env, src, true), {
         mode: 'no-cors',
         credentials: 'include',
