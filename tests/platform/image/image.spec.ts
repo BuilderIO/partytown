@@ -34,4 +34,8 @@ test('image', async ({ page }) => {
   await page.waitForSelector('.testImgListenerError');
   const testImgListenerError = page.locator('#testImgListenerError');
   await expect(testImgListenerError).toHaveText('error');
+
+  await page.waitForSelector('.testImgSrc');
+  const testImgSrc = page.locator('#testImgSrc');
+  await expect(testImgSrc).toHaveText('dot.gif?imageSrcTest');
 });
