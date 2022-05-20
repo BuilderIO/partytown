@@ -26,6 +26,7 @@ export const createImageConstructor = (env: WebWorkerEnvironment) =>
 
       fetch(resolveUrl(env, src, true), {
         mode: 'no-cors',
+        credentials: 'include',
         keepalive: true,
       }).then(
         (rsp) => {
