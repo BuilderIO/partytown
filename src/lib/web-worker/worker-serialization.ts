@@ -166,6 +166,10 @@ export const deserializeFromMain = (
       );
     }
 
+    if (serializedType === SerializedType.Error) {
+      return new CustomError(serializedValue);
+    }
+
     obj = {};
     for (key in serializedValue) {
       obj[key] = deserializeFromMain(winId!, instanceId, [...applyPath, key], serializedValue[key]);
@@ -259,6 +263,15 @@ const deserializeRefFromMain = (
 
   return webWorkerRefsByRefId[$refId$];
 };
+
+class CustomError extends Error {
+  constructor(errorObject: Error) {
+    super(errorObject.message);
+    this.name = errorObject.name;
+    this.message = errorObject.message;
+    this.stack = errorObject.stack;
+  }
+}
 
 const NodeList = class {
   private _: WorkerNode[];
