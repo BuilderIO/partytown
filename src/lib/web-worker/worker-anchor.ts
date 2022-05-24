@@ -27,11 +27,13 @@ export const patchHTMLAnchorElement = (WorkerHTMLAnchorElement: any, env: WebWor
         let url;
 
         if (anchorProp === 'href') {
-          const baseHref = isValidUrl(value)
-              ? new URL(value).href
-              : env.$location$.href
-          url = resolveToUrl(env, baseHref);
-          url.href = new URL(value + '', url.href);
+          if (isValidUrl(value)) {
+            url = new URL(value);
+          } else {
+            const baseHref = env.$location$.href
+            url = resolveToUrl(env, baseHref);
+            url.href = new URL(value + '', url.href);
+          }
         } else {
           url = resolveToUrl(env, this.href);
           url[anchorProp] = value;
