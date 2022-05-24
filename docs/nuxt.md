@@ -9,7 +9,7 @@ There is a first-class [Nuxt integration for partytown](https://github.com/nuxt-
 Add `@nuxtjs/partytown` dependency to your project.
 
 ```bash
-yarn add @nuxtjs/partytown # or npm install @nuxtjs/partytown
+yarn add --dev @nuxtjs/partytown # or npm install --save-dev @nuxtjs/partytown
 ```
 
 ## Configure
@@ -17,7 +17,7 @@ yarn add @nuxtjs/partytown # or npm install @nuxtjs/partytown
 Add `@nuxtjs/partytown` to the `modules` section of `nuxt.config.ts`. Use the `partytown` property for the [configuration](/configuration).
 
 ```js
-import { defineNuxtConfig } from 'nuxt3';
+import { defineNuxtConfig } from 'nuxt';
 
 export default defineNuxtConfig({
   modules: ['@nuxtjs/partytown'],
