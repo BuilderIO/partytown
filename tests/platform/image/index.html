@@ -183,6 +183,22 @@
           })();
         </script>
       </li>
+
+      <li>
+        <strong>&lt;img&gt; src</strong>
+        <code id="testImgSrc"></code>
+        <script type="text/partytown">
+          (function () {
+            const image = new Image();
+            image.src = 'dot.gif?imageSrcTest';
+            image.onload = function (ev) {
+              const elm = document.getElementById('testImgSrc');
+              elm.textContent = image.src;
+              elm.className = 'testImgSrc';
+            };
+          })();
+        </script>
+      </li>
     </ul>
 
     <hr />
