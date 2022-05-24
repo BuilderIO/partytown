@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>Error</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        font-size: 12px;
+      }
+      h1 {
+        margin: 0 0 15px 0;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        display: block;
+        padding: 16px 8px;
+      }
+      a:link,
+      a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover {
+        background-color: #eee;
+      }
+      li {
+        display: flex;
+        margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button {
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
+      }
+    </style>
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+      };
+    </script>
+    <script src="/~partytown/debug/partytown.js"></script>
+  </head>
+  <body>
+    <h1>Error</h1>
+    <ul>
+      <li>
+        <button id="refErrorAttachHandler">attach</button>
+        <button id="refErrorThrowingButton">throw ReferenceError</button>
+        <code id="refErrorName"></code>
+        <code id="refErrorMessage"></code>
+        <code id="refErrorStack"></code>
+        <script type="text/javascript">
+          (function () {
+            const refErrorThrowingButton = document.getElementById('refErrorThrowingButton');
+
+            refErrorThrowingButton.addEventListener('click', function () {
+              blahblah
+            });
+          }())
+        </script>
+        <script type="text/partytown">
+          (function () {
+            const attachErrorBtn = document.getElementById('refErrorAttachHandler');
+            const reporterNameEl = document.getElementById('refErrorName');
+            const reporterMessageEl = document.getElementById('refErrorMessage');
+            const reporterStackEl = document.getElementById('refErrorStack');
+
+            function errorHandler(message, source, lineno, colno, err) {
+              reporterNameEl.textContent = err.name;
+              reporterMessageEl.textContent = err.message;
+              reporterStackEl.textContent = err.stack;
+
+              window.onerror = null;
+            }
+
+            attachErrorBtn.addEventListener('click', () => {
+              window.onerror = errorHandler;
+            });
+
+            reporterNameEl.className = 'refErrorReady';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <button id="customErrorAttachHandler">attach</button>
+        <button id="customErrorThrowingButton">throw CustomError</button>
+        <code id="customErrorName"></code>
+        <code id="customErrorMessage"></code>
+        <code id="customErrorStack"></code>
+        <script type="text/javascript">
+          (function () {
+            const customErrorThrowingButton = document.getElementById('customErrorThrowingButton');
+
+            class FooError extends Error {
+              constructor(msg) {
+                super(msg);
+                this.name = 'FooError';
+              }
+            }
+
+            customErrorThrowingButton.addEventListener('click', function () {
+              const err = new FooError('custom error message');
+              console.log(err);
+              throw err;
+            });
+          }())
+        </script>
+        <script type="text/partytown">
+          (function () {
+            const attachErrorBtn = document.getElementById('customErrorAttachHandler');
+            const reporterNameEl = document.getElementById('customErrorName');
+            const reporterMessageEl = document.getElementById('customErrorMessage');
+
+            function errorHandler(message, source, lineno, colno, err) {
+              reporterNameEl.textContent = err.name;
+              reporterMessageEl.textContent = err.message;
+
+              window.onerror = null;
+            }
+
+            attachErrorBtn.addEventListener('click', () => {
+              window.onerror = errorHandler;
+              console.log('attached handler');
+            });
+            reporterNameEl.className = 'customErrorReady';
+          })();
+        </script>
+      </li>
+    </ul>
+
+    <hr />
+    <p><a href="/tests/">All Tests</a></p>
+  </body>
+</html>
