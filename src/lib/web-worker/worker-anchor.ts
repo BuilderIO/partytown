@@ -1,5 +1,5 @@
 import { commaSplit } from './worker-constants';
-import { definePrototypePropertyDescriptor } from '../utils';
+import { definePrototypePropertyDescriptor, isValidUrl } from '../utils';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getter, setter } from './worker-proxy';
 import { resolveToUrl } from './worker-exec';
@@ -24,10 +24,18 @@ export const patchHTMLAnchorElement = (WorkerHTMLAnchorElement: any, env: WebWor
       },
 
       set(this: any, value) {
-        let href = getInstanceStateValue(this, StateProp.url);
-        let url: any = resolveToUrl(env, href);
+        let url;
 
-        url[anchorProp] = new URL(value + '', url.href);
+        if (anchorProp === 'href') {
+          const baseHref = isValidUrl(value)
+              ? new URL(value).href
+              : env.$location$.href
+          url = resolveToUrl(env, baseHref);
+          url.href = new URL(value + '', url.href);
+        } else {
+          url = resolveToUrl(env, this.href);
+          url[anchorProp] = value;
+        }
 
         setInstanceStateValue(this, StateProp.url, url.href);
 

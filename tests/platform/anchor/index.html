@@ -75,7 +75,7 @@
           })();
         </script>
       </li>
-      
+
       <li>
         <strong>constructor.name</strong>
         <div><a id="testAnchorConstructor"></a></div>
@@ -90,7 +90,7 @@
 
       <li>
         <strong>createElement('a'), no appendChild</strong>
-        <div id="testCreateAnchorNoAppend"></a>
+        <div id="testCreateAnchorNoAppend"></div>
         <script type="text/partytown">
           (function () {
             const a = document.createElement('a');
@@ -136,7 +136,7 @@
             elm.className = 'testInnerHtmlFirstChild';
           })();
         </script>
-      </li> 
+      </li>
 
       <li>
         <strong>get <a id="getHref" href="https://builder.io/">href</a></strong>
@@ -161,6 +161,62 @@
             const elm = document.getElementById('testSetHref');
             elm.textContent = a.pathname;
             elm.className = 'testSetHref';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set <a id="setHref2" href="/">href</a> 2</strong>
+        <div id="testSetHref2"></div>
+        <script type="text/partytown">
+          (function () {
+            const a = document.getElementById('setHref');
+            a.href = 'http://builder.io/pathname';
+            a.href = '/local-pathname';
+            const elm = document.getElementById('testSetHref2');
+            elm.textContent = a.href;
+            elm.className = 'testSetHref2';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>get <a id="getSearch" href="https://builder.io/?a=42&b=23">search</a></strong>
+        <div>
+          <strong>search:</strong><span id="testGetSearch"></span>
+          <strong>href:</strong><span id="testGetSearchHref"></span>
+        </div>
+        <script type="text/partytown">
+          (function () {
+            const a = document.getElementById('getSearch');
+
+            const elmHref = document.getElementById('testGetSearchHref');
+            elmHref.textContent = a.href;
+
+            const elm = document.getElementById('testGetSearch');
+            elm.textContent = a.search;
+            elm.className = 'testGetSearch';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>set <a id="setSearch" href="https://builder.io/?a=42&b=23">search</a></strong>
+        <div>
+          <strong>search:</strong><span id="testSetSearch"></span>
+          <strong>href:</strong><span id="testSetSearchHref"></span>
+        </div>
+        <script type="text/partytown">
+          (function () {
+            const a = document.getElementById('setSearch');
+            a.search = '?x=1&y=2';
+
+            const elmHref = document.getElementById('testSetSearchHref');
+            elmHref.textContent = a.href;
+
+            const elm = document.getElementById('testSetSearch');
+            elm.textContent = a.search;
+            elm.className = 'testSetSearch';
           })();
         </script>
       </li>

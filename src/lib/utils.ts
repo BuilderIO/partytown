@@ -128,3 +128,12 @@ export const createElementFromConstructor = (
       : doc.createElement(htmlConstructorTags[tag] || tag);
   }
 };
+
+export const isValidUrl = (url: any): boolean => {
+  try {
+    new URL(url);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
