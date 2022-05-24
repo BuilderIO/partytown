@@ -50,7 +50,7 @@ export type MessageFromSandboxToWorker =
   | [type: WorkerMessageType.InitializedScripts, winId: WinId]
   | [type: WorkerMessageType.RefHandlerCallback, callbackData: RefHandlerCallbackData]
   | [type: WorkerMessageType.ForwardMainTrigger, triggerData: ForwardMainTriggerData]
-  | [type: WorkerMessageType.LocationUpdate, winId: WinId, documentBaseURI: string]
+  | [type: WorkerMessageType.LocationUpdate, locationChangeData: LocationUpdateData]
   | [type: WorkerMessageType.DocumentVisibilityState, winId: WinId, visibilityState: string]
   | [
       type: WorkerMessageType.CustomElementCallback,
@@ -77,6 +77,22 @@ export const enum WorkerMessageType {
   LocationUpdate,
   DocumentVisibilityState,
   CustomElementCallback,
+}
+
+export const enum LocationUpdateType {
+  PushState,
+  ReplaceState,
+  PopState,
+  HashChange
+}
+
+export interface LocationUpdateData {
+  $winId$: WinId;
+  type: LocationUpdateType,
+  state: object;
+  url: string;
+  newUrl?: string;
+  oldUrl?: string;
 }
 
 export interface ForwardMainTriggerData {
@@ -178,6 +194,7 @@ export interface WebWorkerEnvironment {
   $runWindowLoadEvent$?: number;
   $isSameOrigin$?: boolean;
   $isTopWindow$?: boolean;
+  $propagateHistoryChange$?: boolean;
 }
 
 export interface MembersInterfaceTypeInfo {
@@ -331,7 +348,6 @@ export type SerializedTransfer =
   | SerializedInstanceTransfer
   | SerializedNodeListTransfer
   | SerializedObjectTransfer
-  | SerializedPrimitiveTransfer
   | SerializedPrimitiveTransfer
   | SerializedRefTransfer
   | [];

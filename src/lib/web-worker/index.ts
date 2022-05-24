@@ -8,6 +8,7 @@ import { initNextScriptsInWebWorker } from './worker-exec';
 import { initWebWorker } from './init-web-worker';
 import { logWorker, normalizedWinId } from '../log';
 import { workerForwardedTriggerHandle } from './worker-forwarded-trigger';
+import { forwardLocationChange } from "./worker-location";
 
 const queuedEvents: MessageEvent<MessageFromSandboxToWorker>[] = [];
 
@@ -40,7 +41,12 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
     } else if (msgType === WorkerMessageType.DocumentVisibilityState) {
       environments[msgValue].$visibilityState$ = msg[2];
     } else if (msgType === WorkerMessageType.LocationUpdate) {
-      environments[msgValue].$location$.href = msg[2];
+      const $winId$ = msgValue.$winId$;
+      const env = environments[$winId$];
+
+      forwardLocationChange(msgValue.$winId$, env, msgValue);
+
+      env.$location$.href = msgValue.url;
     } else if (msgType === WorkerMessageType.CustomElementCallback) {
       callCustomElementCallback(...msg);
     }

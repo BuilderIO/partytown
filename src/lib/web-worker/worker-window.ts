@@ -433,6 +433,21 @@ export const createWindow = (
             },
             length: 0,
           };
+          win.indexeddb = undefined;
+        } else {
+          const originalPushState: Window['history']['pushState'] = win.history.pushState.bind(win.history);
+          const originalReplaceState: Window['history']['replaceState'] = win.history.replaceState.bind(win.history);
+
+          win.history.pushState = (stateObj: any, _: string, newUrl?: string) => {
+            if (env.$propagateHistoryChange$ !== false) {
+              originalPushState(stateObj, _, newUrl)
+            }
+          }
+          win.history.replaceState = (stateObj: any, _: string, newUrl?: string) => {
+            if (env.$propagateHistoryChange$ !== false) {
+              originalReplaceState(stateObj, _, newUrl)
+            }
+          }
         }
 
         win.Worker = undefined;
