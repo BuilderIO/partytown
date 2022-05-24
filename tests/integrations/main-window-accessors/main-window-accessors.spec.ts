@@ -9,4 +9,7 @@ test('integration window accessor', async ({ page }) => {
 
   const child_element = page.locator('#testChildWindowAccessor');
   await expect(child_element).toHaveText('stringValue');
+
+  const global_function = page.locator('#testGlobalFunction');
+  await expect(global_function).toHaveText('{"hello":"world"}');
 });

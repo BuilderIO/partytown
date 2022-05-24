@@ -13,7 +13,7 @@
       logSetters: true,
       logStackTraces: false,
       logScriptExecution: true,
-      mainWindowAccessors: ['globalField'],
+      mainWindowAccessors: ['globalField', 'globalFunction'],
     };
   </script>
   <script src='/~partytown/debug/partytown.js'></script>
@@ -88,6 +88,15 @@
     <code id='testChildWindowAccessor'></code>
     <script type='text/partytown'>
       document.getElementById('testChildWindowAccessor').innerText = window.globalField.parentObj.childValue;
+    </script>
+    <code id='testGlobalFunction'></code>
+    <script type='text/javascript'>
+      window.globalFunction = (arg) => {
+        document.getElementById('testGlobalFunction').textContent = JSON.stringify(arg);
+      }
+    </script>
+    <script type='text/partytown'>
+      window.globalFunction({ hello: 'world' });
     </script>
   </li>
   <script type='text/partytown'>

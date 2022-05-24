@@ -1,5 +1,6 @@
 import {
   ApplyPath,
+  CallType,
   InstanceId,
   RefHandlerCallbackData,
   RefId,
@@ -145,6 +146,10 @@ export const deserializeFromMain = (
     }
 
     if (serializedType === SerializedType.Function) {
+      if (winId && applyPath.length > 0) {
+        return (...args: any[]) => callMethod(environments[winId].$window$, applyPath, args, CallType.Blocking);
+      }
+
       return noop;
     }
 
