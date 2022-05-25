@@ -37,7 +37,13 @@ export const serializeForWorker = (
         );
       }
     } else if (type === 'object') {
-      if ((cstrName = getConstructorName(value)) === '') {
+      if (serializedValueIsError(value)) {
+        return [SerializedType.Error, {
+          name: value.name,
+          message: value.message,
+          stack: value.stack
+        }];
+      } else if ((cstrName = getConstructorName(value)) === '') {
         // error reading this object, probably "DOMException: Blocked from accessing a cross-origin frame."
         return [SerializedType.Object, {}];
       } else if (cstrName === 'Window') {
@@ -113,6 +119,10 @@ const serializeCssRuleForWorker = (cssRule: any) => {
   }
   return obj;
 };
+
+const serializedValueIsError = (value: any) => {
+  return value instanceof (window.top as any).Error;
+}
 
 export const deserializeFromWorker = (
   worker: PartytownWebWorker,

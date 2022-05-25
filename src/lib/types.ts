@@ -283,6 +283,7 @@ export const enum SerializedType {
   CSSRule,
   CSSRuleList,
   CSSStyleDeclaration,
+  Error,
 }
 
 export type SerializedArrayTransfer = [SerializedType.Array, (SerializedTransfer | undefined)[]];
@@ -300,6 +301,11 @@ export type SerializedCSSRuleListTransfer = [SerializedType.CSSRuleList, Seriali
 export type SerializedCSSStyleDeclarationTransfer = [
   SerializedType.CSSStyleDeclaration,
   { [key: string]: SerializedTransfer | undefined }
+];
+
+export type SerializedErrorTransfer = [
+  SerializedType.Error,
+  Error
 ];
 
 export type SerializedEventTransfer = [SerializedType.Event, SerializedObject];
@@ -350,6 +356,7 @@ export type SerializedTransfer =
   | SerializedObjectTransfer
   | SerializedPrimitiveTransfer
   | SerializedRefTransfer
+  | SerializedErrorTransfer
   | [];
 
 export interface SerializedObject {
