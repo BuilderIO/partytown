@@ -18,7 +18,7 @@ test('errors', async ({ page }) => {
   const refErrorStack = await page.locator('#refErrorStack');
   // Error messages differ between Chromium and Webkit
   await expect(refErrorStack).toContainText(
-    /(ReferenceError: blahblah is not defined at HTMLButtonElement|@https?:\/\/.+\/tests\/platform\/error\/:\d+:\d+)/
+    /(ReferenceError: blahblah is not defined\s+at HTMLButtonElement|@https?:\/\/.+\/tests\/platform\/error\/:\d+:\d+)/
   );
 
   // CustomError
