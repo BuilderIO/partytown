@@ -13,9 +13,13 @@ test('errors', async ({ page }) => {
   const refErrorName = await page.locator('#refErrorName');
   await expect(refErrorName).toHaveText('ReferenceError')
   const refErrorMessage = await page.locator('#refErrorMessage');
-  await expect(refErrorMessage).toHaveText('blahblah is not defined')
+  // Error messages differ between Chromium and Webkit
+  await expect(refErrorMessage).toHaveText(/(blahblah is not defined|Can't find variable: blahblah)/);
   const refErrorStack = await page.locator('#refErrorStack');
-  await expect(refErrorStack).toContainText('ReferenceError: blahblah is not defined at HTMLButtonElement')
+  // Error messages differ between Chromium and Webkit
+  await expect(refErrorStack).toContainText(
+    /(ReferenceError: blahblah is not defined at HTMLButtonElement|@https?:\/\/.+\/tests\/platform\/error\/:\d+:\d+)/
+  );
 
   // CustomError
   await page.waitForSelector('.customErrorReady');
