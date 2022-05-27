@@ -44,9 +44,9 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
       const $winId$ = msgValue.$winId$;
       const env = environments[$winId$];
 
-      forwardLocationChange(msgValue.$winId$, env, msgValue);
-
       env.$location$.href = msgValue.url;
+
+      forwardLocationChange(msgValue.$winId$, env, msgValue);
     } else if (msgType === WorkerMessageType.CustomElementCallback) {
       callCustomElementCallback(...msg);
     }
