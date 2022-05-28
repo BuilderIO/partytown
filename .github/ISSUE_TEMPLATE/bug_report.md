@@ -23,6 +23,9 @@ Please include a link to a Stackblitz or Codesandbox reproducing the issue. We w
 **Expected behavior**
 A clear and concise description of what you expected to happen.
 
+**Partytown version**
+What version of Partytown you are using, e.g. `0.0.1`
+
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
