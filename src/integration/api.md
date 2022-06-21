@@ -24,6 +24,7 @@ export interface PartytownConfig {
     get?: GetHook;
     globalFns?: string[];
     lib?: string;
+    loadScriptsOnMainThread?: string[];
     logCalls?: boolean;
     logGetters?: boolean;
     logImageRequests?: boolean;
