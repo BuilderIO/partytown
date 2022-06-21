@@ -64,6 +64,4 @@ Please see the [Atomics communication layer docs](/atomics) on how to enable the
 
 ## Serialization
 
-Data passed between the main thread and web worker must be [serializable](https://en.wikipedia.org/wiki/Serialization). Partytown automatically handles the serializing and deserializing of data passed between threads. The easiest would be primitive values, such as a `string`, `boolean` or `number`.
-
-More complicated, but Partytown also handles, is passing functions between the threads. Technically the "functions" are not between the two threads, but instead, references to functions are assigned unique IDs, and the opposite thread is able to call it.
+Data passed between the main thread and web worker must be [serializable](https://en.wikipedia.org/wiki/Serialization). Partytown automatically handles the serializing and deserializing of data passed between threads. This works for primitive values, such as a `string`, `boolean` or `number`, and also functions, which get unique IDs assigned that are passed to the opposite thread and can be called.
