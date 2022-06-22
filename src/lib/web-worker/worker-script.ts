@@ -26,11 +26,14 @@ export const patchHTMLScriptElement = (WorkerHTMLScriptElement: any, env: WebWor
           setter(this, ['dataset', 'ptsrc'], orgUrl);
         }
 
-        if(this.type && config.loadScriptsOnMainThread){
+        if (this.type && config.loadScriptsOnMainThread) {
           const shouldExecuteScriptViaMainThread = config.loadScriptsOnMainThread.some(scriptUrl => 
             scriptUrl === url
           )
-          setter(this, ['type'], shouldExecuteScriptViaMainThread ? 'text/javascript' : SCRIPT_TYPE );
+
+          if (shouldExecuteScriptViaMainThread) {
+            setter(this, ['type'], 'text/javascript');
+          }
         }
       },
     },
