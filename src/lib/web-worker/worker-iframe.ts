@@ -55,7 +55,7 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any, env: WebWor
           let xhrStatus: number;
           let env = getIframeEnv(this);
 
-          env.$location$.href = src = resolveUrl(env, src);
+          env.$location$.href = src = resolveUrl(env, src, 'iframe');
           env.$isLoading$ = 1;
 
           setInstanceStateValue(this, StateProp.loadErrorStatus, undefined);

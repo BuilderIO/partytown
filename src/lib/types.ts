@@ -83,12 +83,12 @@ export const enum LocationUpdateType {
   PushState,
   ReplaceState,
   PopState,
-  HashChange
+  HashChange,
 }
 
 export interface LocationUpdateData {
   $winId$: WinId;
-  type: LocationUpdateType,
+  type: LocationUpdateType;
   state: object;
   url: string;
   newUrl?: string;
@@ -303,10 +303,7 @@ export type SerializedCSSStyleDeclarationTransfer = [
   { [key: string]: SerializedTransfer | undefined }
 ];
 
-export type SerializedErrorTransfer = [
-  SerializedType.Error,
-  Error
-];
+export type SerializedErrorTransfer = [SerializedType.Error, Error];
 
 export type SerializedEventTransfer = [SerializedType.Event, SerializedObject];
 
@@ -374,6 +371,8 @@ export type SerializedInstance =
       type: string
     ];
 
+export type ResolveUrlType = 'fetch' | 'xhr' | 'script' | 'iframe';
+
 /**
  * https://partytown.builder.io/configuration
  *
@@ -388,9 +387,10 @@ export interface PartytownConfig {
    *
    * @param url - The URL to be resolved. This is a URL https://developer.mozilla.org/en-US/docs/Web/API/URL, not a string.
    * @param location - The current window location.
+   * @param type - The type of resource the url is being resolved for. For example, `fetch` is the value when resolving for `fetch()`, and `a` would be the value when resolving for an anchor element's `href`.
    * @returns The returned value must be a URL interface, otherwise the default resolved URL is used.
    */
-  resolveUrl?(url: URL, location: Location): URL | undefined | null;
+  resolveUrl?(url: URL, location: Location, type: ResolveUrlType): URL | undefined | null;
   /**
    * When set to `true`, Partytown scripts are not inlined and not minified.
    *

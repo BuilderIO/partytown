@@ -15,8 +15,8 @@ export const patchHTMLScriptElement = (WorkerHTMLScriptElement: any, env: WebWor
         return getInstanceStateValue<string>(this, StateProp.url) || '';
       },
       set(url: string) {
-        const orgUrl = resolveUrl(env, url, true);
-        url = resolveUrl(env, url);
+        const orgUrl = resolveUrl(env, url, null);
+        url = resolveUrl(env, url, 'script');
         setInstanceStateValue(this, StateProp.url, url);
         setter(this, ['src'], url);
         if (orgUrl !== url) {

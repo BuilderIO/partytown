@@ -435,19 +435,22 @@ export const createWindow = (
           };
           win.indexeddb = undefined;
         } else {
-          const originalPushState: Window['history']['pushState'] = win.history.pushState.bind(win.history);
-          const originalReplaceState: Window['history']['replaceState'] = win.history.replaceState.bind(win.history);
+          const originalPushState: Window['history']['pushState'] = win.history.pushState.bind(
+            win.history
+          );
+          const originalReplaceState: Window['history']['replaceState'] =
+            win.history.replaceState.bind(win.history);
 
           win.history.pushState = (stateObj: any, _: string, newUrl?: string) => {
             if (env.$propagateHistoryChange$ !== false) {
-              originalPushState(stateObj, _, newUrl)
+              originalPushState(stateObj, _, newUrl);
             }
-          }
+          };
           win.history.replaceState = (stateObj: any, _: string, newUrl?: string) => {
             if (env.$propagateHistoryChange$ !== false) {
-              originalReplaceState(stateObj, _, newUrl)
+              originalReplaceState(stateObj, _, newUrl);
             }
-          }
+          };
         }
 
         win.Worker = undefined;
@@ -477,7 +480,7 @@ export const createWindow = (
 
       fetch(input: string | URL | Request, init: any) {
         input = typeof input === 'string' || input instanceof URL ? String(input) : input.url;
-        return fetch(resolveUrl(env, input), init);
+        return fetch(resolveUrl(env, input, 'fetch'), init);
       }
 
       get frames() {
@@ -576,7 +579,7 @@ export const createWindow = (
         const ExtendedXhr = defineConstructorName(
           class extends Xhr {
             open(...args: any[]) {
-              args[1] = resolveUrl(env, args[1]);
+              args[1] = resolveUrl(env, args[1], 'xhr');
               (super.open as any)(...args);
             }
             set withCredentials(_: any) {}
