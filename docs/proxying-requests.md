@@ -60,10 +60,13 @@ Below are a few examples of [reverse proxies](https://en.wikipedia.org/wiki/Reve
 ```javascript
 partytown = {
   resolveUrl: function (url) {
-    const proxyUrl = new URL('https://cdn.builder.codes/api/v1/js-proxy');
-    proxyUrl.searchParams.append('url', url.href);
-    proxyUrl.searchParams.append('apiKey', YOUR_BUILDER_PUBLIC_API_KEY);  
-    return proxyUrl;
+    if (/* check that this is a JS url you want to proxy */) {
+      const proxyUrl = new URL('https://cdn.builder.codes/api/v1/js-proxy');
+      proxyUrl.searchParams.append('url', url.href);
+      proxyUrl.searchParams.append('apiKey', YOUR_BUILDER_PUBLIC_API_KEY);  
+      return proxyUrl;
+    }
+    return url;
   },
 };
 ```
