@@ -20,7 +20,7 @@ export const patchHTMLAnchorElement = (WorkerHTMLAnchorElement: any, env: WebWor
           value = (new URL(href) as any)[anchorProp];
         }
 
-        return (resolveToUrl(env, value) as any)[anchorProp];
+        return (resolveToUrl(env, value, null) as any)[anchorProp];
       },
 
       set(this: any, value) {
@@ -30,12 +30,12 @@ export const patchHTMLAnchorElement = (WorkerHTMLAnchorElement: any, env: WebWor
           if (isValidUrl(value)) {
             url = new URL(value);
           } else {
-            const baseHref = env.$location$.href
-            url = resolveToUrl(env, baseHref);
+            const baseHref = env.$location$.href;
+            url = resolveToUrl(env, baseHref, null);
             url.href = new URL(value + '', url.href);
           }
         } else {
-          url = resolveToUrl(env, this.href);
+          url = resolveToUrl(env, this.href, null);
           url[anchorProp] = value;
         }
 

@@ -5,6 +5,7 @@ import {
   InitializeScriptData,
   InstanceId,
   NodeName,
+  ResolveUrlType,
   StateProp,
   WebWorkerEnvironment,
   WinId,
@@ -29,7 +30,7 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
 
   if (scriptSrc) {
     try {
-      scriptSrc = resolveToUrl(env, scriptSrc) + '';
+      scriptSrc = resolveToUrl(env, scriptSrc, 'script') + '';
 
       setInstanceStateValue(instance!, StateProp.url, scriptSrc);
 
@@ -169,7 +170,7 @@ export const insertIframe = (winId: WinId, iframe: WorkerInstance) => {
 export const resolveToUrl = (
   env: WebWorkerEnvironment,
   url: string,
-  noUserHook?: boolean,
+  type: ResolveUrlType | null,
   baseLocation?: Location,
   resolvedUrl?: URL,
   configResolvedUrl?: any
@@ -184,8 +185,8 @@ export const resolveToUrl = (
   }
 
   resolvedUrl = new URL(url || '', baseLocation as any);
-  if (!noUserHook && webWorkerCtx.$config$.resolveUrl) {
-    configResolvedUrl = webWorkerCtx.$config$.resolveUrl!(resolvedUrl, baseLocation);
+  if (type && webWorkerCtx.$config$.resolveUrl) {
+    configResolvedUrl = webWorkerCtx.$config$.resolveUrl!(resolvedUrl, baseLocation, type!);
     if (configResolvedUrl) {
       return configResolvedUrl;
     }
@@ -193,8 +194,8 @@ export const resolveToUrl = (
   return resolvedUrl;
 };
 
-export const resolveUrl = (env: WebWorkerEnvironment, url: string, noUserHook?: boolean) =>
-  resolveToUrl(env, url, noUserHook) + '';
+export const resolveUrl = (env: WebWorkerEnvironment, url: string, type: ResolveUrlType | null) =>
+  resolveToUrl(env, url, type) + '';
 
 export const getPartytownScript = () =>
   `<script src="${partytownLibUrl('partytown.js?v=' + VERSION)}"></script>`;
