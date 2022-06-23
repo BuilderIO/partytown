@@ -30,8 +30,8 @@ When executed from within Partytown, every URL is resolved by Partytown, which a
 
 ```javascript
 partytown = {
-  resolveUrl: function (url) {
-    if (url.hostname === 'www.google-analytics.com') {
+  resolveUrl: function (url, location, type) {
+    if (type === 'script') {
       var proxyUrl = new URL('https://my-reverse-proxy.com/');
       proxyUrl.searchParams.append('url', url.href);
       return proxyUrl;
@@ -59,11 +59,14 @@ Below are a few examples of [reverse proxies](https://en.wikipedia.org/wiki/Reve
 
 ```javascript
 partytown = {
-  resolveUrl: function (url) {
-    const proxyUrl = new URL('https://cdn.builder.codes/api/v1/js-proxy');
-    proxyUrl.searchParams.append('url', url.href);
-    proxyUrl.searchParams.append('apiKey', YOUR_BUILDER_PUBLIC_API_KEY);  
-    return proxyUrl;
+  resolveUrl: function (url, location, type) {
+    if (type === 'script') {
+      const proxyUrl = new URL('https://cdn.builder.codes/api/v1/js-proxy');
+      proxyUrl.searchParams.append('url', url.href);
+      proxyUrl.searchParams.append('apiKey', YOUR_BUILDER_PUBLIC_API_KEY);  
+      return proxyUrl;
+    }
+    return url;
   },
 };
 ```
