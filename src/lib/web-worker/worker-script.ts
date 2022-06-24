@@ -1,4 +1,4 @@
-import { definePrototypePropertyDescriptor, SCRIPT_TYPE } from '../utils';
+import { definePrototypePropertyDescriptor } from '../utils';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getter, setter } from './worker-proxy';
 import { HTMLSrcElementDescriptorMap } from './worker-src-element';
