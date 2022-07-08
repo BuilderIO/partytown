@@ -415,6 +415,20 @@ export interface PartytownConfig {
    * https://partytown.builder.io/forwarding-events
    */
   forward?: PartytownForwardProperty[];
+
+  /**
+   * Some scripts that runs on the main thread may want to access data on global window object.
+   * If a data as been forwarded with a `push`, as defined in the `forward` config, this `pushBack` config
+   * allow to get the data back to the global window scope, using the `Array.splice` method.
+   * NOTE: only handle a depth of 1 (ie "object.sub.push" will fail)
+   * Example with Google Tag Manager:
+   *
+   * ```js
+   * ['dataLayer.push']
+   * ```
+   */
+  pushBack?: PartytownPushBackProperty[];
+
   mainWindowAccessors?: string[];
   /**
    * Rarely, a script will add a named function to the global scope with the
@@ -485,6 +499,13 @@ export interface PartytownConfig {
 export type PartytownForwardProperty = string;
 
 /**
+ * Represent the object and its method that should be re-applied on the main thread.
+ * As an example, `dataLayer.push` will set a 'dataLayer' var on the main window and replay the 'push'es on it
+ * @public
+ */
+export type PartytownPushBackProperty = string;
+
+/**
  * @public
  */
 export type GetHook = (opts: GetHookOptions) => any;
@@ -529,6 +550,8 @@ export interface ApplyHookOptions extends HookOptions {
 export interface MainWindow extends Window {
   partytown?: PartytownConfig;
   _ptf?: any[];
+  // handle `dataLayer` and others third-party global variables
+  [key: string]: any;
 }
 
 export const enum NodeName {

@@ -216,4 +216,61 @@ test('no window._ptf if no forward config', ({ window, document, navigator }) =>
   assert.equal(window._ptf, undefined);
 });
 
+
+// Test "pushBack" functionnality
+test('pushBack: run window.arr.push() call after initialized', ({
+  winId,
+  win,
+  worker,
+  document,
+  navigator,
+  top,
+}) => {
+  win.partytown = {
+    forward: ['arr.push', 'obj', 'extraObj.push'],
+    pushBack: ['arr.push', 'extraObj.push'],
+  };
+  snippet(win, document, navigator, top, false);
+
+  mainForwardTrigger(worker, winId, win);
+
+  win.arr.push('a', 'b');
+  assert.equal(win.arr, ['a', 'b']);
+
+  win.extraObj.push('c');
+  assert.equal(win.extraObj, ['c']);
+
+
+  // keep checking existing functionnality
+  const msg = worker.$messages[0][0];
+  assert.equal(msg[0], WorkerMessageType.ForwardMainTrigger);
+  assert.equal(msg[1].$winId$, winId);
+  assert.equal(msg[1].$forward$, ['arr', 'push']);
+  assert.equal(msg[1].$args$[0], SerializedType.Array);
+});
+
+test('pushBack: run queued window.arr.push() call', ({ winId, win, worker, document, navigator, top }) => {
+  win.partytown = {
+    forward: ['arr.push', 'obj', 'extraObj.push'],
+    pushBack: ['arr.push', 'extraObj.push'],
+  };
+  snippet(win, document, navigator, top, false);
+  win.arr.push('a', 'b');
+  win.extraObj.push('c');
+
+  mainForwardTrigger(worker, winId, win);
+
+  assert.equal(win.arr, ['a', 'b']);
+  assert.equal(win.extraObj, ['c']);
+
+  // keep checking existing functionnality
+  assert.equal(worker.$messages.length, 2);
+  const msg = worker.$messages[0][0];
+  assert.equal(msg[0], WorkerMessageType.ForwardMainTrigger);
+  assert.equal(msg[1].$winId$, winId);
+  assert.equal(msg[1].$forward$, ['arr', 'push']);
+  assert.equal(msg[1].$args$[0], SerializedType.Array);
+});
+
+
 test.run();
