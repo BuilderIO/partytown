@@ -11,6 +11,7 @@
   - [Atomics](/atomics)
   - [Distribution](/distribution)
 - [Integrations](/integrations)
+  - [Angular](/angular)
   - [Astro](/astro)
   - [Gatsby](/gatsby)
   - [HTML](/html)
