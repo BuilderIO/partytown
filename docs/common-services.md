@@ -6,16 +6,15 @@ Partytown is built with the goal that any third-party script can be ran from wit
 
 Below is a list of plugins / libraries that are tested & known to be working with Partytown with their commonly used [forward configs](/forwarding-events) and [proxied domains](/proxying-requests).
 
-| Service                                                                                                                    | Forward Config                                                                | Proxy Domain                                        |
-| -------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------- |
-| [Adobe Launch](https://experienceleague.adobe.com/docs/experience-platform/tags/client-side/satellite-object.html?lang=en) | "\_satellite.track"                                                           |                                                     |
-| [Facebook Pixel](/facebook-pixel)                                                                                          | "fbq"                                                                         | "connect.facebook.net"                              |
-| [Freshpaint](https://documentation.freshpaint.io/)                                                                         | "freshpaint.addPageviewProperties", "freshpaint.identify", "freshpaint.track" |                                                     |
-| [Google Tag Manager](/google-tag-manager)                                                                                  | "dataLayer.push"                                                              |                                                     |
-| [Hubspot Tracking](https://developers.hubspot.com/docs/api/events/tracking-code)                                           | "\_hsq.push"                                                                  |                                                     |
-| [Intercom](https://developers.intercom.com/installing-intercom/docs/intercom-javascript)                                   | "Intercom"                                                                    |                                                     |
-| [Klaviyo](https://developers.klaviyo.com/en/docs/javascript-api)                                                           | "\_learnq.push"                                                               | "static.klaviyo.com", "static-tracking.klaviyo.com" |
-| [TikTok Pixel](https://ads.tiktok.com/marketing_api/docs?rid=959icq5stjr&id=1701890973258754)                              | "ttq.track", "ttq.page", "ttq.load"                                           |                                                     |
+| Service                                                                                       | Forward Config                                                                | Proxy Domain                                        |
+| --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- | --------------------------------------------------- |
+| [Facebook Pixel](/facebook-pixel)                                                             | "fbq"                                                                         | "connect.facebook.net"                              |
+| [Freshpaint](https://documentation.freshpaint.io/)                                            | "freshpaint.addPageviewProperties", "freshpaint.identify", "freshpaint.track" |                                                     |
+| [Google Tag Manager](/google-tag-manager)                                                     | "dataLayer.push"                                                              |                                                     |
+| [Hubspot Tracking](https://developers.hubspot.com/docs/api/events/tracking-code)              | "\_hsq.push"                                                                  |                                                     |
+| [Intercom](https://developers.intercom.com/installing-intercom/docs/intercom-javascript)      | "Intercom"                                                                    |                                                     |
+| [Klaviyo](https://developers.klaviyo.com/en/docs/javascript-api)                              | "\_learnq.push"                                                               | "static.klaviyo.com", "static-tracking.klaviyo.com" |
+| [TikTok Pixel](https://ads.tiktok.com/marketing_api/docs?rid=959icq5stjr&id=1701890973258754) | "ttq.track", "ttq.page", "ttq.load"                                           |                                                     |
 
 If you would like to add to this list,
 
