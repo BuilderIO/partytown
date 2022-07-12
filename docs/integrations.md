@@ -4,6 +4,7 @@ title: Integration Guides
 
 Partytown can work with any HTML page, and doesn't require a specific framework. However, to make it easier to use in various frameworks or services, plugins/wrappers can be made for their ecosystem. Below is a current list of integrations. Please help us add more!
 
+- [Angular](/angular)
 - [Astro](/astro)
 - [Gatsby](/gatsby)
 - [HTML](/html)
