@@ -16,7 +16,7 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}${currentPage === '/' ? '/index'
 <html dir={content.dir ?? 'ltr'} lang={content.lang ?? 'en-us'} class="initial">
 	<head>
 		<HeadCommon />
-		<HeadSEO {content} canonicalURL={Astro.canonicalURL} />
+		<HeadSEO {content} />
 		{ currentPage === '/' ? (
 			<title>Welcome To Partytown</title>
 		) : (
