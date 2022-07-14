@@ -59,7 +59,7 @@ The snippet below shows you how to setup Partytown scripts in your `index.html` 
 
   <script type="text/partytown">
     /* Third-Party Script goes here */ 
-    </script>
+  </script>
 </head>
 
 ```
