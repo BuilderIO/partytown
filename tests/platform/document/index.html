@@ -452,6 +452,18 @@
         </script>
       </li>
 
+      <li>
+        <strong>document.images</strong>
+        <code id="testDocumentImages"></code>
+        <img src="/fake.jpg" />
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDocumentImages');
+            elm.textContent = document.images[0].src;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

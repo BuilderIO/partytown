@@ -169,6 +169,12 @@ export const patchDocument = (
       },
     },
 
+    images: {
+      get() {
+        return getter(this, ['images']);
+      },
+    },
+
     implementation: {
       get() {
         return {
