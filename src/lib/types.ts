@@ -425,6 +425,14 @@ export interface PartytownConfig {
    * when a third-party script rudely pollutes `window` with functions.
    */
   globalFns?: string[];
+  /**
+   * This array can be used to filter which script are executed via
+   * Partytown and which you would like to execute on the main thread.
+   * 
+   * @example loadScriptsOnMainThread:['https://test.com/analytics.js']
+   * // Loads the `https://test.com/analytics.js` script on the main thread 
+   */
+  loadScriptsOnMainThread?: string[]
   get?: GetHook;
   set?: SetHook;
   apply?: ApplyHook;
@@ -654,7 +662,9 @@ export interface WorkerInstance {
   [InstanceStateKey]: { [key: string]: any };
 }
 
-export interface WorkerNode extends WorkerInstance, Node {}
+export interface WorkerNode extends WorkerInstance, Node {
+  type: string | undefined;
+}
 
 export interface WorkerWindow extends WorkerInstance {
   [key: string]: any;
