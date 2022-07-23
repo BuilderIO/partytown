@@ -22,7 +22,7 @@ The following is an example of including the `<Partytown/>` component in `gatsby
 import React from 'react';
 import { Partytown } from '@builder.io/partytown/react';
 
-export const onRenderBody = ({ setHeadComponents }) => {
+export const onRenderBody = ({ setHeadComponents, setPreBodyComponents }) => {
   setHeadComponents([
     <Partytown key="partytown" debug={true} forward={['dataLayer.push']} />,
     <script key="analytics" src="https://example.com/analytics.js" type="text/partytown" />
