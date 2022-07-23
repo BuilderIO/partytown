@@ -96,4 +96,8 @@ test('document', async ({ page }) => {
 
   const testVisibilityState = page.locator('#testVisibilityState');
   await expect(testVisibilityState).toHaveText('visible');
+
+  const testImages = page.locator('#testDocumentImages');
+  const pageUrl = new URL(page.url());
+  await expect(testImages).toHaveText(`${pageUrl.origin}/fake.jpg`);
 });
