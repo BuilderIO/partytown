@@ -2,6 +2,7 @@ import { debug } from '../utils';
 import { environments, partytownLibUrl, webWorkerCtx } from './worker-constants';
 import {
   EventHandler,
+  FetchFallbackType,
   InitializeScriptData,
   InstanceId,
   NodeName,
@@ -38,7 +39,26 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
         logWorker(`Execute script src: ${scriptOrgSrc}`, winId);
       }
 
-      rsp = await fetch(scriptSrc);
+      try {
+        rsp = await fetch(scriptSrc);
+      } catch (urlError: any) {
+        if (
+          urlError?.toString()?.includes('Failed to fetch') &&
+          webWorkerCtx.$config$.fetchFallback === 'cors-error'
+        ) {
+          const fallbackUrl = resolveToUrl(env, scriptSrc, 'script', 'cors-error') + '';
+
+          if (fallbackUrl === scriptSrc) {
+            throw urlError;
+          }
+
+          scriptSrc = fallbackUrl;
+          rsp = await fetch(scriptSrc);
+        } else {
+          throw urlError;
+        }
+      }
+
       if (rsp.ok) {
         scriptContent = await rsp.text();
 
@@ -171,6 +191,7 @@ export const resolveToUrl = (
   env: WebWorkerEnvironment,
   url: string,
   type: ResolveUrlType | null,
+  fallbackType?: FetchFallbackType,
   baseLocation?: Location,
   resolvedUrl?: URL,
   configResolvedUrl?: any
@@ -186,7 +207,12 @@ export const resolveToUrl = (
 
   resolvedUrl = new URL(url || '', baseLocation as any);
   if (type && webWorkerCtx.$config$.resolveUrl) {
-    configResolvedUrl = webWorkerCtx.$config$.resolveUrl!(resolvedUrl, baseLocation, type!);
+    configResolvedUrl = webWorkerCtx.$config$.resolveUrl!(
+      resolvedUrl,
+      baseLocation,
+      type!,
+      fallbackType
+    );
     if (configResolvedUrl) {
       return configResolvedUrl;
     }
@@ -194,8 +220,12 @@ export const resolveToUrl = (
   return resolvedUrl;
 };
 
-export const resolveUrl = (env: WebWorkerEnvironment, url: string, type: ResolveUrlType | null) =>
-  resolveToUrl(env, url, type) + '';
+export const resolveUrl = (
+  env: WebWorkerEnvironment,
+  url: string,
+  type: ResolveUrlType | null,
+  fallbackType?: FetchFallbackType
+) => resolveToUrl(env, url, type, fallbackType) + '';
 
 export const getPartytownScript = () =>
   `<script src="${partytownLibUrl('partytown.js?v=' + VERSION)}"></script>`;

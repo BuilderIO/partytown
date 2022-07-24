@@ -478,9 +478,20 @@ export const createWindow = (
         return env.$documentElement$;
       }
 
-      fetch(input: string | URL | Request, init: any) {
+      async fetch(input: string | URL | Request, init: any) {
         input = typeof input === 'string' || input instanceof URL ? String(input) : input.url;
-        return fetch(resolveUrl(env, input, 'fetch'), init);
+
+        const urlToFetch = resolveUrl(env, input, 'fetch');
+        const resp = await fetch(urlToFetch, init);
+        if (!resp.ok && webWorkerCtx.$config$.fetchFallback === 'cors-error') {
+          const fallbackUrlToFetch = resolveUrl(env, input, 'fetch', 'cors-error');
+
+          if (fallbackUrlToFetch !== urlToFetch) {
+            return fetch(fallbackUrlToFetch, init);
+          }
+        }
+
+        return resp;
       }
 
       get frames() {
