@@ -373,6 +373,8 @@ export type SerializedInstance =
 
 export type ResolveUrlType = 'fetch' | 'xhr' | 'script' | 'iframe';
 
+export type FetchFallbackType = 'cors-error';
+
 /**
  * https://partytown.builder.io/configuration
  *
@@ -388,9 +390,15 @@ export interface PartytownConfig {
    * @param url - The URL to be resolved. This is a URL https://developer.mozilla.org/en-US/docs/Web/API/URL, not a string.
    * @param location - The current window location.
    * @param type - The type of resource the url is being resolved for. For example, `fetch` is the value when resolving for `fetch()`, and `a` would be the value when resolving for an anchor element's `href`.
+   * @param fetchFallbackType - If fetch fails, try again with specific type.
    * @returns The returned value must be a URL interface, otherwise the default resolved URL is used.
    */
-  resolveUrl?(url: URL, location: Location, type: ResolveUrlType): URL | undefined | null;
+  resolveUrl?(
+    url: URL,
+    location: Location,
+    type: ResolveUrlType,
+    fallbackType?: FetchFallbackType
+  ): URL | undefined | null;
   /**
    * When set to `true`, Partytown scripts are not inlined and not minified.
    *
@@ -428,11 +436,11 @@ export interface PartytownConfig {
   /**
    * This array can be used to filter which script are executed via
    * Partytown and which you would like to execute on the main thread.
-   * 
+   *
    * @example loadScriptsOnMainThread:['https://test.com/analytics.js']
-   * // Loads the `https://test.com/analytics.js` script on the main thread 
+   * // Loads the `https://test.com/analytics.js` script on the main thread
    */
-  loadScriptsOnMainThread?: string[]
+  loadScriptsOnMainThread?: string[];
   get?: GetHook;
   set?: SetHook;
   apply?: ApplyHook;
@@ -480,6 +488,10 @@ export interface PartytownConfig {
    * Path to the service worker file. Defaults to `partytown-sw.js`.
    */
   swPath?: string;
+  /**
+   * Enable fallback type mode
+   */
+  fetchFallback?: FetchFallbackType;
 }
 
 /**
