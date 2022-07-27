@@ -9,14 +9,7 @@
 
     <script>
       partytown = {
-        resolveUrl(url, location) {
-          if (url.hostname.includes('fullstory.com')) {
-            const proxyUrl = new URL('https://cdn.builder.io/api/v1/proxy-api');
-            proxyUrl.searchParams.append('url', url);
-            return proxyUrl;
-          }
-        },
-        forward: ['FS', 'FS.identify', '_fs_namespace'],
+        forward: ['FS.identify'],
         logCalls: true,
         logGetters: true,
         logSetters: true,
@@ -31,18 +24,14 @@
 
     <!-- FullStory Code -->
     <script type="text/partytown">
-      window['_fs_debug'] = false;
+
+      window['_fs_debug'] = true;
       window['_fs_host'] = 'fullstory.com';
       window['_fs_script'] = 'edge.fullstory.com/s/fs.js';
-      window['_fs_org'] = 'ORG-ID';
+      window['_fs_org'] = 'FBQ1T';
       window['_fs_namespace'] = 'FS';
       (function (m, n, e, t, l, o, g, y) {
-        if (e in m) {
-          if (m.console && m.console.log) {
-            m.console.log('FullStory namespace conflict. Please set window["_fs_namespace"].');
-          }
-          return;
-        }
+
         g = m[e] = function (a, b, s) {
           g.q ? g.q.push([a, b, s]) : g._api(a, b, s);
         };
@@ -156,7 +145,10 @@
 
     <script>
       function sendEvent() {
-        window['FS']('track', 'PageView');
+        window['FS'].identify('462718483', {
+          displayName: 'Daniel Falko',
+          email: 'daniel.falko@example.com',
+        });
         document.getElementById('testIdentify').textContent = 'called';
       }
     </script>

@@ -8,6 +8,6 @@ test('full-story', async ({ page }) => {
   const buttonSendEvent = page.locator('#buttonSendEvent');
   await buttonSendEvent.click();
 
-  const testFbq = page.locator('#testIdentify');
-  await expect(testFbq).toHaveText('called');
+  const testFullStory = page.locator('#testIdentify');
+  await expect(testFullStory).toHaveText('called');
 });
