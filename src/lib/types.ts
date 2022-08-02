@@ -429,8 +429,8 @@ export interface PartytownConfig {
    * This array can be used to filter which script are executed via
    * Partytown and which you would like to execute on the main thread.
    * 
-   * @example loadScriptsOnMainThread:['https://test.com/analytics.js']
-   * // Loads the `https://test.com/analytics.js` script on the main thread 
+   * @example loadScriptsOnMainThread:['https://test.com/analytics.js', 'inline-script-id']
+   * // Loads the `https://test.com/analytics.js` script on the main thread
    */
   loadScriptsOnMainThread?: string[]
   get?: GetHook;

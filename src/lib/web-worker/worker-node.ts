@@ -26,6 +26,8 @@ export const createNodeCstr = (
   env: WebWorkerEnvironment,
   WorkerBase: WorkerConstructor
 ) => {
+  const config = webWorkerCtx.$config$;
+
   const WorkerNode = defineConstructorName(
     class extends WorkerBase {
       appendChild(node: WorkerNode) {
@@ -54,11 +56,19 @@ export const createNodeCstr = (
 
           if (scriptContent) {
             if (isScriptJsType(scriptType)) {
-              const errorMsg = runScriptContent(env, instanceId, scriptContent, winId, '');
-              const datasetType = errorMsg ? 'pterror' : 'ptid';
-              const datasetValue = errorMsg || instanceId;
-              setter(newNode, ['type'], SCRIPT_TYPE + SCRIPT_TYPE_EXEC);
-              setter(newNode, ['dataset', datasetType], datasetValue);
+              // @ts-ignore
+              const scriptId = newNode.id;
+              const loadOnMainThread = scriptId && config.loadScriptsOnMainThread?.includes?.(scriptId);
+
+              if (loadOnMainThread) {
+                setter(newNode, ['type'], 'text/javascript');
+              } else {
+                const errorMsg = runScriptContent(env, instanceId, scriptContent, winId, '');
+                const datasetType = errorMsg ? 'pterror' : 'ptid';
+                const datasetValue = errorMsg || instanceId;
+                setter(newNode, ['type'], SCRIPT_TYPE + SCRIPT_TYPE_EXEC);
+                setter(newNode, ['dataset', datasetType], datasetValue);
+              }
             }
             setter(newNode, ['innerHTML'], scriptContent);
           }
