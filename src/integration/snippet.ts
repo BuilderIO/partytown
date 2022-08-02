@@ -15,6 +15,7 @@ export const createSnippet = (config: PartytownConfig | undefined | null, snippe
 
   return [
     `!(function(w,p,f,c){`,
+    `if(!window.crossOriginIsolated && !navigator.serviceWorker) return;`,
     Object.keys(filteredConfig).length > 0
       ? `c=w[p]=Object.assign(w[p]||{},${configStr});`
       : `c=w[p]=w[p]||{};`,
