@@ -244,6 +244,24 @@
       </li>
 
       <li>
+        <strong>set innerHTML, nested</strong>
+        <code some-attr="111" id="testInnerHTMLNested"></code>
+        <script type="text/partytown">
+          (function () {
+            const testEl = document.getElementById('testInnerHTMLNested');
+            const parent = document.createElement('div');
+            parent.innerHTML = '<script>console.log(42);<\/script>';
+
+            testEl.innerHTML = [
+              parent.firstChild.tagName,
+              parent.firstChild.innerHTML
+            ].join(', ');
+            testEl.className = 'testInnerHTMLNested';
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>async/defer</strong>
         <code id="testAsync"></code>
         <script src="defer-1.js" defer type="text/partytown"></script>

@@ -41,6 +41,10 @@ test('script', async ({ page }) => {
   const testInnerHTMLError = page.locator('#testInnerHTMLError');
   await expect(testInnerHTMLError).toHaveText('gahh');
 
+  await page.waitForSelector('.testInnerHTMLNested');
+  const testInnerHTMLNested = page.locator('#testInnerHTMLNested');
+  await expect(testInnerHTMLNested).toHaveText('SCRIPT, console.log(42);');
+
   await page.waitForSelector('.testAsync');
   const testAsync = page.locator('#testAsync');
   const testAsyncText = await testAsync.innerText();

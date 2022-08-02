@@ -38,6 +38,8 @@ export const patchHTMLScriptElement = (WorkerHTMLScriptElement: any, env: WebWor
       },
     },
 
+    text: innerHTMLDescriptor,
+
     textContent: innerHTMLDescriptor,
 
     type: {
@@ -60,7 +62,19 @@ export const patchHTMLScriptElement = (WorkerHTMLScriptElement: any, env: WebWor
 
 const innerHTMLDescriptor: PropertyDescriptor & ThisType<WorkerNode> = {
   get() {
-    return getInstanceStateValue<string>(this, StateProp.innerHTML) || '';
+    let innerHTML = getInstanceStateValue<string>(this, StateProp.innerHTML);
+
+    if (!innerHTML) {
+      // Try to retrieve innerHTML from main thread as fallback
+      const mainInnerHTML = getter(this, ['innerHTML']);
+
+      if (mainInnerHTML) {
+        setInstanceStateValue(this, StateProp.innerHTML, mainInnerHTML);
+        innerHTML = mainInnerHTML;
+      }
+    }
+
+    return innerHTML || '';
   },
   set(scriptContent: string) {
     setInstanceStateValue(this, StateProp.innerHTML, scriptContent);
