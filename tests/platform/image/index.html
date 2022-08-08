@@ -185,6 +185,23 @@
       </li>
 
       <li>
+        <strong>&lt;img&gt; style</strong>
+        <code id="testImgStyle"></code>
+        <script type="text/partytown">
+          (function () {
+            const image = new Image();
+            image.style.color = 'red'
+            image.addEventListener('error', function (ev) {
+              const elm = document.getElementById('testImgStyle');
+              elm.textContent = image.style.color;
+              elm.className = 'testImgStyle';
+            });
+            image.src = '404.gif?testImgStyle';
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>&lt;img&gt; src</strong>
         <code id="testImgSrc"></code>
         <script type="text/partytown">
