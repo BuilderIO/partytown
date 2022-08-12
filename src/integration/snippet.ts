@@ -1,7 +1,7 @@
 import type { PartytownConfig } from '../lib/types';
 
 export const createSnippet = (config: PartytownConfig | undefined | null, snippetCode: string) => {
-  const { forward = [], ...filteredConfig } = config || {};
+  const { forward = [], forwardCall = [], ...filteredConfig } = config || {};
 
   const configStr = JSON.stringify(filteredConfig, (k, v) => {
     if (typeof v === 'function') {
@@ -14,13 +14,15 @@ export const createSnippet = (config: PartytownConfig | undefined | null, snippe
   });
 
   return [
-    `!(function(w,p,f,c){`,
+    `!(function(w,p,f,fc,c){`,
     Object.keys(filteredConfig).length > 0
       ? `c=w[p]=Object.assign(w[p]||{},${configStr});`
       : `c=w[p]=w[p]||{};`,
     `c[f]=(c[f]||[])`,
-    forward.length > 0 ? `.concat(${JSON.stringify(forward)})` : ``,
-    `})(window,'partytown','forward');`,
+    forward.length > 0 ? `.concat(${JSON.stringify(forward)});` : `;`,
+    `c[fc]=(c[fc]||[])`,
+    forwardCall.length > 0 ? `.concat(${JSON.stringify(forwardCall)})` : ``,
+    `})(window,'partytown','forward','forwardCall');`,
     snippetCode,
   ].join('');
 };

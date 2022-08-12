@@ -1,4 +1,4 @@
-import { debug } from '../utils';
+import { debug, forwardCallWrapper, randomId } from '../utils';
 import type { MainWindow, PartytownConfig } from '../types';
 
 export function snippet(
@@ -135,6 +135,27 @@ export function snippet(
             : function () {
                 // queue these calls to be forwarded on later, after Partytown is ready
                 (win._ptf = win._ptf || []).push(forwardPropsArr, arguments);
+              };
+      });
+    });
+
+    let mainForwardCallFn: any;
+
+    (config.forwardCall || []).map(function (forwardProps) {
+      mainForwardCallFn = win;
+      forwardProps.split('.').map(function (_, i, forwardPropsArr) {
+        mainForwardCallFn = mainForwardCallFn[forwardPropsArr[i]] =
+          i + 1 < forwardPropsArr.length
+            ? forwardPropsArr[i + 1] == 'push'
+              ? []
+              : mainForwardCallFn[forwardPropsArr[i]] || {}
+            : function () {
+                const $callId$ = randomId();
+
+                // queue these calls to be forwarded on later, after Partytown is ready
+                (win._ptfc = win._ptfc || []).push(forwardPropsArr, arguments, $callId$);
+
+                return forwardCallWrapper($callId$, win, 5000);
               };
       });
     });

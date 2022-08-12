@@ -7,6 +7,7 @@ import {
   PartytownWebWorker,
   WorkerMessageType,
 } from '../types';
+import { mainForwardCall } from './main-forward-call'
 import { mainForwardTrigger } from './main-forward-trigger';
 import { logMain, normalizedWinId } from '../log';
 
@@ -56,6 +57,7 @@ export const readNextScript = (worker: PartytownWebWorker, winCtx: MainWindowCon
         // finished environment initialization
         winCtx.$isInitialized$ = 1;
 
+        mainForwardCall(worker, $winId$, win);
         mainForwardTrigger(worker, $winId$, win);
 
         doc.dispatchEvent(new CustomEvent('pt0'));

@@ -3,10 +3,11 @@ import { callWorkerRefHandler } from './worker-serialization';
 import { createEnvironment } from './worker-environment';
 import { debug } from '../utils';
 import { environments, webWorkerCtx } from './worker-constants';
-import { ForwardMainTriggerData, MessageFromSandboxToWorker, WorkerMessageType } from '../types';
+import { ForwardMainCallData, ForwardMainTriggerData, MessageFromSandboxToWorker, WorkerMessageType } from '../types';
 import { initNextScriptsInWebWorker } from './worker-exec';
 import { initWebWorker } from './init-web-worker';
 import { logWorker, normalizedWinId } from '../log';
+import { workerForwardedCallHandle } from './worker-forwarded-call';
 import { workerForwardedTriggerHandle } from './worker-forwarded-trigger';
 import { forwardLocationChange } from './worker-location';
 
@@ -24,6 +25,8 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
     } else if (msgType === WorkerMessageType.RefHandlerCallback) {
       // main has called a worker ref handler
       callWorkerRefHandler(msgValue);
+    } else if (msgType === WorkerMessageType.ForwardMainCall) {
+      workerForwardedCallHandle(msgValue as ForwardMainCallData);
     } else if (msgType === WorkerMessageType.ForwardMainTrigger) {
       workerForwardedTriggerHandle(msgValue as ForwardMainTriggerData);
     } else if (msgType === WorkerMessageType.InitializeEnvironment) {

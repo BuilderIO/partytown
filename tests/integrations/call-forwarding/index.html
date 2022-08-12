@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>Integration Call Forwarding</title>
+
+    <script>
+      partytown = {
+        forwardCall: ['square', 'nested.square',  'timeout'],
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+      };
+    </script>
+    <script src="/~partytown/debug/partytown.js"></script>
+
+    <script>
+      window.square(4).then((value) => {
+        document.getElementById('testStandardCallQueued').textContent = value;
+      });
+
+      window.nested.square(5).then((value) => {
+        document.getElementById('testNestedCallQueued').textContent = value;
+      });
+    </script>
+
+    <script type="text/partytown">
+      (function() {
+        square = function(value) {
+          return value * value;
+        }
+      })();
+    </script>
+
+    <script type="text/partytown">
+      (function() {
+        nested = {
+          square: function(value) {
+            return value * value;
+          }
+        }
+      })();
+    </script>
+
+    <script type="text/partytown">
+      (function() {
+        timeout = function() {
+          let value = 0;
+
+          for (let index = 0; index < 1000000000; index += 1) {
+            value += index;
+          }
+
+          return value;
+        }
+      })();
+    </script>
+
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        font-size: 12px;
+      }
+      h1 {
+        margin: 0 0 15px 0;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        display: block;
+        padding: 16px 8px;
+      }
+      a:link,
+      a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover {
+        background-color: #eee;
+      }
+      li {
+        display: flex;
+        margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button {
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Integration Event Forwarding</h1>
+    <ul>
+      <li>
+        <strong>Standard call</strong>
+        <button id="buttonStandardCall">square</button>
+        <code id="testStandardCall"></code>
+        <code id="testStandardCallQueued"></code>
+        <script>
+          (function () {
+            const btn = document.getElementById('buttonStandardCall');
+            const testStandardCall = document.getElementById('testStandardCall');
+
+            let value = 0;
+
+            btn.addEventListener('click', function (ev) {
+              window.square(value++).then((result) => {
+                testStandardCall.textContent = result;
+              });
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>Nested call</strong>
+        <button id="buttonNestedCall">square</button>
+        <code id="testNestedCall"></code>
+        <code id="testNestedCallQueued"></code>
+        <script>
+          (function () {
+            const btn = document.getElementById('buttonNestedCall');
+            const testNestedCall = document.getElementById('testNestedCall');
+
+            let value = 0;
+
+            btn.addEventListener('click', function (ev) {
+              window.nested.square(value++).then((result) => {
+                testNestedCall.textContent = result;
+              });
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>Timeout call</strong>
+        <button id="buttonTimeout">timeout</button>
+        <code id="testTimeout"></code>
+        <code></code>
+        <script>
+          (function () {
+            const btn = document.getElementById('buttonTimeout');
+            const testTimeout = document.getElementById('testTimeout');
+
+            let value = 0;
+
+            btn.addEventListener('click', function (ev) {
+              window.timeout().catch((error) => {
+                testTimeout.textContent = error.$error$;
+              });
+            });
+          })();
+        </script>
+      </li>
+    </ul>
+
+    <script type="text/partytown">
+      document.body.classList.add('completed');
+    </script>
+
+    <hr />
+    <p><a href="/tests/">All Tests</a></p>
+    <hr />
+  </body>
+</html>

@@ -1,4 +1,4 @@
-import type { ApplyPath, RandomId } from './types';
+import type { ApplyPath, MainWindow, RandomId } from './types';
 
 export const debug = !!(globalThis as any).partytownDebug;
 
@@ -136,4 +136,33 @@ export const isValidUrl = (url: any): boolean => {
   } catch (_) {
     return false;
   }
+};
+
+const forwardCallMessageError = ($callId$: string, $error$: string) => ({
+  $callId$,
+  $error$,
+});
+
+export const forwardCallWrapper = ($callId$: string, win: MainWindow, timeout: number = 1000) => {
+  return new Promise((resolve, reject) => {
+    const timeoutId = setTimeout(() => {
+      reject(forwardCallMessageError($callId$, 'Timeout'));
+
+      win.removeEventListener('message', messageHandler);
+    }, timeout);
+
+    function messageHandler(message: any) {
+      if (typeof message.data === 'object') {
+        const { $callId$: messageCallId, $result$ } = message.data;
+
+        if (messageCallId === $callId$) {
+          resolve($result$);
+          clearTimeout(timeoutId);
+          win.removeEventListener('message', messageHandler);
+        }
+      }
+    }
+
+    win.addEventListener('message', messageHandler);
+  });
 };

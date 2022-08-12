@@ -49,6 +49,7 @@ export type MessageFromSandboxToWorker =
   | [type: WorkerMessageType.InitializeNextScript, initScriptData: InitializeScriptData]
   | [type: WorkerMessageType.InitializedScripts, winId: WinId]
   | [type: WorkerMessageType.RefHandlerCallback, callbackData: RefHandlerCallbackData]
+  | [type: WorkerMessageType.ForwardMainCall, callData: ForwardMainCallData]
   | [type: WorkerMessageType.ForwardMainTrigger, triggerData: ForwardMainTriggerData]
   | [type: WorkerMessageType.LocationUpdate, locationChangeData: LocationUpdateData]
   | [type: WorkerMessageType.DocumentVisibilityState, winId: WinId, visibilityState: string]
@@ -71,6 +72,7 @@ export const enum WorkerMessageType {
   InitializeNextScript,
   InitializedScripts,
   RefHandlerCallback,
+  ForwardMainCall,
   ForwardMainTrigger,
   ForwardWorkerAccessRequest,
   AsyncAccessRequest,
@@ -93,6 +95,13 @@ export interface LocationUpdateData {
   url: string;
   newUrl?: string;
   oldUrl?: string;
+}
+
+export interface ForwardMainCallData {
+  $winId$: WinId;
+  $forward$: string[];
+  $callId$: string;
+  $args$: SerializedTransfer | undefined;
 }
 
 export interface ForwardMainTriggerData {
@@ -420,6 +429,15 @@ export interface PartytownConfig {
    */
   forward?: PartytownForwardProperty[];
   /**
+   * Many third-party scripts provide a global variable which user code calls
+   * in order to send data to the service. Some of them also return data back.
+   * Because we're moving third-party scripts to a web worker, the main thread
+   * needs to know which variables to patch first, and when Partytown loads, it
+   * can then forward call on to the service and forward return value
+   * of the invoked function back to caller.
+   */
+  forwardCall?: PartytownForwardProperty[];
+  /**
    * The css selector where the sandbox should be placed.
    * Default: body
    */
@@ -548,6 +566,7 @@ export interface ApplyHookOptions extends HookOptions {
 export interface MainWindow extends Window {
   partytown?: PartytownConfig;
   _ptf?: any[];
+  _ptfc?: any[];
 }
 
 export const enum NodeName {

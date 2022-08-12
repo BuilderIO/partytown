@@ -83,6 +83,7 @@ function getWindow(): any {
   const win: any = createWindow();
   win.top = win.self = win.parent = win.window = win;
   win.document.readyState = 'complete';
+  win.postMessage = () => {}
   return win;
 }
 
