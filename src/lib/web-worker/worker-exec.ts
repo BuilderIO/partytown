@@ -1,5 +1,5 @@
-import { debug } from '../utils';
-import { environments, partytownLibUrl, webWorkerCtx } from './worker-constants';
+import { VERSION } from '../build-modules/version';
+import { logWorker } from '../log';
 import {
   EventHandler,
   InitializeScriptData,
@@ -10,12 +10,12 @@ import {
   WebWorkerEnvironment,
   WinId,
   WorkerInstance,
-  WorkerMessageType,
+  WorkerMessageType
 } from '../types';
-import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
+import { debug } from '../utils';
+import { environments, partytownLibUrl, webWorkerCtx } from './worker-constants';
 import { getOrCreateNodeInstance } from './worker-constructors';
-import { logWorker } from '../log';
-import { VERSION } from '../build-modules/version';
+import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 
 export const initNextScriptsInWebWorker = async (initScript: InitializeScriptData) => {
   let winId = initScript.$winId$;
@@ -27,6 +27,7 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
   let errorMsg = '';
   let env = environments[winId];
   let rsp: Response;
+  let contentTypeBlocklist = ["image/gif"]
 
   if (scriptSrc) {
     try {
@@ -40,10 +41,12 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
 
       rsp = await fetch(scriptSrc);
       if (rsp.ok) {
-        scriptContent = await rsp.text();
-
-        env.$currentScriptId$ = instanceId;
-        run(env, scriptContent, scriptOrgSrc || scriptSrc);
+        let responseContentType = rsp.headers.get("content-type")
+        if (!contentTypeBlocklist.some(ct => ct === responseContentType)){
+          scriptContent = await rsp.text();
+          env.$currentScriptId$ = instanceId;
+          run(env, scriptContent, scriptOrgSrc || scriptSrc);
+        }
         runStateLoadHandlers(instance!, StateProp.loadHandlers);
       } else {
         errorMsg = rsp.statusText;
