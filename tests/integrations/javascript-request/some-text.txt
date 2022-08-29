@@ -1,0 +1,4 @@
+(function () {
+  const element = document.querySelector("#text-execution")
+  element.textContent = "Executed the text"
+})()
