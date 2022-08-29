@@ -27,7 +27,14 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
   let errorMsg = '';
   let env = environments[winId];
   let rsp: Response;
-  let contentTypeBlocklist = ["image/gif"]
+  let javascriptContentTypes = ["text/jscript",
+                                "text/javascript",
+                                "text/x-javascript",
+                                "application/javascript",
+                                "application/x-javascript",
+                                "text/ecmascript",
+                                "text/x-ecmascript",
+                                "application/ecmascript"]
 
   if (scriptSrc) {
     try {
@@ -41,8 +48,9 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
 
       rsp = await fetch(scriptSrc);
       if (rsp.ok) {
-        let responseContentType = rsp.headers.get("content-type")
-        if (!contentTypeBlocklist.some(ct => ct === responseContentType)){
+        let responseContentType = rsp.headers.get("content-type");
+        let shouldExecute = !javascriptContentTypes.some(ct => responseContentType?.toLowerCase().includes(ct));
+        if (shouldExecute){
           scriptContent = await rsp.text();
           env.$currentScriptId$ = instanceId;
           run(env, scriptContent, scriptOrgSrc || scriptSrc);
