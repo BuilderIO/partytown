@@ -9,11 +9,13 @@ export const createImageConstructor = (env: WebWorkerEnvironment) =>
     s: string;
     l: EventHandler[];
     e: EventHandler[];
+    style: Record<string, string>;
 
     constructor() {
       this.s = '';
       this.l = [];
       this.e = [];
+      this.style = {};
     }
 
     get src() {
