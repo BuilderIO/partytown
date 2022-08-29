@@ -45,16 +45,39 @@ test('Class this', ({ env, win }) => {
 
 test('manually define global functions', ({ env, win, config }) => {
   config.globalFns = ['abc', 'xyz'];
-  const s = `
+  const s1 = `
     function abc() {
       return true;
     }
     function xyz() {
       return true;
     }
+  `;
+  const s2 = `
     window.result = window.abc() && window.xyz();
   `;
-  run(env, s);
+  run(env, s1);
+  run(env, s2);
+  assert.is(win.result, true);
+});
+
+test('manually define global functions in try/catch', ({ env, win, config }) => {
+  config.globalFns = ['abc', 'xyz'];
+  const s1 = `
+    try {
+      function abc() {
+        return true;
+      }
+      function xyz() {
+        return true;
+      }
+    } catch(err) {}
+  `;
+  const s2 = `
+    window.result = window.abc() && window.xyz();
+  `;
+  run(env, s1);
+  run(env, s2);
   assert.is(win.result, true);
 });
 
