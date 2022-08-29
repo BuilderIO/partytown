@@ -49,7 +49,7 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
       rsp = await fetch(scriptSrc);
       if (rsp.ok) {
         let responseContentType = rsp.headers.get("content-type");
-        let shouldExecute = !javascriptContentTypes.some(ct => responseContentType?.toLowerCase?.().includes?.(ct));
+        let shouldExecute = javascriptContentTypes.some(ct => responseContentType?.toLowerCase?.().includes?.(ct));
         if (shouldExecute){
           scriptContent = await rsp.text();
           env.$currentScriptId$ = instanceId;
