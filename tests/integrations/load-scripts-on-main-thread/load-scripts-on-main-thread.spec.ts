@@ -6,4 +6,8 @@ test('integration window accessor', async ({ page }) => {
 
   const scriptElement = page.locator('#testScript');
   await expect(scriptElement).toHaveAttribute('type', 'text/javascript')
+
+  await page.waitForSelector('.testInlineScript');
+  const testInlineScript = page.locator('#testInlineScript');
+  await expect(testInlineScript).toHaveText('12');
 });
