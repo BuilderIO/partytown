@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>TreeWalker</title>
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+      };
+    </script>
+    <script src="/~partytown/debug/partytown.js"></script>
+  </head>
+  <body>
+    <h1>TreeWalker</h1>
+    <div id="walkerResult"></div>
+    <script type="text/partytown">
+      (function () {
+        const tw = document.createTreeWalker(document.body, 1);
+        result = [];
+        do {
+          result.push(tw.currentNode.nodeName);
+        } while (tw.nextNode());
+        document.getElementById('walkerResult').textContent = result.join(' ');
+      })();
+    </script>
+
+    <hr />
+    <p><a href="/tests/">All Tests</a></p>
+  </body>
+</html>
