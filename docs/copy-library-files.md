@@ -102,14 +102,12 @@ const partytown = require('@builder.io/partytown/utils');
 
 module.exports = {
   plugins: [
-    new CopyPlugin({
-      patterns: [
+    new CopyPlugin([
         {
           from: partytown.libDirPath(),
           to: path.join(__dirname, 'public', '~partytown'),
         },
-      ],
-    }),
+      ]),
   ],
 };
 ```
