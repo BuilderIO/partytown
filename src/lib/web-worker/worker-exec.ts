@@ -102,7 +102,7 @@ export const runScriptContent = (
 
 export const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) => {
   env.$runWindowLoadEvent$ = 1;
-  
+
   scriptContent =
     `with(this){${
       (webWorkerCtx.$config$.globalFns || [])
