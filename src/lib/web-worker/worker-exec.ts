@@ -102,14 +102,13 @@ export const runScriptContent = (
 
 export const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) => {
   env.$runWindowLoadEvent$ = 1;
-
   scriptContent =
     `with(this){${
       (webWorkerCtx.$config$.globalFns || [])
         .filter((globalFnName) => /[a-zA-Z_$][0-9a-zA-Z_$]*/.test(globalFnName))
         .map((g) => `(typeof ${g}=='function'&&(window.${g}=${g}))`)
         .join(';') +
-      scriptContent.replace(/(?<!\$)\bthis\b/g, '(thi$(this)?window:this)').replace(/\/\/# so/g, '//Xso')
+      scriptContent.replace(/\bthis\b/g, (match, offset, originalStr) =>  (offset > 0 && originalStr[offset - 1] !== "$") ? '(thi$(this)?window:this)' : match).replace(/\/\/# so/g, '//Xso')
     }\n;function thi$(t){return t===this}}` + (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '');
 
   if (!env.$isSameOrigin$) {
