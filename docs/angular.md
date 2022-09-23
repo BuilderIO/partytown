@@ -12,12 +12,6 @@ Run the command below to install the dependencies
 npm install @builder.io/partytown # or yarn add @builder.io/partytown
 ```
 
-Then run the command below to copy the Partytown JS files into your project
-
-```bash
-npx partytown copylib "src/~partytown/"
-```
-
 Add the path to the Partytown JS files into the assets array in your `angular.json` file
 
 
@@ -31,7 +25,13 @@ Add the path to the Partytown JS files into the assets array in your `angular.js
             "build": {
                 ...
                 "options": {
-                    "assets": [..., "src/~partytown"]
+                    "assets": [...,
+                      {
+                        "glob": "**/*",
+                        "input": "node_modules/@builder.io/partytown/lib",
+                        "output": "/~partytown"
+                      }
+                    ]
                 }
             }
         }
