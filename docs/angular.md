@@ -29,7 +29,7 @@ Add the path to the Partytown JS files into the assets array in your `angular.js
                       {
                         "glob": "**/*",
                         "input": "node_modules/@builder.io/partytown/lib",
-                        "output": "/assets"
+                        "output": "/~partytown"
                       }
                     ]
                 }
