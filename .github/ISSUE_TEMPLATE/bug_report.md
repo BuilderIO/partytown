@@ -7,6 +7,28 @@ assignees: ''
 
 ---
 
+<!-- 
+
+                      THIS ISSUE WILL BE CLOSED
+             (unless there is a high quality reproduction)
+
+
+We can only help you if you provide us a good reproduction of the problem! 
+We are verry sorry but a stack trace or "it does not work" simply does not 
+have enough usefull information for us to help you.
+
+Unless we can reproduce the issue in under 1 minute it will be closed as 
+can't reproduce!
+
+Your reproduction must have these:
+1. an easy way to reproduce the failure on our computers
+  - github repo for us to clone OR
+  - fork https://replit.com/@MiskoHevery/Partytown-Example
+2. exact steps on what to do to cause an error
+3. exact steps to retrieve the failure
+
+--!>
+
 - [ ] I am interested in helping provide a fix!
 
 **Describe the bug**
