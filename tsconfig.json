@@ -12,7 +12,7 @@
     "declaration": true,
     "skipLibCheck": true,
     "sourceMap": false,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "baseUrl": ".",
     "paths": {
       "@builder.io/partytown/integration": ["src/integration/index.ts"],
