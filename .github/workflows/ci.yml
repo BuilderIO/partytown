@@ -84,6 +84,13 @@ jobs:
           name: WebKit E2E Test Videos Videos
           path: tests/videos
 
+      - name: Upload WebKit E2E Test Html Report
+        uses: actions/upload-artifact@v1
+        if: always()
+        with:
+          name: WebKit E2E Test Html Report
+          path: tests/report
+
   # benchmark-chromium:
   #   name: Benchmark Chromium (Ubuntu)
   #   runs-on: ubuntu-latest

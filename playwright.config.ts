@@ -1,4 +1,4 @@
-import type { PlaywrightTestConfig } from '@playwright/test';
+import { PlaywrightTestConfig } from '@playwright/test';
 
 const config: PlaywrightTestConfig = {
   use: {
@@ -19,6 +19,7 @@ const config: PlaywrightTestConfig = {
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
   },
+  reporter: [['html', { outputFolder: 'tests/report' }], [process.env.CI ? 'dot' : 'list']],
 };
 
 export default config;
