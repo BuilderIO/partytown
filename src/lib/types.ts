@@ -30,7 +30,6 @@ export type AssignInstanceId = InstanceId | AssignWinInstanceId;
 
 export type MessageFromWorkerToSandbox =
   | [type: WorkerMessageType.MainDataRequestFromWorker]
-  | [type: WorkerMessageType.MainInterfacesRequestFromWorker]
   | [type: WorkerMessageType.InitializedWebWorker]
   | [
       type: WorkerMessageType.InitializedEnvironmentScript,
@@ -43,8 +42,10 @@ export type MessageFromWorkerToSandbox =
   | [type: WorkerMessageType.AsyncAccessRequest, accessReq: MainAccessRequest];
 
 export type MessageFromSandboxToWorker =
-  | [type: WorkerMessageType.MainDataResponseToWorker, initWebWorkerData: InitWebWorkerData]
-  | [type: WorkerMessageType.MainInterfacesResponseToWorker, interfaces: InterfaceInfo[]]
+  | [
+      type: WorkerMessageType.MainDataResponseToWorker,
+      initWebWorkerData: InitWebWorkerData | undefined
+    ]
   | [type: WorkerMessageType.InitializeEnvironment, initEnvData: InitializeEnvironmentData]
   | [type: WorkerMessageType.InitializeNextScript, initScriptData: InitializeScriptData]
   | [type: WorkerMessageType.InitializedScripts, winId: WinId]
@@ -63,8 +64,6 @@ export type MessageFromSandboxToWorker =
 export const enum WorkerMessageType {
   MainDataRequestFromWorker,
   MainDataResponseToWorker,
-  MainInterfacesRequestFromWorker,
-  MainInterfacesResponseToWorker,
   InitializedWebWorker,
   InitializeEnvironment,
   InitializedEnvironmentScript,
@@ -428,11 +427,11 @@ export interface PartytownConfig {
   /**
    * This array can be used to filter which script are executed via
    * Partytown and which you would like to execute on the main thread.
-   * 
+   *
    * @example loadScriptsOnMainThread:['https://test.com/analytics.js', 'inline-script-id']
    * // Loads the `https://test.com/analytics.js` script on the main thread
    */
-  loadScriptsOnMainThread?: string[]
+  loadScriptsOnMainThread?: string[];
   get?: GetHook;
   set?: SetHook;
   apply?: ApplyHook;

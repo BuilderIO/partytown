@@ -6,7 +6,7 @@ import {
   WorkerMessageType,
 } from '../types';
 import { onMessageFromWebWorker } from '../sandbox/on-messenge-from-worker';
-import { readMainInterfaces, readMainPlatform } from '../sandbox/read-main-platform';
+import { initMainPlatform } from '../sandbox/read-main-platform';
 
 const createMessengerAtomics: Messenger = async (receiveMessage) => {
   const size = 1024 * 1024 * 1024;
@@ -21,12 +21,12 @@ const createMessengerAtomics: Messenger = async (receiveMessage) => {
       // web worker has requested the initial data from the main thread
       // collect up the info about the main thread interfaces
       // send the main thread interface data to the web worker
-      const initData = readMainPlatform();
-      initData.$sharedDataBuffer$ = sharedDataBuffer;
-      worker.postMessage([WorkerMessageType.MainDataResponseToWorker, initData]);
-    } else if (msg[0] === WorkerMessageType.MainInterfacesRequestFromWorker) {
-      // web worker has requested the rest of the html/svg interfaces
-      worker.postMessage([WorkerMessageType.MainInterfacesResponseToWorker, readMainInterfaces()]);
+      initMainPlatform((data) => {
+        if (data) {
+          data.$sharedDataBuffer$ = sharedDataBuffer;
+        }
+        worker.postMessage([WorkerMessageType.MainDataResponseToWorker, data]);
+      });
     } else if (msgType === WorkerMessageType.ForwardWorkerAccessRequest) {
       receiveMessage(accessReq, (accessRsp) => {
         const stringifiedData = JSON.stringify(accessRsp);

@@ -1,5 +1,5 @@
 import * as assert from 'uvu/assert';
-import { createElementFromConstructor } from '../../src/lib/utils';
+import { tagNameFromConstructor } from '../../src/lib/utils';
 import { suite } from './utils';
 
 const test = suite();
@@ -50,5 +50,16 @@ test('createElementFromConstructor, HTML', ({ doc }) => {
   assert.is(createElementFromConstructor(doc, 'ConstructorElement'), undefined);
   assert.is(createElementFromConstructor(doc, 'IntersectionObserver'), undefined);
 });
+
+function createElementFromConstructor(doc: Document, cstrName: string) {
+  const d = tagNameFromConstructor(cstrName);
+  if (d) {
+    const [isSvg, tagName] = d;
+    if (isSvg) {
+      return doc.createElementNS('http://www.w3.org/2000/svg', tagName);
+    }
+    return doc.createElement(tagName);
+  }
+}
 
 test.run();

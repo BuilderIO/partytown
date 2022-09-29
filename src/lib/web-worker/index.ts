@@ -8,7 +8,7 @@ import { initNextScriptsInWebWorker } from './worker-exec';
 import { initWebWorker } from './init-web-worker';
 import { logWorker, normalizedWinId } from '../log';
 import { workerForwardedTriggerHandle } from './worker-forwarded-trigger';
-import { forwardLocationChange } from "./worker-location";
+import { forwardLocationChange } from './worker-location';
 
 const queuedEvents: MessageEvent<MessageFromSandboxToWorker>[] = [];
 
@@ -51,29 +51,26 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
       callCustomElementCallback(...msg);
     }
   } else if (msgType === WorkerMessageType.MainDataResponseToWorker) {
-    // received initial main data
-    // initialize the web worker with the received the main data
-    initWebWorker(msgValue);
+    if (msgValue) {
+      // completed receivings initial main data
+      initWebWorker(msgValue);
 
-    // request from main that the worker needs the interfaces
-    webWorkerCtx.$postMessage$([WorkerMessageType.MainInterfacesRequestFromWorker]);
-  } else if (msgType === WorkerMessageType.MainInterfacesResponseToWorker) {
-    // received more main thread interfaces, append them to the array
-    webWorkerCtx.$interfaces$ = [...webWorkerCtx.$interfaces$, ...msgValue];
-    webWorkerCtx.$isInitialized$ = 1;
+      logWorker(`Initialized web worker`);
 
-    logWorker(`Initialized web worker`);
+      // send to the main thread that the web worker has been initialized
+      webWorkerCtx.$postMessage$([WorkerMessageType.InitializedWebWorker]);
 
-    // send to the main thread that the web worker has been initialized
-    webWorkerCtx.$postMessage$([WorkerMessageType.InitializedWebWorker]);
-
-    // replay any of the queued events we already have
-    // before the web worker was initialized
-    if (debug && queuedEvents.length) {
-      logWorker(`Queued ready messages: ${queuedEvents.length}`);
+      // replay any of the queued events we already have
+      // before the web worker was initialized
+      if (debug && queuedEvents.length) {
+        logWorker(`Queued ready messages: ${queuedEvents.length}`);
+      }
+      [...queuedEvents].map(receiveMessageFromSandboxToWorker);
+      queuedEvents.length = 0;
+    } else {
+      // request from main that the worker needs the interfaces from the main thread
+      postMessage([WorkerMessageType.MainDataRequestFromWorker]);
     }
-    [...queuedEvents].map(receiveMessageFromSandboxToWorker);
-    queuedEvents.length = 0;
   } else {
     // the web worker hasn't finished initializing yet, let's store
     // this event so it can be re-ran after initialization

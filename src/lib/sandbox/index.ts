@@ -18,7 +18,7 @@ import { VERSION } from '../build-modules/version';
 let worker: PartytownWebWorker;
 
 const receiveMessage: MessengerRequestCallback = (accessReq, responseCallback) =>
-  mainAccessHandler(worker, accessReq).then(responseCallback);
+  setTimeout(() => mainAccessHandler(worker, accessReq).then(responseCallback));
 
 syncCreateMessenger(receiveMessage).then((onMessageHandler) => {
   if (onMessageHandler) {

@@ -1,10 +1,10 @@
 import {
-  createElementFromConstructor,
   getConstructorName,
   getNodeName,
   isValidMemberName,
   len,
   noop,
+  tagNameFromConstructor,
 } from '../utils';
 import { config, docImpl, libPath, mainWindow } from './main-globals';
 import {
@@ -15,7 +15,46 @@ import {
   StorageItem,
 } from '../types';
 
-export const readMainPlatform = () => {
+export const initMainPlatform = (cb: (data?: InitWebWorkerData) => void) => {
+  const interfaces = initState.$interfaces$;
+  const elementTags = initState.$elementTags$;
+  const impls = initState.$impls$;
+  const win = initState.$window$;
+
+  if (!win) {
+    initState.$window$ = readImplementation('Window', mainWindow);
+  } else if (!interfaces) {
+    initState.$interfaces$ = [win, readImplementation('Node', docImpl.createTextNode(''))];
+  } else if (!impls) {
+    initState.$impls$ = readMainImplementations();
+    initState.$elementTags$ = getElementTags();
+  } else if (elementTags) {
+    createElementFromTagNames(elementTags, impls);
+  } else if (readImplementations(impls, interfaces, initState.$doneCstrs$!)) {
+    initState = {};
+    addGlobalConstructorUsingPrototype(interfaces, mainWindow, 'IntersectionObserverEntry');
+
+    return cb({
+      $config$: JSON.stringify(config, (k, v) => {
+        if (typeof v === 'function') {
+          v = String(v);
+          if (v.startsWith(k + '(')) {
+            v = 'function ' + v;
+          }
+        }
+        return v;
+      }),
+      $interfaces$: interfaces,
+      $libPath$: new URL(libPath, mainWindow.location as any) + '',
+      $origin$: origin,
+      $localStorage$: readStorage('localStorage'),
+      $sessionStorage$: readStorage('sessionStorage'),
+    });
+  }
+  cb();
+};
+
+const readMainImplementations = () => {
   const elm = docImpl.createElement('i');
   const textNode = docImpl.createTextNode('');
   const comment = docImpl.createComment('');
@@ -27,7 +66,7 @@ export const readMainPlatform = () => {
   const perf = mainWindow.performance;
   const screen = mainWindow.screen;
 
-  const impls: any[] = [
+  return [
     // window implementations
     [mainWindow.history],
     [perf],
@@ -55,69 +94,54 @@ export const readMainPlatform = () => {
     [docImpl],
     [docImpl.doctype!],
   ];
-
-  const initialInterfaces: InterfaceInfo[] = [
-    readImplementation('Window', mainWindow),
-    readImplementation('Node', textNode),
-  ];
-
-  const $config$ = JSON.stringify(config, (k, v) => {
-    if (typeof v === 'function') {
-      v = String(v);
-      if (v.startsWith(k + '(')) {
-        v = 'function ' + v;
-      }
-    }
-    return v;
-  });
-
-  const initWebWorkerData: InitWebWorkerData = {
-    $config$,
-    $interfaces$: readImplementations(impls, initialInterfaces),
-    $libPath$: new URL(libPath, mainWindow.location as any) + '',
-    $origin$: origin,
-    $localStorage$: readStorage('localStorage'),
-    $sessionStorage$: readStorage('sessionStorage'),
-  };
-
-  addGlobalConstructorUsingPrototype(
-    initWebWorkerData.$interfaces$,
-    mainWindow,
-    'IntersectionObserverEntry'
-  );
-
-  return initWebWorkerData;
 };
 
-export const readMainInterfaces = () => {
-  // get all HTML*Element constructors on window
-  // and create each element to get their implementation
-  const elms = Object.getOwnPropertyNames(mainWindow)
-    .map((interfaceName) => createElementFromConstructor(docImpl, interfaceName))
-    .filter((elm) => elm)
-    .map((elm) => [elm]);
+const getElementTags = () =>
+  Object.getOwnPropertyNames(mainWindow)
+    .map((cstrName) => tagNameFromConstructor(cstrName)!)
+    .filter((d) => d);
 
-  return readImplementations(elms, []);
+const createElementFromTagNames = (
+  tagNames: [isSvg: boolean, tagName: string][],
+  impls: any[],
+  elementData?: [isSvg: boolean, tagName: string]
+) => {
+  const start = Date.now();
+
+  while ((elementData = tagNames.pop())) {
+    if (Date.now() - start > 5) {
+      return;
+    }
+    impls.push([
+      elementData[0]
+        ? docImpl.createElementNS('http://www.w3.org/2000/svg', elementData[1])
+        : docImpl.createElement(elementData[1]),
+    ]);
+  }
+  initState.$elementTags$ = undefined;
 };
 
 const cstrs = new Set(['Object']);
 
-const readImplementations = (impls: any[], interfaces: InterfaceInfo[]) => {
-  const cstrImpls = impls
-    .filter((implData) => implData[0])
-    .map((implData) => {
-      const impl = implData[0];
-      const interfaceType: InterfaceType = implData[1] as any;
-      const cstrName = getConstructorName(impl);
+const readImplementations = (impls: any[], interfaces: InterfaceInfo[], doneCstrs: Set<string>) => {
+  const start = Date.now();
+  impls = impls.filter((implData) => implData[0]);
+
+  for (const implData of impls) {
+    if (Date.now() - start > 5) {
+      return false;
+    }
+    const impl = implData[0];
+    const interfaceType: InterfaceType = implData[1] as any;
+    const cstrName = getConstructorName(impl);
+    if (!doneCstrs.has(cstrName)) {
+      doneCstrs.add(cstrName);
       const CstrPrototype = (mainWindow as any)[cstrName].prototype;
-      return [cstrName, CstrPrototype, impl, interfaceType];
-    });
+      readOwnImplementation(cstrs, interfaces, cstrName, CstrPrototype, impl, interfaceType);
+    }
+  }
 
-  cstrImpls.map(([cstrName, CstrPrototype, impl, intefaceType]) =>
-    readOwnImplementation(cstrs, interfaces, cstrName, CstrPrototype, impl, intefaceType)
-  );
-
-  return interfaces;
+  return true;
 };
 
 const readImplementation = (cstrName: string, impl: any, memberName?: string) => {
@@ -227,4 +251,14 @@ const addGlobalConstructorUsingPrototype = (
       InterfaceType.EnvGlobalConstructor,
     ]);
   }
+};
+
+let initState: {
+  $doneCstrs$?: Set<string>;
+  $elementTags$?: [isSvg: boolean, tagName: string][];
+  $impls$?: any[];
+  $interfaces$?: any;
+  $window$?: any;
+} = {
+  $doneCstrs$: new Set(),
 };

@@ -111,21 +111,22 @@ const svgConstructorTags: { [key: string]: string } = {
   SVG: 'svg',
 };
 
-export const createElementFromConstructor = (
-  doc: Document,
+export const tagNameFromConstructor = (
   interfaceName: string,
   r?: RegExpMatchArray | null,
-  tag?: string
-) => {
+  tag?: string,
+  isSvg?: boolean
+): [isSvg: boolean, tagName: string] | undefined => {
   r = interfaceName.match(/^(HTML|SVG)(.+)Element$/);
   if (r) {
     tag = r[2];
-    return interfaceName[0] == 'S'
-      ? doc.createElementNS(
-          'http://www.w3.org/2000/svg',
-          svgConstructorTags[tag] || tag.slice(0, 2).toLowerCase() + tag.slice(2)
-        )
-      : doc.createElement(htmlConstructorTags[tag] || tag);
+    isSvg = interfaceName[0] == 'S';
+    return [
+      isSvg,
+      isSvg
+        ? svgConstructorTags[tag] || tag.slice(0, 2).toLowerCase() + tag.slice(2)
+        : htmlConstructorTags[tag] || tag,
+    ];
   }
 };
 
@@ -136,4 +137,4 @@ export const isValidUrl = (url: any): boolean => {
   } catch (_) {
     return false;
   }
-}
+};
