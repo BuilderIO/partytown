@@ -12,7 +12,7 @@ const config: PlaywrightTestConfig = {
       },
     },
   },
-  timeout: 60000,
+  timeout: 20000,
   webServer: {
     command: 'npm run serve.test',
     port: 4001,
