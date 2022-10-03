@@ -55,21 +55,6 @@ Below are a few examples of [reverse proxies](https://en.wikipedia.org/wiki/Reve
 - [NGINX](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/)
 - [Vercel: Rewrites](https://vercel.com/docs/cli#project-configuration/rewrites)
 
-[Builder.io](https://www.builder.io/) also provides a hosted [reverse proxy API](https://www.builder.io/c/docs/js-proxy-api) you can use for Partytown with a free account
-
-```javascript
-partytown = {
-  resolveUrl: function (url, location, type) {
-    if (type === 'script') {
-      const proxyUrl = new URL('https://cdn.builder.codes/api/v1/js-proxy');
-      proxyUrl.searchParams.append('url', url.href);
-      proxyUrl.searchParams.append('apiKey', YOUR_BUILDER_PUBLIC_API_KEY);  
-      return proxyUrl;
-    }
-    return url;
-  },
-};
-```
 
 ## Serving Resources Locally
 
