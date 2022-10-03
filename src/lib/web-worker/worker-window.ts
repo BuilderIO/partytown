@@ -74,6 +74,7 @@ import { patchHTMLIFrameElement } from './worker-iframe';
 import { patchHTMLScriptElement } from './worker-script';
 import { patchSvgElement } from './worker-svg';
 import { resolveUrl } from './worker-exec';
+import { createNodeListCstr } from './worker-serialization';
 
 export const createWindow = (
   $winId$: WinId,
@@ -198,6 +199,7 @@ export const createWindow = (
         win.name = name + (debug ? `${normalizedWinId($winId$)} (${$winId$})` : ($winId$ as any));
 
         createNodeCstr(win, env, WorkerBase);
+        createNodeListCstr(win);
         createCSSStyleDeclarationCstr(win, WorkerBase, 'CSSStyleDeclaration');
         createPerformanceConstructor(win, WorkerBase, 'Performance');
         createCustomElementRegistry(win, nodeCstrs);
