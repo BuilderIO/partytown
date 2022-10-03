@@ -35,7 +35,8 @@ export interface PartytownConfig {
     logStackTraces?: boolean;
     // (undocumented)
     mainWindowAccessors?: string[];
-    resolveUrl?(url: URL, location: Location): URL | undefined | null;
+    // Warning: (ae-forgotten-export) The symbol "ResolveUrlType" needs to be exported by the entry point index.d.ts
+    resolveUrl?(url: URL, location: Location, type: ResolveUrlType): URL | undefined | null;
     // (undocumented)
     set?: SetHook;
     swPath?: string;
