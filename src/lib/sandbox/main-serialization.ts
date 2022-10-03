@@ -97,7 +97,11 @@ const serializeObjectForWorker = (
     added.add(obj);
     for (propName in obj) {
       if (isValidMemberName(propName)) {
-        propValue = obj[propName];
+        if (propName === 'path' && obj instanceof Event) {
+          propValue = obj.composedPath();
+        } else {
+          propValue = obj[propName];
+        }
         if (includeFunctions || typeof propValue !== 'function') {
           if (includeEmptyStrings || propValue !== '') {
             serializedObj[propName] = serializeForWorker(winId, propValue, added);
