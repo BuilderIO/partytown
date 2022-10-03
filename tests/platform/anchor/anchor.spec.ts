@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 
 test('anchor', async ({ page }) => {
+  page.on('console', (msg) => console.log(msg.text()));
+
   await page.goto('/tests/platform/anchor/');
 
   await page.waitForSelector('.testAnchor');
@@ -34,7 +36,7 @@ test('anchor', async ({ page }) => {
   await page.waitForSelector('.testSetHref2');
   const testSetHref2 = page.locator('#testSetHref2');
   const desiredLocalUrl = new URL(page.url());
-  desiredLocalUrl.pathname = '/local-pathname'
+  desiredLocalUrl.pathname = '/local-pathname';
   await expect(testSetHref2).toHaveText(desiredLocalUrl.toString());
 
   await page.waitForSelector('.testGetSearch');

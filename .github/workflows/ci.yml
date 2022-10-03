@@ -79,14 +79,14 @@ jobs:
 
       - name: Upload WebKit E2E Test Videos
         uses: actions/upload-artifact@v1
-        if: always()
+        if: ${{ failure() }}
         with:
           name: WebKit E2E Test Videos Videos
           path: tests/videos
 
       - name: Upload WebKit E2E Test Html Report
         uses: actions/upload-artifact@v1
-        if: always()
+        if: ${{ failure() }}
         with:
           name: WebKit E2E Test Html Report
           path: tests/report
