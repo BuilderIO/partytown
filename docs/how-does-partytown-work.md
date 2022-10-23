@@ -59,7 +59,7 @@ Please see the [Atomics communication layer docs](/atomics) on how to enable the
 1. Web worker is given the scripts to execute within the worker thread.
 1. Web worker creates JavaScript Proxies to replicate and forward calls to the main thread APIs (such as DOM operations).
 1. Any call to the JS proxy will use [Atomics.store()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/store) and `postMessage()` to send the data to the main thread, and run [Atomics.wait()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/wait).
-1. [Atomics.load()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/load) is used once the web worker recieves the results data from the main thread.
+1. [Atomics.load()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/load) is used once the web worker receives the results data from the main thread.
 1. From the point of view of code executing on the web worker, everything was synchronous, and each call to the document was blocking.
 
 ## Serialization
