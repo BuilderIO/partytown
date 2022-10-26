@@ -32,4 +32,21 @@ Google Tag Manager uses the [dataLayer](https://developers.google.com/tag-platfo
 }
 ```
 
+## Custom Events
+
+If you have custom analytics events, like `window.gtag("event", name, options);`, you will also need to forward the `"gtag"` variable. After `gtag` is defined in your Partytown script you'll need to set `window.gtag = gtag`;
+
+```json
+{
+  "forward": ["dataLayer.push", "gtag"]
+}
+```
+```html
+<script type="text/partytown">
+  /* Insert GTM Script Here */
+  window.gtag = gtag;
+</script>
+```
+
+<br>
 Please see the [integration docs](/integrations) for framework specific configuration.
