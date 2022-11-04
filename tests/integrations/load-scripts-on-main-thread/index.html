@@ -15,6 +15,7 @@
       logScriptExecution: true,
       loadScriptsOnMainThread: [
         `http://${location.host}/tests/integrations/load-scripts-on-main-thread/test-script.js`,
+        `RegExp:test-script-\\d\\.js`,
         `inline-test-script`
       ],
     };
@@ -25,6 +26,24 @@
       const scriptElement = document.createElement("script");
       scriptElement.type = "text/javascript";
       scriptElement.src = "./test-script.js";
+      scriptElement.id = "testScript";
+      document.head.appendChild(scriptElement);
+    })()
+  </script>
+  <script type='text/partytown'>
+    (() => {
+      const scriptElement = document.createElement("script");
+      scriptElement.type = "text/javascript";
+      scriptElement.src = "./test-script-1.js";
+      scriptElement.id = "testScript";
+      document.head.appendChild(scriptElement);
+    })()
+  </script>
+  <script type='text/partytown'>
+    (() => {
+      const scriptElement = document.createElement("script");
+      scriptElement.type = "text/javascript";
+      scriptElement.src = "./test-script-2.js";
       scriptElement.id = "testScript";
       document.head.appendChild(scriptElement);
     })()
