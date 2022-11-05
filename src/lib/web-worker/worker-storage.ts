@@ -73,14 +73,16 @@ export const addStorageApi = (
   };
 
   win[storageName] = new Proxy(storage, {
-    get(storage, key) {
+    get(storage, key: string) {
       return storage.getItem(key);
     },
-    set(storage, key, value) {
-      return storage.setItem(key, value);
+    set(storage, key: string, value: string): boolean {
+      storage.setItem(key, value);
+      return true;
     },
-    deleteProperty: (storage, key) => {
-      return storage.removeItem(key);
+    deleteProperty(storage, key: string): boolean {
+      storage.removeItem(key);
+      return true;
     },
   });
 };
