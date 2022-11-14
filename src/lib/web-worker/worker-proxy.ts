@@ -21,6 +21,7 @@ import {
   cachedStructure,
   dimensionChangingMethodNames,
   dimensionChangingSetterNames,
+  environments,
   HookContinue,
   HookPrevent,
   InstanceDataKey,
@@ -254,4 +255,6 @@ const createHookOptions = (instance: WorkerInstance, applyPath: ApplyPath): Hook
   continue: HookContinue,
   nodeName: (instance as any as WorkerNode)[InstanceDataKey],
   constructor: getConstructorName(instance),
+  instance,
+  window: environments[instance[WinIdKey]].$window$,
 });
