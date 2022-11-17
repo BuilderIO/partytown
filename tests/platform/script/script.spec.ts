@@ -53,7 +53,7 @@ test('script', async ({ page }) => {
   await page.waitForSelector('.testSrcAttr');
   const testSrcAttr = page.locator('#testSrcAttr');
   const srcAttr = await testSrcAttr.textContent();
-  const srcUrl = new URL(srcAttr);
+  const srcUrl = new URL(srcAttr!);
   expect(srcUrl.pathname).toBe('/tests/platform/script/set-get-attr.js');
 
   await page.waitForSelector('.testSetPropType');
@@ -79,4 +79,8 @@ test('script', async ({ page }) => {
   await page.waitForSelector('.testSourceMappingURL');
   const testSourceMappingURL = page.locator('#testSourceMappingURL');
   await expect(testSourceMappingURL).toHaveText('sourceMappingURL');
+
+  await page.waitForSelector('.testAppendMainScript');
+  const testAppendMainScript = page.locator('#testAppendMainScript');
+  await expect(testAppendMainScript).toHaveText('ptupdate');
 });
