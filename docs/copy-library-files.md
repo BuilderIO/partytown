@@ -102,14 +102,17 @@ const partytown = require('@builder.io/partytown/utils');
 
 module.exports = {
   plugins: [
-    new CopyPlugin([
+    new CopyPlugin({
+      patterns: [
         {
           from: partytown.libDirPath(),
-          to: path.join(__dirname, 'public', '~partytown'),
+          to: path.join(__dirname, "public", "~partytown"),
         },
-      ]),
+      ],
+    }),
   ],
 };
+
 ```
 ## Laravel Mix
 
