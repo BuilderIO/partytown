@@ -374,7 +374,7 @@ export type SerializedInstance =
 /**
  * @public
  */
-export type ResolveUrlType = 'fetch' | 'xhr' | 'script' | 'iframe';
+export type ResolveUrlType = 'fetch' | 'xhr' | 'script' | 'iframe' | 'image';
 
 /**
  * https://partytown.builder.io/configuration
