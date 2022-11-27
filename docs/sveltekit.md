@@ -7,9 +7,11 @@ SvelteKit does not offer any built in integrations, so we will add Partytown man
 1. Add the Partytown script to `src/routes/__layout.svelte`
 2. Copy the Partytown files to the local filesystem using the Vite plugin
 3. Reverse-Proxying scripts 
-4. Then adding 3rd party scripts.
+4. Then adding 3rd party scripts
 
 ## 1. Add the Partytown script to `src/routes/__layout.svelte`
+
+Adapting from [the HTML integration guide](https://partytown.builder.io/html)
 
 ```svelte
 // src/routes/__layout.svelte
@@ -45,7 +47,9 @@ SvelteKit does not offer any built in integrations, so we will add Partytown man
 
 ## 2. Copy the Partytown files to the local filesystem using the Vite plugin
 
-```svelte
+Adopting [this strategy](https://partytown.builder.io/copy-library-files#vite) from the Partytown+Vite docs:
+
+```js
 // vite.config.js
 
 import { join } from 'path'
@@ -67,6 +71,8 @@ export default config
 ```
 
 ## 3. Reverse-Proxying scripts 
+
+This will vary depending on hosting platform. See [Partytown's recommended guides](https://partytown.builder.io/proxying-requests#reverse-proxy).
 
 ```svelte
 // src/routes/__layout.svelte
@@ -96,7 +102,9 @@ export default config
 </script>
 ```
 
-## 4. Then adding 3rd party scripts.
+## 4. Then adding 3rd party scripts
+
+This is where we FINALLY use party town to add those scripts (note `type="text/partytown"` below). This example shows Google Tag Manager.
 
 ```js
 // svelte.config.js
@@ -164,3 +172,5 @@ and
   </script>
 </svelte:head>
 ```
+
+Reminder to visit https://monogram.io/blog/add-partytown-to-svelte if you need a blog-style guide on this.
