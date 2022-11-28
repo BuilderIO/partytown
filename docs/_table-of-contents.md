@@ -21,6 +21,7 @@
   - [Remix](/remix)
   - [Shopify](/shopify-plugin)
   - [Shopify Hydrogen](/shopify-hydrogen)
+  - [SvelteKit](/sveltekit)
 - [Configuration](/configuration)
   - [Overview](/configuration)
   - [Proxying Requests](/proxying-requests)
