@@ -50,6 +50,77 @@
         margin: 0 5px;
       }
     </style>
+    <script id="hack">
+      (function () {
+        let iFrameCount = 0;
+        function observe(target, prop, predicate = () => true) {
+          let name = `${window.hack ? '' : 'INNER '}${target.constructor.name}.${prop}`;
+          let originalDesc = Object.getOwnPropertyDescriptor(target, prop);
+          if (!originalDesc) throw new Error(name + ' does not exist');
+          let newDesc = { ...originalDesc };
+          if (!('value' in newDesc)) {
+            newDesc.set = function (value) {
+              predicate(this) && console.log(name, 'SET', value, this);
+              return originalDesc.set.call(this, value);
+            };
+            newDesc.get = function () {
+              if (document.getElementById('twitter-widget-0') && iFrameCount++ == 5) {
+                //debugger;
+              }
+              const value = originalDesc.get.call(this);
+              if (predicate(this)) {
+                //console.log(name, 'GET', value, this.getAttribute('style'), this);
+                //if (name == 'HTMLElement.offsetHeight' && value == 438) debugger;
+              }
+              return value;
+              if (typeof value == 'object' && value !== null) {
+                try {
+                  return logProxy(value, '?' || String(this));
+                } catch (e) {
+                  console.error(e);
+                  debugger;
+                  return value;
+                }
+              } else {
+                return value;
+              }
+            };
+          }
+          Object.defineProperty(target, prop, newDesc);
+        }
+        let count = 0;
+        function logProxy(delegate, name) {
+          return new Proxy(delegate, {
+            get(target, prop) {
+              let value = target[prop];
+              //console.log('STYLE GET', name, prop, value);
+              return value;
+            },
+            set(target, prop, value) {
+              console.log('STYLE SET', name, prop, value);
+              if (value == '422px') {
+                console.log('/////////////////////');
+                debugger;
+              }
+              if (count++ == 10) {
+                //debugger;
+              }
+              return (target[prop] = value);
+            },
+          });
+        }
+
+        observe(HTMLElement.prototype, 'style', (obj) => false && obj.id == 'twitter-widget-0');
+        observe(Element.prototype, 'getBoundingClientRect', () => true);
+        observe(Element.prototype, 'getClientRects', () => true);
+        observe(HTMLElement.prototype, 'offsetWidth', (obj) => obj.id == 'twitter-widget-0');
+        observe(HTMLElement.prototype, 'offsetHeight', () => true);
+        observe(Element.prototype, 'clientWidth', () => true);
+        observe(Element.prototype, 'clientHeight', () => true);
+        observe(Element.prototype, 'scrollWidth', () => true);
+        observe(Element.prototype, 'scrollHeight', () => true);
+      })();
+    </script>
     <script>
       partytown = {
         resolveUrl(url, location) {
@@ -63,14 +134,14 @@
           }
         },
         forward: [],
-        logCalls: true,
-        logGetters: true,
-        logSetters: true,
-        logImageRequests: true,
-        logMainAccess: true,
-        logSendBeaconRequests: true,
-        logStackTraces: false,
-        logScriptExecution: true,
+        // logCalls: true,
+        // logGetters: true,
+        // logSetters: true,
+        // logImageRequests: true,
+        // logMainAccess: true,
+        // logSendBeaconRequests: true,
+        // logStackTraces: false,
+        // logScriptExecution: true,
       };
     </script>
     <script src="/~partytown/debug/partytown.js"></script>
@@ -92,12 +163,20 @@
     <h1>Partytown Twitter Embed 🎉</h1>
 
     <!-- prettier-ignore -->
-    <blockquote class="twitter-tweet"><p lang="en" dir="ltr">How <a href="https://twitter.com/builderio?ref_src=twsrc%5Etfw">@builderio</a> cut 99% of their JavaScript with <a href="https://twitter.com/QwikDev?ref_src=twsrc%5Etfw">@QwikDev</a> + Partytown<a href="https://t.co/VhdljVdqrZ">https://t.co/VhdljVdqrZ</a> <a href="https://t.co/vb9VLu7vbJ">https://t.co/vb9VLu7vbJ</a></p>&mdash; Qwik WebDev Framework (@QwikDev) <a href="https://twitter.com/QwikDev/status/1468672275775950854?ref_src=twsrc%5Etfw">December 8, 2021</a></blockquote>
+    <!-- <blockquote class="twitter-tweet"><p lang="en" dir="ltr">How <a href="https://twitter.com/builderio?ref_src=twsrc%5Etfw">@builderio</a> cut 99% of their JavaScript with <a href="https://twitter.com/QwikDev?ref_src=twsrc%5Etfw">@QwikDev</a> + Partytown<a href="https://t.co/VhdljVdqrZ">https://t.co/VhdljVdqrZ</a> <a href="https://t.co/vb9VLu7vbJ">https://t.co/vb9VLu7vbJ</a></p>&mdash; Qwik WebDev Framework (@QwikDev) <a href="https://twitter.com/QwikDev/status/1468672275775950854?ref_src=twsrc%5Etfw">December 8, 2021</a></blockquote> -->
+    <hr />
+    <a
+      class="twitter-timeline"
+      data-tweet-limit="1"
+      data-chrome="nofooter noborders"
+      data-dnt="true"
+      href="https://twitter.com/QwikDev"
+    ></a>
     <script
       async
       src="https://platform.twitter.com/widgets.js"
       charset="utf-8"
-      type="text/partytown"
+      type-x="text/partytown"
     ></script>
 
     <hr />
