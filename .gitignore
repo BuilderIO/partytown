@@ -22,3 +22,4 @@ node_modules/
 /index.mjs
 /index.d.ts
 .idea
+.history

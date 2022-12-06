@@ -27,9 +27,9 @@ export const patchHTMLScriptElement = (WorkerHTMLScriptElement: any, env: WebWor
         }
 
         if (this.type && config.loadScriptsOnMainThread) {
-          const shouldExecuteScriptViaMainThread = config.loadScriptsOnMainThread.some(scriptUrl => 
-            scriptUrl === url
-          )
+          const shouldExecuteScriptViaMainThread = config.loadScriptsOnMainThread.some(
+            (scriptUrl) => scriptUrl === url
+          );
 
           if (shouldExecuteScriptViaMainThread) {
             setter(this, ['type'], 'text/javascript');
@@ -60,7 +60,12 @@ export const patchHTMLScriptElement = (WorkerHTMLScriptElement: any, env: WebWor
 
 const innerHTMLDescriptor: PropertyDescriptor & ThisType<WorkerNode> = {
   get() {
-    return getInstanceStateValue<string>(this, StateProp.innerHTML) || '';
+    const type = getter(this, ['type']);
+    if (isScriptJsType(type)) {
+      return getInstanceStateValue<string>(this, StateProp.innerHTML) || '';
+    } else {
+      return getter(this, ['innerHTML']);
+    }
   },
   set(scriptContent: string) {
     setInstanceStateValue(this, StateProp.innerHTML, scriptContent);
