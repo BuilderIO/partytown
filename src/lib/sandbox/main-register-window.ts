@@ -1,7 +1,14 @@
 import { debug } from '../utils';
 import { logMain, normalizedWinId } from '../log';
-import { MainWindow, PartytownWebWorker, WinId, WorkerMessageType, LocationUpdateType } from '../types';
+import {
+  MainWindow,
+  PartytownWebWorker,
+  WinId,
+  WorkerMessageType,
+  LocationUpdateType,
+} from '../types';
 import { winCtxs, windowIds } from './main-constants';
+import { readNextScript } from './read-main-scripts';
 
 export const registerWindow = (
   worker: PartytownWebWorker,
@@ -48,18 +55,26 @@ export const registerWindow = (
     const pushState = history.pushState.bind(history);
     const replaceState = history.replaceState.bind(history);
 
-    const onLocationChange = (type: LocationUpdateType, state: object, newUrl?: string, oldUrl?: string) => {
-      setTimeout(() =>{
-        worker.postMessage([WorkerMessageType.LocationUpdate, {
-          $winId$,
-          type,
-          state,
-          url: doc.baseURI,
-          newUrl,
-          oldUrl
-        }])
+    const onLocationChange = (
+      type: LocationUpdateType,
+      state: object,
+      newUrl?: string,
+      oldUrl?: string
+    ) => {
+      setTimeout(() => {
+        worker.postMessage([
+          WorkerMessageType.LocationUpdate,
+          {
+            $winId$,
+            type,
+            state,
+            url: doc.baseURI,
+            newUrl,
+            oldUrl,
+          },
+        ]);
       });
-    }
+    };
 
     history.pushState = (state, _, newUrl) => {
       pushState(state, _, newUrl);
@@ -96,6 +111,9 @@ export const registerWindow = (
         event.newURL,
         event.oldURL
       ));
+    });
+    $window$.addEventListener('ptupdate', () => {
+      readNextScript(worker, winCtxs[$winId$]!);
     });
     doc.addEventListener('visibilitychange', () =>
       worker.postMessage([WorkerMessageType.DocumentVisibilityState, $winId$, doc.visibilityState])

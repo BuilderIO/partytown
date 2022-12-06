@@ -13,7 +13,7 @@ See the [distribution](https://partytown.builder.io/distribution) section about 
 
 ## Submitting Issues And Writing Tests
 
-We need your help! If you found a bug, it's best to create a [Pull Request](https://docs.github.com/en/github/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) that replicates the issue using a test page. In the [tests directory](https://github.com/BuilderIO/partytown/tree/main/tests), copy one of the directories, such as `tests/platform/document`, and recreate the issue you've found.
+We need your help! If you found a bug, it's best to create a [Pull Request](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/creating-a-pull-request) that replicates the issue using a test page. In the [tests directory](https://github.com/BuilderIO/partytown/tree/main/tests), copy one of the directories, such as `tests/platform/document`, and recreate the issue you've found.
 
 Follow the [manual testing](#manual-testing) directions on how to start the local dev server. Next, the more you can describe the debug and pin-point the issue the better, and any fixes to the runtime to solve the problem would be awesome. 🎉
 

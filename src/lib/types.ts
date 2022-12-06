@@ -515,6 +515,8 @@ export interface HookOptions {
   continue: Symbol;
   nodeName: string | undefined;
   constructor: string | undefined;
+  instance: WorkerInstance;
+  window: Window;
 }
 
 /**
