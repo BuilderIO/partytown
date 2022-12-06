@@ -48,7 +48,7 @@ export type PartytownForwardProperty = string;
 export const partytownSnippet: (config?: PartytownConfig | undefined) => string;
 
 // @public (undocumented)
-export type ResolveUrlType = 'fetch' | 'xhr' | 'script' | 'iframe';
+export type ResolveUrlType = 'fetch' | 'xhr' | 'script' | 'iframe' | 'image';
 
 // @public
 export const SCRIPT_TYPE = "text/partytown";
