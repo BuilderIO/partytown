@@ -22,7 +22,17 @@ export const registerWindow = (
     const history = $window$.history;
     const $parentWinId$ = windowIds.get($window$.parent)!;
 
-    const sendInitEnvData = () =>
+    let initialised = false;
+    const onInitialisedQueue: Function[] = [];
+    const onInitialised = ((callback: Function) => {
+      if (initialised) {
+        callback();
+      } else {
+        onInitialisedQueue.push(callback);
+      }
+    });
+
+    const sendInitEnvData = () => {
       worker.postMessage([
         WorkerMessageType.InitializeEnvironment,
         {
@@ -32,6 +42,15 @@ export const registerWindow = (
           $visibilityState$: doc.visibilityState,
         },
       ]);
+
+      // Timeout to call postpone second after init message
+      setTimeout(() => {
+        initialised = true;
+        onInitialisedQueue.forEach((callback) => {
+          callback();
+        });
+      });
+    }
 
     const pushState = history.pushState.bind(history);
     const replaceState = history.replaceState.bind(history);
@@ -59,19 +78,39 @@ export const registerWindow = (
 
     history.pushState = (state, _, newUrl) => {
       pushState(state, _, newUrl);
-      onLocationChange(LocationUpdateType.PushState, state, newUrl?.toString());
+      onInitialised(onLocationChange.bind(
+        this,
+        LocationUpdateType.PushState,
+        state,
+        newUrl?.toString()
+      ));
     };
 
     history.replaceState = (state, _, newUrl) => {
       replaceState(state, _, newUrl);
-      onLocationChange(LocationUpdateType.ReplaceState, state, newUrl?.toString());
+      onInitialised(onLocationChange.bind(
+        this,
+        LocationUpdateType.ReplaceState,
+        state,
+        newUrl?.toString()
+      ));
     };
 
     $window$.addEventListener('popstate', (event) => {
-      onLocationChange(LocationUpdateType.PopState, event.state);
+      onInitialised(onLocationChange.bind(
+        this,
+        LocationUpdateType.PopState,
+        event.state
+      ));
     });
     $window$.addEventListener('hashchange', (event) => {
-      onLocationChange(LocationUpdateType.HashChange, {}, event.newURL, event.oldURL);
+      onInitialised(onLocationChange.bind(
+        this,
+        LocationUpdateType.HashChange,
+        {},
+        event.newURL,
+        event.oldURL
+      ));
     });
     $window$.addEventListener('ptupdate', () => {
       readNextScript(worker, winCtxs[$winId$]!);
