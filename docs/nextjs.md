@@ -13,7 +13,7 @@ As of Next.js `v12.1.1-canary.11`, the `<Script/>` component now provides an exp
 > Below are the instructions if you are not using the experimental [Worker Strategy](#worker-strategy).
 
 ```bash
-npm install @builder.io/partytown
+npm install "@builder.io/partytown"
 ```
 
 ## Configure
