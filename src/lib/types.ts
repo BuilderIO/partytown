@@ -52,6 +52,7 @@ export type MessageFromSandboxToWorker =
   | [type: WorkerMessageType.ForwardMainTrigger, triggerData: ForwardMainTriggerData]
   | [type: WorkerMessageType.LocationUpdate, locationChangeData: LocationUpdateData]
   | [type: WorkerMessageType.DocumentVisibilityState, winId: WinId, visibilityState: string]
+  | [type: WorkerMessageType.SetMessagePort, msgPort: MessagePort]
   | [
       type: WorkerMessageType.CustomElementCallback,
       winId: WinId,
@@ -77,6 +78,21 @@ export const enum WorkerMessageType {
   LocationUpdate,
   DocumentVisibilityState,
   CustomElementCallback,
+  SetMessagePort,
+}
+
+export type InitIsolationIframeData = {
+  $debug$: boolean;
+  $libPath$: string;
+  $workerMsgPort$: MessagePort;
+  $backendMsgPort$?: MessagePort;
+};
+
+export type MessageFromSandboxToIsolationIframe =
+  | [type: IsolationIframeMessageType.InitializeIframe, initData: InitIsolationIframeData];
+
+export const enum IsolationIframeMessageType {
+  InitializeIframe,
 }
 
 export const enum LocationUpdateType {
@@ -109,8 +125,6 @@ export interface RefHandlerCallbackData {
   $args$: SerializedTransfer | undefined;
 }
 
-export type PostMessageToWorker = (msg: MessageFromSandboxToWorker) => void;
-
 export interface MainWindowContext {
   $winId$: WinId;
   $isInitialized$?: number;
@@ -118,14 +132,16 @@ export interface MainWindowContext {
   $window$: MainWindow;
 }
 
-export interface PartytownWebWorker extends Worker {
-  postMessage: PostMessageToWorker;
-}
+export type PartytownWebWorker = (Worker | MessagePort) & {
+  postMessage(msg: MessageFromSandboxToWorker): void;
+  postMessage(msg: MessageFromSandboxToWorker, transfer: Transferable[]): void;
+};
 
 export interface InitWebWorkerData {
   $config$: string;
   $interfaces$: InterfaceInfo[];
   $libPath$: string;
+  $sandboxLibPath$: string;
   $sharedDataBuffer$?: SharedArrayBuffer;
   $localStorage$: StorageItem[];
   $sessionStorage$: StorageItem[];
@@ -164,6 +180,7 @@ export interface WebWorkerContext {
   $indexedDB$: any;
   $isInitialized$?: number;
   $libPath$: string;
+  $sandboxLibPath$: string;
   $origin$: string;
   $postMessage$: (msg: MessageFromWorkerToSandbox, arr?: any[]) => void;
   $sharedDataBuffer$?: SharedArrayBuffer;
@@ -259,6 +276,10 @@ export interface MainAccessResponse {
   $error$?: string;
   $rtnValue$?: SerializedTransfer;
   $isPromise$?: any;
+}
+
+export interface PassMessagePortToServiceWorkerRequest {
+  $msgPort$: MessagePort;
 }
 
 export const enum ApplyPathType {
@@ -483,6 +504,15 @@ export interface PartytownConfig {
    * Path to the service worker file. Defaults to `partytown-sw.js`.
    */
   swPath?: string;
+  /**
+   * An absolute path to the root directory which Partytown sandbox files
+   * can be found. This path might either start with `/` or lead
+   * to a different domain.
+   *
+   * When the path is on a different domain, 3rd party scripts will run on a
+   * different origin than the embedding document.
+   */
+  sandboxLib?: string;
 }
 
 /**

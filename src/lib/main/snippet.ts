@@ -1,4 +1,4 @@
-import { debug } from '../utils';
+import { debug, registerServiceWorker } from '../utils';
 import type { MainWindow, PartytownConfig } from '../types';
 
 export function snippet(
@@ -9,6 +9,7 @@ export function snippet(
   useAtomics: boolean,
   config?: PartytownConfig,
   libPath?: string,
+  customSandboxPath?: boolean,
   timeout?: any,
   scripts?: NodeListOf<HTMLScriptElement>,
   sandbox?: HTMLIFrameElement | HTMLScriptElement,
@@ -19,6 +20,7 @@ export function snippet(
   function ready() {
     if (!isReady) {
       isReady = 1;
+      customSandboxPath = !!config!.sandboxLib;
       if (debug) {
         // default to use debug files
         libPath = (config!.lib || '/~partytown/') + (config!.debug !== false ? 'debug/' : '');
@@ -27,7 +29,7 @@ export function snippet(
         libPath = (config!.lib || '/~partytown/') + (config!.debug ? 'debug/' : '');
       }
 
-      if (libPath[0] == '/') {
+      if (libPath[0] == '/' || customSandboxPath) {
         // grab all the partytown scripts
         scripts = doc.querySelectorAll('script[type="text/partytown"]');
 
@@ -44,23 +46,17 @@ export function snippet(
             loadSandbox(1);
           } else if (nav.serviceWorker) {
             // service worker support
-            nav.serviceWorker
-              .register(libPath + (config!.swPath || 'partytown-sw.js'), {
-                scope: libPath,
-              })
-              .then(function (swRegistration) {
-                if (swRegistration.active) {
-                  loadSandbox();
-                } else if (swRegistration.installing) {
-                  swRegistration.installing.addEventListener('statechange', function (ev) {
-                    if ((ev.target as any as ServiceWorker).state == 'activated') {
-                      loadSandbox();
-                    }
-                  });
-                } else if (debug) {
-                  console.warn(swRegistration);
-                }
-              }, console.error);
+            if (config!.sandboxLib) {
+              loadSandbox();
+            } else {
+              registerServiceWorker({
+                nav,
+                libPath,
+                swPath: config!.swPath,
+                onSuccess: loadSandbox,
+                onError: console.error,
+              });
+            }
           } else {
             // no support for atomics or service worker
             fallback();
@@ -73,15 +69,20 @@ export function snippet(
   }
 
   function loadSandbox(isAtomics?: number) {
-    sandbox = doc.createElement(isAtomics ? 'script' : 'iframe');
+    sandbox = doc.createElement(isAtomics || customSandboxPath ? 'script' : 'iframe');
     if (!isAtomics) {
       sandbox.setAttribute('style', 'display:block;width:0;height:0;border:0;visibility:hidden');
       sandbox.setAttribute('aria-hidden', !0 as any);
     }
-    sandbox.src =
-      libPath +
-      'partytown-' +
-      (isAtomics ? 'atomics.js?v=_VERSION_' : 'sandbox-sw.html?' + Date.now());
+
+    let sandboxSrcBase = libPath + 'partytown-';
+    if (isAtomics) {
+      sandboxSrcBase += 'atomics.js?v=_VERSION_';
+    } else {
+      sandboxSrcBase += customSandboxPath ? 'sandbox-sw.js?v=_VERSION_' : 'sandbox-sw.html?';
+    }
+
+    sandbox.src = sandboxSrcBase + Date.now();
     doc.body.appendChild(sandbox);
   }
 

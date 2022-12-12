@@ -41,7 +41,7 @@ export const ABOUT_BLANK = 'about:blank';
 export const commaSplit = (str: string) => str.split(',');
 
 export const partytownLibUrl = (url: string) => {
-  url = webWorkerCtx.$libPath$ + url;
+  url = (webWorkerCtx.$sandboxLibPath$ || webWorkerCtx.$libPath$) + url;
   if (new URL(url).origin != location.origin) {
     throw 'Invalid ' + url;
   }

@@ -112,7 +112,7 @@ function getWorker(): TestWorker {
   } as any;
 }
 
-export interface TestWorker extends PartytownWebWorker {
+export type TestWorker = PartytownWebWorker & {
   $messages: any[];
 }
 

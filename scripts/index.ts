@@ -8,6 +8,7 @@ import { buildReact } from './build-react';
 import { buildServiceWorker } from './build-service-worker';
 import { buildServices } from './build-services';
 import { buildUtils } from './build-utils';
+import { buildIsolation } from './build-isolation-iframe';
 import { emptyDir, ensureDir, readJsonSync, writeFile } from 'fs-extra';
 import { join } from 'path';
 
@@ -24,6 +25,7 @@ export async function runBuild(rootDir: string, isDev: boolean, isReleaseBuild: 
     buildMainSnippet(opts),
     buildServiceWorker(opts),
     ...buildAtomics(opts),
+    ...buildIsolation(opts),
     buildMediaImplementation(opts),
     buildIntegration(opts),
     buildServices(opts),

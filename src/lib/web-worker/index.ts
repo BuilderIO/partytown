@@ -8,8 +8,9 @@ import { initNextScriptsInWebWorker } from './worker-exec';
 import { initWebWorker } from './init-web-worker';
 import { logWorker, normalizedWinId } from '../log';
 import { workerForwardedTriggerHandle } from './worker-forwarded-trigger';
-import { forwardLocationChange } from "./worker-location";
+import { forwardLocationChange } from './worker-location';
 
+let messagePort: MessagePort | null = null; // Used for messages when web worker is created inside isolated iframe
 const queuedEvents: MessageEvent<MessageFromSandboxToWorker>[] = [];
 
 const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxToWorker>) => {
@@ -50,10 +51,14 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
     } else if (msgType === WorkerMessageType.CustomElementCallback) {
       callCustomElementCallback(...msg);
     }
+  } else if (msgType === WorkerMessageType.SetMessagePort) {
+    messagePort = msgValue;
+    messagePort!.onmessage = receiveMessageFromSandboxToWorker;
+    messagePort!.postMessage([WorkerMessageType.MainDataRequestFromWorker]);
   } else if (msgType === WorkerMessageType.MainDataResponseToWorker) {
     // received initial main data
     // initialize the web worker with the received the main data
-    initWebWorker(msgValue);
+    initWebWorker(msgValue, messagePort);
 
     // request from main that the worker needs the interfaces
     webWorkerCtx.$postMessage$([WorkerMessageType.MainInterfacesRequestFromWorker]);
@@ -83,4 +88,7 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
 
 self.onmessage = receiveMessageFromSandboxToWorker;
 
-postMessage([WorkerMessageType.MainDataRequestFromWorker]);
+const searchParams = new URLSearchParams(self.location.search);
+if (!searchParams.has('useMsgPort')) {
+  postMessage([WorkerMessageType.MainDataRequestFromWorker]);
+}

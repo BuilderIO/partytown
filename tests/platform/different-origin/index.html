@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>Different Origin Sandbox</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        font-size: 12px;
+      }
+      h1 {
+        margin: 0 0 15px 0;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        display: block;
+        padding: 16px 8px;
+      }
+      a:link,
+      a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover {
+        background-color: #eee;
+      }
+      li {
+        display: flex;
+        margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button {
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
+      }
+    </style>
+    <script>
+      partytown = {
+        sandboxLib: 'http://localhost:4100/~partytown/',
+      };
+    </script>
+    <script src="/~partytown/debug/partytown.js"></script>
+  </head>
+  <body>
+    <h1 class="title">Different Origin Sandbox</h1>
+    <ul>
+      <li>
+        <strong>No access to main document IndexedDB</strong>
+        <code id="testNoAccessToMainDocIndexedDb"></code>
+        <script>
+          const dbPromise = indexedDB.open('pt-different-origin', 1, function (upgradeDb) {
+            if (!upgradeDb.objectStoreNames.contains('firstOS')) {
+              upgradeDb.createObjectStore('firstOS');
+            }
+          });
+        </script>
+        <script type="text/partytown">
+          (function () {
+            // Worker on different origin should have no access to databases created by main document
+            indexedDB.databases().then((databases) => {
+              document.getElementById('testNoAccessToMainDocIndexedDb').textContent = databases.length > 0 ? 'Some databases found' : 'No databases found';
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>No access to main document resources</strong>
+        <code id="testNoAccessToMainDocResources"></code>
+        <script type="text/partytown">
+          (function () {
+            // Requests made from different origin will fail with CORS error
+            fetch(self.location.origin)
+            .then((response) => {
+              document.getElementById('testNoAccessToMainDocResources').textContent = 'Request ok:' + response.ok;
+            })
+            .catch((error) => {
+              document.getElementById('testNoAccessToMainDocResources').textContent = 'Request failed';
+            });
+          })();
+        </script>
+      </li>
+
+      <script type="text/partytown">
+        (function () {
+          document.body.classList.add('completed');
+        })();
+      </script>
+    </ul>
+
+    <hr />
+    <p><a href="/tests/">All Tests</a></p>
+  </body>
+</html>

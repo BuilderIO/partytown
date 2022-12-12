@@ -136,4 +136,40 @@ export const isValidUrl = (url: any): boolean => {
   } catch (_) {
     return false;
   }
-}
+};
+
+export const registerServiceWorker = ({
+  nav,
+  libPath,
+  swPath,
+  onSuccess,
+  onError,
+}: {
+  nav: Navigator;
+  libPath?: string;
+  swPath?: string;
+  onSuccess?: () => void;
+  onError?: (err: Error) => void;
+}) => {
+  nav.serviceWorker
+    .register(libPath + (swPath || 'partytown-sw.js'), {
+      scope: libPath,
+    })
+    .then(function (swRegistration) {
+      if (swRegistration.active) {
+        onSuccess?.();
+      } else if (swRegistration.installing) {
+        swRegistration.installing.addEventListener('statechange', function (ev) {
+          if ((ev.target as any as ServiceWorker).state == 'activated') {
+            onSuccess?.();
+          }
+        });
+      } else if (debug) {
+        console.warn(swRegistration);
+      }
+    }, onError);
+};
+
+export const createPartytownWorker = (url: string | URL) => {
+  return new Worker(url, { name: `Partytown 🎉` });
+};

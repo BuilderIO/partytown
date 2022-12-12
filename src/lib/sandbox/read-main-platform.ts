@@ -6,7 +6,7 @@ import {
   len,
   noop,
 } from '../utils';
-import { config, docImpl, libPath, mainWindow } from './main-globals';
+import { config, docImpl, libPath, mainWindow, sandboxLibPath } from './main-globals';
 import {
   InterfaceType,
   InterfaceInfo,
@@ -75,6 +75,7 @@ export const readMainPlatform = () => {
     $config$,
     $interfaces$: readImplementations(impls, initialInterfaces),
     $libPath$: new URL(libPath, mainWindow.location as any) + '',
+    $sandboxLibPath$: sandboxLibPath || '',
     $origin$: origin,
     $localStorage$: readStorage('localStorage'),
     $sessionStorage$: readStorage('sessionStorage'),
