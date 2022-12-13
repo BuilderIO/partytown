@@ -3,6 +3,10 @@ import type { MainAccessRequest, MainAccessResponse } from '../types';
 import Sandbox from '@sandbox';
 import SandboxDebug from '@sandbox-debug';
 
+const resolveTimeout = debug ? 120000 : 10000;
+
+type MessageResolve = [(data?: any) => void, any];
+
 export const onFetchServiceWorkerRequest = (ev: FetchEvent, messagePort?: MessagePort) => {
   const req = ev.request;
   const url = new URL(req.url);
@@ -45,14 +49,7 @@ const sendMessageToSandboxFromServiceWorker = (accessReq: MainAccessRequest) =>
     })[0];
 
     if (client) {
-      const timeout = debug ? 120000 : 10000;
-      const msgResolve: MessageResolve = [
-        resolve,
-        setTimeout(() => {
-          resolves.delete(accessReq.$msgId$);
-          resolve(swMessageError(accessReq, `Timeout`));
-        }, timeout),
-      ];
+      const msgResolve = buildMessageResolve({ accessReq, resolve, timeout: resolveTimeout });
       resolves.set(accessReq.$msgId$, msgResolve);
       client.postMessage(accessReq);
     } else {
@@ -61,15 +58,8 @@ const sendMessageToSandboxFromServiceWorker = (accessReq: MainAccessRequest) =>
   });
 
 const sendMessageToMessagePort = (accessReq: MainAccessRequest, messagePort: MessagePort) =>
-  new Promise<MainAccessResponse>(async (resolve) => {
-    const timeout = debug ? 120000 : 10000;
-    const msgResolve: MessageResolve = [
-      resolve,
-      setTimeout(() => {
-        resolves.delete(accessReq.$msgId$);
-        resolve(swMessageError(accessReq, `Timeout`));
-      }, timeout),
-    ];
+  new Promise<MainAccessResponse>((resolve) => {
+    const msgResolve = buildMessageResolve({ accessReq, resolve, timeout: resolveTimeout });
     resolves.set(accessReq.$msgId$, msgResolve);
     messagePort.postMessage(accessReq);
   });
@@ -78,8 +68,6 @@ const swMessageError = (accessReq: MainAccessRequest, $error$: string): MainAcce
   $msgId$: accessReq.$msgId$,
   $error$,
 });
-
-type MessageResolve = [(data?: any) => void, any];
 
 const httpRequestFromWebWorker = (req: Request, messagePort?: MessagePort) =>
   new Promise<Response>(async (resolve) => {
@@ -97,3 +85,19 @@ const response = (body: string, contentType?: string) =>
       'Cache-Control': 'no-store',
     },
   });
+
+const buildMessageResolve = ({
+  accessReq,
+  timeout,
+  resolve,
+}: {
+  accessReq: MainAccessRequest;
+  timeout: number;
+  resolve: (res: MainAccessResponse) => void;
+}): MessageResolve => [
+  resolve,
+  setTimeout(() => {
+    resolves.delete(accessReq.$msgId$);
+    resolve(swMessageError(accessReq, `Timeout`));
+  }, timeout),
+];
