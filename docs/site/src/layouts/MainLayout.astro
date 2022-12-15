@@ -110,6 +110,7 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}${currentPage === '/' ? '/index'
 	</head>
 
 	<body>
+	  <div id="oss-top-bar" style="height:60px"></div>
 		<Header {currentPage} />
 		<main class="layout">
 			<aside id="grid-left" class="grid-sidebar" title="Site Navigation">
@@ -125,5 +126,12 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}${currentPage === '/' ? '/index'
 				<RightSidebar {content} {githubEditUrl} />
 			</aside>
 		</main>
+		<script>
+		  fetch('https://cdn.builder.io/api/v1/qwik/oss-top-bar/?apiKey=YJIGb4i01jvw0SRdL5Bt').then((response) => {
+				response.json().then((data) => {
+					document.getElementById('oss-top-bar').innerHTML = data.html;
+				});
+			});
+		</script>
 	</body>
 </html>
