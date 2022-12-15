@@ -439,6 +439,7 @@ export interface PartytownConfig {
   get?: GetHook;
   set?: SetHook;
   apply?: ApplyHook;
+  returnValue?: ReturnValueHook;
   /**
    * An absolute path to the root directory which Partytown library files
    * can be found. The library path must start and end with a `/`.
@@ -510,6 +511,11 @@ export type SetHook = (opts: SetHookOptions) => any;
  */
 export type ApplyHook = (opts: ApplyHookOptions) => any;
 
+/**
+ * @public
+ */
+export type ReturnValueHook = (opts: ReturnValueHookOptions) => any;
+
 export interface HookOptions {
   name: string;
   continue: Symbol;
@@ -538,6 +544,13 @@ export interface SetHookOptions extends HookOptions {
 export interface ApplyHookOptions extends HookOptions {
   args: any[];
 }
+
+/**
+ * @public
+ */
+export type ReturnValueHookOptions = (GetHookOptions | SetHookOptions | ApplyHookOptions) & {
+  rtnValue: any;
+};
 
 export interface MainWindow extends Window {
   partytown?: PartytownConfig;

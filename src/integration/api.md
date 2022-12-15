@@ -37,6 +37,8 @@ export interface PartytownConfig {
     mainWindowAccessors?: string[];
     resolveUrl?(url: URL, location: Location, type: ResolveUrlType): URL | undefined | null;
     // (undocumented)
+    returnValue?: ReturnValueHook;
+    // (undocumented)
     set?: SetHook;
     swPath?: string;
 }
@@ -49,6 +51,11 @@ export const partytownSnippet: (config?: PartytownConfig | undefined) => string;
 
 // @public (undocumented)
 export type ResolveUrlType = 'fetch' | 'xhr' | 'script' | 'iframe' | 'image';
+
+// Warning: (ae-forgotten-export) The symbol "ReturnValueHookOptions" needs to be exported by the entry point index.d.ts
+//
+// @public (undocumented)
+export type ReturnValueHook = (opts: ReturnValueHookOptions) => any;
 
 // @public
 export const SCRIPT_TYPE = "text/partytown";

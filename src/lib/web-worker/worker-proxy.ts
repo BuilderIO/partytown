@@ -155,6 +155,13 @@ export const getter: Getter = (
 
   rtnValue = queue(instance, applyPath, CallType.Blocking, undefined, groupedGetters);
 
+  if (webWorkerCtx.$config$.returnValue) {
+    rtnValue = webWorkerCtx.$config$.returnValue({
+      ...createHookOptions(instance, applyPath),
+      rtnValue,
+    });
+  }
+
   logWorkerGetter(instance, applyPath, rtnValue, false, !!groupedGetters);
 
   return rtnValue;
@@ -211,7 +218,6 @@ export const callMethod: CallMethod = (
   }
 
   methodName = applyPath[len(applyPath) - 1];
-  applyPath = [...applyPath, serializeInstanceForMain(instance, args)];
 
   callType =
     callType ||
@@ -229,9 +235,26 @@ export const callMethod: CallMethod = (
     logDimensionCacheClearMethod(instance, methodName);
   }
 
-  rtnValue = queue(instance, applyPath, callType, assignInstanceId, undefined, buffer);
+  const applyPathWithInstanceForMain = [...applyPath, serializeInstanceForMain(instance, args)];
 
-  logWorkerCall(instance, applyPath, args, rtnValue);
+  rtnValue = queue(
+    instance,
+    applyPathWithInstanceForMain,
+    callType,
+    assignInstanceId,
+    undefined,
+    buffer
+  );
+
+  if (webWorkerCtx.$config$.returnValue) {
+    rtnValue = webWorkerCtx.$config$.returnValue({
+      ...createHookOptions(instance, applyPath),
+      args,
+      rtnValue,
+    });
+  }
+
+  logWorkerCall(instance, applyPathWithInstanceForMain, args, rtnValue);
 
   return rtnValue;
 };

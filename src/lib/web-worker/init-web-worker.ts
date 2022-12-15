@@ -24,9 +24,11 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   delete (self as any).postMessage;
   delete (self as any).WorkerGlobalScope;
 
-  (commaSplit('resolveUrl,get,set,apply') as any).map((configName: keyof PartytownConfig) => {
-    if (config[configName]) {
-      config[configName] = new Function('return ' + config[configName])();
+  (commaSplit('resolveUrl,get,set,apply,returnValue') as any).map(
+    (configName: keyof PartytownConfig) => {
+      if (config[configName]) {
+        config[configName] = new Function('return ' + config[configName])();
+      }
     }
-  });
+  );
 };

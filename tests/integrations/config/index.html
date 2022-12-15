@@ -77,6 +77,17 @@
           }
           return opts.continue;
         },
+        returnValue(opts) {
+          if (opts.nodeName === '#document' && opts.name === 'cookie') {
+            return 'hooked-' + opts.rtnValue;
+          }
+
+          if (opts.name === 'getAttribute' && opts.args && opts.args[0] === 'id') {
+            return 'hooked-attribute-' + opts.rtnValue;
+          }
+
+          return opts.rtnValue;
+        },
         logCalls: true,
         logGetters: true,
         logSetters: true,
@@ -180,6 +191,30 @@
             const elm = document.getElementById('testApplyArgs');
             elm.setAttribute('gw', '9.99');
             elm.textContent = elm.getAttribute('gw');
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>returnValue() on getter</strong>
+        <code id="testReturnValueGetter"></code>
+        <script>
+          document.cookie = 'mph=88';
+        </script>
+        <script type="text/partytown">
+          (function () {
+            document.getElementById('testReturnValueGetter').textContent = document.cookie;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>returnValue() on function call</strong>
+        <code id="testReturnValueApply"></code>
+        <script type="text/partytown">
+          (function () {
+            const idAttrValue = document.getElementById('testReturnValueApply').getAttribute('id');
+            document.getElementById('testReturnValueApply').textContent = idAttrValue;
           })();
         </script>
       </li>

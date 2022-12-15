@@ -28,6 +28,9 @@ test('integration config', async ({ page }) => {
   const testApplyHook = page.locator('#testApplyHook');
   await expect(testApplyHook).toHaveText('prevented document.write()');
 
-  const testApplyArgs = page.locator('#testApplyArgs');
-  await expect(testApplyArgs).toHaveText('1.21');
+  const testReturnValueGetter = page.locator('#testReturnValueGetter');
+  await expect(testReturnValueGetter).toHaveText('hooked-mph=88');
+
+  const testReturnValueApply = page.locator('#testReturnValueApply');
+  await expect(testReturnValueApply).toHaveText('hooked-attribute-testReturnValueApply');
 });
