@@ -23,7 +23,7 @@ const handleError = (err: any) => {
   throw err;
 };
 
-const encodedUrl = encodeURIComponent('/');
+const encodedUrl = encodeURIComponent(new URL(Astro.request.url).pathname);
 const url = `https://cdn.builder.io/api/v1/qwik/oss-top-bar?apiKey=${apiKey}&userAttributes.site=partytown.builder.io&userAttributes.url=${encodedUrl}`;
 const qwikPageData = await fetch(url)
   .then((res) => res.json())
