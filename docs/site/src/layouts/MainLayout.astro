@@ -23,9 +23,12 @@ const handleError = (err: any) => {
   throw err;
 };
 
-const encodedUrl = encodeURIComponent(new URL(Astro.request.url).pathname);
-const url = `https://cdn.builder.io/api/v1/qwik/oss-top-bar?apiKey=${apiKey}&userAttributes.site=partytown.builder.io&userAttributes.url=${encodedUrl}`;
-const qwikPageData = await fetch(url)
+const url = new URL('https://cdn.builder.io/api/v1/qwik/oss-top-bar');
+url.searchParams.set('apiKey', apiKey);
+url.searchParams.set('userAttributes.site', 'partytown.builder.io');
+url.searchParams.set('userAttributes.url', new URL(Astro.request.url).pathname);
+url.searchParams.set('cachebust', 'true');
+const qwikPageData = await fetch(url.toString())
   .then((res) => res.json())
   .catch(handleError);
 
