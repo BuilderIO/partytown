@@ -6,7 +6,7 @@ The Next.js setup is largely the same as the [React integration guide](/react), 
 
 ## Worker Strategy
 
-As of Next.js `v12.1.1-canary.11`, the `<Script/>` component now provides an experimental `worker` strategy. Please see the Next.js [Script documentation](https://nextjs.org/docs/basic-features/script#off-loading-scripts-to-a-web-worker-experimental) for more information. 
+As of Next.js `v12.1.1-canary.11`, the `<Script/>` component now provides an experimental `worker` strategy, which uses Partytown under-the-hood. Please see the Next.js [Script documentation](https://nextjs.org/docs/basic-features/script#off-loading-scripts-to-a-web-worker-experimental) for more information.
 
 ## Install
 
