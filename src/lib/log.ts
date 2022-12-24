@@ -148,7 +148,6 @@ export const logWorkerGlobalConstructor = (target: any, cstrName: string, args: 
 const getTargetProp = (target: any, applyPath: ApplyPath) => {
   let n = '';
   if (target) {
-    const instanceId = target[InstanceIdKey];
     const cstrName = getConstructorName(target);
     if (cstrName === 'Window') {
       n = '';

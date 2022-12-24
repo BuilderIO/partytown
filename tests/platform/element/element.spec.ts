@@ -64,6 +64,9 @@ test('element', async ({ page }) => {
   await expect(testAttrsStyleValue).toHaveText('style color: red');
   await expect(testAttrsStyleValue).toHaveCSS('color', 'rgb(255, 0, 0)');
 
+  const testNamedNodeMap = page.locator('#testNamedNodeMap');
+  await expect(testNamedNodeMap).toHaveText('[2,"OK","OK","OK",null]');
+
   const testParagraphConstructor = page.locator('#testParagraphConstructor');
   await expect(testParagraphConstructor).toHaveText('HTMLParagraphElement HTMLParagraphElement');
 
