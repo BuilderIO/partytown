@@ -97,7 +97,7 @@ const serializeObjectForWorker = (
     added.add(obj);
     for (propName in obj) {
       if (isValidMemberName(propName)) {
-        if (propName === 'path' && obj instanceof Event) {
+        if (propName === 'path' && getConstructorName(obj).endsWith("Event")) {
           propValue = obj.composedPath();
         } else {
           propValue = obj[propName];
