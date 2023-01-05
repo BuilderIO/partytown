@@ -19,8 +19,6 @@ npm install "@builder.io/partytown"
 
 ## Configure
 
-> Below are the instructions if you are not using the experimental [Worker Strategy](#worker-strategy).
-
 The `<Partytown/>` component is imported from the `@builder.io/partytown/react` submodule. The [config properties](/configuration) are JSX props.
 
 The following is an example of including the `<Partytown/>` component in a Nextjs page. Notice the `<Partytown/>` component is in the `<Head>`, and the example analytics script has the `type="text/partytown"` attribute.
