@@ -15,7 +15,7 @@
   - [Astro](/astro)
   - [Gatsby](/gatsby)
   - [HTML](/html)
-  - [NextJS](/nextjs)
+  - [Next.js](/nextjs)
   - [Nuxt](/nuxt)
   - [React](/react)
   - [Remix](/remix)
