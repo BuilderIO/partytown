@@ -72,7 +72,32 @@ export const addStorageApi = (
     },
   };
 
-  win[storageName] = storage;
+  win[storageName] = new Proxy(storage, {
+    get(target, key: string) {
+      if (Reflect.has(target, key)) {
+        return Reflect.get(target, key);
+      } else {
+        return target.getItem(key);
+      }
+    },
+    set(target, key: string, value: string): boolean {
+      target.setItem(key, value);
+      return true;
+    },
+    has(target, key: PropertyKey | string): boolean {
+      if (Reflect.has(target, key)) {
+        return true;
+      } else if (typeof key === 'string') {
+        return target.getItem(key) !== null;
+      } else {
+        return false;
+      }
+    },
+    deleteProperty(target, key: string): boolean {
+      target.removeItem(key);
+      return true;
+    },
+  });
 };
 
 const STORAGE_KEY = 0;
