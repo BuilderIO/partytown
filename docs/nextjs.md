@@ -1,16 +1,17 @@
 ---
-title: NextJS
+title: Next.js
 ---
 
 The Next.js setup is largely the same as the [React integration guide](/react), except it goes further into how to add to the [NextJS](https://nextjs.org/) framework's `<Head/>` component.
 
 ## Worker Strategy
 
-As of Next.js `v12.1.1-canary.11`, the `<Script/>` component now provides an experimental `worker` strategy, which uses Partytown under-the-hood. Please see the Next.js [Script documentation](https://nextjs.org/docs/basic-features/script#off-loading-scripts-to-a-web-worker-experimental) for more information.
+The Next.js `<Script/>` component provides an experimental `worker` strategy, which uses Partytown under-the-hood. Please see the Next.js [Script documentation](https://nextjs.org/docs/api-reference/next/script#worker) for more information.
+
+--- 
+> Below are the instructions if you are not using the experimental [Worker Strategy](#worker-strategy).
 
 ## Install
-
-> Below are the instructions if you are not using the experimental [Worker Strategy](#worker-strategy).
 
 ```bash
 npm install "@builder.io/partytown"
