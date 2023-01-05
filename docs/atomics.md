@@ -7,7 +7,7 @@ Partytown will use [Atomics](https://developer.mozilla.org/en-US/docs/Web/JavaSc
 - 10x faster communication between threads compared to the service-worker requests
 - 5% smaller build file compared to the service-worker build
 - No `proxytown` requests in the network tab
-- Less http requests to initialize the Partytown library
+- Fewer http requests to initialize the Partytown library
 - Partytown service-worker and iframe is no longer used
 
 It's important to note that [not all browsers support Atomics](#browser-atomics-support), and the server hosting the site must be configured with the correct response headers. If neither of those are true, then Partytown will fallback to using the service-worker communication layer instead.
