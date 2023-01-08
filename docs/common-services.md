@@ -15,7 +15,7 @@ Below is a list of plugins / libraries that are tested & known to be working wit
 | [Intercom](https://developers.intercom.com/installing-intercom/docs/intercom-javascript)      | "Intercom"                                                                    |                                                     |
 | [Klaviyo](https://developers.klaviyo.com/en/docs/javascript-api)                              | "\_learnq.push"                                                               | "static.klaviyo.com", "static-tracking.klaviyo.com" |
 | [TikTok Pixel](https://ads.tiktok.com/marketing_api/docs?rid=959icq5stjr&id=1701890973258754) | "ttq.track", "ttq.page", "ttq.load" 
-| [Mixapnel](https://developer.mixpanel.com/docs/javascript-quickstart) | "mixpanel.track" |                                                     |
+| [Mixpanel](https://developer.mixpanel.com/docs/javascript-quickstart) | "mixpanel.track" |                                                     |
 
 If you would like to add to this list,
 
