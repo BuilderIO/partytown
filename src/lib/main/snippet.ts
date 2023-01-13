@@ -98,7 +98,6 @@ export function snippet(
     // remove any previously patched functions
     if (top == win) {
       (config!.forward || []).map((function(forwardProps) {
-        mainForwardFn = win;
         delete win[forwardProps.split(".")[0] as any];
       }))
     }
