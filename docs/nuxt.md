@@ -34,7 +34,7 @@ Add `type: 'text/partytown'` [attribute](/partytown-scripts) to any scripts you 
 ```html
 <template>
   <div>
-    <script type="text/partytown" src="https://example.com/analytics.js" />
+    <Script type="text/partytown" src="https://example.com/analytics.js" />
   </div>
 </template>
 ```
