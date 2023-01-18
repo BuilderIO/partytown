@@ -9,12 +9,14 @@
   "type": "module",
   "exports": {
     "./integration": {
+      "types": "./integration/index.d.ts",
       "import": "./integration/index.mjs",
       "require": "./integration/index.cjs"
     },
     "./integration/index.mjs": "./integration/index.mjs",
     "./integration/index.cjs": "./integration/index.cjs",
     "./react": {
+      "types": "./react/index.d.ts",
       "import": "./react/index.mjs",
       "require": "./react/index.cjs"
     },
@@ -23,10 +25,12 @@
     "./services/index.mjs": "./services/index.mjs",
     "./services/index.cjs": "./services/index.cjs",
     "./services": {
+      "types": "./services/index.d.ts",
       "import": "./services/index.mjs",
       "require": "./services/index.cjs"
     },
     "./utils": {
+      "types": "./utils/index.d.ts",
       "import": "./utils/index.mjs",
       "require": "./utils/index.cjs"
     },
@@ -34,6 +38,7 @@
     "./utils/index.cjs": "./utils/index.cjs",
     "./package.json": "./package.json",
     ".": {
+      "types": "./index.d.ts",
       "import": "./index.mjs",
       "require": "./index.cjs"
     }
