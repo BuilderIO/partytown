@@ -10,7 +10,7 @@ import {
   WebWorkerEnvironment,
   WinId,
   WorkerInstance,
-  WorkerMessageType
+  WorkerMessageType,
 } from '../types';
 import { debug } from '../utils';
 import { environments, partytownLibUrl, webWorkerCtx } from './worker-constants';
@@ -27,14 +27,16 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
   let errorMsg = '';
   let env = environments[winId];
   let rsp: Response;
-  let javascriptContentTypes = ["text/jscript",
-                                "text/javascript",
-                                "text/x-javascript",
-                                "application/javascript",
-                                "application/x-javascript",
-                                "text/ecmascript",
-                                "text/x-ecmascript",
-                                "application/ecmascript"]
+  let javascriptContentTypes = [
+    'text/jscript',
+    'text/javascript',
+    'text/x-javascript',
+    'application/javascript',
+    'application/x-javascript',
+    'text/ecmascript',
+    'text/x-ecmascript',
+    'application/ecmascript',
+  ];
 
   if (scriptSrc) {
     try {
@@ -48,9 +50,11 @@ export const initNextScriptsInWebWorker = async (initScript: InitializeScriptDat
 
       rsp = await fetch(scriptSrc);
       if (rsp.ok) {
-        let responseContentType = rsp.headers.get("content-type");
-        let shouldExecute = javascriptContentTypes.some(ct => responseContentType?.toLowerCase?.().includes?.(ct));
-        if (shouldExecute){
+        let responseContentType = rsp.headers.get('content-type');
+        let shouldExecute = javascriptContentTypes.some((ct) =>
+          responseContentType?.toLowerCase?.().includes?.(ct)
+        );
+        if (shouldExecute) {
           scriptContent = await rsp.text();
           env.$currentScriptId$ = instanceId;
           run(env, scriptContent, scriptOrgSrc || scriptSrc);
@@ -116,14 +120,14 @@ export const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?
   env.$runWindowLoadEvent$ = 1;
 
   scriptContent =
-    `with(this){${
-      scriptContent.replace(/\bthis\b/g, '(thi$(this)?window:this)').replace(/\/\/# so/g, '//Xso')
-    }\n;function thi$(t){return t===this}};${
-      (webWorkerCtx.$config$.globalFns || [])
-        .filter((globalFnName) => /[a-zA-Z_$][0-9a-zA-Z_$]*/.test(globalFnName))
-        .map((g) => `(typeof ${g}=='function'&&(this.${g}=${g}))`)
-        .join(';')
-    };` + (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '');
+    `with(this){${scriptContent
+      .replace(/\bthis\b/g, '(thi$(this)?window:this)')
+      .replace(/\/\/# so/g, '//Xso')}\n;function thi$(t){return t===this}};${(
+      webWorkerCtx.$config$.globalFns || []
+    )
+      .filter((globalFnName) => /[a-zA-Z_$][0-9a-zA-Z_$]*/.test(globalFnName))
+      .map((g) => `(typeof ${g}=='function'&&(this.${g}=${g}))`)
+      .join(';')};` + (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '');
 
   if (!env.$isSameOrigin$) {
     scriptContent = scriptContent.replace(/.postMessage\(/g, `.postMessage('${env.$winId$}',`);

@@ -97,9 +97,9 @@ export function snippet(
 
     // remove any previously patched functions
     if (top == win) {
-      (config!.forward || []).map((function(forwardProps) {
-        delete win[forwardProps.split(".")[0] as any];
-      }))
+      (config!.forward || []).map(function (forwardProps) {
+        delete win[forwardProps.split('.')[0] as any];
+      });
     }
 
     for (i = 0; i < scripts!.length; i++) {

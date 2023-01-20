@@ -184,7 +184,8 @@ export const patchDocument = (
             callMethod(this, ['implementation', 'createHTMLDocument'], [title], CallType.Blocking, {
               $winId$,
             });
-            const docEnv = createEnvironment({
+            const docEnv = createEnvironment(
+              {
                 $winId$,
                 $parentWinId$: $winId$,
                 $url$: env.$location$ + '',
