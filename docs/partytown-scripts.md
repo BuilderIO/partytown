@@ -20,7 +20,7 @@ The `type="text/partytown"` attribute does two things:
 
 ## Dynamically Appending Scripts
 
-Commonly scripts will already be apart of the DOM when the document loads, and once the document is ready and the window has loaded, Partytown will find the scripts are start executing them in the web worker. However, if a script is dynamically appended to the DOM, _after_ Partytown has initialized, you can still dispatch the `ptupdate` custom event on window to notify Partytown there are new scripts to find.
+Commonly scripts will already be apart of the DOM when the document loads, and once the document is ready and the window has loaded, Partytown will find the scripts, and start executing them in the web worker. However, if a script is dynamically appended to the DOM, _after_ Partytown has initialized, you can still dispatch the `ptupdate` custom event on window to notify Partytown there are new scripts to find.
 
 Below is an example of dynamically appending a script to the document, then notifying Partytown to run its update again. Notice that _before_ the script is appended, the `type` property (or attribute) is already set to `text/partytown`.
 
