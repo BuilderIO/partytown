@@ -60,6 +60,7 @@ import { partytownVite } from '@builder.io/partytown/utils'
 const config = {
   plugins: [
     sveltekit(),
+    // THIS STEP DOESN'T WORK. WORK AROUND. MANUALLY COPY partytown-sw.js to /static/~partytown/
     partytownVite({
       // `dest` specifies where files are copied to in production
       dest: join(process.cwd(), 'static', '~partytown')
