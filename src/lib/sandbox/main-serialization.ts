@@ -18,7 +18,8 @@ export const serializeForWorker = (
   value: any,
   added?: Set<any>,
   type?: string,
-  cstrName?: string
+  cstrName?: string,
+  prevInstanceId?: string
 ): SerializedTransfer | undefined => {
   if (value !== undefined && (type = typeof value)) {
     if (type === 'string' || type === 'number' || type === 'boolean' || value == null) {
@@ -72,7 +73,7 @@ export const serializeForWorker = (
       } else if (value.nodeType) {
         return [
           SerializedType.Instance,
-          [$winId$, getAndSetInstanceId(value)!, getNodeName(value)],
+          [$winId$, getAndSetInstanceId(value)!, getNodeName(value), prevInstanceId],
         ];
       } else {
         return [SerializedType.Object, serializeObjectForWorker($winId$, value, added, true, true)];

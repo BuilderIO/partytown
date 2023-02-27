@@ -22,11 +22,13 @@ export const getOrCreateNodeInstance = (
   instanceId: InstanceId,
   nodeName?: string,
   namespace?: string,
-  instance?: WorkerNode
+  instance?: WorkerNode,
+  prevInstanceId?: string
 ) => {
   instance = webWorkerInstances.get(instanceId);
   if (!instance && nodeName && environments[winId]) {
-    instance = environments[winId].$createNode$(nodeName, instanceId, namespace);
+    const prevInstance =  webWorkerInstances.get(prevInstanceId || '');
+    instance = environments[winId].$createNode$(nodeName, instanceId, namespace, prevInstance);
     webWorkerInstances.set(instanceId, instance!);
   }
   return instance;

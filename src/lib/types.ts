@@ -187,7 +187,7 @@ export interface WebWorkerEnvironment {
   $body$: HTMLElement;
   $location$: Location;
   $visibilityState$?: string;
-  $createNode$: (nodeName: string, instanceId: InstanceId, namespace?: string) => WorkerNode;
+  $createNode$: (nodeName: string, instanceId: InstanceId, namespace?: string, prevInstance?: WorkerNode) => WorkerNode;
   $currentScriptId$?: InstanceId;
   $isInitialized$?: number;
   $isLoading$?: number;
@@ -368,7 +368,8 @@ export type SerializedInstance =
       /**
        * Node name for Node instances
        */
-      type: string
+      type: string,
+      type?: string
     ];
 
 /**

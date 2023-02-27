@@ -88,6 +88,7 @@ export const createWindow = (
   let cstrInstanceId: InstanceId | undefined;
   let cstrNodeName: string | undefined;
   let cstrNamespace: string | undefined;
+  let cstrPrevInstance: WorkerNode | undefined;
 
   // base class all Nodes/Elements/Global Constructors will extend
   const WorkerBase = class implements WorkerInstance {
@@ -110,7 +111,7 @@ export const createWindow = (
       this[ApplyPathKey] = applyPath || [];
       this[InstanceDataKey] = instanceData || cstrNodeName;
       this[NamespaceKey] = namespace || cstrNamespace;
-      this[InstanceStateKey] = {};
+      this[InstanceStateKey] = cstrPrevInstance && cstrPrevInstance[InstanceStateKey] || {};
       cstrInstanceId = cstrNodeName = cstrNamespace = undefined;
     }
   };
@@ -179,7 +180,8 @@ export const createWindow = (
         let $createNode$ = (
           nodeName: string,
           instanceId: InstanceId,
-          namespace?: string
+          namespace?: string,
+          prevInstance?: WorkerNode,
         ): WorkerNode => {
           if (htmlMedia.includes(nodeName)) {
             initWindowMedia();
@@ -193,6 +195,7 @@ export const createWindow = (
           cstrInstanceId = instanceId;
           cstrNodeName = nodeName;
           cstrNamespace = namespace;
+          cstrPrevInstance = prevInstance
           return new NodeCstr() as any;
         };
 
