@@ -10,7 +10,7 @@ const handleError = (err: any) => {
 
 const apiKey = `YJIGb4i01jvw0SRdL5Bt`;  // ggignore
 
-const footerUrl = new URL('https://cdn.builder.io/api/v1/qwik/oss-top-bar');
+const footerUrl = new URL('https://cdn.builder.io/api/v1/qwik/oss-footer');
 footerUrl.searchParams.set('apiKey', apiKey);
 footerUrl.searchParams.set('userAttributes.site', 'partytown.builder.io');
 footerUrl.searchParams.set('userAttributes.url', new URL(Astro.request.url).pathname);
