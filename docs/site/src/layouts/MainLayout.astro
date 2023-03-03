@@ -23,15 +23,14 @@ const handleError = (err: any) => {
   throw err;
 };
 
-const url = new URL('https://cdn.builder.io/api/v1/qwik/oss-top-bar');
-url.searchParams.set('apiKey', apiKey);
-url.searchParams.set('userAttributes.site', 'partytown.builder.io');
-url.searchParams.set('userAttributes.url', new URL(Astro.request.url).pathname);
-url.searchParams.set('cachebust', 'true');
-const qwikPageData = await fetch(url.toString())
+const topBarUrl = new URL('https://cdn.builder.io/api/v1/qwik/oss-top-bar');
+topBarUrl.searchParams.set('apiKey', apiKey);
+topBarUrl.searchParams.set('userAttributes.site', 'partytown.builder.io');
+topBarUrl.searchParams.set('userAttributes.url', new URL(Astro.request.url).pathname);
+topBarUrl.searchParams.set('cachebust', 'true');
+const topBarData = await fetch(topBarUrl.toString())
   .then((res) => res.json())
   .catch(handleError);
-
 ---
 
 <html dir={content.dir ?? 'ltr'} lang={content.lang ?? 'en-us'} class="initial">
@@ -131,7 +130,7 @@ const qwikPageData = await fetch(url.toString())
 	</head>
 
 	<body>
-	  <div set:html={qwikPageData.html}></div>
+	  <div set:html={topBarData.html}></div>
 		<Header {currentPage} />
 		<main class="layout">
 			<aside id="grid-left" class="grid-sidebar" title="Site Navigation">
