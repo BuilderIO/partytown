@@ -21,7 +21,7 @@ const footerData = await fetch(footerUrl.toString())
 
 ---
 
-<footer class="container mx-auto px-4 md:px-0 mt-4" set:html={footerData.html}></footer>
+<footer class="container mx-auto" set:html={footerData.html}></footer>
 <style>
   footer {
     margin-top: 2rem;
