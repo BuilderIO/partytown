@@ -4,17 +4,17 @@ title: SvelteKit
 
 SvelteKit does not offer any built in integrations, so we will add Partytown manually. Credit belongs to [monogram.io](https://monogram.io/blog/add-partytown-to-svelte) for this guide.
 
-1. Add the Partytown script to `src/routes/__layout.svelte`
+1. Add the Partytown script to `src/routes/+layout.svelte`
 2. Copy the Partytown files to the local filesystem using the Vite plugin
 3. Reverse-Proxying scripts 
 4. Then adding 3rd party scripts
 
-## 1. Add the Partytown script to `src/routes/__layout.svelte`
+## 1. Add the Partytown script to `src/routes/+layout.svelte`
 
 Adapting from [the HTML integration guide](https://partytown.builder.io/html)
 
 ```svelte
-// src/routes/__layout.svelte
+// src/routes/+layout.svelte
 
 <script>
   import { onMount } from 'svelte'
@@ -75,7 +75,7 @@ export default config
 This will vary depending on hosting platform. See [Partytown's recommended guides](https://partytown.builder.io/proxying-requests#reverse-proxy).
 
 ```svelte
-// src/routes/__layout.svelte
+// src/routes/+layout.svelte
 
 <script>
   partytown = {
@@ -122,7 +122,7 @@ const config = {
 and
 
 ```svelte
-// src/routes/__layout.svelte
+// src/routes/+layout.svelte
 
 <svelte:head>
   <script>
