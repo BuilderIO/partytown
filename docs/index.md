@@ -5,6 +5,8 @@ description: Partytown - Run third-party scripts from a web worker
 
 Partytown is a lazy-loaded library to help relocate resource intensive scripts into a [web worker](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API), and off of the [main thread](https://developer.mozilla.org/en-US/docs/Glossary/Main_thread). Its goal is to help speed up sites by dedicating the main thread to your code, and offloading third-party scripts to a web worker.
 
+- [Partytown, Google Slides Presentation](https://docs.google.com/presentation/d/10aKHUokby6hQydL_xuOtct4CPwAkgay5l0-FqgO8-3g/edit?usp=sharing)
+
 Even with a fast and highly tuned website following all of today's best practices, it's all too common for your performance wins to be erased the moment third-party scripts are added. By third-party scripts we mean code that is embedded within your site, but not directly under your control. A few examples include: analytics, metrics, ads, A/B testing, trackers, etc.
 
 Partytown is maintained by [Builder.io](https://www.builder.io/) and is currently in [Beta](https://www.builder.io/blog/partytown-is-now-in-beta).
