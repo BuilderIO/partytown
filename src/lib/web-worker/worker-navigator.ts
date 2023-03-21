@@ -38,5 +38,10 @@ export const createNavigator = (env: WebWorkerEnvironment) => {
     nav[key] = (navigator as any)[key];
   }
 
-  return nav;
+  return new Proxy(nav, {
+    set(_, propName, propValue) {
+        (navigator as any)[propName] = propValue;
+      return true;
+    },
+  });
 };
