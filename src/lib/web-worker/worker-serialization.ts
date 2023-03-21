@@ -1,5 +1,6 @@
 import {
   ApplyPath,
+  CallType,
   InstanceId,
   RefHandlerCallbackData,
   RefId,
@@ -22,7 +23,7 @@ import {
   webWorkerRefsByRefId,
   WinIdKey,
 } from './worker-constants';
-import { getConstructorName, len, noop } from '../utils';
+import { defineConstructorName, getConstructorName, len, noop } from '../utils';
 import { getOrCreateNodeInstance } from './worker-constructors';
 import { setWorkerRef } from './worker-state';
 
@@ -145,6 +146,11 @@ export const deserializeFromMain = (
     }
 
     if (serializedType === SerializedType.Function) {
+      if (winId && applyPath.length > 0) {
+        return (...args: any[]) =>
+          callMethod(environments[winId].$window$, applyPath, args, CallType.Blocking);
+      }
+
       return noop;
     }
 
@@ -164,6 +170,10 @@ export const deserializeFromMain = (
       return (serializedValue as SerializedTransfer[]).map((v) =>
         deserializeFromMain(winId, instanceId, applyPath, v)
       );
+    }
+
+    if (serializedType === SerializedType.Error) {
+      return new CustomError(serializedValue);
     }
 
     obj = {};
@@ -260,7 +270,16 @@ const deserializeRefFromMain = (
   return webWorkerRefsByRefId[$refId$];
 };
 
-const NodeList = class {
+class CustomError extends Error {
+  constructor(errorObject: Error) {
+    super(errorObject.message);
+    this.name = errorObject.name;
+    this.message = errorObject.message;
+    this.stack = errorObject.stack;
+  }
+}
+
+export class NodeList {
   private _: WorkerNode[];
 
   constructor(nodes: WorkerNode[]) {
@@ -287,6 +306,10 @@ const NodeList = class {
   [Symbol.iterator]() {
     return this._[Symbol.iterator]();
   }
+}
+
+export const createNodeListCstr = (win: any) => {
+  win.NodeList = defineConstructorName(NodeList, 'NodeList');
 };
 
 const Attr = class {

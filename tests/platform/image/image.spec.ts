@@ -3,6 +3,9 @@ import { test, expect } from '@playwright/test';
 test('image', async ({ page }) => {
   await page.goto('/tests/platform/image/');
 
+  const resolveUrlCalled = new Promise(resolve =>
+    page.on('request', request => request.url().includes('resolvedUrl') && resolve(true)));
+
   await page.waitForSelector('.testImageOnLoad');
   const testImageOnLoad = page.locator('#testImageOnLoad');
   await expect(testImageOnLoad).toHaveText('load');
@@ -34,4 +37,15 @@ test('image', async ({ page }) => {
   await page.waitForSelector('.testImgListenerError');
   const testImgListenerError = page.locator('#testImgListenerError');
   await expect(testImgListenerError).toHaveText('error');
+
+  await page.waitForSelector('.testImgStyle');
+  const testImgStyle = page.locator('#testImgStyle');
+  await expect(testImgStyle).toHaveText('red');
+
+  await page.waitForSelector('.testImgSrc');
+  const testImgSrc = page.locator('#testImgSrc');
+  await expect(testImgSrc).toHaveText('dot.gif?imageSrcTest');
+
+  // Making sure the network calls for the images went through the resolveUrl function
+  expect(await resolveUrlCalled).toEqual(true);
 });

@@ -8,10 +8,20 @@ export const noop = () => {};
 
 export const len = (obj: { length: number }) => obj.length;
 
-export const getConstructorName = (obj: { constructor: { name: string } } | undefined | null) => {
+type ObjectWithConstructor = { constructor?: Function };
+type ObjectWithZoneJsConstructor = { __zone_symbol__originalInstance?: ObjectWithConstructor };
+
+export const getConstructorName = (obj: Object) => {
   try {
-    return obj!.constructor.name;
+    const constructorName = obj?.constructor?.name;
+    if (constructorName) return constructorName;
   } catch (e) {}
+  try {
+    const zoneJsConstructorName = (obj as ObjectWithZoneJsConstructor)
+      ?.__zone_symbol__originalInstance?.constructor?.name;
+    if (zoneJsConstructorName) return zoneJsConstructorName;
+  } catch (e) {}
+
   return '';
 };
 
@@ -116,5 +126,14 @@ export const createElementFromConstructor = (
           svgConstructorTags[tag] || tag.slice(0, 2).toLowerCase() + tag.slice(2)
         )
       : doc.createElement(htmlConstructorTags[tag] || tag);
+  }
+};
+
+export const isValidUrl = (url: any): boolean => {
+  try {
+    new URL(url);
+    return true;
+  } catch (_) {
+    return false;
   }
 };

@@ -1,13 +1,15 @@
+import preact from '@astrojs/preact';
+import { defineConfig } from 'astro/config';
+
 // Full Astro Configuration API Documentation:
 // https://docs.astro.build/reference/configuration-reference
 
-// @ts-check
-export default /** @type {import('astro').AstroUserConfig} */ ({
-  renderers: [
+export default defineConfig({
+  integrations: [
     // Enable the Preact renderer to support Preact JSX components.
-    '@astrojs/renderer-preact',
+    preact(),
   ],
-  buildOptions: {
+  build: {
     site: 'https://partytown.builder.io',
   },
 });

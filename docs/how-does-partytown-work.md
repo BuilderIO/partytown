@@ -59,11 +59,9 @@ Please see the [Atomics communication layer docs](/atomics) on how to enable the
 1. Web worker is given the scripts to execute within the worker thread.
 1. Web worker creates JavaScript Proxies to replicate and forward calls to the main thread APIs (such as DOM operations).
 1. Any call to the JS proxy will use [Atomics.store()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/store) and `postMessage()` to send the data to the main thread, and run [Atomics.wait()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/wait).
-1. [Atomics.load()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/load) is used once the web worker recieves the results data from the main thread.
+1. [Atomics.load()](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics/load) is used once the web worker receives the results data from the main thread.
 1. From the point of view of code executing on the web worker, everything was synchronous, and each call to the document was blocking.
 
 ## Serialization
 
-Data passed between the main thread and web worker must be [serializable](https://en.wikipedia.org/wiki/Serialization). Partytown automatically handles the serializing and deserializing of data passed between threads. The easiest would be primitive values, such as a `string`, `boolean` or `number`.
-
-More complicated, but Partytown also handles, is passing functions between the threads. Technically the "functions" are not between the two threads, but instead, references to functions are assigned unique IDs, and the opposite thread is able to call it.
+Data passed between the main thread and web worker must be [serializable](https://en.wikipedia.org/wiki/Serialization). Partytown automatically handles the serializing and deserializing of data passed between threads. This works for primitive values, such as a `string`, `boolean` or `number`, and also functions, which get unique IDs assigned that are passed to the opposite thread and can be called.

@@ -58,4 +58,14 @@ test('history', async ({ page }) => {
   const buttonIframeReplaceState = page.locator('#buttonIframeReplaceState');
   await buttonIframeReplaceState.click();
   await expect(testIframeReplaceState).toHaveText('88');
+
+  const testMainPushStateEcho = page.locator('#testMainPushStateEcho');
+  const buttonMainPushState = page.locator('#buttonMainPushState');
+  await buttonMainPushState.click();
+  await expect(testMainPushStateEcho).toHaveText('{"state":42,"url":"/tests/platform/history/pushed-state"}');
+
+  const testMainReplaceStateEcho = page.locator('#testMainReplaceStateEcho');
+  const buttonMainReplaceState = page.locator('#buttonMainReplaceState');
+  await buttonMainReplaceState.click();
+  await expect(testMainReplaceStateEcho).toHaveText('{"state":23,"url":"/tests/platform/history"}');
 });

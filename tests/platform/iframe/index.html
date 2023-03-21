@@ -854,6 +854,23 @@
           })();
         </script>
       </li>
+
+      <li>
+        <strong>set javascript: source</strong>
+        <code id="testSetJavascriptSrc"></code>
+        <script type="text/partytown">
+          (function() {
+            const elm = document.getElementById('testSetJavascriptSrc');
+
+            const iframe = document.createElement('iframe');
+            iframe.src = 'javascript:void(0);';
+            elm.parentNode.appendChild(iframe);
+
+            elm.textContent = iframe.src;
+            elm.className = 'testSetJavascriptSrc';
+          })();
+        </script>
+      </li>
     </ul>
 
     <hr />

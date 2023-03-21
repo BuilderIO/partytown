@@ -19,4 +19,5 @@ export type {
   ApplyHook,
   GetHook,
   SetHook,
+  ResolveUrlType,
 } from '../lib/types';

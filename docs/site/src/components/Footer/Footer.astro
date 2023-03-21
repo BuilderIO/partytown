@@ -1,47 +1,32 @@
- 
-<footer>
-	<div class="social">
-		<a href="https://github.com/BuilderIO/partytown">
-			Github
-		</a>
-		<a href="https://discord.gg/hbuEtxdEZ3">
-			Discord
-		</a>
-		<a href="https://twitter.com/QwikDev">
-			@QwikDev
-		</a>
-		<a href="https://twitter.com/builderio">
-			@Builderio
-		</a> 
-	</div>
-	<div class="builder">
-		Made with 💜 by the <a href="https://www.builder.io/">Builder.io</a> team
-	</div>
-</footer>
+---
+const handleError = (err: any) => {
+  console.log(err);
+  // The requested Builder content could not be found.
+  if (err.response.status === 404) {
+    return { data: null };
+  }
+  throw err;
+};
 
+const apiKey = `YJIGb4i01jvw0SRdL5Bt`;  // ggignore
+
+const footerUrl = new URL('https://cdn.builder.io/api/v1/qwik/oss-footer');
+footerUrl.searchParams.set('apiKey', apiKey);
+footerUrl.searchParams.set('userAttributes.site', 'partytown.builder.io');
+footerUrl.searchParams.set('userAttributes.url', new URL(Astro.request.url).pathname);
+footerUrl.searchParams.set('cachebust', 'true');
+const footerData = await fetch(footerUrl.toString())
+  .then((res) => res.json())
+  .catch(handleError);
+
+---
+
+<footer class="container mx-auto" set:html={footerData.html}></footer>
 <style>
-	footer {
-		margin-top: 2rem;
-		padding: 2rem 0;
-		border-top: 2px solid var(--theme-divider);
-		text-align: center;
-	}
-	footer .social a {
-		margin: 0 4px;
-		padding: 4px 12px;
-		text-decoration: none;
-		color: var(--theme-text-light);
-		display: inline-block;
-		border-radius: 4px;
-	}
-	footer .social a:hover {
-		background-color: var(--theme-bg-hover);
-	}
-	footer .builder {
-		font-size: 12px;
-		margin: 15px 0;
-	}
-	footer .builder a:hover {
-		text-decoration: none; 
-	}
+  footer {
+    margin-top: 2rem;
+    padding: 2rem 0;
+    border-top: 2px solid var(--theme-divider);
+    color: black;
+  }
 </style>

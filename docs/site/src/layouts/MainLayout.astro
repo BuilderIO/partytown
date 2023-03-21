@@ -1,22 +1,42 @@
 ---
 import HeadCommon from '../components/HeadCommon.astro';
 import HeadSEO from '../components/HeadSEO.astro';
-import Header from '../components/Header/Header.astro'; 
+import Header from '../components/Header/Header.astro';
 import PageContent from '../components/PageContent/PageContent.astro';
-import Footer from '../components/Footer/Footer.astro'; 
+import Footer from '../components/Footer/Footer.astro';
 import LeftSidebar from '../components/LeftSidebar/LeftSidebar.astro';
 import RightSidebar from '../components/RightSidebar/RightSidebar.astro';
 import * as CONFIG from '../config';
 
 const { content = {} } = Astro.props;
-const currentPage = Astro.request.url.pathname;
+const currentPage = new URL(Astro.request.url).pathname;
 const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}${currentPage === '/' ? '/index' : currentPage}.md`;
+
+const apiKey = `YJIGb4i01jvw0SRdL5Bt`;  // ggignore
+
+const handleError = (err: any) => {
+  console.log(err);
+  // The requested Builder content could not be found.
+  if (err.response.status === 404) {
+    return { data: null };
+  }
+  throw err;
+};
+
+const topBarUrl = new URL('https://cdn.builder.io/api/v1/qwik/oss-top-bar');
+topBarUrl.searchParams.set('apiKey', apiKey);
+topBarUrl.searchParams.set('userAttributes.site', 'partytown.builder.io');
+topBarUrl.searchParams.set('userAttributes.url', new URL(Astro.request.url).pathname);
+topBarUrl.searchParams.set('cachebust', 'true');
+const topBarData = await fetch(topBarUrl.toString())
+  .then((res) => res.json())
+  .catch(handleError);
 ---
 
 <html dir={content.dir ?? 'ltr'} lang={content.lang ?? 'en-us'} class="initial">
 	<head>
 		<HeadCommon />
-		<HeadSEO {content} canonicalURL={Astro.request.canonicalURL} />
+		<HeadSEO {content} />
 		{ currentPage === '/' ? (
 			<title>Welcome To Partytown</title>
 		) : (
@@ -110,6 +130,7 @@ const githubEditUrl = `${CONFIG.GITHUB_EDIT_URL}${currentPage === '/' ? '/index'
 	</head>
 
 	<body>
+	  <div set:html={topBarData.html}></div>
 		<Header {currentPage} />
 		<main class="layout">
 			<aside id="grid-left" class="grid-sidebar" title="Site Navigation">

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+
+    <title>Javascript request execution 🎉</title>
+
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logImageRequests: true,
+        logMainAccess: true,
+        logSendBeaconRequests: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+      }
+    </script>
+    <script src="/~partytown/debug/partytown.js"></script>
+  </head>
+  <body>
+    <h1>Javascript request execution</h1>
+
+    <p>
+      <strong>Javascript ("create-element.js") execution</strong>
+      <span id="javascript-execution"></span>
+    </p>
+
+    <p>
+      <strong>Text ("some-text.txt") execution</strong>
+      <span id="text-execution"></span>
+    </p>
+
+    <!-- Some third party js -->
+    <script type="text/partytown">
+      (async function(){
+        const jsRequestElement = document.createElement("script")
+        jsRequestElement.setAttribute("src", "/tests/integrations/javascript-request/execute.js")
+        document.head.appendChild(jsRequestElement)
+
+        const textRequestElement = document.createElement("script")
+        textRequestElement.setAttribute("src", "/tests/integrations/javascript-request/some-text.txt")
+        document.head.appendChild(textRequestElement)
+
+      })()
+    </script>
+    <!-- End Some third party js -->
+
+    <script type="text/partytown">
+      (function () {
+        document.body.classList.add('completed')
+      })()
+    </script>
+
+    <p><a href="/tests/">All Tests</a></p>
+  </body>
+</html>

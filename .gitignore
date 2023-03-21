@@ -21,3 +21,5 @@ node_modules/
 /index.cjs
 /index.mjs
 /index.d.ts
+.idea
+.history

@@ -1,7 +1,14 @@
 import { debug } from '../utils';
 import { logMain, normalizedWinId } from '../log';
-import { MainWindow, PartytownWebWorker, WinId, WorkerMessageType } from '../types';
+import {
+  MainWindow,
+  PartytownWebWorker,
+  WinId,
+  WorkerMessageType,
+  LocationUpdateType,
+} from '../types';
 import { winCtxs, windowIds } from './main-constants';
+import { readNextScript } from './read-main-scripts';
 
 export const registerWindow = (
   worker: PartytownWebWorker,
@@ -15,7 +22,17 @@ export const registerWindow = (
     const history = $window$.history;
     const $parentWinId$ = windowIds.get($window$.parent)!;
 
-    const sendInitEnvData = () =>
+    let initialised = false;
+    const onInitialisedQueue: Function[] = [];
+    const onInitialised = (callback: Function) => {
+      if (initialised) {
+        callback();
+      } else {
+        onInitialisedQueue.push(callback);
+      }
+    };
+
+    const sendInitEnvData = () => {
       worker.postMessage([
         WorkerMessageType.InitializeEnvironment,
         {
@@ -26,26 +43,56 @@ export const registerWindow = (
         },
       ]);
 
+      // Timeout to call postpone second after init message
+      setTimeout(() => {
+        initialised = true;
+        onInitialisedQueue.forEach((callback) => {
+          callback();
+        });
+      });
+    };
+
     const pushState = history.pushState.bind(history);
     const replaceState = history.replaceState.bind(history);
 
-    const onLocationChange = () =>
-      setTimeout(() =>
-        worker.postMessage([WorkerMessageType.LocationUpdate, $winId$, doc.baseURI])
+    const onLocationChange =
+      (type: LocationUpdateType, state: object, newUrl?: string, oldUrl?: string) => () => {
+        setTimeout(() => {
+          worker.postMessage([
+            WorkerMessageType.LocationUpdate,
+            {
+              $winId$,
+              type,
+              state,
+              url: doc.baseURI,
+              newUrl,
+              oldUrl,
+            },
+          ]);
+        });
+      };
+
+    history.pushState = (state, _, newUrl) => {
+      pushState(state, _, newUrl);
+      onInitialised(onLocationChange(LocationUpdateType.PushState, state, newUrl?.toString()));
+    };
+
+    history.replaceState = (state, _, newUrl) => {
+      replaceState(state, _, newUrl);
+      onInitialised(onLocationChange(LocationUpdateType.ReplaceState, state, newUrl?.toString()));
+    };
+
+    $window$.addEventListener('popstate', (event) => {
+      onInitialised(onLocationChange(LocationUpdateType.PopState, event.state));
+    });
+    $window$.addEventListener('hashchange', (event) => {
+      onInitialised(
+        onLocationChange(LocationUpdateType.HashChange, {}, event.newURL, event.oldURL)
       );
-
-    history.pushState = (data, _, url) => {
-      pushState(data, _, url);
-      onLocationChange();
-    };
-
-    history.replaceState = (data, _, url) => {
-      replaceState(data, _, url);
-      onLocationChange();
-    };
-
-    $window$.addEventListener('popstate', onLocationChange);
-    $window$.addEventListener('hashchange', onLocationChange);
+    });
+    $window$.addEventListener('ptupdate', () => {
+      readNextScript(worker, winCtxs[$winId$]!);
+    });
     doc.addEventListener('visibilitychange', () =>
       worker.postMessage([WorkerMessageType.DocumentVisibilityState, $winId$, doc.visibilityState])
     );

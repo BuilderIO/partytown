@@ -11,7 +11,7 @@ export const createNavigator = (env: WebWorkerEnvironment) => {
       if (debug && webWorkerCtx.$config$.logSendBeaconRequests) {
         try {
           logWorker(
-            `sendBeacon: ${resolveUrl(env, url, true)}${
+            `sendBeacon: ${resolveUrl(env, url, null)}${
               body ? ', data: ' + JSON.stringify(body) : ''
             }`
           );
@@ -20,7 +20,7 @@ export const createNavigator = (env: WebWorkerEnvironment) => {
         }
       }
       try {
-        fetch(resolveUrl(env, url, true), {
+        fetch(resolveUrl(env, url, null), {
           method: 'POST',
           body,
           mode: 'no-cors',
@@ -38,5 +38,10 @@ export const createNavigator = (env: WebWorkerEnvironment) => {
     nav[key] = (navigator as any)[key];
   }
 
-  return nav;
+  return new Proxy(nav, {
+    set(_, propName, propValue) {
+        (navigator as any)[propName] = propValue;
+      return true;
+    },
+  });
 };

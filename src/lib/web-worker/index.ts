@@ -8,6 +8,7 @@ import { initNextScriptsInWebWorker } from './worker-exec';
 import { initWebWorker } from './init-web-worker';
 import { logWorker, normalizedWinId } from '../log';
 import { workerForwardedTriggerHandle } from './worker-forwarded-trigger';
+import { forwardLocationChange } from './worker-location';
 
 const queuedEvents: MessageEvent<MessageFromSandboxToWorker>[] = [];
 
@@ -40,7 +41,12 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
     } else if (msgType === WorkerMessageType.DocumentVisibilityState) {
       environments[msgValue].$visibilityState$ = msg[2];
     } else if (msgType === WorkerMessageType.LocationUpdate) {
-      environments[msgValue].$location$.href = msg[2];
+      const $winId$ = msgValue.$winId$;
+      const env = environments[$winId$];
+
+      env.$location$.href = msgValue.url;
+
+      forwardLocationChange(msgValue.$winId$, env, msgValue);
     } else if (msgType === WorkerMessageType.CustomElementCallback) {
       callCustomElementCallback(...msg);
     }
@@ -48,6 +54,15 @@ const receiveMessageFromSandboxToWorker = (ev: MessageEvent<MessageFromSandboxTo
     // received initial main data
     // initialize the web worker with the received the main data
     initWebWorker(msgValue);
+
+    // request from main that the worker needs the interfaces
+    webWorkerCtx.$postMessage$([WorkerMessageType.MainInterfacesRequestFromWorker]);
+  } else if (msgType === WorkerMessageType.MainInterfacesResponseToWorker) {
+    // received more main thread interfaces, append them to the array
+    webWorkerCtx.$interfaces$ = [...webWorkerCtx.$interfaces$, ...msgValue];
+    webWorkerCtx.$isInitialized$ = 1;
+
+    logWorker(`Initialized web worker`);
 
     // send to the main thread that the web worker has been initialized
     webWorkerCtx.$postMessage$([WorkerMessageType.InitializedWebWorker]);

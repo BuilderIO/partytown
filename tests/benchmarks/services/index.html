@@ -92,20 +92,6 @@
       and prints more console logs.
     </p>
 
-    <template id="al">
-      <script>
-        (function () {
-          console.log('Adobe Launch');
-          var script = document.createElement('script');
-          script.async = true;
-          script.src =
-            // 'https://assets.adobedtm.com/0d863d487334/1df1eade08c2/launch-d4935864d5f5.min.js';
-            '/integrations/adobe-launch/launch-d4935864d5f5.min.js';
-          document.head.appendChild(script);
-        })();
-      </script>
-    </template>
-
     <template id="fbp">
       <script>
         !(function (f, b, e, v, n, t, s) {
@@ -212,16 +198,14 @@
               url.hostname.includes('connect.facebook.net') ||
               url.hostname.includes('js.hs-scripts.com') ||
               url.hostname.includes('js.hs-analytics.net') ||
-              url.hostname.includes('cdn.syndication.twimg.com') ||
-              url.hostname.includes('assets.adobedtm.com')
+              url.hostname.includes('cdn.syndication.twimg.com')
             ) {
               const proxyUrl = new URL('https://cdn.builder.io/api/v1/proxy-api');
               proxyUrl.searchParams.append('url', url);
               return proxyUrl;
             }
           },
-          forward: ['fbq', 'dataLayer.push', '_satellite.track', '_wq.push'],
-          globalFns: ['s_gi', 'AppMeasurement'],
+          forward: ['fbq', 'dataLayer.push', '_wq.push'],
           debug: document.getElementById('debug-mode').checked,
         };
         /* Partytown 0.2.0 - MIT builder.io */
@@ -278,7 +262,6 @@
     <script>
       (() => {
         const services = [
-          { name: 'Adobe Launch', id: 'al' },
           { name: 'Facebook Pixel', id: 'fbp' },
           { name: 'Google Tag Manager', id: 'gtm' },
           { name: 'Hubspot', id: 'hs' },

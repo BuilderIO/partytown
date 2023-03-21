@@ -9,6 +9,7 @@ Partytown does not require a config for it to work, however a config can be set 
 | `debug`      | When `true`, Partytown scripts are not inlined and not minified. See the [Debugging](/debugging) docs on how to enable more logging.                                                                                      |
 | `forward`    | An array of strings representing function calls on the main thread to forward to the web worker. See [Forwarding Events and Triggers](/forwarding-events) for more info.                                                  |
 | `lib`        | Path where the Partytown library can be found your server. Note that the path must both start and end with a `/` character, and the files must be hosted from the same origin as the webpage. Default is `/~partytown/`   |
+| `loadScriptsOnMainThread` | An array of strings used to filter out which script are executed via Partytown and the main thread. An example is as follows: `loadScriptsOnMainThread: ["https://test.com/analytics.js", "inline-script-id"]`.|
 | `resolveUrl` | Hook that is called to resolve URLs which can be used to modify URLs. The hook uses the API: `resolveUrl(url: URL, location: URL, method: string)`. See the [Proxying Requests](/proxying-requests) for more information. |
 
 ## Vanilla Config

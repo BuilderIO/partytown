@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+  <meta charset='UTF-8' />
+  <meta name='viewport' content='width=device-width, initial-scale=1' />
+  <meta name='description' content='Partytown Test Page' />
+  <title>Load scripts on main thread</title>
+
+  <script>
+    partytown = {
+      logCalls: true,
+      logGetters: true,
+      logSetters: true,
+      logStackTraces: false,
+      logScriptExecution: true,
+      loadScriptsOnMainThread: [
+        `http://${location.host}/tests/integrations/load-scripts-on-main-thread/test-script.js`,
+        `inline-test-script`
+      ],
+    };
+  </script>
+  <script src='/~partytown/debug/partytown.js'></script>
+  <script type='text/partytown'>
+    (() => {
+      const scriptElement = document.createElement("script");
+      scriptElement.type = "text/javascript";
+      scriptElement.src = "./test-script.js";
+      scriptElement.id = "testScript";
+      document.head.appendChild(scriptElement);
+    })()
+  </script>
+
+  <style>
+      body {
+          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+          font-size: 12px;
+      }
+
+      h1 {
+          margin: 0 0 15px 0;
+      }
+
+      ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+      }
+
+      a {
+          display: block;
+          padding: 16px 8px;
+      }
+
+      a:link,
+      a:visited {
+          text-decoration: none;
+          color: blue;
+      }
+
+      a:hover {
+          background-color: #eee;
+      }
+
+      li {
+          display: flex;
+          margin: 15px 0;
+      }
+
+      li strong,
+      li code,
+      li button {
+          white-space: nowrap;
+          flex: 1;
+          margin: 0 5px;
+      }
+  </style>
+</head>
+<body>
+<h1>Load scripts on main thread 🎉</h1>
+<ul>
+    <li>
+      <strong>Script Type:</strong>
+      <code id='testScriptType'></code>
+      <script type='text/partytown'>
+        (() => {
+          const scriptElement = document.getElementById('testScript');
+          const codeElement = document.getElementById('testScriptType');
+          
+          codeElement.innerText = scriptElement.type;
+        })()
+      </script>
+    </li>
+    <li>
+      <strong>Script Source:</strong>
+      <code id='testScriptSource'></code>
+      <script type='text/partytown'>
+        (() => {
+          const scriptElement = document.getElementById('testScript');
+          const codeElement = document.getElementById('testScriptSource');
+          
+          codeElement.innerText = scriptElement.src;
+        })()
+      </script>
+  </li>
+  <li>
+    <strong>Partytown Config:</strong>
+    <code id='testConfig'></code>
+    <script>
+      (() => {
+        const partyTownConfig = window.partytown;
+        const codeElement = document.getElementById('testConfig');
+        
+        codeElement.innerText = partyTownConfig.loadScriptsOnMainThread;
+      })()
+    </script>
+  </li>
+
+  <li>
+    <strong>Inline script</strong>
+    <code id="testInlineScript"></code>
+    <script type="text/javascript">const globalVariable = 12;</script>
+    <script type="text/partytown">
+      (function () {
+        const script = document.createElement('script');
+
+        script.type = "text/javascript";
+        script.id = "inline-test-script";
+        script.innerHTML = `
+          document.getElementById('testInlineScript');
+
+          const testEl = document.getElementById('testInlineScript');
+          testEl.className = 'testInlineScript';
+          testEl.innerHTML = globalVariable;
+        `;
+
+        document.body.appendChild(script);
+      })();
+    </script>
+  </li>
+</ul>
+
+<hr />
+<p><a href='/tests/'>All Tests</a></p>
+
+</body>
+</html>

@@ -74,6 +74,8 @@ import { patchHTMLIFrameElement } from './worker-iframe';
 import { patchHTMLScriptElement } from './worker-script';
 import { patchSvgElement } from './worker-svg';
 import { resolveUrl } from './worker-exec';
+import { createNodeListCstr } from './worker-serialization';
+import { createNamedNodeMapCstr } from './worker-named-node-map';
 
 export const createWindow = (
   $winId$: WinId,
@@ -198,6 +200,8 @@ export const createWindow = (
         win.name = name + (debug ? `${normalizedWinId($winId$)} (${$winId$})` : ($winId$ as any));
 
         createNodeCstr(win, env, WorkerBase);
+        createNodeListCstr(win);
+        createNamedNodeMapCstr(win, WorkerBase);
         createCSSStyleDeclarationCstr(win, WorkerBase, 'CSSStyleDeclaration');
         createPerformanceConstructor(win, WorkerBase, 'Performance');
         createCustomElementRegistry(win, nodeCstrs);
@@ -362,6 +366,8 @@ export const createWindow = (
                 // https://developer.mozilla.org/en-US/docs/Web/API/Window/frames
                 let frame = getChildEnvs()[propName as any];
                 return frame ? frame.$window$ : undefined;
+              } else if (webWorkerCtx.$config$.mainWindowAccessors?.includes(propName)) {
+                return getter(this, [propName]);
               } else {
                 return win[propName];
               }
@@ -431,6 +437,24 @@ export const createWindow = (
             },
             length: 0,
           };
+          win.indexeddb = undefined;
+        } else {
+          const originalPushState: Window['history']['pushState'] = win.history.pushState.bind(
+            win.history
+          );
+          const originalReplaceState: Window['history']['replaceState'] =
+            win.history.replaceState.bind(win.history);
+
+          win.history.pushState = (stateObj: any, _: string, newUrl?: string) => {
+            if (env.$propagateHistoryChange$ !== false) {
+              originalPushState(stateObj, _, newUrl);
+            }
+          };
+          win.history.replaceState = (stateObj: any, _: string, newUrl?: string) => {
+            if (env.$propagateHistoryChange$ !== false) {
+              originalReplaceState(stateObj, _, newUrl);
+            }
+          };
         }
 
         win.Worker = undefined;
@@ -460,7 +484,7 @@ export const createWindow = (
 
       fetch(input: string | URL | Request, init: any) {
         input = typeof input === 'string' || input instanceof URL ? String(input) : input.url;
-        return fetch(resolveUrl(env, input), init);
+        return fetch(resolveUrl(env, input, 'fetch'), init);
       }
 
       get frames() {
@@ -559,7 +583,7 @@ export const createWindow = (
         const ExtendedXhr = defineConstructorName(
           class extends Xhr {
             open(...args: any[]) {
-              args[1] = resolveUrl(env, args[1]);
+              args[1] = resolveUrl(env, args[1], 'xhr');
               (super.open as any)(...args);
             }
             set withCredentials(_: any) {}

@@ -2,14 +2,13 @@
 import { SITE,   } from '../config.ts';
 export interface Props {
 	content: any;
-	site: any;
-	canonicalURL: URL | string;
+	site: any; 
 }
-const { content = {}, canonicalURL } = Astro.props;
-const formattedContentTitle = content.title ? `${content.title} ${SITE.title}` : SITE.title;
-const imageSrc = '';
-const canonicalImageSrc = new URL(imageSrc, Astro.site);
-const imageAlt = '';
+const { content = {} } = Astro.props;
+const formattedContentTitle = content.title ? `${content.title} - ${SITE.title}` : SITE.title;
+const imageSrc = 'https://partytown.builder.io/partytown-media.png';
+const pathname = new URL(Astro.request.url).pathname;
+const canonicalURL = new URL(pathname, 'https://partytown.builder.io/');
 ---
 
 <!-- Page Metadata -->
@@ -20,8 +19,7 @@ const imageAlt = '';
 <meta property="og:type" content="article" />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:locale" content={SITE.defaultLanguage} />
-<meta property="og:image" content={canonicalImageSrc} />
-<meta property="og:image:alt" content={imageAlt} />
+<meta property="og:image" content={imageSrc} />
 <meta name="description" property="og:description" content={content.description ? content.description : SITE.description} />
 <meta property="og:site_name" content={SITE.title} />
 
@@ -30,5 +28,5 @@ const imageAlt = '';
 <meta name="twitter:site" content="@builderio" />
 <meta name="twitter:title" content={formattedContentTitle} />
 <meta name="twitter:description" content={content.description ? content.description : formattedContentTitle} />
-<meta name="twitter:image" content="https://partytown.builder.io/partytown-media.png	" />
+<meta name="twitter:image" content={imageSrc} />
 <meta name="twitter:image:alt" content="Partytown Logo" />

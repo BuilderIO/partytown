@@ -26,6 +26,8 @@ export const createNodeCstr = (
   env: WebWorkerEnvironment,
   WorkerBase: WorkerConstructor
 ) => {
+  const config = webWorkerCtx.$config$;
+
   const WorkerNode = defineConstructorName(
     class extends WorkerBase {
       appendChild(node: WorkerNode) {
@@ -54,11 +56,20 @@ export const createNodeCstr = (
 
           if (scriptContent) {
             if (isScriptJsType(scriptType)) {
-              const errorMsg = runScriptContent(env, instanceId, scriptContent, winId, '');
-              const datasetType = errorMsg ? 'pterror' : 'ptid';
-              const datasetValue = errorMsg || instanceId;
-              setter(newNode, ['type'], SCRIPT_TYPE + SCRIPT_TYPE_EXEC);
-              setter(newNode, ['dataset', datasetType], datasetValue);
+              // @ts-ignore
+              const scriptId = newNode.id;
+              const loadOnMainThread =
+                scriptId && config.loadScriptsOnMainThread?.includes?.(scriptId);
+
+              if (loadOnMainThread) {
+                setter(newNode, ['type'], 'text/javascript');
+              } else {
+                const errorMsg = runScriptContent(env, instanceId, scriptContent, winId, '');
+                const datasetType = errorMsg ? 'pterror' : 'ptid';
+                const datasetValue = errorMsg || instanceId;
+                setter(newNode, ['type'], SCRIPT_TYPE + SCRIPT_TYPE_EXEC);
+                setter(newNode, ['dataset', datasetType], datasetValue);
+              }
             }
             setter(newNode, ['innerHTML'], scriptContent);
           }
@@ -69,6 +80,11 @@ export const createNodeCstr = (
         if (isIFrame) {
           // an iframe element's instanceId is also
           // the winId of its contentWindow
+          const src = getInstanceStateValue<string>(newNode, StateProp.src);
+          if (src && src.startsWith('javascript:')) {
+            const scriptContent = src.split('javascript:')[1];
+            runScriptContent(env, instanceId, scriptContent, winId, '');
+          }
           insertIframe(instanceId, newNode);
         }
         if (isScript) {

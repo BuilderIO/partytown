@@ -10,7 +10,7 @@ import {
 import { getPartytownScript, resolveUrl } from './worker-exec';
 import { getter, sendToMain, setter } from './worker-proxy';
 import { HTMLSrcElementDescriptorMap } from './worker-src-element';
-import { setInstanceStateValue } from './worker-state';
+import { setInstanceStateValue, getInstanceStateValue } from './worker-state';
 import {
   StateProp,
   WebWorkerEnvironment,
@@ -35,16 +35,27 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any, env: WebWor
 
     src: {
       get() {
-        let src = getIframeEnv(this).$location$.href;
+        let src = getInstanceStateValue(this, StateProp.src);
+        if (src && src.startsWith('javascript:')) {
+          return src;
+        }
+        src = getIframeEnv(this).$location$.href;
         return src.startsWith('about:') ? '' : src;
       },
       set(src: string) {
+        if (!src) {
+          return;
+        }
+        if (src.startsWith('javascript:')) {
+          setInstanceStateValue(this, StateProp.src, src);
+          return;
+        }
         if (!src.startsWith('about:')) {
           let xhr = new XMLHttpRequest();
           let xhrStatus: number;
           let env = getIframeEnv(this);
 
-          env.$location$.href = src = resolveUrl(env, src);
+          env.$location$.href = src = resolveUrl(env, src, 'iframe');
           env.$isLoading$ = 1;
 
           setInstanceStateValue(this, StateProp.loadErrorStatus, undefined);
@@ -58,10 +69,7 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any, env: WebWor
               this,
               ['srcdoc'],
               `<base href="${src}">` +
-                xhr.responseText
-                  .replace(/<script>/g, `<script type="${SCRIPT_TYPE}">`)
-                  .replace(/<script /g, `<script type="${SCRIPT_TYPE}" `)
-                  .replace(/text\/javascript/g, SCRIPT_TYPE) +
+                replaceScriptWithPartytownScript(xhr.responseText) +
                 getPartytownScript()
             );
 
@@ -80,6 +88,29 @@ export const patchHTMLIFrameElement = (WorkerHTMLIFrameElement: any, env: WebWor
 
   definePrototypePropertyDescriptor(WorkerHTMLIFrameElement, HTMLIFrameDescriptorMap);
 };
+
+const ATTR_REGEXP_STR = `((?:\\w|-)+(?:=(?:(?:\\w|-)+|'[^']*'|"[^"]*")?)?)`;
+const SCRIPT_TAG_REGEXP = new RegExp(`<script\\s*((${ATTR_REGEXP_STR}\\s*)*)>`, 'mg');
+const ATTR_REGEXP = new RegExp(ATTR_REGEXP_STR, 'mg');
+export function replaceScriptWithPartytownScript(text: string): string {
+  return text.replace(SCRIPT_TAG_REGEXP, (_, attrs: string) => {
+    const parts = [];
+    let hasType = false;
+    let match: RegExpExecArray | null;
+    while ((match = ATTR_REGEXP.exec(attrs))) {
+      let [keyValue] = match;
+      if (keyValue.startsWith('type=')) {
+        hasType = true;
+        keyValue = keyValue.replace(/(application|text)\/javascript/, SCRIPT_TYPE);
+      }
+      parts.push(keyValue);
+    }
+    if (!hasType) {
+      parts.push('type="' + SCRIPT_TYPE + '"');
+    }
+    return `<script ${parts.join(' ')}>`;
+  });
+}
 
 const getIframeEnv = (iframe: WorkerInstance) => {
   // the winId of an iframe's contentWindow is the same

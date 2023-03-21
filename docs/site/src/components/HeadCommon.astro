@@ -10,7 +10,7 @@ const partytownSnippetHtml = partytownSnippet({
 <link rel="icon" type="image/svg+xml" href="/partytown-logo.svg">
 <link rel="sitemap" href="/sitemap.xml" />
 
-<style global>
+<style is:global>
 	@import "../styles/theme.css";
 	@import "../styles/code.css";
 	@import "../styles/index.css";
@@ -20,7 +20,7 @@ const partytownSnippetHtml = partytownSnippet({
 Array.from(document.getElementsByTagName('pre')).forEach((element) => {
 	element.setAttribute('tabindex', '0');
 });
-</script> 
+</script>
 
 <!-- Partytown Snippet -->
 <script set:html={partytownSnippetHtml}></script>
@@ -33,3 +33,8 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
 })(window,document,'script','dataLayer','GTM-W275NLW');</script>
 <!-- End Google Tag Manager -->
+
+<!-- Builder Attribution -->
+<script src="//cdn.jsdelivr.net/npm/@builder.io/persist-attribution@latest/dist/persist-attribution.min.js" async defer></script>
+<meta id="persist-attribution-init" data-send-page-view-events="true" />
+<!-- End Builder Attribution -->

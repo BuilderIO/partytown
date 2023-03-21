@@ -47,6 +47,12 @@
       partytown = {
         logImageRequests: true,
         logScriptExecution: true,
+        resolveUrl: (url, location, type) => {
+          if (type === 'image') {
+            url.searchParams.append('resolvedUrl', true);
+          }
+          return url;
+        },
       };
     </script>
     <script src="/~partytown/debug/partytown.js"></script>
@@ -180,6 +186,39 @@
               elm.className = 'testImgListenerError';
             });
             image.src = '404.gif?testImgListenerError';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>&lt;img&gt; style</strong>
+        <code id="testImgStyle"></code>
+        <script type="text/partytown">
+          (function () {
+            const image = new Image();
+            image.style.color = 'red'
+            image.addEventListener('error', function (ev) {
+              const elm = document.getElementById('testImgStyle');
+              elm.textContent = image.style.color;
+              elm.className = 'testImgStyle';
+            });
+            image.src = '404.gif?testImgStyle';
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>&lt;img&gt; src</strong>
+        <code id="testImgSrc"></code>
+        <script type="text/partytown">
+          (function () {
+            const image = new Image();
+            image.src = 'dot.gif?imageSrcTest';
+            image.onload = function (ev) {
+              const elm = document.getElementById('testImgSrc');
+              elm.textContent = image.src;
+              elm.className = 'testImgSrc';
+            };
           })();
         </script>
       </li>

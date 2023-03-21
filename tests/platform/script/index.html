@@ -368,6 +368,27 @@
           })();
         </script>
       </li>
+
+      <li>
+        <strong>appendMainScript</strong>
+        <code id="testAppendMainScript"></code>
+        <script type="text/javascript">
+          (function () {
+            window.addEventListener('load', () => {
+              setTimeout(() => {
+                const script = document.createElement('script');
+                script.type = 'text/partytown';
+                script.innerHTML = `
+                  document.getElementById('testAppendMainScript').textContent = 'ptupdate';
+                  document.getElementById('testAppendMainScript').className = 'testAppendMainScript';
+                `;
+                document.head.appendChild(script);
+                window.dispatchEvent(new CustomEvent('ptupdate'));
+              }, 500);
+            });
+          })();
+        </script>
+      </li>
     </ul>
 
     <hr />

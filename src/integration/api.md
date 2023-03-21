@@ -24,6 +24,7 @@ export interface PartytownConfig {
     get?: GetHook;
     globalFns?: string[];
     lib?: string;
+    loadScriptsOnMainThread?: string[];
     logCalls?: boolean;
     logGetters?: boolean;
     logImageRequests?: boolean;
@@ -32,7 +33,9 @@ export interface PartytownConfig {
     logSendBeaconRequests?: boolean;
     logSetters?: boolean;
     logStackTraces?: boolean;
-    resolveUrl?(url: URL, location: Location): URL | undefined | null;
+    // (undocumented)
+    mainWindowAccessors?: string[];
+    resolveUrl?(url: URL, location: Location, type: ResolveUrlType): URL | undefined | null;
     // (undocumented)
     set?: SetHook;
     swPath?: string;
@@ -43,6 +46,9 @@ export type PartytownForwardProperty = string;
 
 // @public
 export const partytownSnippet: (config?: PartytownConfig | undefined) => string;
+
+// @public (undocumented)
+export type ResolveUrlType = 'fetch' | 'xhr' | 'script' | 'iframe' | 'image';
 
 // @public
 export const SCRIPT_TYPE = "text/partytown";

@@ -30,8 +30,8 @@ When executed from within Partytown, every URL is resolved by Partytown, which a
 
 ```javascript
 partytown = {
-  resolveUrl: function (url) {
-    if (url.hostname === 'www.google-analytics.com') {
+  resolveUrl: function (url, location, type) {
+    if (type === 'script') {
       var proxyUrl = new URL('https://my-reverse-proxy.com/');
       proxyUrl.searchParams.append('url', url.href);
       return proxyUrl;
@@ -54,6 +54,7 @@ Below are a few examples of [reverse proxies](https://en.wikipedia.org/wiki/Reve
 - [Netlify: Proxy to another service](https://docs.netlify.com/routing/redirects/rewrites-proxies/#proxy-to-another-service)
 - [NGINX](https://docs.nginx.com/nginx/admin-guide/web-server/reverse-proxy/)
 - [Vercel: Rewrites](https://vercel.com/docs/cli#project-configuration/rewrites)
+
 
 ## Serving Resources Locally
 

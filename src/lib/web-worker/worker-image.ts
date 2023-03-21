@@ -9,11 +9,13 @@ export const createImageConstructor = (env: WebWorkerEnvironment) =>
     s: string;
     l: EventHandler[];
     e: EventHandler[];
+    style: Record<string, string>;
 
     constructor() {
       this.s = '';
       this.l = [];
       this.e = [];
+      this.style = {};
     }
 
     get src() {
@@ -21,11 +23,14 @@ export const createImageConstructor = (env: WebWorkerEnvironment) =>
     }
     set src(src: string) {
       if (debug && webWorkerCtx.$config$.logImageRequests) {
-        logWorker(`Image() request: ${resolveUrl(env, src)}`, env.$winId$);
+        logWorker(`Image() request: ${resolveUrl(env, src, 'image')}`, env.$winId$);
       }
 
-      fetch(resolveUrl(env, src, true), {
+      this.s = src;
+
+      fetch(resolveUrl(env, src, 'image'), {
         mode: 'no-cors',
+        credentials: 'include',
         keepalive: true,
       }).then(
         (rsp) => {

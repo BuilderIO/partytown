@@ -11,6 +11,15 @@ test('storage', async ({ page }) => {
   const testLocalStorageGet = page.locator('#testLocalStorageGet');
   await expect(testLocalStorageGet).toHaveText('12');
 
+  const testLocalStorageSetterWithGetItem = page.locator('#testLocalStorageSetterWithGetItem');
+  await expect(testLocalStorageSetterWithGetItem).toHaveText('141.622');
+
+  const testLocalStorageGetItemWithSetter = page.locator('#testLocalStorageGetItemWithSetter');
+  await expect(testLocalStorageGetItemWithSetter).toHaveText('141.622');
+
+  const testLocalStorageDeleteOperator = page.locator('#testLocalStorageDeleteOperator');
+  await expect(testLocalStorageDeleteOperator).toHaveText('true,true,false,false');
+
   const testLocalStorageSetGet = page.locator('#testLocalStorageSetGet');
   await expect(testLocalStorageSetGet).toHaveText('88');
 

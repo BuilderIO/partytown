@@ -432,9 +432,10 @@
         <script type="text/partytown">
           (function () {
             const doc = document.implementation.createHTMLDocument();
-            doc.body.textContent = '88mph ' + doc.visibilityState;
-
             const elm = document.getElementById('testCreateHTMLDocument');
+            const addlElm = doc.createElement('base');
+
+            doc.body.textContent = '88mph ' + doc.visibilityState + ' ' + addlElm.tagName;
             elm.textContent = doc.body.textContent;
           })();
         </script>
@@ -447,6 +448,18 @@
           (function () {
             const elm = document.getElementById('testVisibilityState');
             elm.textContent = document.visibilityState;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>document.images</strong>
+        <code id="testDocumentImages"></code>
+        <img src="/fake.jpg" />
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDocumentImages');
+            elm.textContent = document.images[0].src;
           })();
         </script>
       </li>

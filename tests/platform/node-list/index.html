@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>NodeList</title>
+    <style>
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+        font-size: 12px;
+      }
+      h1 {
+        margin: 0 0 15px 0;
+      }
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+      }
+      a {
+        display: block;
+        padding: 16px 8px;
+      }
+      a:link,
+      a:visited {
+        text-decoration: none;
+        color: blue;
+      }
+      a:hover {
+        background-color: #eee;
+      }
+      li {
+        display: flex;
+        margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button {
+        white-space: nowrap;
+        flex: 1;
+        margin: 0 5px;
+      }
+    </style>
+    <script>
+      partytown = {
+        logCalls: true,
+        logGetters: true,
+        logSetters: true,
+        logStackTraces: false,
+        logScriptExecution: true,
+        logMainAccess: true,
+      };
+    </script>
+    <script src="/~partytown/debug/partytown.js"></script>
+  </head>
+  <body>
+    <h1>NodeList</h1>
+    <ul>
+      <li>
+        <strong>NodeList is defined</strong>
+        <code id="testNodeList"></code>
+        <script type="text/partytown">
+          (function () {
+            const parentNode = document.createElement('div');
+            const childNodeOne = document.createElement('p');
+            const childNodeTwo = document.createElement('a');
+            const childNodeThree = document.createElement('span');
+            parentNode.appendChild(childNodeOne);
+            parentNode.appendChild(childNodeTwo);
+            parentNode.appendChild(childNodeThree);
+            const nodeList = parentNode.childNodes;
+
+            const isNodeListDefined = Boolean(NodeList && nodeList instanceof NodeList);
+
+            document.getElementById('testNodeList').textContent += String(isNodeListDefined);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>entries()</strong>
+        <code id="testNodeListEntries"></code>
+        <script type="text/partytown">
+          (function () {
+            const parentNode = document.createElement('div');
+            const childNodeOne = document.createElement('p');
+            const childNodeTwo = document.createElement('a');
+            const childNodeThree = document.createElement('span');
+            parentNode.appendChild(childNodeOne);
+            parentNode.appendChild(childNodeTwo);
+            parentNode.appendChild(childNodeThree);
+            const nodeList = parentNode.childNodes;
+
+            for (const [index, node] of nodeList.entries()) {
+              document.getElementById('testNodeListEntries').textContent +=
+                index + ' ' + node.nodeName + ' ';
+            }
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>forEach()</strong>
+        <code id="testNodeListForEach"></code>
+        <script type="text/partytown">
+          (function () {
+            const parentNode = document.createElement('div');
+            const childNodeOne = document.createElement('p');
+            const childNodeTwo = document.createElement('a');
+            const childNodeThree = document.createElement('span');
+            parentNode.appendChild(childNodeOne);
+            parentNode.appendChild(childNodeTwo);
+            parentNode.appendChild(childNodeThree);
+            const nodeList = parentNode.childNodes;
+
+            nodeList.forEach((childNode) => {
+              document.getElementById('testNodeListForEach').textContent +=
+                childNode.nodeName + ' ';
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>item()</strong>
+        <code id="testNodeListItem"></code>
+        <script type="text/partytown">
+          (function () {
+            const parentNode = document.createElement('div');
+            const childNodeOne = document.createElement('p');
+            const childNodeTwo = document.createElement('a');
+            const childNodeThree = document.createElement('span');
+            parentNode.appendChild(childNodeOne);
+            parentNode.appendChild(childNodeTwo);
+            parentNode.appendChild(childNodeThree);
+            const nodeList = parentNode.childNodes;
+
+            document.getElementById('testNodeListItem').textContent +=
+              nodeList.item(0).nodeName + ' ';
+            document.getElementById('testNodeListItem').textContent +=
+              nodeList.item(1).nodeName + ' ';
+            document.getElementById('testNodeListItem').textContent += nodeList.item(2).nodeName;
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>keys()</strong>
+        <code id="testNodeListKeys"></code>
+        <script type="text/partytown">
+          (function () {
+            const parentNode = document.createElement('div');
+            const childNodeOne = document.createElement('p');
+            const childNodeTwo = document.createElement('a');
+            const childNodeThree = document.createElement('span');
+            parentNode.appendChild(childNodeOne);
+            parentNode.appendChild(childNodeTwo);
+            parentNode.appendChild(childNodeThree);
+            const nodeList = parentNode.childNodes;
+
+            for (const key of nodeList.keys()) {
+              document.getElementById('testNodeListKeys').textContent += key + ' ';
+            }
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>length</strong>
+        <code id="testNodeListLength"></code>
+        <script type="text/partytown">
+          (function () {
+            const parentNode = document.createElement('div');
+            const childNodeOne = document.createElement('p');
+            const childNodeTwo = document.createElement('a');
+            const childNodeThree = document.createElement('span');
+            parentNode.appendChild(childNodeOne);
+            parentNode.appendChild(childNodeTwo);
+            parentNode.appendChild(childNodeThree);
+            const nodeList = parentNode.childNodes;
+
+            document.getElementById('testNodeListLength').textContent = String(nodeList.length);
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>values()</strong>
+        <code id="testNodeListValues"></code>
+        <script type="text/partytown">
+          (function () {
+            const parentNode = document.createElement('div');
+            const childNodeOne = document.createElement('p');
+            const childNodeTwo = document.createElement('a');
+            const childNodeThree = document.createElement('span');
+            parentNode.appendChild(childNodeOne);
+            parentNode.appendChild(childNodeTwo);
+            parentNode.appendChild(childNodeThree);
+            const nodeList = parentNode.childNodes;
+
+            for (const value of nodeList.values()) {
+              document.getElementById('testNodeListValues').textContent += value.nodeName + ' ';
+            }
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>Symbol.iterator</strong>
+        <code id="testNodeListSymbolIterator"></code>
+        <script type="text/partytown">
+          (function () {
+            const parentNode = document.createElement('div');
+            const childNodeOne = document.createElement('p');
+            const childNodeTwo = document.createElement('a');
+            const childNodeThree = document.createElement('span');
+            parentNode.appendChild(childNodeOne);
+            parentNode.appendChild(childNodeTwo);
+            parentNode.appendChild(childNodeThree);
+            const nodeList = parentNode.childNodes;
+
+            for (const value of nodeList[Symbol.iterator]()) {
+              document.getElementById('testNodeListSymbolIterator').textContent +=
+                value.nodeName + ' ';
+            }
+          })();
+        </script>
+      </li>
+
+      <script type="text/partytown">
+        (function () {
+          document.body.className = 'completed';
+        })();
+      </script>
+    </ul>
+
+    <hr />
+    <p><a href="/tests/">All Tests</a></p>
+  </body>
+</html>

@@ -10,7 +10,7 @@ You can also use the [lib config](/configuration) if your site must host these f
 
 ## Copy Task Command
 
-For convenience, the Partytown CLI provides a `copylib` task. The last argument should be the directory where the Partytown lib files should be copied too. In the example below, the lib files are copying to the directory `public/~partytown`, relative to the current working directory:
+For convenience, the Partytown CLI provides a `copylib` task. The last argument should be the directory where the Partytown lib files should be copied to. In the example below, the lib files are copying to the directory `public/~partytown`, relative to the current working directory:
 
 ```bash
 partytown copylib public/~partytown
@@ -32,8 +32,8 @@ This command can be used before a build script. Below is an example of copying t
 The same code that the `partytown copylib` CLI task uses, is also exposed as an API and can be imported by any NodeJS script. Below is an example of importing the `@builder.io/partytown/utils` API and copying the lib files to the given directory. Both examples of an ESM import or CommonJS require should work.
 
 ```js
-import { copyLibFiles } from 'builder.io/partytown/utils'; // ESM
-// const { copyLibFiles } = require('builder.io/partytown/utils'); // CommonJS
+import { copyLibFiles } from '@builder.io/partytown/utils'; // ESM
+// const { copyLibFiles } = require('@builder.io/partytown/utils'); // CommonJS
 
 async function myBuildTask() {
   await copyLibFiles('path/to/public/~partytown');
@@ -106,12 +106,13 @@ module.exports = {
       patterns: [
         {
           from: partytown.libDirPath(),
-          to: path.join(__dirname, 'public', '~partytown'),
+          to: path.join(__dirname, "public", "~partytown"),
         },
       ],
     }),
   ],
 };
+
 ```
 ## Laravel Mix
 

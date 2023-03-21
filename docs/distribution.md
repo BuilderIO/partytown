@@ -79,7 +79,7 @@ export function Head() {
 
 ## `@builder.io/partytown/services`
 
-The `services` submodule provides some of the commonly used [forward events](/forwarding-events), such as Google Tag Manager or Facebook Pixel. Please see the [Common Services](/common-services) docs for more informaiton.
+The `services` submodule provides some of the commonly used [forward events](/forwarding-events), such as Google Tag Manager or Facebook Pixel. Please see the [Common Services](/common-services) docs for more information.
 
 ## `@builder.io/partytown/utils`
 

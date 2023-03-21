@@ -92,8 +92,12 @@ test('document', async ({ page }) => {
   await expect(testCreateElementError_).toHaveText('no error');
 
   const testCreateHTMLDocument = page.locator('#testCreateHTMLDocument');
-  await expect(testCreateHTMLDocument).toHaveText('88mph hidden');
+  await expect(testCreateHTMLDocument).toHaveText('88mph hidden BASE');
 
   const testVisibilityState = page.locator('#testVisibilityState');
   await expect(testVisibilityState).toHaveText('visible');
+
+  const testImages = page.locator('#testDocumentImages');
+  const pageUrl = new URL(page.url());
+  await expect(testImages).toHaveText(`${pageUrl.origin}/fake.jpg`);
 });

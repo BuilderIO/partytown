@@ -8,6 +8,8 @@ With `debug` mode and logging enabled, below is an example of the Partytown logs
 
 The [debug config](/configuration) must be `true` in order to see more verbose logging messages. The config table below lists all of the possible log configurations.
 
+If you are using Chrome DevTools to see these logs, make sure that the `Verbose` log level is selected in Console
+
 | Log Config Property     | Description                         |
 | ----------------------- | ----------------------------------- |
 | `logCalls`              | Log method calls                    |
