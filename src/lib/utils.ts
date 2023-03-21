@@ -136,4 +136,4 @@ export const isValidUrl = (url: any): boolean => {
   } catch (_) {
     return false;
   }
-}
+};

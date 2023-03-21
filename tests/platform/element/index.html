@@ -290,6 +290,28 @@
       </li>
 
       <li>
+        <strong>NamedNodeMap</strong>
+        <code id="testNamedNodeMap" test="OK"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testNamedNodeMap');
+            const log = [];
+
+            log.push(elm.attributes.length); // expect: 2 (style; id)
+            log.push(elm.attributes.getNamedItem('test').value); // expect: OK
+            log.push(elm.attributes.test.value); // expect: OK
+            log.push(elm.attributes.item(1).value); // expect: OK
+            elm.setAttribute('data-test', 'DATA');
+            const attr = elm.attributes.getNamedItem('data-test');
+            elm.attributes.removeNamedItem('data-test');
+            log.push(elm.attributes.getNamedItem('data-test')); // expect: null
+
+            elm.textContent = JSON.stringify(log);
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>paragraph constructor.name</strong>
         <div><p style="margin: 0; padding: 0" id="testParagraphConstructor"></p></div>
         <script type="text/partytown">

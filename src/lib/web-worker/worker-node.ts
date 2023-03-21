@@ -58,7 +58,8 @@ export const createNodeCstr = (
             if (isScriptJsType(scriptType)) {
               // @ts-ignore
               const scriptId = newNode.id;
-              const loadOnMainThread = scriptId && config.loadScriptsOnMainThread?.includes?.(scriptId);
+              const loadOnMainThread =
+                scriptId && config.loadScriptsOnMainThread?.includes?.(scriptId);
 
               if (loadOnMainThread) {
                 setter(newNode, ['type'], 'text/javascript');

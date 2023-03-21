@@ -10,7 +10,7 @@ You can also use the [lib config](/configuration) if your site must host these f
 
 ## Copy Task Command
 
-For convenience, the Partytown CLI provides a `copylib` task. The last argument should be the directory where the Partytown lib files should be copied too. In the example below, the lib files are copying to the directory `public/~partytown`, relative to the current working directory:
+For convenience, the Partytown CLI provides a `copylib` task. The last argument should be the directory where the Partytown lib files should be copied to. In the example below, the lib files are copying to the directory `public/~partytown`, relative to the current working directory:
 
 ```bash
 partytown copylib public/~partytown
@@ -102,14 +102,17 @@ const partytown = require('@builder.io/partytown/utils');
 
 module.exports = {
   plugins: [
-    new CopyPlugin([
+    new CopyPlugin({
+      patterns: [
         {
           from: partytown.libDirPath(),
-          to: path.join(__dirname, 'public', '~partytown'),
+          to: path.join(__dirname, "public", "~partytown"),
         },
-      ]),
+      ],
+    }),
   ],
 };
+
 ```
 ## Laravel Mix
 

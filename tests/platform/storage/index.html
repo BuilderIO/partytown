@@ -88,6 +88,56 @@
       </li>
 
       <li>
+        <strong>getItem() / setter</strong>
+        <code id="testLocalStorageSetterWithGetItem"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testLocalStorageSetterWithGetItem');
+            localStorage.kph = '141.622';
+            elm.textContent = localStorage.getItem('kph');
+            localStorage.removeItem('kph');
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>getter / setItem()</strong>
+        <code id="testLocalStorageGetItemWithSetter"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testLocalStorageGetItemWithSetter');
+            localStorage.setItem('kph', '141.622');
+            elm.textContent = localStorage.kph;
+            localStorage.removeItem('kph');
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>delete operator</strong>
+        <code id="testLocalStorageDeleteOperator"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testLocalStorageDeleteOperator');
+            localStorage.setItem('kph', '141.622');
+            const testHas = () => {
+              return [
+                localStorage.getItem('kph') !== null,
+                'kph' in localStorage,
+              ];
+            };
+
+            const results = [
+              ...testHas()
+            ];
+            delete localStorage.kph;
+            results.push(...testHas());
+            elm.textContent = String(results);
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>setItem() / getItem()</strong>
         <code id="testLocalStorageSetGet"></code>
         <script type="text/partytown">

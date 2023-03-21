@@ -35,7 +35,6 @@ export interface PartytownConfig {
     logStackTraces?: boolean;
     // (undocumented)
     mainWindowAccessors?: string[];
-    // Warning: (ae-forgotten-export) The symbol "ResolveUrlType" needs to be exported by the entry point index.d.ts
     resolveUrl?(url: URL, location: Location, type: ResolveUrlType): URL | undefined | null;
     // (undocumented)
     set?: SetHook;
@@ -47,6 +46,9 @@ export type PartytownForwardProperty = string;
 
 // @public
 export const partytownSnippet: (config?: PartytownConfig | undefined) => string;
+
+// @public (undocumented)
+export type ResolveUrlType = 'fetch' | 'xhr' | 'script' | 'iframe' | 'image';
 
 // @public
 export const SCRIPT_TYPE = "text/partytown";

@@ -8,7 +8,7 @@ import { initNextScriptsInWebWorker } from './worker-exec';
 import { initWebWorker } from './init-web-worker';
 import { logWorker, normalizedWinId } from '../log';
 import { workerForwardedTriggerHandle } from './worker-forwarded-trigger';
-import { forwardLocationChange } from "./worker-location";
+import { forwardLocationChange } from './worker-location';
 
 const queuedEvents: MessageEvent<MessageFromSandboxToWorker>[] = [];
 

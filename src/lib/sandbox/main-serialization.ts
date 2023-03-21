@@ -38,11 +38,14 @@ export const serializeForWorker = (
       }
     } else if (type === 'object') {
       if (serializedValueIsError(value)) {
-        return [SerializedType.Error, {
-          name: value.name,
-          message: value.message,
-          stack: value.stack
-        }];
+        return [
+          SerializedType.Error,
+          {
+            name: value.name,
+            message: value.message,
+            stack: value.stack,
+          },
+        ];
       } else if ((cstrName = getConstructorName(value)) === '') {
         // error reading this object, probably "DOMException: Blocked from accessing a cross-origin frame."
         return [SerializedType.Object, {}];
@@ -97,7 +100,7 @@ const serializeObjectForWorker = (
     added.add(obj);
     for (propName in obj) {
       if (isValidMemberName(propName)) {
-        if (propName === 'path' && obj instanceof Event) {
+        if (propName === 'path' && getConstructorName(obj).endsWith('Event')) {
           propValue = obj.composedPath();
         } else {
           propValue = obj[propName];
@@ -126,7 +129,7 @@ const serializeCssRuleForWorker = (cssRule: any) => {
 
 const serializedValueIsError = (value: any) => {
   return value instanceof (window.top as any).Error;
-}
+};
 
 export const deserializeFromWorker = (
   worker: PartytownWebWorker,

@@ -83,6 +83,18 @@
           })();
         </script>
       </li>
+      <li>
+        <strong>Assign value 5 to navigator.a</strong>
+        <code id="testNavKey"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testNavKey');
+            navigator.a=5;
+            elm.textContent = navigator.a;
+            elm.className = 'testNavKey';
+          })();
+        </script>
+      </li>
     </ul>
 
     <hr />
