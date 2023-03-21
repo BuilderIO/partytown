@@ -2,6 +2,7 @@
 
 - [Introduction](/)
   - [How Does It Work?](/how-does-partytown-work)
+  - [FAQs](/faq)
   - [Trade-Offs](/trade-offs)
   - [Browser Support](/browser-support)
 - [Getting Started](/getting-started)
