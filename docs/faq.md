@@ -21,7 +21,7 @@ If a similar [issue](https://github.com/BuilderIO/partytown/issues) does not alr
 
 ## Why do some scripts work, and others don't with Partytown?
 
-Most of yesterday's and today's third-party scripts were built from the ground-up to work only on the main UI thread, rather than from a web worker which does not have access to the DOM or window. Partytown does its best to. Please also see the [Trade-Offs](/trade-offs) docs.
+Most of yesterday's and today's third-party scripts were built from the ground-up to work only on the main UI thread, rather than from a web worker which does not have access to the DOM or window. Partytown does its best to access the main thread from a web-worker, synchronously so the script continues to work as expected. However, because this architecture is different from what's the original designers expected, the script may have an internal error. For all these reasons we encourage you to first thoroughly test your scripts when using them with Partytown. Please also see the [Trade-Offs](/trade-offs) docs.
 
 ## Will you debug why my script is not working for me?
 
