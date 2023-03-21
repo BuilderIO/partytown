@@ -121,7 +121,9 @@ export const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?
 
   scriptContent =
     `with(this){${scriptContent
-      .replace(/\bthis\b/g, '(thi$(this)?window:this)')
+      .replace(/\bthis\b/g, (match, offset, originalStr) =>
+        offset > 0 && originalStr[offset - 1] !== '$' ? '(thi$(this)?window:this)' : match
+      )
       .replace(/\/\/# so/g, '//Xso')}\n;function thi$(t){return t===this}};${(
       webWorkerCtx.$config$.globalFns || []
     )
