@@ -389,6 +389,20 @@
           })();
         </script>
       </li>
+      <li>
+        <strong>script cloneNode</strong>
+        <code id="testSrcCloneNode"></code>
+        <script src="script-1.js" type="text/partytown"></script>
+        <script type="text/partytown">
+          (function () {
+            const scriptElm = document.querySelector("script[src='script-1.js']");
+            const scriptCloneElm = scriptElm.cloneNode(true);
+            const elm = document.getElementById('testSrcCloneNode');
+            elm.textContent = scriptCloneElm.src;
+            elm.className = 'testSrcCloneNode';
+          })();
+        </script>
+      </li>
     </ul>
 
     <hr />
