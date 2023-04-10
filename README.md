@@ -25,7 +25,6 @@ The philosophy is that the main thread should be dedicated to your code, and any
 
 ## Community
 
-- [Partytown Discord](https://discord.gg/bNVSQmPzqy)
 - [@QwikDev](https://twitter.com/QwikDev)
 - [@Builderio](https://twitter.com/builderio)
 - [Local Development](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#local-development)
@@ -37,6 +36,14 @@ The philosophy is that the main thread should be dedicated to your code, and any
 - [Mitosis](https://github.com/BuilderIO/mitosis): Write components once, run everywhere. Compiles to Vue, React, Solid, Angular, Svelte, and more.
 - [Builder](https://github.com/BuilderIO/builder): Drag and drop page builder and CMS for React, Vue, Angular, and more.
 
----
+<br>
+<br>
+<p align="center">
+   <a href="https://www.builder.io/m/developers">
+      <picture>
+         <source media="(prefers-color-scheme: dark)" srcset="https://user-images.githubusercontent.com/844291/230786554-eb225eeb-2f6b-4286-b8c2-535b1131744a.png">
+         <img width="250" alt="Made with love by Builder.io" src="https://user-images.githubusercontent.com/844291/230786555-a58479e4-75f3-4222-a6eb-74c5af953eac.png">
+       </picture>
+   </a>
+</p>
 
-Made with ❤️ by [Builder.io](https://github.com/BuilderIO/)
