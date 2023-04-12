@@ -1,0 +1,18 @@
+name: 📖 Documentation Suggestion
+description: Suggestions on how we can improve the documentation.
+title: '[📖]'
+labels: [documentation]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out docs suggestion! However, if you think it's something you can fix yourself, please submit a PR instead.
+        In every doc page, you will be able to find the "Edit this page" in the right menu!
+
+  - type: textarea
+    id: description
+    attributes:
+      description: 'A clear and concise description of your suggestion to improve the docs.'
+      label: Suggestion
+    validations:
+      required: true

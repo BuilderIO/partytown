@@ -1,0 +1,51 @@
+name: 🐞 Bug Report
+description: Something does not work or is flaky! Let us know!
+labels: [bug, triage]
+title: '[🐞]'
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to fill out this bug report!
+
+  - type: textarea
+    id: description
+    attributes:
+      description: 'A clear and concise description of what you expected to happen instead. If you intend to submit a PR for this issue, tell us in the description. Thanks!'
+      label: Describe the bug
+      placeholder: I am doing ... What I expect is ... What actually happening is ...
+
+    validations:
+      required: true
+
+  - type: input
+    id: reproduction
+    attributes:
+      label: Reproduction
+      description: Please provide a link to a repo that can reproduce the problem you ran into. Please see the [contributing docs](https://github.com/BuilderIO/partytown/blob/main/CODE_OF_CONDUCT.md) for suggestions on create a reproduction. A [minimal reproduction](https://stackoverflow.com/help/minimal-reproducible-example) is required ([Why?](https://antfu.me/posts/why-reproductions-are-required)). If a report is vague (e.g. just a generic error message) and has no reproduction, it will receive a "need reproduction" label. If no reproduction is provided after 3 days, it will be auto-closed.
+      placeholder: Reproduction URL
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction-steps
+    attributes:
+      label: Steps to reproduce
+      description: Please provide any reproduction steps that may need to be described.
+
+  - type: textarea
+    id: browser-info
+    attributes:
+      label: Browser Info
+      description: Which browser did you experience the issue on?
+      render: shell
+      placeholder: Chrome, Safari, Firefox, Edge
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional_information
+    attributes:
+      label: Additional Information
+    validations:
+      required: false
