@@ -27,8 +27,8 @@ The philosophy is that the main thread should be dedicated to your code, and any
 
 - [@QwikDev](https://twitter.com/QwikDev)
 - [@Builderio](https://twitter.com/builderio)
-- [Local Development](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#local-development)
-- [For Plugin Authors / Developers](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#plugin-authors-developers)
+- [Local Development](https://github.com/BuilderIO/partytown/blob/main/CONTRIBUTING.md#local-development)
+- [For Plugin Authors / Developers](https://github.com/BuilderIO/partytown/blob/main/CONTRIBUTING.md#plugin-authors-developers)
 
 ## Related Projects
 
@@ -46,4 +46,3 @@ The philosophy is that the main thread should be dedicated to your code, and any
        </picture>
    </a>
 </p>
-

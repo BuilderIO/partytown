@@ -38,7 +38,7 @@
   - [End-to-end Tests](/tests/)
   - [Services](/tests/benchmarks/services/)
   - [Benchmark](/tests/benchmarks/)
-  - [Local Development](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md)
+  - [Local Development](https://github.com/BuilderIO/partytown/blob/main/CONTRIBUTING.md)
   - [Github](https://github.com/BuilderIO/partytown)
   - [@QwikDev](https://twitter.com/QwikDev)
   - [@Builderio](https://twitter.com/builderio)

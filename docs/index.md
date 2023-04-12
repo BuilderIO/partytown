@@ -64,7 +64,7 @@ Below are just a few examples of third-party scripts that might be a good candid
 
 We try and keep a list of all the plugins and libraries that we know of that works out-of-the-box in Partytown, but we would love your help as plugin & library authors and contributors to keep this list growing.
 
-We have [some documentation](https://github.com/BuilderIO/partytown/blob/main/DEVELOPER.md#plugin-authors--developers) on how you could create and check-in an integration test that shows how your library / plugin works on Partytown. And if it works, then we would love to have the configuration needed (if any) on our [Common Services page](/common-services)
+We have [some documentation](https://github.com/BuilderIO/partytown/blob/main/CONTRIBUTING.md#plugin-authors--developers) on how you could create and check-in an integration test that shows how your library / plugin works on Partytown. And if it works, then we would love to have the configuration needed (if any) on our [Common Services page](/common-services)
 
 ## Articles
 
