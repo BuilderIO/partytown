@@ -14,7 +14,6 @@ body:
       description: 'A clear and concise description of what you expected to happen instead. If you intend to submit a PR for this issue, tell us in the description. Thanks!'
       label: Describe the bug
       placeholder: I am doing ... What I expect is ... What actually happening is ...
-
     validations:
       required: true
 
@@ -28,17 +27,18 @@ body:
       required: true
 
   - type: textarea
-    id: reproduction-steps
+    id: reproduction_steps
     attributes:
       label: Steps to reproduce
       description: Please provide any reproduction steps that may need to be described.
+    validations:
+      required: true
 
-  - type: textarea
-    id: browser-info
+  - type: input
+    id: browser_info
     attributes:
       label: Browser Info
       description: Which browser did you experience the issue on?
-      render: shell
       placeholder: Chrome, Safari, Firefox, Edge
     validations:
       required: true
