@@ -50,7 +50,7 @@ Below is a summary of potential issues after add third-party scripts, referenced
 
 While full webapps "can" run from within Partytown, it's actually best intended for code that doesn't need to be in the [critical rendering path](https://developer.mozilla.org/en-US/docs/Web/Performance/Critical_rendering_path). Most third-party scripts fall into this category, as they're not required for the first-paint. Additionally, the asynchronous nature of most third-party script works well with Partytown, as they can lazily receive user events and post data to their respective services.
 
-Below are just a few examples of third-party scripts that might be a good candidate to run from within a web worker. The goal is to continue validating commonly used services to ensure Partytown has the correct API, but Partytown itself does not hardcode to any specific services. Help us test and join the conversation in [Partytown's Discord](https://discord.gg/bNVSQmPzqy)!
+Below are just a few examples of third-party scripts that might be a good candidate to run from within a web worker. The goal is to continue validating commonly used services to ensure Partytown has the correct API, but Partytown itself does not hardcode to any specific services. Help us test and contribute to this page in Github when you find good working scripts!
 
 - [Google Tag Manager (GTM)](https://marketingplatform.google.com/about/tag-manager/)
 - [Google Analytics (GA)](https://analytics.google.com/)
