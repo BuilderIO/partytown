@@ -83,4 +83,10 @@ test('script', async ({ page }) => {
   await page.waitForSelector('.testAppendMainScript');
   const testAppendMainScript = page.locator('#testAppendMainScript');
   await expect(testAppendMainScript).toHaveText('ptupdate');
+
+  await page.waitForSelector('.testSrcCloneNode');
+  const testSrcCloneNode = page.locator('#testSrcCloneNode');
+  const srcAttr2 = await testSrcCloneNode.textContent();
+  const srcUrl2 = new URL(srcAttr2!);
+  expect(srcUrl2.pathname).toBe('/tests/platform/script/script-1.js');
 });
