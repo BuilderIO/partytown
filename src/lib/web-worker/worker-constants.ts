@@ -65,7 +65,7 @@ export const structureChangingMethodNames = /*#__PURE__*/ commaSplit(
 
 /** setters that could change dimensions of elements */
 export const dimensionChangingSetterNames = /*#__PURE__*/ commaSplit(
-  'className,width,height,hidden,innerHTML,innerText,textContent'
+  'className,width,height,hidden,innerHTML,innerText,textContent,text'
 );
 
 /** method calls that could change dimensions of elements */

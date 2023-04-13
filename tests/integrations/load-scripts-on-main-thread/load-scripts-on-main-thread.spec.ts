@@ -10,4 +10,8 @@ test('integration window accessor', async ({ page }) => {
   await page.waitForSelector('.testInlineScript');
   const testInlineScript = page.locator('#testInlineScript');
   await expect(testInlineScript).toHaveText('12');
+
+  await page.waitForSelector('.testInlineTextScript');
+  const testInlineTextScript = page.locator('#testInlineTextScript');
+  await expect(testInlineTextScript).toHaveText('12');
 });

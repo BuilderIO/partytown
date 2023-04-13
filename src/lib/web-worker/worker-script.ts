@@ -39,6 +39,7 @@ export const patchHTMLScriptElement = (WorkerHTMLScriptElement: any, env: WebWor
     },
 
     textContent: innerHTMLDescriptor,
+    text: innerHTMLDescriptor,
 
     type: {
       get() {

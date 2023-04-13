@@ -15,7 +15,8 @@
       logScriptExecution: true,
       loadScriptsOnMainThread: [
         `http://${location.host}/tests/integrations/load-scripts-on-main-thread/test-script.js`,
-        `inline-test-script`
+        `inline-test-script`,
+        `inline-text-test-script`
       ],
     };
   </script>
@@ -79,29 +80,29 @@
 <body>
 <h1>Load scripts on main thread 🎉</h1>
 <ul>
-    <li>
-      <strong>Script Type:</strong>
-      <code id='testScriptType'></code>
-      <script type='text/partytown'>
-        (() => {
-          const scriptElement = document.getElementById('testScript');
-          const codeElement = document.getElementById('testScriptType');
-          
-          codeElement.innerText = scriptElement.type;
-        })()
-      </script>
-    </li>
-    <li>
-      <strong>Script Source:</strong>
-      <code id='testScriptSource'></code>
-      <script type='text/partytown'>
-        (() => {
-          const scriptElement = document.getElementById('testScript');
-          const codeElement = document.getElementById('testScriptSource');
-          
-          codeElement.innerText = scriptElement.src;
-        })()
-      </script>
+  <li>
+    <strong>Script Type:</strong>
+    <code id='testScriptType'></code>
+    <script type='text/partytown'>
+      (() => {
+        const scriptElement = document.getElementById('testScript');
+        const codeElement = document.getElementById('testScriptType');
+        
+        codeElement.innerText = scriptElement.type;
+      })()
+    </script>
+  </li>
+  <li>
+    <strong>Script Source:</strong>
+    <code id='testScriptSource'></code>
+    <script type='text/partytown'>
+      (() => {
+        const scriptElement = document.getElementById('testScript');
+        const codeElement = document.getElementById('testScriptSource');
+        
+        codeElement.innerText = scriptElement.src;
+      })()
+    </script>
   </li>
   <li>
     <strong>Partytown Config:</strong>
@@ -127,13 +128,35 @@
         script.type = "text/javascript";
         script.id = "inline-test-script";
         script.innerHTML = `
-          document.getElementById('testInlineScript');
-
-          const testEl = document.getElementById('testInlineScript');
-          testEl.className = 'testInlineScript';
-          testEl.innerHTML = globalVariable;
+          (function () {
+            const testEl = document.getElementById('testInlineScript');
+            testEl.className = 'testInlineScript';
+            testEl.innerHTML = globalVariable;
+          })();
         `;
 
+        document.body.appendChild(script);
+      })();
+    </script>
+  </li>
+  <li>
+    <strong>Inline script with text</strong>
+    <code id="testInlineTextScript"></code>
+    <script type="text/javascript">const globalVariable2 = 12;</script>
+    <script type="text/partytown">
+      (function () {
+        const script = document.createElement('script');
+
+        script.type = "text/javascript";
+        script.id = "inline-text-test-script";
+
+        script.text = `
+          (function () {
+            const testEl = document.getElementById('testInlineTextScript');
+            testEl.className = 'testInlineTextScript';
+            testEl.innerHTML = globalVariable2;
+          })();
+        `;
         document.body.appendChild(script);
       })();
     </script>
