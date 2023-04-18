@@ -21,7 +21,6 @@
   - [Qwik](https://qwik.builder.io/integrations/partytown/)
   - [React](/react)
   - [Remix](/remix)
-  - [Shopify](/shopify-plugin)
   - [Shopify Hydrogen](/shopify-hydrogen)
   - [SvelteKit](/sveltekit)
 - [Configuration](/configuration)
