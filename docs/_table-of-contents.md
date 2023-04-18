@@ -18,7 +18,7 @@
   - [HTML](/html)
   - [Next.js](/nextjs)
   - [Nuxt](/nuxt)
-  - [Qwik](https://qwik.builder.io/integrations/partytown/)
+  - [Qwik](https://qwik.builder.io/docs/integrations/partytown/)
   - [React](/react)
   - [Remix](/remix)
   - [Shopify Hydrogen](/shopify-hydrogen)
