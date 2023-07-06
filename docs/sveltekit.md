@@ -58,16 +58,6 @@ const config = {
 export default config
 ```
 
-The above will handle `dev` mode. For `build`, you will need to update your `package.json`:
-```json
-// package.json
-{
-  "scripts": {
-    "build": "partytown copylib .svelte-kit/output/client/~partytown && vite build",
-  }
-}
-```
-
 ## 3. Optional: reverse-proxying scripts 
 
 This will only be necessary depending on which scripts you are using. The implementation will vary depending on hosting platform. See [Partytown's recommended guides](https://partytown.builder.io/proxying-requests#reverse-proxy).
