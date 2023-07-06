@@ -11,14 +11,20 @@ title: Google Tag Manager
 Set the script element's `type` attribute to `text/partytown`. For example:
 
 ```html
-<script type="text/partytown">
-  /* Insert GTM Script Here */
-</script>
+  <!-- GTM script + config -->
+  <script type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=YOUR-ID-HERE"></script>
+  <script type="text/partytown">
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'YOUR-ID-HERE');
+  </script>
 ```
 
 ## Google Analytics 4 (GA4)
 
-When using Google Analytics, it's recommended to use [Google Analytics 4](https://support.google.com/analytics/answer/10089681?hl=en). Not only is GA4 Google's official recommendation, but it's also because the GA4 responses come with the correct CORS headers. Simply put, if you ensure you're using GA4, you will not have to [proxy](/proxying-requests) the requests to `www.google-analytics.com`.
+GA4 responses come with the correct CORS headers, so you will not have to [proxy](/proxying-requests) the requests to `www.google-analytics.com`. [Older versions of Google Analytics](https://support.google.com/analytics/answer/11583528?sjid=5512098847312629397-NA) required proxying, but have been sunset by Google and are no longer supported.
 
 ## Forward Events
 
