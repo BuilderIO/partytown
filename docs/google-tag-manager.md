@@ -11,7 +11,6 @@ title: Google Tag Manager
 Set the script element's `type` attribute to `text/partytown`. For example:
 
 ```html
-  <!-- GTM script + config -->
   <script type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=YOUR-ID-HERE"></script>
   <script type="text/partytown">
     window.dataLayer = window.dataLayer || [];
