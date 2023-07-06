@@ -18,7 +18,6 @@ Adapting from [the HTML integration guide](https://partytown.builder.io/html)
 // src/routes/+layout.svelte
 
 <script>
-  import { onMount } from 'svelte'
   import { partytownSnippet } from '@builder.io/partytown/integration'
 </script>
 
@@ -35,9 +34,9 @@ Adapting from [the HTML integration guide](https://partytown.builder.io/html)
 </svelte:head>
 ```
 
-## 2. Copy the Partytown files to the local filesystem using the Vite plugin
+## 2. Copy the Partytown files to the local filesystem
 
-Adopting [this strategy](https://partytown.builder.io/copy-library-files#vite) from the Partytown+Vite docs:
+Adopting [this strategy](https://partytown.builder.io/copy-library-files#vite) from the Partytown + Vite docs:
 
 ```js
 // vite.config.js
@@ -51,8 +50,7 @@ const config = {
   plugins: [
     sveltekit(),
     partytownVite({
-      // `dest` specifies where files are copied to in production
-      dest: join(process.cwd(), 'static', '~partytown')
+      dest: join(process.cwd(), '.svelte-kit/output/client/~partytown')
     })
   ]
 }
@@ -60,7 +58,15 @@ const config = {
 export default config
 ```
 
-You will need to add `/static/~partytown` to your `.gitignore`.
+The above will handle `dev` mode. For `build`, you will need to update your `package.json`:
+```json
+// package.json
+{
+  "scripts": {
+    "build": "partytown copylib .svelte-kit/output/client/~partytown && vite build",
+  }
+}
+```
 
 ## 3. Optional: reverse-proxying scripts 
 
