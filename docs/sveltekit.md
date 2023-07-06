@@ -2,7 +2,7 @@
 title: SvelteKit
 ---
 
-SvelteKit does not offer any built in integrations, so we will add Partytown manually.
+SvelteKit uses Vite to build, so we can use `partytownVite`.
 
 1. Add the Partytown script to `src/routes/+layout.svelte`
 2. Copy the Partytown files to the local filesystem using the Vite plugin
@@ -34,7 +34,7 @@ Adapting from [the HTML integration guide](https://partytown.builder.io/html)
 </svelte:head>
 ```
 
-## 2. Copy the Partytown files to the local filesystem
+## 2. Copy the Partytown files to the local filesystem using the Vite plugin
 
 Adopting [this strategy](https://partytown.builder.io/copy-library-files#vite) from the Partytown + Vite docs:
 
