@@ -10,7 +10,7 @@ Partytown can work with any HTML page, and doesn't require a specific framework.
 - [HTML](/html)
 - [NextJS](/nextjs)
 - [Nuxt](/nuxt)
-- [Qwik](https://qwik.builder.io/integrations/integration/partytown/)
+- [Qwik](https://qwik.builder.io/docs/integrations/partytown/)
 - [React](/react)
 - [Remix](/remix)
 - [Shopify Hydrogen](/shopify-hydrogen)
