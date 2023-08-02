@@ -32,7 +32,7 @@ While most third-party scripts add the correct [Cross-Origin Resource Sharing (C
 
 Events handled by third-party scripts that call `event.preventDefault()` will have no effect. Partytown is able to be blocking when the code is ran within the web worker, but not in the other direction.
 
-For example, when a user clicks a link on the main thread, a third-party script may have an event handler on that same link, which may have [event.preventDefault()](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault). By the time the web worker receives and event that the link was clicked, it is no longer a synchronous operation and calling `preventDefault()` has no effect. As a side note, you could also see this as a feature when third-party scripts are abusing `scroll` events without using passive event listeners.
+For example, when a user clicks a link on the main thread, a third-party script may have an event handler on that same link, which may have [event.preventDefault()](https://developer.mozilla.org/en-US/docs/Web/API/Event/preventDefault). By the time the web worker receives an event that the link was clicked, it is no longer a synchronous operation and calling `preventDefault()` has no effect. As a side note, you could also see this as a feature when third-party scripts are abusing `scroll` events without using passive event listeners.
 
 ## Cross-Origin IFrame Cookies And Storage
 
