@@ -106,6 +106,12 @@ export function snippet(
     for (i = 0; i < scripts!.length; i++) {
       script = doc.createElement('script');
       script.innerHTML = scripts![i].innerHTML;
+      // We don't need to set a `nonce` on sandbox script since it is loaded via
+      // the `src` attribute. However, we do need to set a `nonce` on the current
+      // script because it contains an inline script. This action ensures that the
+      // script can still be executed even when inline scripts are blocked
+      // (assuming `unsafe-inline` is disabled and `nonce-*` is used instead).
+      script.nonce = config!.nonce;
       doc.head.appendChild(script);
     }
 
