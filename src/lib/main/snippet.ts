@@ -75,7 +75,11 @@ export function snippet(
   function loadSandbox(isAtomics?: number) {
     sandbox = doc.createElement(isAtomics ? 'script' : 'iframe');
     if (!isAtomics) {
-      sandbox.setAttribute('style', 'display:block;width:0;height:0;border:0;visibility:hidden');
+      sandbox.style.display = 'block';
+      sandbox.style.width = '0';
+      sandbox.style.height = '0';
+      sandbox.style.border = '0';
+      sandbox.style.visibility = 'hidden';
       sandbox.setAttribute('aria-hidden', !0 as any);
     }
     sandbox.src =
