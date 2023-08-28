@@ -9,9 +9,7 @@ import { partytownSnippet } from '@builder.io/partytown/integration';
  *
  * @public
  */
-export interface PartytownProps extends PartytownConfig {
-  nonce?: string;
-}
+export interface PartytownProps extends PartytownConfig {}
 
 /**
  * The React `<Partytown/>` component should be placed within the `<head>`

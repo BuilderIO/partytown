@@ -187,7 +187,12 @@ export interface WebWorkerEnvironment {
   $body$: HTMLElement;
   $location$: Location;
   $visibilityState$?: string;
-  $createNode$: (nodeName: string, instanceId: InstanceId, namespace?: string, prevInstance?: WorkerNode) => WorkerNode;
+  $createNode$: (
+    nodeName: string,
+    instanceId: InstanceId,
+    namespace?: string,
+    prevInstance?: WorkerNode
+  ) => WorkerNode;
   $currentScriptId$?: InstanceId;
   $isInitialized$?: number;
   $isLoading$?: number;
@@ -489,6 +494,12 @@ export interface PartytownConfig {
    * Path to the service worker file. Defaults to `partytown-sw.js`.
    */
   swPath?: string;
+  /**
+   * The nonce property may be set on script elements created by Partytown.
+   * This should be set only when dealing with content security policies
+   * and when the use of `unsafe-inline` is disabled (using `nonce-*` instead).
+   */
+  nonce?: string;
 }
 
 /**
