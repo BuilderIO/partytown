@@ -1,7 +1,6 @@
 import * as assert from 'uvu/assert';
-import { run } from '../../src/lib/web-worker/worker-exec';
+import { run, replaceThisInSource } from '../../src/lib/web-worker/worker-exec';
 import { suite } from './utils';
-
 const test = suite();
 
 test('add window id to postMessage() when cross-origin', ({ env, win, winId }) => {
@@ -91,6 +90,66 @@ test('window is window', ({ env, win }) => {
   const s = `window.result = window === window;`;
   run(env, s);
   assert.is(win.result, true);
+});
+
+test('We should replace `this` keyword more or less sane', ({ env, win }) => {
+  const replaceSymbol = '__this';
+  const r = function (code: string) {
+    return replaceThisInSource(code, replaceSymbol);
+  };
+
+  // Should replace:
+  assert.is(r('{ ...this.opts };this.lol;'), '{ ...__this.opts };__this.lol;');
+
+  const input = `
+    // Should replace:
+    { ...this.opts };this.lol;
+    this
+    this.test
+    log(this.variable)
+    \`hello \${CONST} is \${this.CONST2}\`
+
+    // Should not replace:
+    ['this', "this", \`this\`]
+    {this:123}
+    { this: 123 }
+    'sadly we fail at this simple string'
+    "same as this"
+    \`and this is \${false} too\`;
+    a.b.this
+    let _this, This, $this
+  `;
+  const rez = replaceThisInSource(input, `__this`);
+
+  const out = `
+    // Should replace:
+    { ...__this.opts };__this.lol;
+    __this
+    __this.test
+    log(__this.variable)
+    \`hello \${CONST} is \${__this.CONST2}\`
+
+    // Should not replace:
+    ['this', "this", \`this\`]
+    {this:123}
+    { this: 123 }
+    'sadly we fail at __this simple string'
+    "same as __this"
+    \`and __this is \${false} too\`;
+    a.b.this
+    let _this, This, $this
+  `;
+
+  assert.is(rez, out);
+});
+
+test('properly replaces this is js window context', ({ env, win }) => {
+  const s = `
+    let a = { this: 123 };
+    window.result = a.this;
+  `;
+  run(env, s);
+  assert.is(win.result, 123);
 });
 
 test.run();

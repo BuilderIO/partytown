@@ -116,17 +116,28 @@ export const runScriptContent = (
   return errorMsg;
 };
 
+/**
+ * Replace some `this` symbols with a new value.
+ * Still not perfect, but might be better than a more naive regex.
+ * Check out the tests for examples: tests/unit/worker-exec.spec.ts
+ */
+export const replaceThisInSource = (scriptContent: string, newThis: string): string => {
+  // Best for now but not perfect
+  const r = /(?<!([a-zA-Z0-9_$\.\'\"\`]))(\.\.\.)?this(?![a-zA-Z0-9_$:])/g;
+  return scriptContent.replace(r, '$2' + newThis);
+};
+
 export const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) => {
   env.$runWindowLoadEvent$ = 1;
 
+  // First we want to replace all `this` symbols
+  let sourceWithReplacedThis = replaceThisInSource(scriptContent, '(thi$(this)?window:this)');
+
   scriptContent =
-    `with(this){${scriptContent
-      .replace(/\bthis\b/g, (match, offset, originalStr) =>
-        offset > 0 && originalStr[offset - 1] !== '$' ? '(thi$(this)?window:this)' : match
-      )
-      .replace(/\/\/# so/g, '//Xso')}\n;function thi$(t){return t===this}};${(
-      webWorkerCtx.$config$.globalFns || []
-    )
+    `with(this){${sourceWithReplacedThis.replace(
+      /\/\/# so/g,
+      '//Xso'
+    )}\n;function thi$(t){return t===this}};${(webWorkerCtx.$config$.globalFns || [])
       .filter((globalFnName) => /[a-zA-Z_$][0-9a-zA-Z_$]*/.test(globalFnName))
       .map((g) => `(typeof ${g}=='function'&&(this.${g}=${g}))`)
       .join(';')};` + (scriptUrl ? '\n//# sourceURL=' + scriptUrl : '');
