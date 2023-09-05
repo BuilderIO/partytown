@@ -91,6 +91,47 @@ function isSerializable(obj: AnyObject, path: string[] = []): boolean {
   return isSerializableFlag;
 }
 
+const makeObjectSerializable = (obj: AnyObject): AnyObject => {
+  while (!isSerializable(obj)) {
+    const nonSerializablePaths: string[][] = [];
+
+    const findNonSerializablePaths = (currentObj: AnyObject, currentPath: string[] = []): void => {
+      for (const property in currentObj) {
+        if (Object.prototype.hasOwnProperty.call(currentObj, property)) {
+          const newPath = [...currentPath, property];
+          const value = currentObj[property];
+
+          if (!isSerializable(value, newPath)) {
+            nonSerializablePaths.push(newPath);
+          }
+
+          if (isObjectLike(value)) {
+            findNonSerializablePaths(value, newPath);
+          }
+        }
+      }
+    };
+
+    findNonSerializablePaths(obj);
+
+    // Find the deepest non-serializable path
+    const deepestPath = nonSerializablePaths.reduce((deepest, current) =>
+      current.length > deepest.length ? current : deepest,
+      []
+    );
+
+    // Remove the deepest non-serializable property
+    if (deepestPath.length) {
+      let target = obj;
+      for (let i = 0; i < deepestPath.length - 1; i++) {
+        target = target[deepestPath[i]];
+      }
+      delete target[deepestPath[deepestPath.length - 1]];
+    }
+  }
+
+  return obj;
+};
 
 export const readMainPlatform = () => {
   const elm = docImpl.createElement('i');
@@ -149,11 +190,14 @@ export const readMainPlatform = () => {
   });
 
   const interfaces_res = readImplementations(impls, initialInterfaces);
-  const interfaces_filtered = interfaces_res.filter((intrfc) => isSerializable(intrfc));
+  //const interfaces_filtered = interfaces_res.filter((intrfc) => {
+      //if (isSerializable(intrfc)) { return true;} else { console.log("removed an interface", intrfc);return false;
+    //}});
+  const interfaces_cleaned = interfaces_res.map(makeObjectSerializable) as InterfaceInfo[];
 
   const initWebWorkerData: InitWebWorkerData = {
     $config$,
-    $interfaces$: interfaces_filtered,
+    $interfaces$: interfaces_cleaned,
     $libPath$: new URL(libPath, mainWindow.location as any) + '',
     $origin$: origin,
     $localStorage$: readStorage('localStorage'),
