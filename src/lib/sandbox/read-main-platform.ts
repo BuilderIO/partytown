@@ -15,6 +15,83 @@ import {
   StorageItem,
 } from '../types';
 
+
+type AnyObject = { [key: string]: any };
+
+function getTag(value: any): string {
+  if (value == null) {
+    return value === undefined ? "[object Undefined]" : "[object Null]";
+  }
+  return Object.prototype.toString.call(value);
+}
+
+function isObjectLike(value: any): boolean {
+  return typeof value === "object" && value !== null;
+}
+
+function isPlainObject(value: any): boolean {
+  if (!isObjectLike(value) || getTag(value) !== "[object Object]") {
+    return false;
+  }
+  if (Object.getPrototypeOf(value) === null) {
+    return true;
+  }
+  let proto = value;
+  while (Object.getPrototypeOf(proto) !== null) {
+    proto = Object.getPrototypeOf(proto);
+  }
+  return Object.getPrototypeOf(value) === proto;
+}
+
+function isSerializable(obj: AnyObject, path: string[] = []): boolean {
+  let isNestedSerializable: boolean;
+  let isSerializableFlag = true;
+
+  function isPlain(val: any): boolean {
+    return (
+      typeof val === "undefined" ||
+      typeof val === "string" ||
+      typeof val === "boolean" ||
+      typeof val === "number" ||
+      Array.isArray(val) ||
+      isPlainObject(val)
+    );
+  }
+
+  for (const property in obj) {
+    if (Object.prototype.hasOwnProperty.call(obj, property)) {
+      const currentPath = [...path, property];
+      const value = obj[property];
+
+      if (!isPlain(value)) {
+        console.log(
+          `Non-Serializable Property: ${currentPath.join(".")} of type ${typeof value}`
+        );
+        if (typeof value === 'function') {
+          console.log(`Function Name: ${value.name}`);
+        }
+        console.log(
+          "Parent Object:",
+          JSON.stringify(obj, (key, val) =>
+            typeof val === "function" ? val.toString() : val
+          )
+        );
+        isSerializableFlag = false;
+      }
+
+      if (isObjectLike(value)) {
+        isNestedSerializable = isSerializable(value, currentPath);
+        if (!isNestedSerializable) {
+          isSerializableFlag = false;
+        }
+      }
+    }
+  }
+
+  return isSerializableFlag;
+}
+
+
 export const readMainPlatform = () => {
   const elm = docImpl.createElement('i');
   const textNode = docImpl.createTextNode('');
@@ -71,9 +148,12 @@ export const readMainPlatform = () => {
     return v;
   });
 
+  const interfaces_res = readImplementations(impls, initialInterfaces);
+  const interfaces_filtered = interfaces_res.filter((intrfc) => isSerializable(intrfc));
+
   const initWebWorkerData: InitWebWorkerData = {
     $config$,
-    $interfaces$: readImplementations(impls, initialInterfaces),
+    $interfaces$: interfaces_filtered,
     $libPath$: new URL(libPath, mainWindow.location as any) + '',
     $origin$: origin,
     $localStorage$: readStorage('localStorage'),
