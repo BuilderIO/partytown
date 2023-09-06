@@ -100,9 +100,8 @@ export const readMainInterfaces = () => {
   return readImplementations(elms, []);
 };
 
-const cstrs = new Set(['Object']);
-
 const readImplementations = (impls: any[], interfaces: InterfaceInfo[]) => {
+  const cstrs = new Set(['Object']);
   const cstrImpls = impls
     .filter((implData) => implData[0])
     .map((implData) => {
@@ -176,7 +175,7 @@ const readImplementationMember = (
         }
       } else if (memberType === 'object' && value != null) {
         cstrName = getConstructorName(value);
-        if (cstrName !== 'Object' && (self as any)[cstrName]) {
+        if (cstrName !== 'Object' && cstrName !== 'Function' && (self as any)[cstrName]) {
           interfaceMembers.push([memberName, value.nodeType || cstrName]);
         }
       } else if (memberType !== 'symbol') {
