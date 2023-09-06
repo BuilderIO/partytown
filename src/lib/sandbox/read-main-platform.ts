@@ -224,9 +224,8 @@ export const readMainInterfaces = () => {
   return readImplementations(elms, []);
 };
 
-const cstrs = new Set(['Object']);
-
 const readImplementations = (impls: any[], interfaces: InterfaceInfo[]) => {
+  const cstrs = new Set(['Object']);
   const cstrImpls = impls
     .filter((implData) => implData[0])
     .map((implData) => {
