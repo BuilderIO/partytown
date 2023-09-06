@@ -15,124 +15,6 @@ import {
   StorageItem,
 } from '../types';
 
-
-type AnyObject = { [key: string]: any };
-
-function getTag(value: any): string {
-  if (value == null) {
-    return value === undefined ? "[object Undefined]" : "[object Null]";
-  }
-  return Object.prototype.toString.call(value);
-}
-
-function isObjectLike(value: any): boolean {
-  return typeof value === "object" && value !== null;
-}
-
-function isPlainObject(value: any): boolean {
-  if (!isObjectLike(value) || getTag(value) !== "[object Object]") {
-    return false;
-  }
-  if (Object.getPrototypeOf(value) === null) {
-    return true;
-  }
-  let proto = value;
-  while (Object.getPrototypeOf(proto) !== null) {
-    proto = Object.getPrototypeOf(proto);
-  }
-  return Object.getPrototypeOf(value) === proto;
-}
-
-function isSerializable(obj: AnyObject, path: string[] = []): boolean {
-  let isNestedSerializable: boolean;
-  let isSerializableFlag = true;
-
-  function isPlain(val: any): boolean {
-    return (
-      typeof val === "undefined" ||
-      typeof val === "string" ||
-      typeof val === "boolean" ||
-      typeof val === "number" ||
-      Array.isArray(val) ||
-      isPlainObject(val)
-    );
-  }
-
-  for (const property in obj) {
-    if (Object.prototype.hasOwnProperty.call(obj, property)) {
-      const currentPath = [...path, property];
-      const value = obj[property];
-
-      if (!isPlain(value)) {
-        console.log(
-          `Non-Serializable Property: ${currentPath.join(".")} of type ${typeof value}`
-        );
-        if (typeof value === 'function') {
-          console.log(`Function Name: ${value.name}`);
-        }
-        console.log(
-          "Parent Object:",
-          JSON.stringify(obj, (key, val) =>
-            typeof val === "function" ? val.toString() : val
-          )
-        );
-        isSerializableFlag = false;
-      }
-
-      if (isObjectLike(value)) {
-        isNestedSerializable = isSerializable(value, currentPath);
-        if (!isNestedSerializable) {
-          isSerializableFlag = false;
-        }
-      }
-    }
-  }
-
-  return isSerializableFlag;
-}
-
-const makeObjectSerializable = (obj: AnyObject): AnyObject => {
-  while (!isSerializable(obj)) {
-    const nonSerializablePaths: string[][] = [];
-
-    const findNonSerializablePaths = (currentObj: AnyObject, currentPath: string[] = []): void => {
-      for (const property in currentObj) {
-        if (Object.prototype.hasOwnProperty.call(currentObj, property)) {
-          const newPath = [...currentPath, property];
-          const value = currentObj[property];
-
-          if (!isSerializable(value, newPath)) {
-            nonSerializablePaths.push(newPath);
-          }
-
-          if (isObjectLike(value)) {
-            findNonSerializablePaths(value, newPath);
-          }
-        }
-      }
-    };
-
-    findNonSerializablePaths(obj);
-
-    // Find the deepest non-serializable path
-    const deepestPath = nonSerializablePaths.reduce((deepest, current) =>
-      current.length > deepest.length ? current : deepest,
-      []
-    );
-
-    // Remove the deepest non-serializable property
-    if (deepestPath.length) {
-      let target = obj;
-      for (let i = 0; i < deepestPath.length - 1; i++) {
-        target = target[deepestPath[i]];
-      }
-      delete target[deepestPath[deepestPath.length - 1]];
-    }
-  }
-
-  return obj;
-};
-
 export const readMainPlatform = () => {
   const elm = docImpl.createElement('i');
   const textNode = docImpl.createTextNode('');
@@ -189,15 +71,9 @@ export const readMainPlatform = () => {
     return v;
   });
 
-  const interfaces_res = readImplementations(impls, initialInterfaces);
-  //const interfaces_filtered = interfaces_res.filter((intrfc) => {
-      //if (isSerializable(intrfc)) { return true;} else { console.log("removed an interface", intrfc);return false;
-    //}});
-  const interfaces_cleaned = interfaces_res.map(makeObjectSerializable) as InterfaceInfo[];
-
   const initWebWorkerData: InitWebWorkerData = {
     $config$,
-    $interfaces$: interfaces_cleaned,
+    $interfaces$: readImplementations(impls, initialInterfaces),
     $libPath$: new URL(libPath, mainWindow.location as any) + '',
     $origin$: origin,
     $localStorage$: readStorage('localStorage'),
