@@ -299,7 +299,7 @@ const readImplementationMember = (
         }
       } else if (memberType === 'object' && value != null) {
         cstrName = getConstructorName(value);
-        if (cstrName !== 'Object' && (self as any)[cstrName]) {
+        if (cstrName !== 'Object' && cstrName !== 'Function' && (self as any)[cstrName]) {
           interfaceMembers.push([memberName, value.nodeType || cstrName]);
         }
       } else if (memberType !== 'symbol') {
