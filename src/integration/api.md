@@ -35,7 +35,9 @@ export interface PartytownConfig {
     logStackTraces?: boolean;
     // (undocumented)
     mainWindowAccessors?: string[];
+    nonce?: string;
     resolveUrl?(url: URL, location: Location, type: ResolveUrlType): URL | undefined | null;
+    sandboxParent?: string;
     // (undocumented)
     set?: SetHook;
     swPath?: string;
