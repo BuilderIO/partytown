@@ -1,7 +1,9 @@
 import gzipSize from 'gzip-size';
 import { basename, join } from 'path';
-import { readdirSync, readFileSync, readJson, statSync, writeJson } from 'fs-extra';
+import fsExtra from 'fs-extra';
 import type { Plugin, RollupWarning } from 'rollup';
+
+const { readdirSync, readFileSync, readJson, statSync, writeJson } = fsExtra;
 
 export function syncCommunicationModulesPlugin(opts: BuildOptions, msgType: MessageType): Plugin {
   return {

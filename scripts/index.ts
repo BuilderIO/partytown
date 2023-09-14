@@ -1,15 +1,17 @@
-import type { BuildOptions, PackageJson } from './utils';
-import { buildApi } from './build-api';
-import { buildAtomics } from './build-atomics';
-import { buildIntegration } from './build-integration';
-import { buildMediaImplementation } from './build-media-implementations';
-import { buildMainSnippet } from './build-main-snippet';
-import { buildReact } from './build-react';
-import { buildServiceWorker } from './build-service-worker';
-import { buildServices } from './build-services';
-import { buildUtils } from './build-utils';
-import { emptyDir, ensureDir, readJsonSync, writeFile } from 'fs-extra';
-import { join } from 'path';
+import type { BuildOptions, PackageJson } from './utils.js';
+import { buildApi } from './build-api.js';
+import { buildAtomics } from './build-atomics.js';
+import { buildIntegration } from './build-integration.js';
+import { buildMediaImplementation } from './build-media-implementations.js';
+import { buildMainSnippet } from './build-main-snippet.js';
+import { buildReact } from './build-react.js';
+import { buildServiceWorker } from './build-service-worker.js';
+import { buildServices } from './build-services.js';
+import { buildUtils } from './build-utils.js';
+import fsExtra from 'fs-extra';
+import { join } from 'node:path';
+
+const { emptyDir, ensureDir, readJsonSync, writeFile } = fsExtra;
 
 export async function runBuild(rootDir: string, isDev: boolean, isReleaseBuild: boolean) {
   const opts = createBuildOptions(rootDir, isDev, isReleaseBuild);

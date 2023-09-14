@@ -1,6 +1,6 @@
 import type { BuildOptions } from './utils';
 import type { Plugin } from 'rollup';
-import { terser } from 'rollup-plugin-terser';
+import terser from '@rollup/plugin-terser';
 import type { MinifyOptions } from 'terser';
 
 export function minifyPlugin(opts: BuildOptions, debug: boolean) {
