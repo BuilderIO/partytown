@@ -123,8 +123,30 @@ export const runScriptContent = (
  */
 export const replaceThisInSource = (scriptContent: string, newThis: string): string => {
   // Best for now but not perfect
-  const r = /(?<!([a-zA-Z0-9_$\.\'\"\`]))(\.\.\.)?this(?![a-zA-Z0-9_$:])/g;
-  return scriptContent.replace(r, '$2' + newThis);
+  // Use a more complex regex to match potential preceding character and adjust replacement accordingly
+  const r0 = /(?<!([a-zA-Z0-9_$\.\'\"\`]))(\.\.\.)?this(?![a-zA-Z0-9_$:])/g;
+  const r2 = /([a-zA-Z0-9_$\.\'\"\`])?(\.\.\.)?this(?![a-zA-Z0-9_$:])/g;
+
+  return scriptContent.replace(r2, (match, p1, p2) => {
+    // console.log('\n');
+    // console.log('input: ' + scriptContent);
+    // console.log('match: ', match);
+    // console.log('p1: ', p1);
+    // console.log('p2: ', p2);
+    // console.log('\n');
+    if (p1 != null) {
+      return (p1 || '') + (p2 || '') + 'this';
+    }
+    // If there was a preceding character, include it unchanged
+    // console.log('===', scriptContent, '----', p1, p2);
+    return (p1 || '') + (p2 || '') + newThis;
+  });
+
+  // 3.5
+  // const r = /(^|[^a-zA-Z0-9_$.\'\"`])\.\.\.?this(?![a-zA-Z0-9_$:])/g;
+  // return scriptContent.replace(r, '$1' + newThis);
+  // const r = /(?<!([a-zA-Z0-9_$\.\'\"\`]))(\.\.\.)?this(?![a-zA-Z0-9_$:])/g;
+  // return scriptContent.replace(r, '$2' + newThis);
 };
 
 export const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) => {
