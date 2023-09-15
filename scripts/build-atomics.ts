@@ -6,10 +6,10 @@ import {
   syncCommunicationModulesPlugin,
   versionPlugin,
   watchDir,
-} from './utils';
-import { join } from 'path';
-import { minifyPlugin } from './minify';
-import { webWorkerBlobUrlPlugin } from './build-web-worker';
+} from './utils.js';
+import { join } from 'node:path';
+import { minifyPlugin } from './minify.js';
+import { webWorkerBlobUrlPlugin } from './build-web-worker.js';
 
 export function buildAtomics(opts: BuildOptions): RollupOptions[] {
   const rollups: RollupOptions[] = [];

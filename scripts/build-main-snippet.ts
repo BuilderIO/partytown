@@ -1,6 +1,6 @@
-import { BuildOptions, fileSize, jsBannerPlugin, versionPlugin } from './utils';
-import { join } from 'path';
-import { minifyPlugin } from './minify';
+import { BuildOptions, fileSize, jsBannerPlugin, versionPlugin } from './utils.js';
+import { join } from 'node:path';
+import { minifyPlugin } from './minify.js';
 import type { OutputOptions, Plugin, RollupOptions } from 'rollup';
 
 export function buildMainSnippet(opts: BuildOptions): RollupOptions {

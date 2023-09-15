@@ -6,10 +6,12 @@ import {
   onwarn,
   syncCommunicationModulesPlugin,
   versionPlugin,
-} from './utils';
-import { join } from 'path';
-import { writeFile } from 'fs-extra';
-import { minifyPlugin } from './minify';
+} from './utils.js';
+import { join } from 'node:path';
+import fsExtra from 'fs-extra';
+import { minifyPlugin } from './minify.js';
+
+const { writeFile } = fsExtra;
 
 export async function buildWebWorker(opts: BuildOptions, msgType: MessageType, debug: boolean) {
   const build = await rollup({

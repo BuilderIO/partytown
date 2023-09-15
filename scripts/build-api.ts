@@ -1,5 +1,5 @@
-import type { BuildOptions } from './utils';
-import { join } from 'path';
+import type { BuildOptions } from './utils.js';
+import { join } from 'node:path';
 import { Extractor, ExtractorConfig } from '@microsoft/api-extractor';
 
 export function buildApi(opts: BuildOptions) {

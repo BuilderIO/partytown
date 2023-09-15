@@ -1,5 +1,5 @@
-import { BuildOptions, submodulePackageJson } from './utils';
-import { join } from 'path';
+import { BuildOptions, submodulePackageJson } from './utils.js';
+import { join } from 'node:path';
 import type { RollupOptions } from 'rollup';
 
 export function buildUtils(opts: BuildOptions): RollupOptions {

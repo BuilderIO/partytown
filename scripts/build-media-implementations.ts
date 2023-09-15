@@ -1,7 +1,7 @@
 import type { OutputOptions, RollupOptions } from 'rollup';
-import { BuildOptions, fileSize, jsBannerPlugin, versionPlugin, watchDir } from './utils';
-import { join } from 'path';
-import { minifyPlugin } from './minify';
+import { BuildOptions, fileSize, jsBannerPlugin, versionPlugin, watchDir } from './utils.js';
+import { join } from 'node:path';
+import { minifyPlugin } from './minify.js';
 
 export function buildMediaImplementation(opts: BuildOptions): RollupOptions {
   const debugOutput: OutputOptions = {
