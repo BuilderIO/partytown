@@ -49,9 +49,7 @@ import { partytownVite } from '@builder.io/partytown/utils'
 const config = {
   plugins: [
     sveltekit(),
-    partytownVite({
-      dest: join(process.cwd(), '.svelte-kit/output/client/~partytown')
-    })
+    partytownVite()
   ]
 }
 
