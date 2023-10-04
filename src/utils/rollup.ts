@@ -1,10 +1,11 @@
-import { isAbsolute } from 'path';
+import { isAbsolute, join } from 'node:path';
+import type { Plugin } from 'rollup';
 import { copyLibFiles } from './copy-lib-files';
 
 /** @public */
 export interface PartytownRollupOptions {
   /** An absolute path to the destination directory where the lib files should be copied. */
-  dest: string;
+  dest?: string;
 
   /**
    * When `debug` is set to `false`, the `lib/debug` directory will not be copied.
@@ -21,26 +22,23 @@ export interface PartytownRollupOptions {
  *
  * @public
  */
-export function partytownRollup(opts: PartytownRollupOptions) {
+export function partytownRollup(opts?: PartytownRollupOptions) {
   opts = opts || ({} as any);
 
-  if (typeof opts.dest !== 'string' || opts.dest.length === 0) {
-    throw new Error(`Partytown plugin must have "dest" property.`);
-  }
-
-  if (!isAbsolute(opts.dest)) {
-    throw new Error(`Partytown plugin "dest" property must be an absolute path.`);
-  }
-
-  let hasCopied = false;
-
-  const plugin = {
+  const plugin: Plugin = {
     name: 'rollup-plugin-partytown',
-    async writeBundle() {
-      if (!hasCopied) {
-        await copyLibFiles(opts.dest, { debugDir: opts.debug });
-        hasCopied = true;
+    async writeBundle(rollupOpts) {
+      const dir = opts?.dest || (rollupOpts.dir ? join(rollupOpts.dir, '~partytown') : undefined);
+
+      if (typeof dir !== 'string') {
+        throw new Error(`A destination directory must be specified either via the Partytown "dest" option or Rollup output dir option.`);
       }
+    
+      if (!isAbsolute(dir)) {
+        throw new Error(`Partytown plugin "dest" property must be an absolute path.`);
+      }
+
+      await copyLibFiles(dir, { debugDir: opts?.debug });
     },
   };
 
