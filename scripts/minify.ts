@@ -1,7 +1,6 @@
-import type { BuildOptions } from './utils';
+import terser, { Options } from '@rollup/plugin-terser';
 import type { Plugin } from 'rollup';
-import terser from '@rollup/plugin-terser';
-import type { MinifyOptions } from 'terser';
+import type { BuildOptions } from './utils';
 
 export function minifyPlugin(opts: BuildOptions, debug: boolean) {
   if (debug) {
@@ -10,7 +9,7 @@ export function minifyPlugin(opts: BuildOptions, debug: boolean) {
   return [managlePropsPlugin(), terser(minifyOptions(opts, false))];
 }
 
-function minifyOptions(opts: BuildOptions, debug: boolean): MinifyOptions {
+function minifyOptions(opts: BuildOptions, debug: boolean): Options {
   if (debug) {
     const moreCompression = !opts.isDev;
     return {
