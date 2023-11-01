@@ -99,7 +99,6 @@ test('We should replace `this` keyword more or less sane', ({ env, win }) => {
   };
 
   // Should replace:
-  // assert.is(r('`sadly we fail at this simple string`'), '`sadly we fail at this simple string`');
   assert.is(r('{this:123}'), '{this:123}');
   assert.is(r('a.this'), 'a.this');
   assert.is(r('[`kathis`]'), '[`kathis`]');
@@ -124,7 +123,7 @@ test('We should replace `this` keyword more or less sane', ({ env, win }) => {
     a.b.this
     let _this, This, $this
   `;
-  // const rez = replaceThisInSource(input, `__this`);
+  const rez = replaceThisInSource(input, `__this`);
 
   const out = `
     // Should replace:
@@ -145,16 +144,16 @@ test('We should replace `this` keyword more or less sane', ({ env, win }) => {
     let _this, This, $this
   `;
 
-  // assert.is(rez, out);
+  assert.is(rez, out);
 });
 
-// test('properly replaces this is js window context', ({ env, win }) => {
-//   const s = `
-//     let a = { this: 123 };
-//     window.result = a.this;
-//   `;
-//   run(env, s);
-//   assert.is(win.result, 123);
-// });
+test('properly replaces this is js window context', ({ env, win }) => {
+  const s = `
+    let a = { this: 123 };
+    window.result = a.this;
+  `;
+  run(env, s);
+  assert.is(win.result, 123);
+});
 
 test.run();
