@@ -118,35 +118,30 @@ export const runScriptContent = (
 
 /**
  * Replace some `this` symbols with a new value.
- * Still not perfect, but might be better than a more naive regex.
+ * Still not perfect, but might be better than a less advanced regex
  * Check out the tests for examples: tests/unit/worker-exec.spec.ts
+ *
+ * This still fails with simple strings like:
+ * 'sadly we fail at this simple string'
+ *
+ * One way to do that would be to remove all comments from code and do single / double quote counting
+ * per symbol. But this will still fail with evals.
  */
 export const replaceThisInSource = (scriptContent: string, newThis: string): string => {
-  // Best for now but not perfect
-  // Use a more complex regex to match potential preceding character and adjust replacement accordingly
-  const r0 = /(?<!([a-zA-Z0-9_$\.\'\"\`]))(\.\.\.)?this(?![a-zA-Z0-9_$:])/g;
-  const r2 = /([a-zA-Z0-9_$\.\'\"\`])?(\.\.\.)?this(?![a-zA-Z0-9_$:])/g;
+  /**
+   * Best for now but not perfect
+   * We don't use Regex lookbehind, because of Safari
+   */
+  const FIND_THIS = /([a-zA-Z0-9_$\.\'\"\`])?(\.\.\.)?this(?![a-zA-Z0-9_$:])/g;
 
-  return scriptContent.replace(r2, (match, p1, p2) => {
-    // console.log('\n');
-    // console.log('input: ' + scriptContent);
-    // console.log('match: ', match);
-    // console.log('p1: ', p1);
-    // console.log('p2: ', p2);
-    // console.log('\n');
+  return scriptContent.replace(FIND_THIS, (match, p1, p2) => {
+    const prefix = (p1 || '') + (p2 || '');
     if (p1 != null) {
-      return (p1 || '') + (p2 || '') + 'this';
+      return prefix + 'this';
     }
     // If there was a preceding character, include it unchanged
-    // console.log('===', scriptContent, '----', p1, p2);
-    return (p1 || '') + (p2 || '') + newThis;
+    return prefix + newThis;
   });
-
-  // 3.5
-  // const r = /(^|[^a-zA-Z0-9_$.\'\"`])\.\.\.?this(?![a-zA-Z0-9_$:])/g;
-  // return scriptContent.replace(r, '$1' + newThis);
-  // const r = /(?<!([a-zA-Z0-9_$\.\'\"\`]))(\.\.\.)?this(?![a-zA-Z0-9_$:])/g;
-  // return scriptContent.replace(r, '$2' + newThis);
 };
 
 export const run = (env: WebWorkerEnvironment, scriptContent: string, scriptUrl?: string) => {
