@@ -1,4 +1,4 @@
-name: Qwik PR Checks
+name: PR Title Checks
 
 on:
   pull_request_target:
