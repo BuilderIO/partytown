@@ -1,5 +1,3 @@
-
-
 /**
  * WHAT IS THIS FILE?
  *
@@ -8,28 +6,12 @@
  *
  */
 html {
-  -webkit-text-size-adjust: 100%;
-  -moz-tab-size: 4;
-  -o-tab-size: 4;
-  tab-size: 4;
-  font-family:
-    ui-sans-serif,
-    system-ui,
-    -apple-system,
-    BlinkMacSystemFont,
-    "Segoe UI",
-    Roboto,
-    "Helvetica Neue",
-    Arial,
-    "Noto Sans",
-    sans-serif,
-    "Apple Color Emoji",
-    "Segoe UI Emoji",
-    "Segoe UI Symbol",
-    "Noto Color Emoji";
+  height: 100%;
+  background-color: #e6e6e6;
 }
 
 body {
   padding: 0;
   line-height: inherit;
+  height: 100%;
 }
