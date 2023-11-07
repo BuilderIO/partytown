@@ -463,7 +463,7 @@ export const createWindow = (
         win.Worker = undefined;
       }
 
-      addEventListener(...args: any[]) {
+      addEventListener = (...args: any[]) => {
         if (args[0] === 'load') {
           if (env.$runWindowLoadEvent$) {
             setTimeout(() => args[1]({ type: 'load' }));

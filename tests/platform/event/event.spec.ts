@@ -58,4 +58,13 @@ test('events', async ({ page }) => {
   await page.waitForSelector('.testPreventDefault');
   const testPreventDefault = page.locator('#testPreventDefault');
   await expect(testPreventDefault).toHaveText('preventDefault-noop');
+
+  await page.locator('body').dblclick();
+
+  const testWinAddEventListenerNoContext = page.locator('#testWinAddEventListenerNoContext');
+  await expect(testWinAddEventListenerNoContext).toHaveText('Window dblclick');
+  const testWinAddEventListenerNoContextCount = page.locator(
+    '#testWinAddEventListenerNoContextCount'
+  );
+  await expect(testWinAddEventListenerNoContextCount).toHaveText('1');
 });
