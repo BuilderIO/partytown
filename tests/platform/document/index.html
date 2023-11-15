@@ -464,6 +464,25 @@
         </script>
       </li>
 
+      <li>
+        <strong>document.scripts</strong>
+        <code id="testDocumentScripts">
+          <span id="testDocumentScriptsInitial"></span>
+          <span id="testDocumentScriptsAfter"></span>
+        </code>
+        <script type="text/partytown">
+          (function () {
+            document.getElementById('testDocumentScriptsInitial').textContent = document.scripts.length;
+
+            const newScript = document.createElement('script');
+            newScript.innerText = `console.log("new script")`;
+            document.body.appendChild(newScript);
+
+            document.getElementById('testDocumentScriptsAfter').textContent = document.scripts.length;
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');

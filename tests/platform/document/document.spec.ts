@@ -100,4 +100,10 @@ test('document', async ({ page }) => {
   const testImages = page.locator('#testDocumentImages');
   const pageUrl = new URL(page.url());
   await expect(testImages).toHaveText(`${pageUrl.origin}/fake.jpg`);
+
+  const testDocumentScriptsInitial = page.locator('#testDocumentScriptsInitial');
+  await expect(+(await testDocumentScriptsInitial.innerText())).toBeGreaterThan(0);
+  const value = +(await testDocumentScriptsInitial.innerText());
+  const testDocumentScriptsAfter = page.locator('#testDocumentScriptsAfter');
+  await expect(+(await testDocumentScriptsAfter.innerText())).toEqual(value + 1);
 });
