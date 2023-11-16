@@ -3,8 +3,9 @@ import { test, expect } from '@playwright/test';
 test('image', async ({ page }) => {
   await page.goto('/tests/platform/image/');
 
-  const resolveUrlCalled = new Promise(resolve =>
-    page.on('request', request => request.url().includes('resolvedUrl') && resolve(true)));
+  const resolveUrlCalled = new Promise((resolve) =>
+    page.on('request', (request) => request.url().includes('resolvedUrl') && resolve(true))
+  );
 
   await page.waitForSelector('.testImageOnLoad');
   const testImageOnLoad = page.locator('#testImageOnLoad');
@@ -33,6 +34,11 @@ test('image', async ({ page }) => {
   await page.waitForSelector('.testImgListenerLoad');
   const testImgListenerLoad = page.locator('#testImgListenerLoad');
   await expect(testImgListenerLoad).toHaveText('load');
+
+  await page.waitForSelector('.testImgListenerRemoved');
+  const testImgListenerRemoved = page.locator('#testImgListenerRemoved');
+  await page.waitForTimeout(100);
+  await expect(testImgListenerRemoved).toHaveText('onload');
 
   await page.waitForSelector('.testImgListenerError');
   const testImgListenerError = page.locator('#testImgListenerError');
