@@ -4,13 +4,34 @@ title: SvelteKit
 
 SvelteKit uses Vite to build, so we can use `partytownVite`.
 
-1. Add the Partytown script to `src/routes/+layout.svelte`
-2. Copy the Partytown files to the local filesystem using the Vite plugin
-3. Optional: reverse-proxying scripts
-4. Optional: `svelte-preprocess` configuration
-5. Then adding 3rd party scripts
-   
-## 1. Add the Partytown script to `src/routes/+layout.svelte`
+1. Copy the Partytown files to the local filesystem using the Vite plugin
+2. Add the Partytown script to `src/routes/+layout.svelte`
+3. Then add 3rd party scripts
+4. Optional: reverse-proxying scripts
+
+## 1. Copy the Partytown files to the local filesystem using the Vite plugin
+
+Adopting [this strategy](https://partytown.builder.io/copy-library-files#vite) from the Partytown + Vite docs:
+
+```js
+// vite.config.js
+
+import { join } from 'path'
+import { sveltekit } from '@sveltejs/kit/vite'
+import { partytownVite } from '@builder.io/partytown/utils'
+
+/** @type {import('vite').UserConfig} */
+const config = {
+  plugins: [
+    sveltekit(),
+    partytownVite()
+  ]
+}
+
+export default config
+```
+
+## 2. Add the Partytown script to `src/routes/+layout.svelte`
 
 Adapting from [the HTML integration guide](https://partytown.builder.io/html)
 
@@ -34,49 +55,9 @@ Adapting from [the HTML integration guide](https://partytown.builder.io/html)
 </svelte:head>
 ```
 
-## 2. Copy the Partytown files to the local filesystem using the Vite plugin
+## 3. Then add 3rd party scripts
 
-Adopting [this strategy](https://partytown.builder.io/copy-library-files#vite) from the Partytown + Vite docs:
-
-```js
-// vite.config.js
-
-import { join } from 'path'
-import { sveltekit } from '@sveltejs/kit/vite'
-import { partytownVite } from '@builder.io/partytown/utils'
-
-/** @type {import('vite').UserConfig} */
-const config = {
-  plugins: [
-    sveltekit(),
-    partytownVite()
-  ]
-}
-
-export default config
-```
-
-## 3. Optional: reverse-proxying scripts 
-
-This will only be necessary depending on which scripts you are using. The implementation will vary depending on hosting platform. See [Partytown's recommended guides](https://partytown.builder.io/proxying-requests#reverse-proxy).
-
-## 4. Optional: `svelte-preprocess` configuration
-
-Most users will be using `vitePreprocess` and will not need to update their `svelte.config.js` file. However, if you're are using `svelte-preprocess`, you will need to set the `preserve` option:
-```js
-// svelte.config.js
-
-const config = {
-  preprocess: preprocess({
-    preserve: ['partytown']
-  })
-  ...
-}
-```
-
-## 5. Then adding 3rd party scripts
-
-This is where we FINALLY use partytown to add those scripts (note `type="text/partytown"` below). This example shows Google Tag Manager. Putting it together with the previous changes, our `+layout.svelte` looks like:
+This is where we use partytown to add those scripts (note `type="text/partytown"` below). This example shows Google Tag Manager. Putting it together with the previous changes, our `+layout.svelte` looks like:
 
 ```svelte
 // src/routes/+layout.svelte
@@ -105,5 +86,10 @@ This is where we FINALLY use partytown to add those scripts (note `type="text/pa
 	</script>
 </svelte:head>
 ```
+
+## 4. Optional: reverse-proxying scripts 
+
+This will only be necessary depending on which scripts you are using. The implementation will vary depending on hosting platform. See [Partytown's recommended guides](https://partytown.builder.io/proxying-requests#reverse-proxy).
+
 
 Acknowledgements: credit belongs to monogram.io for [an earlier version of this guide](https://monogram.io/blog/add-partytown-to-svelte).
