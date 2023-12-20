@@ -1,4 +1,9 @@
-import { debug } from '../utils';
+import {
+  debug,
+  emptyObjectValue,
+  getOriginalBehavior,
+  resolvePartytownForwardProperty,
+} from '../utils';
 import type { MainWindow, PartytownConfig } from '../types';
 
 export function snippet(
@@ -12,7 +17,7 @@ export function snippet(
   timeout?: any,
   scripts?: NodeListOf<HTMLScriptElement>,
   sandbox?: HTMLIFrameElement | HTMLScriptElement,
-  mainForwardFn?: any,
+  mainForwardFn: typeof win = win,
   isReady?: number
 ) {
   // ES5 just so IE11 doesn't choke on arrow fns
@@ -103,7 +108,8 @@ export function snippet(
     // remove any previously patched functions
     if (top == win) {
       (config!.forward || []).map(function (forwardProps) {
-        delete win[forwardProps.split('.')[0] as any];
+        const { property } = resolvePartytownForwardProperty(forwardProps);
+        delete win[property.split('.')[0] as any];
       });
     }
 
@@ -135,17 +141,34 @@ export function snippet(
     // this is the top window
     // patch the functions that'll be forwarded to the worker
     (config.forward || []).map(function (forwardProps) {
+      const { property, preserveBehavior } = resolvePartytownForwardProperty(forwardProps);
       mainForwardFn = win;
-      forwardProps.split('.').map(function (_, i, forwardPropsArr) {
+      property.split('.').map(function (_, i, forwardPropsArr) {
         mainForwardFn = mainForwardFn[forwardPropsArr[i]] =
           i + 1 < forwardPropsArr.length
-            ? forwardPropsArr[i + 1] == 'push'
-              ? []
-              : mainForwardFn[forwardPropsArr[i]] || {}
-            : function () {
-                // queue these calls to be forwarded on later, after Partytown is ready
-                (win._ptf = win._ptf || []).push(forwardPropsArr, arguments);
-              };
+            ? mainForwardFn[forwardPropsArr[i]] || emptyObjectValue(forwardPropsArr[i + 1])
+            : (() => {
+                let originalFunction: ((...args: any[]) => any) | null = null;
+                if (preserveBehavior) {
+                  const { methodOrProperty, thisObject } = getOriginalBehavior(
+                    win,
+                    forwardPropsArr
+                  );
+                  if (typeof methodOrProperty === 'function') {
+                    originalFunction = (...args: any[]) =>
+                      methodOrProperty.apply(thisObject, ...args);
+                  }
+                }
+                return function () {
+                  let returnValue: any;
+                  if (originalFunction) {
+                    returnValue = originalFunction(arguments);
+                  }
+                  // queue these calls to be forwarded on later, after Partytown is ready
+                  (win._ptf = win._ptf || []).push(forwardPropsArr, arguments);
+                  return returnValue;
+                };
+              })();
       });
     });
   }

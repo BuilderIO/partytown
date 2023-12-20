@@ -21,7 +21,7 @@
 
           return url;
         },
-        forward: ['dataLayer.push'],
+        forward: [{ property: 'dataLayer.push', preserveBehavior: true }],
         logCalls: true,
         logGetters: true,
         logSetters: true,
@@ -123,12 +123,8 @@
       })();
     </script>
 
+    <p><a href="/tests/integrations/gtm/">Partytown GTM</a></p>
     <p><a href="/tests/integrations/gtm/standard.html">Standard GTM</a></p>
-    <p>
-      <a href="/tests/integrations/gtm/preserve-behavior.html"
-        >Partytown GTM with preserveBehavior</a
-      >
-    </p>
     <p><a href="/tests/">All Tests</a></p>
   </body>
 </html>
