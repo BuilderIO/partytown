@@ -154,4 +154,7 @@ test('window', async ({ page }) => {
 
   const testVisualViewport = page.locator('#testVisualViewport');
   await expect(testVisualViewport).toHaveText('scale:1 VisualViewport');
+
+  const testDocumentScripts = page.locator('#testDocumentScripts');
+  await expect(testDocumentScripts).toHaveText('scripts.length: number');
 });

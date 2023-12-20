@@ -769,6 +769,22 @@
         </script>
       </li>
 
+      <li>
+        <strong>Scripts</strong>
+        <code id="testDocumentScripts"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testDocumentScripts');
+            try{
+              const scripts = typeof window.document.scripts.length;
+              elm.textContent = 'scripts.length: ' + scripts;
+            }catch(e){
+              elm.textContent = e.toString();
+            }
+          })();
+        </script>
+      </li>
+
       <script type="text/partytown">
         (function () {
           document.body.classList.add('completed');
