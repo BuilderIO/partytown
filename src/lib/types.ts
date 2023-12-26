@@ -446,7 +446,7 @@ export interface PartytownConfig {
    * @example loadScriptsOnMainThread:['https://test.com/analytics.js', 'inline-script-id']
    * // Loads the `https://test.com/analytics.js` script on the main thread
    */
-  loadScriptsOnMainThread?: string[];
+  loadScriptsOnMainThread?: (string | RegExp)[];
   get?: GetHook;
   set?: SetHook;
   apply?: ApplyHook;

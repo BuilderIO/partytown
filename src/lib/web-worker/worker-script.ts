@@ -28,7 +28,7 @@ export const patchHTMLScriptElement = (WorkerHTMLScriptElement: any, env: WebWor
 
         if (this.type && config.loadScriptsOnMainThread) {
           const shouldExecuteScriptViaMainThread = config.loadScriptsOnMainThread.some(
-            (scriptUrl) => scriptUrl === url
+            (scriptUrl) => new RegExp(scriptUrl).test(url)
           );
 
           if (shouldExecuteScriptViaMainThread) {
