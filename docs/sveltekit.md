@@ -43,14 +43,6 @@ Adapting from [the HTML integration guide](https://partytown.builder.io/html)
 </script>
 
 <svelte:head>
-  <!-- Config options -->
-  <script>
-    // Forward the necessary functions to the web worker layer
-    partytown = {
-      forward: ['dataLayer.push']
-    }
-  </script>
-
   {@html '<script>' + partytownSnippet() + '</script>'}
 </svelte:head>
 ```
@@ -70,6 +62,7 @@ This is where we use partytown to add those scripts (note `type="text/partytown"
 
 <svelte:head>
 	<script>
+		// Forward the necessary functions to the web worker layer
 		partytown = {
 			forward: ['dataLayer.push']
 		};
