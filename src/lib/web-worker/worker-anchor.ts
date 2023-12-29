@@ -16,6 +16,13 @@ export const patchHTMLAnchorElement = (WorkerHTMLAnchorElement: any, env: WebWor
 
         if (typeof value !== 'string') {
           href = getter(this, ['href']);
+          if (href === '') {
+            if (anchorProp === 'protocol') {
+              return ':';
+            }
+            return '';
+          }
+
           setInstanceStateValue(this, StateProp.url, href);
           value = (new URL(href) as any)[anchorProp];
         }
