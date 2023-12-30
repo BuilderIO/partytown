@@ -30,7 +30,7 @@ Facebook Pixel uses the [fbq()](https://www.facebook.com/business/help/402791146
 ```js
 // https://partytown.builder.io/configuration
 {
-  resolveUrl={function(url) {
+  resolveUrl: function(url) {
     if (url.hostname === "connect.facebook.net") {
       var proxyUrl = new URL('https://my-reverse-proxy.com/');
       proxyUrl.searchParams.append('url', url.href);
