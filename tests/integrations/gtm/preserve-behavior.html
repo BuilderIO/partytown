@@ -21,7 +21,7 @@
 
           return url;
         },
-        forward: [{ property: 'dataLayer.push', preserveBehavior: true }],
+        forward: [['dataLayer.push', { preserveBehavior: true }]],
         logCalls: true,
         logGetters: true,
         logSetters: true,

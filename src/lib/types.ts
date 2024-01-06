@@ -522,7 +522,11 @@ export interface PartytownConfig {
   nonce?: string;
 }
 
-export type PartytownForwardSettingsProperty = { property: string; preserveBehavior: boolean };
+export type PartytownForwardPropertySettings = {
+  preserveBehavior?: boolean;
+};
+
+export type PartytownForwardPropertyWithSettings = [string, PartytownForwardPropertySettings?];
 
 /**
  * A forward property to patch on `window`. The forward config property is an string,
@@ -532,7 +536,7 @@ export type PartytownForwardSettingsProperty = { property: string; preserveBehav
  *
  * @public
  */
-export type PartytownForwardProperty = string | PartytownForwardSettingsProperty;
+export type PartytownForwardProperty = string | PartytownForwardPropertyWithSettings;
 
 /**
  * @public

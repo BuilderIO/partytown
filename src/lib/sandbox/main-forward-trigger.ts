@@ -26,7 +26,7 @@ export const mainForwardTrigger = (worker: PartytownWebWorker, $winId$: WinId, w
   win._ptf = undefined;
 
   forwards.map((forwardProps) => {
-    const { property, preserveBehavior } = resolvePartytownForwardProperty(forwardProps);
+    const [property, { preserveBehavior }] = resolvePartytownForwardProperty(forwardProps);
     mainForwardFn = win;
     property.split('.').map((_, i, arr) => {
       mainForwardFn = mainForwardFn[arr[i]] =

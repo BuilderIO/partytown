@@ -2,7 +2,8 @@ import type {
   ApplyPath,
   MainWindow,
   PartytownForwardProperty,
-  PartytownForwardSettingsProperty,
+  PartytownForwardPropertySettings,
+  PartytownForwardPropertyWithSettings,
   RandomId,
   StringIndexable,
 } from './types';
@@ -145,16 +146,19 @@ export const isValidUrl = (url: any): boolean => {
   }
 };
 
+const defaultPartytownForwardPropertySettings: Required<PartytownForwardPropertySettings> = {
+  preserveBehavior: false,
+};
+
 export const resolvePartytownForwardProperty = (
-  property: PartytownForwardProperty
-): PartytownForwardSettingsProperty => {
-  if (typeof property === 'string') {
-    return {
-      property,
-      preserveBehavior: false,
-    };
+  propertyOrPropertyWithSettings: PartytownForwardProperty
+): Required<PartytownForwardPropertyWithSettings> => {
+  if (typeof propertyOrPropertyWithSettings === 'string') {
+    return [propertyOrPropertyWithSettings, defaultPartytownForwardPropertySettings];
   }
-  return property;
+  const [property, settings = defaultPartytownForwardPropertySettings] =
+    propertyOrPropertyWithSettings;
+  return [property, { ...defaultPartytownForwardPropertySettings, ...settings }];
 };
 
 type GetOriginalBehaviorReturn = {

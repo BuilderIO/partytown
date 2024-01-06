@@ -108,7 +108,7 @@ export function snippet(
     // remove any previously patched functions
     if (top == win) {
       (config!.forward || []).map(function (forwardProps) {
-        const { property } = resolvePartytownForwardProperty(forwardProps);
+        const [property] = resolvePartytownForwardProperty(forwardProps);
         delete win[property.split('.')[0] as any];
       });
     }
@@ -141,7 +141,7 @@ export function snippet(
     // this is the top window
     // patch the functions that'll be forwarded to the worker
     (config.forward || []).map(function (forwardProps) {
-      const { property, preserveBehavior } = resolvePartytownForwardProperty(forwardProps);
+      const [property, { preserveBehavior }] = resolvePartytownForwardProperty(forwardProps);
       mainForwardFn = win;
       property.split('.').map(function (_, i, forwardPropsArr) {
         mainForwardFn = mainForwardFn[forwardPropsArr[i]] =
