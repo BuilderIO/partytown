@@ -77,6 +77,26 @@
       </li>
 
       <li>
+        <strong>get empty a.href properties</strong>
+        <div id="emptyAnchorContainer"></div>
+        <script type="text/partytown">
+          (function () {
+            try {
+              const container = document.getElementById('emptyAnchorContainer');
+              container.className = 'emptyAnchorContainer';
+              const elm = document.createElement('a');
+              const { hash, host, hostname, href, origin, pathname, port, protocol, search } = elm;
+              elm.href = pathname;
+              container.textContent = 'Anchor properties: ' + JSON.stringify({ hash, host, hostname, href, origin, pathname, port, protocol, search });
+            } catch (err) {
+                container.textContent = 'An error ocurred: ' + err.message;
+                console.error(err);
+            }
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>constructor.name</strong>
         <div><a id="testAnchorConstructor"></a></div>
         <script type="text/partytown">
@@ -183,8 +203,8 @@
       <li>
         <strong>get <a id="getSearch" href="https://builder.io/?a=42&b=23">search</a></strong>
         <div>
-          <strong>search:</strong><span id="testGetSearch"></span>
-          <strong>href:</strong><span id="testGetSearchHref"></span>
+          <strong>search:</strong><span id="testGetSearch"></span> <strong>href:</strong
+          ><span id="testGetSearchHref"></span>
         </div>
         <script type="text/partytown">
           (function () {
@@ -203,8 +223,8 @@
       <li>
         <strong>set <a id="setSearch" href="https://builder.io/?a=42&b=23">search</a></strong>
         <div>
-          <strong>search:</strong><span id="testSetSearch"></span>
-          <strong>href:</strong><span id="testSetSearchHref"></span>
+          <strong>search:</strong><span id="testSetSearch"></span> <strong>href:</strong
+          ><span id="testSetSearchHref"></span>
         </div>
         <script type="text/partytown">
           (function () {

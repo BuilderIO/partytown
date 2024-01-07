@@ -116,6 +116,22 @@
       </li>
 
       <li>
+        <strong>(window.attachEvent || window.addEventListener)('dblclick')</strong>
+        <code id="testWinAddEventListenerNoContextCount">0</code>
+        <code id="testWinAddEventListenerNoContext"></code>
+        <script type="text/partytown">
+          (function () {
+            let count = 0;
+            (window.attachEvent || window.addEventListener)('dblclick', function (ev) {
+              document.getElementById('testWinAddEventListenerNoContextCount').textContent = ++count;
+              document.getElementById('testWinAddEventListenerNoContext').textContent =
+                this.constructor.name + ' ' + ev.type;
+            });
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>document.createEvent('Event')</strong>
         <code id="testCreateEvent" class="currentTarget"></code>
         <script type="text/partytown">

@@ -7,6 +7,12 @@ test('anchor', async ({ page }) => {
   const testAnchor = page.locator('#testAnchor');
   await expect(testAnchor).toHaveText('/tests/platform/anchor/some/other/path');
 
+  await page.waitForSelector('.emptyAnchorContainer');
+  const emptyAnchorContainer = page.locator('#emptyAnchorContainer');
+  await expect(emptyAnchorContainer).toHaveText(
+    'Anchor properties: {"hash":"","host":"","hostname":"","href":"","origin":"","pathname":"","port":"","protocol":":","search":""}'
+  );
+
   await page.waitForSelector('.testAnchorConstructor');
   const testAnchorConstructor = page.locator('#testAnchorConstructor');
   await expect(testAnchorConstructor).toHaveText('HTMLAnchorElement HTMLAnchorElement');
@@ -34,7 +40,7 @@ test('anchor', async ({ page }) => {
   await page.waitForSelector('.testSetHref2');
   const testSetHref2 = page.locator('#testSetHref2');
   const desiredLocalUrl = new URL(page.url());
-  desiredLocalUrl.pathname = '/local-pathname'
+  desiredLocalUrl.pathname = '/local-pathname';
   await expect(testSetHref2).toHaveText(desiredLocalUrl.toString());
 
   await page.waitForSelector('.testGetSearch');

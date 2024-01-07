@@ -175,6 +175,30 @@
       </li>
 
       <li>
+        <strong>&lt;img&gt; removeEventListener('load')</strong>
+        <code id="testImgListenerRemoved"></code>
+        <script type="text/partytown">
+          (function () {
+            const image = new Image();
+            const elm = document.getElementById('testImgListenerRemoved');
+
+            image.onload = function(){
+              elm.textContent = 'onload';
+            }
+
+            function handleImageLoad(ev) {
+              elm.textContent = ev.type;
+            }
+            image.addEventListener('load', handleImageLoad);
+            image.removeEventListener('load', handleImageLoad);
+            image.src = 'dot.gif?testImgListenerRemoved';
+
+            elm.className = 'testImgListenerRemoved';
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>&lt;img&gt; addEventListener('error')</strong>
         <code id="testImgListenerError"></code>
         <script type="text/partytown">
