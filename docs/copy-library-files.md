@@ -80,8 +80,6 @@ import path from 'path';
 import { partytownVite } from '@builder.io/partytown/utils';
 
 export default ({ command }) => ({
-  build: {
-  },
   plugins: [
     partytownVite({
       dest: path.join(__dirname, 'dist', '~partytown'),
@@ -106,14 +104,14 @@ module.exports = {
       patterns: [
         {
           from: partytown.libDirPath(),
-          to: path.join(__dirname, "public", "~partytown"),
+          to: path.join(__dirname, 'public', '~partytown'),
         },
       ],
     }),
   ],
 };
-
 ```
+
 ## Laravel Mix
 
 Below is an example of using [Mix's copy()](https://laravel-mix.com/docs/6.0/copying-files/) to copy the source `lib` directory found in the [@builder.io/partytown](https://www.npmjs.com/package/@builder.io/partytown) package, to the `public/~partytown/` directory:
