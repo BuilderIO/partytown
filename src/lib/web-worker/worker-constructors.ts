@@ -27,7 +27,7 @@ export const getOrCreateNodeInstance = (
 ) => {
   instance = webWorkerInstances.get(instanceId);
   if (!instance && nodeName && environments[winId]) {
-    const prevInstance =  webWorkerInstances.get(prevInstanceId || '');
+    const prevInstance = webWorkerInstances.get(prevInstanceId || '');
     instance = environments[winId].$createNode$(nodeName, instanceId, namespace, prevInstance);
     webWorkerInstances.set(instanceId, instance!);
   }
