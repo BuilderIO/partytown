@@ -1,4 +1,4 @@
-name: PR Title Checks
+name: PR Prettier Check
 
 on:
   pull_request_target:
@@ -36,4 +36,4 @@ jobs:
 
       - name: Prettier Check
         if: ${{ always() }}
-        run: pnpm fmt
+        run: pnpm fmt.check
