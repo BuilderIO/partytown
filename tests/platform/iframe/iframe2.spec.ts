@@ -1,7 +1,7 @@
 import { expect, test } from '@playwright/test';
 
 test('iframe 2', async ({ page }) => {
-  await page.goto('/tests/platform/iframe/');
+  await page.goto('/tests/platform/iframe/index2.html');
 
   await page.waitForSelector('.testMemberNames');
   const testMemberNames = page.locator('#testMemberNames');
