@@ -1,6 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { expect, test } from '@playwright/test';
 
-test('iframe', async ({ page }) => {
+test('iframe 1', async ({ page }) => {
   await page.goto('/tests/platform/iframe/');
 
   await page.waitForSelector('.testSrc');
@@ -77,6 +77,10 @@ test('iframe', async ({ page }) => {
   await page.waitForSelector('.testOnLoadNoSrc');
   const testOnLoadNoSrc = page.locator('#testOnLoadNoSrc');
   await expect(testOnLoadNoSrc).toHaveText('onload');
+});
+
+test('iframe 2', async ({ page }) => {
+  await page.goto('/tests/platform/iframe/');
 
   await page.waitForSelector('.testMemberNames');
   const testMemberNames = page.locator('#testMemberNames');
