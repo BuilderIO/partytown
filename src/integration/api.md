@@ -47,7 +47,7 @@ export interface PartytownConfig {
 export type PartytownForwardProperty = string;
 
 // @public
-export const partytownSnippet: (config?: PartytownConfig | undefined) => string;
+export const partytownSnippet: (config?: PartytownConfig) => string;
 
 // @public (undocumented)
 export type ResolveUrlType = 'fetch' | 'xhr' | 'script' | 'iframe' | 'image';
