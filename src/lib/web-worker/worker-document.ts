@@ -175,6 +175,12 @@ export const patchDocument = (
       },
     },
 
+    scripts: {
+      get() {
+        return getter(this, ['scripts']);
+      },
+    },
+
     implementation: {
       get() {
         return {

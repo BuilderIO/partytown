@@ -1,6 +1,6 @@
 {
   "name": "@builder.io/partytown",
-  "version": "0.8.1",
+  "version": "0.8.2",
   "description": "Relocate resource intensive third-party scripts off of the main thread and into a web worker.",
   "license": "MIT",
   "main": "index.cjs",
@@ -10,6 +10,7 @@
   "engines": {
     "node": ">=18.0.0"
   },
+  "packageManager": "pnpm@8.12.1",
   "exports": {
     "./integration": {
       "types": "./integration/index.d.ts",
@@ -74,13 +75,16 @@
     "test.atomics": "playwright test tests/integrations tests/platform --config playwright.atomics.config.ts --browser=chromium",
     "test.chromium": "playwright test tests/integrations tests/platform --browser=chromium",
     "test.webkit": "playwright test tests/integrations tests/platform --browser=webkit",
+    "test.firefox": "playwright test tests/integrations tests/platform --browser=firefox",
     "test.nextjs.chromium": "cd tests/nextjs && npm i && playwright test --config playwright.nextjs.ts --browser=chromium",
     "test.nextjs.webkit": "cd tests/nextjs && npm i && playwright test --config playwright.nextjs.ts --browser=webkit",
+    "test.nextjs.firefox": "cd tests/nextjs && npm i && playwright test --config playwright.nextjs.ts --browser=firefox",
     "benchmark": "node tests/benchmarks/run.cjs",
     "test.unit": "uvu -r tsm tests/unit",
     "tsc.watch": "tsc -w",
     "version": "npm run build.prod",
-    "fmt": "prettier --config package.json --write src"
+    "fmt": "prettier --config package.json --write src",
+    "fmt.check": "prettier --config package.json --check src"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.19.5",

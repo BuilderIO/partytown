@@ -226,12 +226,19 @@ export const getOrCreateSerializedInstance = ([
   winId,
   instanceId,
   nodeName,
-  prevInstanceId
+  prevInstanceId,
 ]: SerializedInstance): any => {
   if (instanceId === winId && environments[winId]) {
     return environments[winId].$window$;
   } else {
-    return getOrCreateNodeInstance(winId, instanceId, nodeName!, undefined, undefined, prevInstanceId);
+    return getOrCreateNodeInstance(
+      winId,
+      instanceId,
+      nodeName!,
+      undefined,
+      undefined,
+      prevInstanceId
+    );
   }
 };
 

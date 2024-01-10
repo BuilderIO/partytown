@@ -1,6 +1,9 @@
-import { test, expect, Page } from '@playwright/test';
+import { Page, expect, test } from '@playwright/test';
 
 const testPage = async (page: Page) => {
+  await page.goto('/tests/platform/event/');
+  await page.waitForSelector('.completed');
+
   const testAddEventListener = page.locator('#testAddEventListener');
   const buttonAddEventListener = page.locator('#buttonAddEventListener');
   await buttonAddEventListener.click();
@@ -53,29 +56,23 @@ const testPage = async (page: Page) => {
   await btnPreventDefault.click();
   await page.waitForSelector('.testPreventDefault');
   const testPreventDefault = page.locator('#testPreventDefault');
-  await expect(testPreventDefault).toHaveText('preventDefault-noop');  
+  await expect(testPreventDefault).toHaveText('preventDefault-noop');
+
+  await page.locator('body').dblclick();
+
+  const testWinAddEventListenerNoContext = page.locator('#testWinAddEventListenerNoContext');
+  await expect(testWinAddEventListenerNoContext).toHaveText('Window dblclick');
+  const testWinAddEventListenerNoContextCount = page.locator(
+    '#testWinAddEventListenerNoContextCount'
+  );
+  await expect(testWinAddEventListenerNoContextCount).toHaveText('1');
 };
 
 test('events', async ({ page }) => {
-  await page.goto('/tests/platform/event/');
-
-  await page.waitForSelector('.completed');
-
   await testPage(page);
 });
 
 test('events multiple tabs', async ({ page, context }) => {
-  await page.goto('/tests/platform/event/');
-
-  await page.waitForSelector('.completed');
-
-  const page2 = await context.newPage();
-
-  await page2.goto('/tests/platform/event/');
-
-  await page2.waitForSelector('.completed');  
-
   await testPage(page);
-
-  await testPage(page2);
+  await testPage(await context.newPage());
 });

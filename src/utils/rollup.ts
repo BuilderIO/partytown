@@ -31,9 +31,11 @@ export function partytownRollup(opts?: PartytownRollupOptions) {
       const dir = opts?.dest || (rollupOpts.dir ? join(rollupOpts.dir, '~partytown') : undefined);
 
       if (typeof dir !== 'string') {
-        throw new Error(`A destination directory must be specified either via the Partytown "dest" option or Rollup output dir option.`);
+        throw new Error(
+          `A destination directory must be specified either via the Partytown "dest" option or Rollup output dir option.`
+        );
       }
-    
+
       if (!isAbsolute(dir)) {
         throw new Error(`Partytown plugin "dest" property must be an absolute path.`);
       }

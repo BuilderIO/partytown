@@ -1,6 +1,9 @@
-import { test, expect, Page } from '@playwright/test';
+import { Page, expect, test } from '@playwright/test';
 
 const testPage = async (page: Page) => {
+  await page.goto('/tests/platform/window/');
+  await page.waitForSelector('.completed');
+
   const testWindowName = page.locator('#testWindowName');
   await expect(testWindowName).toHaveText('Window');
 
@@ -150,28 +153,16 @@ const testPage = async (page: Page) => {
 
   const testVisualViewport = page.locator('#testVisualViewport');
   await expect(testVisualViewport).toHaveText('scale:1 VisualViewport');
+
+  const testDocumentScripts = page.locator('#testDocumentScripts');
+  await expect(testDocumentScripts).toHaveText('scripts.length: number');
 };
 
 test('window', async ({ page }) => {
-  await page.goto('/tests/platform/window/');
-
-  await page.waitForSelector('.completed');
-
   await testPage(page);
 });
 
 test('window multiple tabs', async ({ page, context }) => {
-  await page.goto('/tests/platform/window/');
-
-  await page.waitForSelector('.completed');
-
-  const page2 = await context.newPage();
-
-  await page2.goto('/tests/platform/window/');
-
-  await page2.waitForSelector('.completed');  
-
   await testPage(page);
-
-  await testPage(page2);
+  await testPage(await context.newPage());
 });

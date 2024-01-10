@@ -4,6 +4,8 @@ import { logWorker } from '../log';
 import { resolveUrl } from './worker-exec';
 import { webWorkerCtx } from './worker-constants';
 
+type HTMLImageElementEvents = 'load' | 'error';
+
 export const createImageConstructor = (env: WebWorkerEnvironment) =>
   class HTMLImageElement {
     s: string;
@@ -44,12 +46,21 @@ export const createImageConstructor = (env: WebWorkerEnvironment) =>
       );
     }
 
-    addEventListener(eventName: 'load' | 'error', cb: EventHandler) {
+    addEventListener(eventName: HTMLImageElementEvents, cb: EventHandler) {
       if (eventName === 'load') {
         this.l.push(cb);
       }
       if (eventName === 'error') {
         this.e.push(cb);
+      }
+    }
+
+    removeEventListener(eventName: HTMLImageElementEvents, cb: EventHandler) {
+      if (eventName === 'load') {
+        this.l = this.l.filter((fn) => fn !== cb);
+      }
+      if (eventName === 'error') {
+        this.e = this.e.filter((fn) => fn !== cb);
       }
     }
 
