@@ -1,9 +1,6 @@
 import { Page, expect, test } from '@playwright/test';
 
 const testPage = async (page: Page) => {
-  await page.goto('/tests/platform/window/');
-  await page.waitForSelector('.completed');
-
   const testWindowName = page.locator('#testWindowName');
   await expect(testWindowName).toHaveText('Window');
 
@@ -159,10 +156,25 @@ const testPage = async (page: Page) => {
 };
 
 test('window', async ({ page }) => {
+  await page.goto('/tests/platform/window/');
+
+  await page.waitForSelector('.completed');
+
   await testPage(page);
 });
 
 test('window multiple tabs', async ({ page, context }) => {
+  await page.goto('/tests/platform/window/');
+
+  await page.waitForSelector('.completed');
+
+  const page2 = await context.newPage();
+
+  await page2.goto('/tests/platform/window/');
+
+  await page2.waitForSelector('.completed');  
+
   await testPage(page);
-  await testPage(await context.newPage());
+
+  await testPage(page2);
 });

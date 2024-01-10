@@ -1,9 +1,6 @@
 import { Page, expect, test } from '@playwright/test';
 
 const testPage = async (page: Page) => {
-  await page.goto('/tests/platform/event/');
-  await page.waitForSelector('.completed');
-
   const testAddEventListener = page.locator('#testAddEventListener');
   const buttonAddEventListener = page.locator('#buttonAddEventListener');
   await buttonAddEventListener.click();
@@ -69,10 +66,25 @@ const testPage = async (page: Page) => {
 };
 
 test('events', async ({ page }) => {
+  await page.goto('/tests/platform/event/');
+
+  await page.waitForSelector('.completed');
+
   await testPage(page);
 });
 
 test('events multiple tabs', async ({ page, context }) => {
+  await page.goto('/tests/platform/event/');
+
+  await page.waitForSelector('.completed');
+
+  const page2 = await context.newPage();
+
+  await page2.goto('/tests/platform/event/');
+
+  await page2.waitForSelector('.completed');  
+
   await testPage(page);
-  await testPage(await context.newPage());
+
+  await testPage(page2);
 });
