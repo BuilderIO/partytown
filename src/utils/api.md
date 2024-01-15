@@ -24,14 +24,14 @@ export interface LibDirOptions {
 export function libDirPath(opts?: LibDirOptions): string;
 
 // @public
-export function partytownRollup(opts: PartytownRollupOptions): {
+export function partytownRollup(opts?: PartytownRollupOptions): {
     name: string;
 };
 
 // @public (undocumented)
 export interface PartytownRollupOptions {
     debug?: boolean;
-    dest: string;
+    dest?: string;
 }
 
 // @public
