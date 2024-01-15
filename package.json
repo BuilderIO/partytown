@@ -83,8 +83,8 @@
     "test.unit": "uvu -r tsm tests/unit",
     "tsc.watch": "tsc -w",
     "version": "npm run build.prod",
-    "fmt": "prettier --config package.json --write src",
-    "fmt.check": "prettier --config package.json --check src"
+    "fmt": "prettier --config package.json --write src scripts",
+    "fmt.check": "prettier --config package.json --check src scripts"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.19.5",
