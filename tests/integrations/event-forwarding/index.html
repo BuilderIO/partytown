@@ -8,7 +8,12 @@
 
     <script>
       partytown = {
-        forward: ['superDuperFunction', 'superArray.push','KiwiSizing'],
+        forward: [
+          'superDuperFunction',
+          'superArray.push',
+          'KiwiSizing',
+          ['superPreservedArray.unshift', { preserveBehavior: true }],
+        ],
         logCalls: true,
         logGetters: true,
         logSetters: true,
@@ -21,6 +26,7 @@
     <script>
       superDuperFunction('fnReady');
       superArray.push('arrayReady');
+      superPreservedArray.unshift('arrayReady');
     </script>
 
     <script type="text/partytown">
@@ -64,7 +70,29 @@
       })();
     </script>
 
-    <script type='text/partytown'>
+    <script type="text/partytown">
+      (function() {
+        const testArray = document.getElementById('testPreservedArray');
+        const label = document.getElementById('testPreservedArrayReturnValue');
+
+        superPreservedArray = [];
+        superPreservedArray.unshift = function() {
+          switch (arguments[0]) {
+            case 'arrayReady': {
+              testArray.textContent = arguments[0];
+              label.textContent = 1;
+              break;
+            }
+            default: {
+              testArray.textContent = JSON.stringify(arguments[0]);
+              break;
+            }
+          }
+        }
+      })();
+    </script>
+
+    <script type="text/partytown">
       (function () {
         window.KiwiSizing = window.KiwiSizing === undefined ? {} : window.KiwiSizing;
         KiwiSizing.data = {
@@ -78,9 +106,9 @@
     <script type="text/partytown">
       console.log("KiwiSizing", KiwiSizing)
       console.log("KiwiSizing.data", KiwiSizing.data)
-      window.document.getElementById("kiwisizing").innerText = KiwiSizing.data;
+      window.document.getElementById("kiwisizing").innerText = JSON.stringify(KiwiSizing.data);
     </script>
-      <style>
+    <style>
       body {
         font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
           Apple Color Emoji, Segoe UI Emoji;
@@ -112,6 +140,7 @@
       }
       li strong,
       li code,
+      li span,
       li button {
         white-space: nowrap;
         flex: 1;
@@ -146,6 +175,24 @@
             const btn = document.getElementById('buttonArrayPush');
             btn.addEventListener('click', function (ev) {
               superArray.push({ mph: mph++ });
+            });
+          })();
+        </script>
+      </li>
+      <li>
+        <strong>array unshift event with preserve behavior</strong>
+        <button id="buttonPreservedArrayPush">unshift</button>
+        <span>
+          <code id="testPreservedArray"></code>
+          <code id="testPreservedArrayReturnValue"></code>
+        </span>
+        <script>
+          (function () {
+            let mph = 88;
+            const btn = document.getElementById('buttonPreservedArrayPush');
+            const label = document.getElementById('testPreservedArrayReturnValue');
+            btn.addEventListener('click', function (ev) {
+              label.textContent = superPreservedArray.unshift({ mph: mph++ });
             });
           })();
         </script>

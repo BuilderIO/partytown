@@ -522,15 +522,21 @@ export interface PartytownConfig {
   nonce?: string;
 }
 
+export type PartytownForwardPropertySettings = {
+  preserveBehavior?: boolean;
+};
+
+export type PartytownForwardPropertyWithSettings = [string, PartytownForwardPropertySettings?];
+
 /**
- * A foward property to patch on `window`. The foward config property is an string,
+ * A forward property to patch on `window`. The forward config property is an string,
  * representing the call to forward, such as `dataLayer.push` or `fbq`.
  *
  * https://partytown.builder.io/forwarding-events
  *
  * @public
  */
-export type PartytownForwardProperty = string;
+export type PartytownForwardProperty = string | PartytownForwardPropertyWithSettings;
 
 /**
  * @public
@@ -576,7 +582,11 @@ export interface ApplyHookOptions extends HookOptions {
   args: any[];
 }
 
-export interface MainWindow extends Window {
+export type StringIndexable = {
+  [key: string]: any;
+};
+
+export interface MainWindow extends Window, StringIndexable {
   partytown?: PartytownConfig;
   _ptf?: any[];
 }

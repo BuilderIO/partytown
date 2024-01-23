@@ -1,4 +1,12 @@
-import type { ApplyPath, RandomId } from './types';
+import type {
+  ApplyPath,
+  MainWindow,
+  PartytownForwardProperty,
+  PartytownForwardPropertySettings,
+  PartytownForwardPropertyWithSettings,
+  RandomId,
+  StringIndexable,
+} from './types';
 
 export const debug = !!(globalThis as any).partytownDebug;
 
@@ -136,4 +144,64 @@ export const isValidUrl = (url: any): boolean => {
   } catch (_) {
     return false;
   }
+};
+
+const defaultPartytownForwardPropertySettings: Required<PartytownForwardPropertySettings> = {
+  preserveBehavior: false,
+};
+
+export const resolvePartytownForwardProperty = (
+  propertyOrPropertyWithSettings: PartytownForwardProperty
+): Required<PartytownForwardPropertyWithSettings> => {
+  if (typeof propertyOrPropertyWithSettings === 'string') {
+    return [propertyOrPropertyWithSettings, defaultPartytownForwardPropertySettings];
+  }
+  const [property, settings = defaultPartytownForwardPropertySettings] =
+    propertyOrPropertyWithSettings;
+  return [property, { ...defaultPartytownForwardPropertySettings, ...settings }];
+};
+
+type GetOriginalBehaviorReturn = {
+  thisObject: StringIndexable;
+  methodOrProperty: Function | Record<string, unknown> | undefined;
+};
+
+export const getOriginalBehavior = (
+  window: MainWindow,
+  properties: string[]
+): GetOriginalBehaviorReturn => {
+  let thisObject: StringIndexable = window;
+
+  for (let i = 0; i < properties.length - 1; i += 1) {
+    thisObject = thisObject[properties[i]];
+  }
+
+  return {
+    thisObject,
+    methodOrProperty:
+      properties.length > 0 ? thisObject[properties[properties.length - 1]] : undefined,
+  };
+};
+
+const getMethods = (obj: {} | []): string[] => {
+  const properties = new Set<string>();
+  let currentObj: any = obj;
+  do {
+    Object.getOwnPropertyNames(currentObj).forEach((item) => {
+      if (typeof currentObj[item] === 'function') {
+        properties.add(item);
+      }
+    });
+  } while ((currentObj = Object.getPrototypeOf(currentObj)) !== Object.prototype);
+  return Array.from(properties);
+};
+
+const arrayMethods = Object.freeze(getMethods([]));
+
+export const emptyObjectValue = (propertyName: string): [] | {} => {
+  if (arrayMethods.includes(propertyName)) {
+    return [];
+  }
+
+  return {};
 };
