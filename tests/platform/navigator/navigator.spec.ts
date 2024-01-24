@@ -14,4 +14,10 @@ test('navigator', async ({ page }) => {
   await page.waitForSelector('.testNavKey');
   const testNavKey = page.locator('#testNavKey');
   await expect(testNavKey).toContainText('5');
+
+  await page.waitForSelector('.testMainNavigatorProperties');
+  const testMainNavigatorProperties = page.locator('#testMainNavigatorProperties');
+  await expect(testMainNavigatorProperties).toContainText(
+    '{"javaEnabled":false,"cookieEnabled":true,"undefinedProp":"is_undefined","nullProp":null,"falseProp":false,"emptyStringProp":"","newProperty":"is_undefined","pdfViewerEnabled":"available","plugins":"available"}'
+  );
 });
