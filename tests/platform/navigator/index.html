@@ -95,6 +95,31 @@
           })();
         </script>
       </li>
+      <li>
+        <strong>Properties defined in global navigator but not in the worker instance</strong>
+        <code id="testMainNavigatorProperties"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testMainNavigatorProperties');
+            navigator.undefinedProp = undefined;
+            navigator.nullProp = null;
+            navigator.falseProp = false;
+            navigator.emptyStringProp = "";
+            elm.textContent = JSON.stringify({
+              javaEnabled: navigator.javaEnabled(),
+              cookieEnabled: navigator.cookieEnabled,
+              undefinedProp: navigator.undefinedProp ? 'is_defined' : 'is_undefined',
+              nullProp: navigator.nullProp,
+              falseProp: navigator.falseProp,
+              emptyStringProp: navigator.emptyStringProp,
+              newProperty: navigator.newProperty ? 'is_defined' : 'is_undefined',
+              pdfViewerEnabled: typeof navigator.pdfViewerEnabled === 'boolean' ? 'available' : 'undefined',
+              plugins: typeof navigator.plugins.length === 'number' ? 'available' : 'undefined',
+            });
+            elm.className = 'testMainNavigatorProperties';
+          })();
+        </script>
+      </li>
     </ul>
 
     <hr />
