@@ -1,9 +1,11 @@
 import type {
   ApplyPath,
   MainWindow,
+  PartytownConfig,
   PartytownForwardProperty,
   PartytownForwardPropertySettings,
   PartytownForwardPropertyWithSettings,
+  PartytownInternalConfig,
   RandomId,
   StringIndexable,
 } from './types';
@@ -205,3 +207,42 @@ export const emptyObjectValue = (propertyName: string): [] | {} => {
 
   return {};
 };
+
+function escapeRegExp(input: string) {
+  return input.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+export function testIfMustLoadScriptOnMainThread(
+  config: PartytownInternalConfig,
+  value: string
+): boolean {
+  return (
+    config.loadScriptsOnMainThread
+      ?.map(([type, value]) => new RegExp(type === 'string' ? escapeRegExp(value) : value))
+      .some((regexp) => regexp.test(value)) ?? false
+  );
+}
+
+export function serializeConfig(config: PartytownConfig) {
+  return JSON.stringify(config, (key, value) => {
+    if (typeof value === 'function') {
+      value = String(value);
+      if (value.startsWith(key + '(')) {
+        value = 'function ' + value;
+      }
+    }
+    if (key === 'loadScriptsOnMainThread') {
+      value = (
+        value as Required<PartytownConfig | PartytownInternalConfig>['loadScriptsOnMainThread']
+      ).map((scriptUrl) =>
+        Array.isArray(scriptUrl)
+          ? scriptUrl
+          : [
+              typeof scriptUrl === 'string' ? 'string' : 'regexp',
+              typeof scriptUrl === 'string' ? scriptUrl : scriptUrl.source,
+            ]
+      ) satisfies Required<PartytownInternalConfig>['loadScriptsOnMainThread'];
+    }
+    return value;
+  });
+}

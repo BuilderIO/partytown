@@ -157,7 +157,7 @@ export type InterfaceMember =
 
 export interface WebWorkerContext {
   $asyncMsgTimer$?: any;
-  $config$: PartytownConfig;
+  $config$: PartytownInternalConfig;
   $importScripts$: (...urls: string[]) => void;
   $initWindowMedia$?: InitWindowMedia;
   $interfaces$: InterfaceInfo[];
@@ -522,6 +522,10 @@ export interface PartytownConfig {
   nonce?: string;
 }
 
+export type PartytownInternalConfig = Omit<PartytownConfig, 'loadScriptsOnMainThread'> & {
+  loadScriptsOnMainThread?: ['regexp' | 'string', string][];
+};
+
 export type PartytownForwardPropertySettings = {
   preserveBehavior?: boolean;
 };
@@ -715,6 +719,7 @@ export interface WorkerInstance {
 }
 
 export interface WorkerNode extends WorkerInstance, Node {
+  id?: string | undefined | null;
   type: string | undefined;
 }
 

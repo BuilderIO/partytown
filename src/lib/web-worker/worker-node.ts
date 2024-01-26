@@ -16,7 +16,12 @@ import {
   webWorkerCtx,
   WinIdKey,
 } from './worker-constants';
-import { defineConstructorName, SCRIPT_TYPE, SCRIPT_TYPE_EXEC } from '../utils';
+import {
+  defineConstructorName,
+  SCRIPT_TYPE,
+  SCRIPT_TYPE_EXEC,
+  testIfMustLoadScriptOnMainThread,
+} from '../utils';
 import { getInstanceStateValue } from './worker-state';
 import { insertIframe, runScriptContent } from './worker-exec';
 import { isScriptJsType } from './worker-script';
@@ -59,7 +64,7 @@ export const createNodeCstr = (
               // @ts-ignore
               const scriptId = newNode.id;
               const loadOnMainThread =
-                scriptId && config.loadScriptsOnMainThread?.includes?.(scriptId);
+                scriptId && testIfMustLoadScriptOnMainThread(config, scriptId);
 
               if (loadOnMainThread) {
                 setter(newNode, ['type'], 'text/javascript');
