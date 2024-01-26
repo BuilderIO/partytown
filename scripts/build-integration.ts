@@ -15,6 +15,11 @@ export function buildIntegration(opts: BuildOptions): RollupOptions {
       file: join(opts.distIntegrationDir, 'index.mjs'),
       format: 'es',
     },
+    {
+      file: join(opts.testsDir, 'integrations', 'load-scripts-on-main-thread', 'snippet.js'),
+      format: 'umd',
+      name: 'partytownIntegration',
+    },
   ];
 
   return {
