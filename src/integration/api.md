@@ -44,7 +44,15 @@ export interface PartytownConfig {
 }
 
 // @public
-export type PartytownForwardProperty = string;
+export type PartytownForwardProperty = string | PartytownForwardPropertyWithSettings;
+
+// @public (undocumented)
+export type PartytownForwardPropertySettings = {
+    preserveBehavior?: boolean;
+};
+
+// @public (undocumented)
+export type PartytownForwardPropertyWithSettings = [string, PartytownForwardPropertySettings?];
 
 // @public
 export const partytownSnippet: (config?: PartytownConfig) => string;
