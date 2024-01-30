@@ -526,10 +526,16 @@ export type PartytownInternalConfig = Omit<PartytownConfig, 'loadScriptsOnMainTh
   loadScriptsOnMainThread?: ['regexp' | 'string', string][];
 };
 
+/**
+ * @public
+ */
 export type PartytownForwardPropertySettings = {
   preserveBehavior?: boolean;
 };
 
+/**
+ * @public
+ */
 export type PartytownForwardPropertyWithSettings = [string, PartytownForwardPropertySettings?];
 
 /**
