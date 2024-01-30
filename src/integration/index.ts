@@ -16,6 +16,8 @@ export { SCRIPT_TYPE } from '../lib/utils';
 export type {
   PartytownConfig,
   PartytownForwardProperty,
+  PartytownForwardPropertyWithSettings,
+  PartytownForwardPropertySettings,
   ApplyHook,
   GetHook,
   SetHook,

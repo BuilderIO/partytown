@@ -2,6 +2,7 @@ import { suite as uvuSuite } from 'uvu';
 import type {
   MainWindow,
   PartytownConfig,
+  PartytownInternalConfig,
   PartytownWebWorker,
   WebWorkerEnvironment,
   WinId,
@@ -73,7 +74,7 @@ export interface TestContext {
   location: Location;
   loc: any;
   worker: TestWorker;
-  config: PartytownConfig;
+  config: PartytownInternalConfig;
   env: WebWorkerEnvironment;
   snippetCode: string;
   run: (code: string) => any;

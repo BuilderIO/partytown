@@ -23,3 +23,4 @@ node_modules/
 /index.d.ts
 .idea
 .history
+tests/integrations/load-scripts-on-main-thread/snippet.js

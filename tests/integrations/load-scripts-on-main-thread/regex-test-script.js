@@ -1,3 +1,4 @@
 (() => {
-    document.body.classList.add('completed');
-})()
+  self.regexTestScriptRanInTheBackgroundFlag = self.name !== '';
+  document.body.classList.add('regexp-completed');
+})();

@@ -5,6 +5,7 @@ import {
   isValidMemberName,
   len,
   noop,
+  serializeConfig,
 } from '../utils';
 import { config, docImpl, libPath, mainWindow } from './main-globals';
 import {
@@ -61,15 +62,7 @@ export const readMainPlatform = () => {
     readImplementation('Node', textNode),
   ];
 
-  const $config$ = JSON.stringify(config, (k, v) => {
-    if (typeof v === 'function') {
-      v = String(v);
-      if (v.startsWith(k + '(')) {
-        v = 'function ' + v;
-      }
-    }
-    return v;
-  });
+  const $config$ = serializeConfig(config);
 
   const initWebWorkerData: InitWebWorkerData = {
     $config$,
