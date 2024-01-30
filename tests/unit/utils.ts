@@ -1,17 +1,16 @@
+import { createWindow } from 'domino';
+import { readFileSync } from 'fs';
+import { join } from 'path';
 import { suite as uvuSuite } from 'uvu';
 import type {
   MainWindow,
-  PartytownConfig,
   PartytownInternalConfig,
   PartytownWebWorker,
   WebWorkerEnvironment,
   WinId,
 } from '../../src/lib/types';
-import { environments, webWorkerCtx } from '../../src/lib/web-worker/worker-constants';
-import { createWindow } from 'domino';
-import { readFileSync } from 'fs';
-import { join } from 'path';
 import { randomId } from '../../src/lib/utils';
+import { environments, webWorkerCtx } from '../../src/lib/web-worker/worker-constants';
 
 export const suite = (title?: string) => {
   const s = uvuSuite<TestContext>(title);
