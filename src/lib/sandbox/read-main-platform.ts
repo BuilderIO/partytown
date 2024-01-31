@@ -3,7 +3,6 @@ import {
   getConstructorName,
   getNodeName,
   isValidMemberName,
-  len,
   noop,
   serializeConfig,
 } from '../utils';
@@ -13,7 +12,6 @@ import {
   InterfaceInfo,
   InterfaceMember,
   InitWebWorkerData,
-  StorageItem,
 } from '../types';
 
 export const readMainPlatform = () => {
@@ -68,9 +66,7 @@ export const readMainPlatform = () => {
     $config$,
     $interfaces$: readImplementations(impls, initialInterfaces),
     $libPath$: new URL(libPath, mainWindow.location as any) + '',
-    $origin$: origin,
-    $localStorage$: readStorage('localStorage'),
-    $sessionStorage$: readStorage('sessionStorage'),
+    $origin$: origin
   };
 
   addGlobalConstructorUsingPrototype(
@@ -184,18 +180,6 @@ const readImplementationMember = (
   } catch (e) {
     console.warn(e);
   }
-};
-
-const readStorage = (storageName: 'localStorage' | 'sessionStorage') => {
-  let items: StorageItem[] = [];
-  let i = 0;
-  let l = len(mainWindow[storageName]);
-  let key: string;
-  for (; i < l; i++) {
-    key = mainWindow[storageName].key(i)!;
-    items.push([key, mainWindow[storageName].getItem(key)!]);
-  }
-  return items;
 };
 
 const getGlobalConstructor = (mainWindow: any, cstrName: string) =>

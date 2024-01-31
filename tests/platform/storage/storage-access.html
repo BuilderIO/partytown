@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Partytown Test Page" />
+  <title>Storage</title>
+  <style>
+      body {
+          font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+          Apple Color Emoji, Segoe UI Emoji;
+          font-size: 12px;
+      }
+      h1 {
+          margin: 0 0 15px 0;
+      }
+      ul {
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+      }
+      a {
+          display: block;
+          padding: 16px 8px;
+      }
+      a:link,
+      a:visited {
+          text-decoration: none;
+          color: blue;
+      }
+      a:hover {
+          background-color: #eee;
+      }
+      li {
+          display: flex;
+          margin: 15px 0;
+      }
+      li strong,
+      li code,
+      li button {
+          white-space: nowrap;
+          flex: 1;
+          margin: 0 5px;
+      }
+  </style>
+  <script>
+    partytown = {
+      logCalls: true,
+      logGetters: true,
+      logSetters: true,
+      logStackTraces: false,
+      logScriptExecution: true,
+      get: params => {
+        if (params.constructor === 'Window' && params.name === 'sessionStorage.length') {
+          return 10
+        }
+        if (params.constructor === 'Window' && params.name === 'localStorage.length') {
+          return 13
+        }
+        return params.continue
+      },
+      apply: params => {
+        console.log(params.name)
+        if (params.constructor === 'Window' && [
+          'sessionStorage.getItem',
+          'localStorage.getItem',
+          'sessionStorage.setItem',
+          'localStorage.setItem',
+          'sessionStorage.removeItem',
+          'localStorage.removeItem',
+          'sessionStorage.clear',
+          'localStorage.clear',
+          'sessionStorage.key',
+          'localStorage.key',
+        ].includes(params.name)) {
+          return `mocked ${params.name}`
+        }
+        return params.continue
+      },
+    };
+  </script>
+  <script src="/~partytown/debug/partytown.js"></script>
+  <script>
+    localStorage.clear();
+    sessionStorage.clear();
+
+    localStorage.setItem('dmc', '12');
+    sessionStorage.setItem('mph', '88')
+  </script>
+</head>
+<body>
+<h1>Storage</h1>
+<ul>
+  <li>
+    <strong>Local storage size</strong>
+    <code id="localStorageSize"></code>
+    <script type="text/partytown">
+      (function () {
+        const size = localStorage.length;
+        const elm = document.getElementById('localStorageSize');
+        elm.textContent = size;
+      })();
+    </script>
+  </li>
+
+  <li>
+    <strong>Local storage getItem</strong>
+    <code id="localStorageItem"></code>
+    <script type="text/partytown">
+      (function () {
+        const item = localStorage.getItem('dmc');
+        const elm = document.getElementById('localStorageItem');
+        elm.textContent = item;
+      })();
+    </script>
+  </li>
+
+  <li>
+    <strong>Local storage setItem</strong>
+    <script type="text/partytown">
+      (function () {
+        localStorage.setItem('dmc', '9999');
+      })();
+    </script>
+  </li>
+
+  <li>
+    <strong>Local storage removeItem</strong>
+    <script type="text/partytown">
+      (function () {
+        localStorage.removeItem('dmc');
+      })();
+    </script>
+  </li>
+
+  <li>
+    <strong>Local storage clear</strong>
+    <script type="text/partytown">
+      (function () {
+        localStorage.clear();
+      })();
+    </script>
+  </li>
+
+  <li>
+    <strong>Local storage key</strong>
+    <code id="localStorageKey"></code>
+    <script type="text/partytown">
+      (function () {
+        const item = localStorage.key(0);
+        const elm = document.getElementById('localStorageKey');
+        elm.textContent = item;
+      })();
+    </script>
+  </li>
+
+  <li>
+    <strong>Session storage size</strong>
+    <code id="sessionStorageSize"></code>
+    <script type="text/partytown">
+      (function () {
+        const size = sessionStorage.length;
+        const elm = document.getElementById('sessionStorageSize');
+        elm.textContent = size;
+      })();
+    </script>
+  </li>
+
+  <li>
+    <strong>Session storage getItem</strong>
+    <code id="sessionStorageItem"></code>
+    <script type="text/partytown">
+      (function () {
+        const item = sessionStorage.getItem('mph');
+        const elm = document.getElementById('sessionStorageItem');
+        elm.textContent = item;
+      })();
+    </script>
+  </li>
+
+  <li>
+    <strong>Session storage setItem</strong>
+    <script type="text/partytown">
+      (function () {
+        sessionStorage.setItem('mph', '9999');
+      })();
+    </script>
+  </li>
+
+  <li>
+    <strong>Session storage removeItem</strong>
+    <script type="text/partytown">
+      (function () {
+        sessionStorage.removeItem('mph');
+      })();
+    </script>
+  </li>
+
+  <li>
+    <strong>Session storage clear</strong>
+    <script type="text/partytown">
+      (function () {
+        sessionStorage.clear();
+      })();
+    </script>
+  </li>
+
+  <li>
+    <strong>Session storage key</strong>
+    <code id="sessionStorageKey"></code>
+    <script type="text/partytown">
+      (function () {
+        const item = sessionStorage.key(0);
+        const elm = document.getElementById('sessionStorageKey');
+        elm.textContent = item;
+      })();
+    </script>
+  </li>
+
+  <script type="text/partytown">
+    (function () {
+      document.body.classList.add('completed');
+    })();
+  </script>
+</ul>
+
+<hr />
+<p><a href="/tests/">All Tests</a></p>
+</body>
+</html>
