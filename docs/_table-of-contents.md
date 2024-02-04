@@ -22,6 +22,7 @@
   - [React](/react)
   - [Remix](/remix)
   - [Shopify Hydrogen](/shopify-hydrogen)
+  - [Solid](/solid)
   - [SvelteKit](/sveltekit)
 - [Configuration](/configuration)
   - [Overview](/configuration)
