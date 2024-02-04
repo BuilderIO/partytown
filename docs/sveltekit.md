@@ -15,13 +15,18 @@ Adopting [this strategy](https://partytown.builder.io/copy-library-files#vite) f
 
 ```js
 // vite.config.js
-
+import { join } from 'path';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { partytownVite } from '@builder.io/partytown/utils';
 
 /** @type {import('vite').UserConfig} */
 const config = {
-  plugins: [sveltekit(), partytownVite()],
+  plugins: [
+    sveltekit(),
+    partytownVite({
+      dest: join(__dirname, 'dist', '~partytown'),
+    }),
+  ],
 };
 
 export default config;
