@@ -12,18 +12,18 @@ Adopting [this strategy](https://partytown.builder.io/copy-library-files#vite) f
 
 ```js
 // vite.config.js
-[...]
+...
 import { join } from 'path';
 import { partytownVite } from '@builder.io/partytown/utils';
 
 export default defineConfig({
   plugins: [
-    [...]
+    ...
     partytownVite({
       dest: join(__dirname, 'dist', '~partytown'),
     }),
   ],
-  [...]
+  ...
 });
 ```
 
@@ -36,15 +36,15 @@ The snippet below shows you how to setup Partytown scripts in your `index.html` 
   <!-- Partytown config properties -->
   <script>
     partytown = {
-      debug: true,
+      ...
     };
   </script>
 
   <!-- Inlined Partytown Snippet -->
   <script src="/~partytown/debug/partytown.js"></script>
   <script type="text/partytown">
-    console.log("New partytown script.");
-    console.log("Third-Party Script goes here!");
+    console.log("New Partytown script.");
+    console.log("Third-Party script goes here!");
   </script>
 </head>
 ```
