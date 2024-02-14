@@ -127,8 +127,6 @@ export interface InitWebWorkerData {
   $interfaces$: InterfaceInfo[];
   $libPath$: string;
   $sharedDataBuffer$?: SharedArrayBuffer;
-  $localStorage$: StorageItem[];
-  $sessionStorage$: StorageItem[];
   $origin$: string;
 }
 
@@ -638,8 +636,6 @@ export type RefHandler = (...args: any[]) => void;
 export type StateMap = Record<number, StateRecord>;
 
 export type StateRecord = Record<string | number, any>;
-
-export type StorageItem = [/*key*/ string, /*value*/ string];
 
 export const enum CallType {
   Blocking = 1,

@@ -25,8 +25,6 @@ import {
   NamespaceKey,
   postMessages,
   webWorkerCtx,
-  webWorkerlocalStorage,
-  webWorkerSessionStorage,
   WinIdKey,
 } from './worker-constants';
 import { createCustomElementRegistry } from './worker-custom-elements';
@@ -419,8 +417,8 @@ export const createWindow = (
         win.cancelIdleCallback = (id: number) => clearTimeout(id);
 
         // add storage APIs to the window
-        addStorageApi(win, 'localStorage', webWorkerlocalStorage, $isSameOrigin$, env);
-        addStorageApi(win, 'sessionStorage', webWorkerSessionStorage, $isSameOrigin$, env);
+        addStorageApi(win, 'localStorage', $isSameOrigin$, env);
+        addStorageApi(win, 'sessionStorage', $isSameOrigin$, env);
 
         if (!$isSameOrigin$) {
           win.indexeddb = undefined;

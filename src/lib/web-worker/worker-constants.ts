@@ -4,7 +4,6 @@ import type {
   PostMessageData,
   RefHandler,
   RefId,
-  StorageItem,
   WebWorkerContext,
   WebWorkerEnvironment,
   WinId,
@@ -27,10 +26,6 @@ export const postMessages: PostMessageData[] = [];
 
 export const webWorkerCtx: WebWorkerContext = {} as any;
 export const webWorkerInterfaces: InterfaceInfo[] = [];
-
-export const webWorkerlocalStorage = /*#__PURE__*/ new Map<string, StorageItem[]>();
-export const webWorkerSessionStorage = /*#__PURE__*/ new Map<string, StorageItem[]>();
-
 export const environments: { [winId: WinId]: WebWorkerEnvironment } = {};
 
 export const cachedDimensions = /*#__PURE__*/ new Map<string, any>();
