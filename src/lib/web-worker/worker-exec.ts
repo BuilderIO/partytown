@@ -213,14 +213,7 @@ export const insertIframe = (winId: WinId, iframe: WorkerInstance) => {
   callback();
 };
 
-export const resolveToUrl = (
-  env: WebWorkerEnvironment,
-  url: string,
-  type: ResolveUrlType | null,
-  baseLocation?: Location,
-  resolvedUrl?: URL,
-  configResolvedUrl?: any
-) => {
+const resolveBaseLocation = (env: WebWorkerEnvironment, baseLocation?: Location) => {
   baseLocation = env.$location$;
   while (!baseLocation.host) {
     env = environments[env.$parentWinId$];
@@ -229,7 +222,20 @@ export const resolveToUrl = (
       break;
     }
   }
+  return baseLocation;
+}
 
+export const resolveToUrl = (
+  env: WebWorkerEnvironment,
+  url: string,
+  type: ResolveUrlType | null,
+  baseLocation?: Location,
+  resolvedUrl?: URL,
+  configResolvedUrl?: any
+) => {
+  
+  baseLocation = resolveBaseLocation(env, baseLocation);
+  
   resolvedUrl = new URL(url || '', baseLocation as any);
   if (type && webWorkerCtx.$config$.resolveUrl) {
     configResolvedUrl = webWorkerCtx.$config$.resolveUrl!(resolvedUrl, baseLocation, type!);
@@ -242,6 +248,18 @@ export const resolveToUrl = (
 
 export const resolveUrl = (env: WebWorkerEnvironment, url: string, type: ResolveUrlType | null) =>
   resolveToUrl(env, url, type) + '';
+
+export const resolveSendBeaconRequestParameters = (env: WebWorkerEnvironment, url: string) => {
+  const baseLocation = resolveBaseLocation(env);
+  const resolvedUrl = new URL(url || '', baseLocation as any);
+  if (webWorkerCtx.$config$.resolveSendBeaconRequestParameters) {
+    const configResolvedParams = webWorkerCtx.$config$.resolveSendBeaconRequestParameters!(resolvedUrl, baseLocation);
+    if (configResolvedParams) {
+      return configResolvedParams;
+    }
+  }
+  return {};
+}
 
 export const getPartytownScript = () =>
   `<script src="${partytownLibUrl('partytown.js?v=' + VERSION)}"></script>`;
