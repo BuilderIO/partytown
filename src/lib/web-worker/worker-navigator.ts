@@ -25,7 +25,7 @@ export const createNavigator = (env: WebWorkerEnvironment) => {
           body,
           mode: 'no-cors',
           keepalive: true,
-          ...(resolveSendBeaconRequestParameters(env, url))
+          ...resolveSendBeaconRequestParameters(env, url),
         });
         return true;
       } catch (e) {

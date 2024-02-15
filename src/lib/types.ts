@@ -383,7 +383,10 @@ export type ResolveUrlType = 'fetch' | 'xhr' | 'script' | 'iframe' | 'image';
 /**
  * @public
  */
-export type SendBeaconParameters = Pick<RequestInit, 'keepalive' | 'mode' | 'headers' | 'signal' | 'cache'>;
+export type SendBeaconParameters = Pick<
+  RequestInit,
+  'keepalive' | 'mode' | 'headers' | 'signal' | 'cache'
+>;
 
 /**
  * https://partytown.builder.io/configuration
@@ -411,7 +414,10 @@ export interface PartytownConfig {
    * @param location - The current window location.
    * @returns The returned value must be a SendBeaconParameters interface, otherwise the default parameters are used.
    */
-  resolveSendBeaconRequestParameters?(url: URL, location: Location): SendBeaconParameters | undefined | null;
+  resolveSendBeaconRequestParameters?(
+    url: URL,
+    location: Location
+  ): SendBeaconParameters | undefined | null;
   /**
    * When set to `true`, Partytown scripts are not inlined and not minified.
    *

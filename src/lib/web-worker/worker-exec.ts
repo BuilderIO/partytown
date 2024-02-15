@@ -223,7 +223,7 @@ const resolveBaseLocation = (env: WebWorkerEnvironment, baseLocation?: Location)
     }
   }
   return baseLocation;
-}
+};
 
 export const resolveToUrl = (
   env: WebWorkerEnvironment,
@@ -233,9 +233,8 @@ export const resolveToUrl = (
   resolvedUrl?: URL,
   configResolvedUrl?: any
 ) => {
-  
   baseLocation = resolveBaseLocation(env, baseLocation);
-  
+
   resolvedUrl = new URL(url || '', baseLocation as any);
   if (type && webWorkerCtx.$config$.resolveUrl) {
     configResolvedUrl = webWorkerCtx.$config$.resolveUrl!(resolvedUrl, baseLocation, type!);
@@ -253,13 +252,16 @@ export const resolveSendBeaconRequestParameters = (env: WebWorkerEnvironment, ur
   const baseLocation = resolveBaseLocation(env);
   const resolvedUrl = new URL(url || '', baseLocation as any);
   if (webWorkerCtx.$config$.resolveSendBeaconRequestParameters) {
-    const configResolvedParams = webWorkerCtx.$config$.resolveSendBeaconRequestParameters!(resolvedUrl, baseLocation);
+    const configResolvedParams = webWorkerCtx.$config$.resolveSendBeaconRequestParameters!(
+      resolvedUrl,
+      baseLocation
+    );
     if (configResolvedParams) {
       return configResolvedParams;
     }
   }
   return {};
-}
+};
 
 export const getPartytownScript = () =>
   `<script src="${partytownLibUrl('partytown.js?v=' + VERSION)}"></script>`;
