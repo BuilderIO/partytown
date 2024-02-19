@@ -7,12 +7,7 @@ import {
   serializeConfig,
 } from '../utils';
 import { config, docImpl, libPath, mainWindow } from './main-globals';
-import {
-  InterfaceType,
-  InterfaceInfo,
-  InterfaceMember,
-  InitWebWorkerData,
-} from '../types';
+import { InterfaceType, InterfaceInfo, InterfaceMember, InitWebWorkerData } from '../types';
 
 export const readMainPlatform = () => {
   const elm = docImpl.createElement('i');
@@ -66,7 +61,7 @@ export const readMainPlatform = () => {
     $config$,
     $interfaces$: readImplementations(impls, initialInterfaces),
     $libPath$: new URL(libPath, mainWindow.location as any) + '',
-    $origin$: origin
+    $origin$: origin,
   };
 
   addGlobalConstructorUsingPrototype(

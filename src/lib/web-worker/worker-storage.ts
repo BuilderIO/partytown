@@ -52,7 +52,7 @@ export const addStorageApi = (
 
     get length() {
       if (isSameOrigin) {
-        return getter(win, [storageName, 'length'])
+        return getter(win, [storageName, 'length']);
       } else {
         warnCrossOrigin('length', storageName, env);
       }
