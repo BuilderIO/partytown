@@ -587,7 +587,11 @@ export const createWindow = (
               args[1] = resolveUrl(env, args[1], 'xhr');
               (super.open as any)(...args);
             }
-            set withCredentials(_: any) {}
+            set withCredentials(_: boolean) {
+              if (webWorkerCtx.$config$.allowXhrCredentials) {
+                super.withCredentials = _;
+              }
+            }
             toString() {
               return str;
             }

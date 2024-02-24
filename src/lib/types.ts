@@ -449,6 +449,11 @@ export interface PartytownConfig {
   set?: SetHook;
   apply?: ApplyHook;
   /**
+   * When set to true, the Partytown Web Worker will respect the `withCredentials` option of XMLHttpRequests.
+   * Default: false
+   */
+  allowXhrCredentials?: boolean;
+  /**
    * An absolute path to the root directory which Partytown library files
    * can be found. The library path must start and end with a `/`.
    * By default the files will load from the server's `/~partytown/` directory.

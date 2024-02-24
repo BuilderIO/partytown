@@ -92,6 +92,24 @@
       </li>
 
       <li>
+        <strong>fetch Set-Cookie</strong>
+        <code>
+          <span id="testFetchCookie"></span>
+        </code>
+        <script type="text/partytown">
+          (async function () {
+            const url = new URL('/api/cookie?name=server-test-fetch', location.origin);
+            const elm = document.getElementById('testFetchCookie');
+            const rsp = await fetch(url, {
+              credentials: 'include',
+            });
+            elm.textContent = document.cookie;
+            elm.className = 'testFetchCookie';
+          })();
+        </script>
+      </li>
+
+      <li>
         <strong>XMLHttpRequest</strong>
         <code id="testXMLHttpRequest"></code>
         <script type="text/partytown">
@@ -157,6 +175,27 @@
             };
 
             elm.textContent = !invalidXMLHttpRequest();
+          })();
+        </script>
+      </li>
+
+      <li>
+        <strong>XMLHttpRequest Set-Cookie</strong>
+        <code>
+          <span id="testXMLHttpRequestCookie"></span>
+        </code>
+        <script type="text/partytown">
+          (async function () {
+            const url = new URL('/api/cookie?name=server-test-xhr', location.origin);
+            const elm = document.getElementById('testXMLHttpRequestCookie');
+            const xhr = new XMLHttpRequest();
+            xhr.addEventListener('load', function () {
+              elm.textContent = document.cookie;
+              elm.className = 'testXMLHttpRequestCookie';
+            });
+            xhr.open('GET', url);
+            xhr.withCredentials = true;
+            xhr.send();
           })();
         </script>
       </li>
