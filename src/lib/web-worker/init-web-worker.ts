@@ -1,7 +1,4 @@
-import {
-  commaSplit,
-  webWorkerCtx,
-} from './worker-constants';
+import { commaSplit, webWorkerCtx } from './worker-constants';
 import type { InitWebWorkerData, PartytownInternalConfig } from '../types';
 
 export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
