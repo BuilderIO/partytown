@@ -1,7 +1,4 @@
-import {
-  commaSplit,
-  webWorkerCtx,
-} from './worker-constants';
+import { commaSplit, webWorkerCtx } from './worker-constants';
 import type { InitWebWorkerData, PartytownInternalConfig } from '../types';
 
 export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
@@ -20,7 +17,7 @@ export const initWebWorker = (initWebWorkerData: InitWebWorkerData) => {
   delete (self as any).postMessage;
   delete (self as any).WorkerGlobalScope;
 
-  (commaSplit('resolveUrl,get,set,apply') as any).map(
+  (commaSplit('resolveUrl,resolveSendBeaconRequestParameters,get,set,apply') as any).map(
     (configName: keyof PartytownInternalConfig) => {
       if (config[configName]) {
         config[configName] = new Function('return ' + config[configName])();
