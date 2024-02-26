@@ -13,7 +13,7 @@ export const createNavigator = (env: WebWorkerEnvironment) => {
           logWorker(
             `sendBeacon: ${resolveUrl(env, url, null)}${
               body ? ', data: ' + JSON.stringify(body) : ''
-            }`
+            }, resolvedParams: ${JSON.stringify(resolveSendBeaconRequestParameters(env, url))}`
           );
         } catch (e) {
           console.error(e);
