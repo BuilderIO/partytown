@@ -1,7 +1,7 @@
 import type { WebWorkerEnvironment } from '../types';
 import { debug } from '../utils';
 import { logWorker } from '../log';
-import { resolveUrl } from './worker-exec';
+import { resolveSendBeaconRequestParameters, resolveUrl } from './worker-exec';
 import { webWorkerCtx } from './worker-constants';
 import { getter } from './worker-proxy';
 
@@ -13,7 +13,7 @@ export const createNavigator = (env: WebWorkerEnvironment) => {
           logWorker(
             `sendBeacon: ${resolveUrl(env, url, null)}${
               body ? ', data: ' + JSON.stringify(body) : ''
-            }`
+            }, resolvedParams: ${JSON.stringify(resolveSendBeaconRequestParameters(env, url))}`
           );
         } catch (e) {
           console.error(e);
@@ -25,6 +25,7 @@ export const createNavigator = (env: WebWorkerEnvironment) => {
           body,
           mode: 'no-cors',
           keepalive: true,
+          ...resolveSendBeaconRequestParameters(env, url),
         });
         return true;
       } catch (e) {

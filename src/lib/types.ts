@@ -381,6 +381,14 @@ export type SerializedInstance =
 export type ResolveUrlType = 'fetch' | 'xhr' | 'script' | 'iframe' | 'image';
 
 /**
+ * @public
+ */
+export type SendBeaconParameters = Pick<
+  RequestInit,
+  'keepalive' | 'mode' | 'headers' | 'signal' | 'cache'
+>;
+
+/**
  * https://partytown.builder.io/configuration
  *
  * @public
@@ -398,6 +406,18 @@ export interface PartytownConfig {
    * @returns The returned value must be a URL interface, otherwise the default resolved URL is used.
    */
   resolveUrl?(url: URL, location: Location, type: ResolveUrlType): URL | undefined | null;
+  /**
+   * The `resolveSendBeaconRequestParameters()` hook can be used to modify the RequestInit parameters
+   * being used by the fetch request that polyfills the navigator.sendBeacon API in the worker context.
+   *
+   * @param url - The URL to be resolved. This is a URL https://developer.mozilla.org/en-US/docs/Web/API/URL, not a string.
+   * @param location - The current window location.
+   * @returns The returned value must be a SendBeaconParameters interface, otherwise the default parameters are used.
+   */
+  resolveSendBeaconRequestParameters?(
+    url: URL,
+    location: Location
+  ): SendBeaconParameters | undefined | null;
   /**
    * When set to `true`, Partytown scripts are not inlined and not minified.
    *
