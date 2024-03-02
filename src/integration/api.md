@@ -16,6 +16,7 @@ export type GetHook = (opts: GetHookOptions) => any;
 
 // @public
 export interface PartytownConfig {
+    allowXhrCredentials?: boolean;
     // (undocumented)
     apply?: ApplyHook;
     debug?: boolean;
@@ -36,6 +37,8 @@ export interface PartytownConfig {
     // (undocumented)
     mainWindowAccessors?: string[];
     nonce?: string;
+    // Warning: (ae-forgotten-export) The symbol "SendBeaconParameters" needs to be exported by the entry point index.d.ts
+    resolveSendBeaconRequestParameters?(url: URL, location: Location): SendBeaconParameters | undefined | null;
     resolveUrl?(url: URL, location: Location, type: ResolveUrlType): URL | undefined | null;
     sandboxParent?: string;
     // (undocumented)
