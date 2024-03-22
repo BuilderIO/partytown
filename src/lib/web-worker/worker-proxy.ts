@@ -107,7 +107,7 @@ export const sendToMain = (isBlocking?: boolean) => {
 
     const endTask = taskQueue[len(taskQueue) - 1];
     const accessReq: MainAccessRequest = {
-      $msgId$: randomId(),
+      $msgId$: `${randomId()}.${webWorkerCtx.$tabId$}`,
       $tasks$: [...taskQueue],
     };
     taskQueue.length = 0;

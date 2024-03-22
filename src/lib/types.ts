@@ -128,6 +128,7 @@ export interface InitWebWorkerData {
   $libPath$: string;
   $sharedDataBuffer$?: SharedArrayBuffer;
   $origin$: string;
+  $tabId$?: number;
 }
 
 /**
@@ -166,6 +167,7 @@ export interface WebWorkerContext {
   $postMessage$: (msg: MessageFromWorkerToSandbox, arr?: any[]) => void;
   $sharedDataBuffer$?: SharedArrayBuffer;
   lastLog?: string;
+  $tabId$?: number;
 }
 
 export interface InitializeEnvironmentData {
@@ -622,6 +624,7 @@ export type StringIndexable = {
 export interface MainWindow extends Window, StringIndexable {
   partytown?: PartytownConfig;
   _ptf?: any[];
+  _pttab?: number;
 }
 
 export const enum NodeName {
