@@ -3,17 +3,11 @@ import {
   getConstructorName,
   getNodeName,
   isValidMemberName,
-  len,
   noop,
+  serializeConfig,
 } from '../utils';
 import { config, docImpl, libPath, mainWindow } from './main-globals';
-import {
-  InterfaceType,
-  InterfaceInfo,
-  InterfaceMember,
-  InitWebWorkerData,
-  StorageItem,
-} from '../types';
+import { InterfaceType, InterfaceInfo, InterfaceMember, InitWebWorkerData } from '../types';
 
 export const readMainPlatform = () => {
   const elm = docImpl.createElement('i');
@@ -61,23 +55,13 @@ export const readMainPlatform = () => {
     readImplementation('Node', textNode),
   ];
 
-  const $config$ = JSON.stringify(config, (k, v) => {
-    if (typeof v === 'function') {
-      v = String(v);
-      if (v.startsWith(k + '(')) {
-        v = 'function ' + v;
-      }
-    }
-    return v;
-  });
+  const $config$ = serializeConfig(config);
 
   const initWebWorkerData: InitWebWorkerData = {
     $config$,
     $interfaces$: readImplementations(impls, initialInterfaces),
     $libPath$: new URL(libPath, mainWindow.location as any) + '',
     $origin$: origin,
-    $localStorage$: readStorage('localStorage'),
-    $sessionStorage$: readStorage('sessionStorage'),
   };
 
   addGlobalConstructorUsingPrototype(
@@ -191,18 +175,6 @@ const readImplementationMember = (
   } catch (e) {
     console.warn(e);
   }
-};
-
-const readStorage = (storageName: 'localStorage' | 'sessionStorage') => {
-  let items: StorageItem[] = [];
-  let i = 0;
-  let l = len(mainWindow[storageName]);
-  let key: string;
-  for (; i < l; i++) {
-    key = mainWindow[storageName].key(i)!;
-    items.push([key, mainWindow[storageName].getItem(key)!]);
-  }
-  return items;
 };
 
 const getGlobalConstructor = (mainWindow: any, cstrName: string) =>

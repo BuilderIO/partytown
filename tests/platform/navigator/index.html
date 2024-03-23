@@ -50,6 +50,18 @@
         logSetters: true,
         logStackTraces: false,
         logScriptExecution: true,
+        resolveSendBeaconRequestParameters: (url, location) => {
+          if (url.searchParams.has('withParams')) {
+            return {
+              keepalive: false,
+              mode: 'same-origin',
+              cache: 'no-cache',
+              headers: new Headers({
+                'custom-header': 'custom-value'
+              })
+            };
+          }
+        }
       };
     </script>
     <script src="/~partytown/debug/partytown.js"></script>
@@ -84,6 +96,20 @@
         </script>
       </li>
       <li>
+        <strong>sendBeacon() resolveParams</strong>
+        <code id="testSendBeaconResolveParams"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testSendBeaconResolveParams');
+            const formData = new FormData();
+            formData.append('name', 'value');
+            const success = navigator.sendBeacon('api.js?withParams=1', formData);
+            elm.textContent = success;
+            elm.className = 'testSendBeaconResolveParams';
+          })();
+        </script>
+      </li>
+      <li>
         <strong>Assign value 5 to navigator.a</strong>
         <code id="testNavKey"></code>
         <script type="text/partytown">
@@ -92,6 +118,31 @@
             navigator.a=5;
             elm.textContent = navigator.a;
             elm.className = 'testNavKey';
+          })();
+        </script>
+      </li>
+      <li>
+        <strong>Properties defined in global navigator but not in the worker instance</strong>
+        <code id="testMainNavigatorProperties"></code>
+        <script type="text/partytown">
+          (function () {
+            const elm = document.getElementById('testMainNavigatorProperties');
+            navigator.undefinedProp = undefined;
+            navigator.nullProp = null;
+            navigator.falseProp = false;
+            navigator.emptyStringProp = "";
+            elm.textContent = JSON.stringify({
+              javaEnabled: navigator.javaEnabled(),
+              cookieEnabled: navigator.cookieEnabled,
+              undefinedProp: navigator.undefinedProp ? 'is_defined' : 'is_undefined',
+              nullProp: navigator.nullProp,
+              falseProp: navigator.falseProp,
+              emptyStringProp: navigator.emptyStringProp,
+              newProperty: navigator.newProperty ? 'is_defined' : 'is_undefined',
+              pdfViewerEnabled: typeof navigator.pdfViewerEnabled === 'boolean' ? 'available' : 'undefined',
+              plugins: typeof navigator.plugins.length === 'number' ? 'available' : 'undefined',
+            });
+            elm.className = 'testMainNavigatorProperties';
           })();
         </script>
       </li>

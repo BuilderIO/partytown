@@ -13,6 +13,10 @@ test('fetch', async ({ page }) => {
   const testFetchJson = page.locator('#testFetchJson');
   await expect(testFetchJson).toHaveText('{"mph":88}');
 
+  await page.waitForSelector('.testFetchCookie');
+  const testFetchCookie = page.locator('#testFetchCookie');
+  await expect(testFetchCookie).toContainText('server-test-fetch=1');
+
   await page.waitForSelector('.testXMLHttpRequest');
   const testXMLHttpRequest = page.locator('#testXMLHttpRequest');
   await expect(testXMLHttpRequest).toHaveText('text');
@@ -22,4 +26,8 @@ test('fetch', async ({ page }) => {
 
   const testXMLHttpRequestCstrNative = page.locator('#testXMLHttpRequestCstrNative');
   await expect(testXMLHttpRequestCstrNative).toHaveText('true');
+
+  await page.waitForSelector('.testXMLHttpRequestCookie');
+  const testXMLHttpRequestCookie = page.locator('#testXMLHttpRequestCookie');
+  await expect(testXMLHttpRequestCookie).toContainText('server-test-xhr=1');
 });

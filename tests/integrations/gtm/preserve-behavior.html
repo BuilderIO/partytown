@@ -21,7 +21,7 @@
 
           return url;
         },
-        forward: ['dataLayer.push'],
+        forward: [['dataLayer.push', { preserveBehavior: true }]],
         logCalls: true,
         logGetters: true,
         logSetters: true,
@@ -36,25 +36,25 @@
 
     <!-- Google Tag Manager -->
     <script type="text/partytown">
-      (function (window, document, dataLayerName, i) {
-        window[dataLayerName] = window[dataLayerName] || [];
+      (function (window, document, i) {
+        window['dataLayer'] = window[dataLayer] || [];
 
-        window[dataLayerName].push({ 'gtm.start': new Date().getTime(), 'event': 'gtm.js' });
+        window['dataLayer'].push({ 'gtm.start': new Date().getTime(), 'event': 'gtm.js' });
 
         var firstScript = document.getElementsByTagName('script')[0];
         var gtmScript = document.createElement('script');
-        var dataLayerParam = dataLayerName != 'dataLayer' ? '&l=' + dataLayerName : '';
+        var dataLayer = 'dataLayer' != 'dataLayer' ? '&l=' + 'dataLayer' : '';
 
         gtmScript.async = true;
 
         // ORIGINAL
-        gtmScript.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dataLayerParam;
+        gtmScript.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dataLayer;
 
         // HACK
-        // gtmScript.src = './gtm.js?id=' + i + dataLayerParam;
+        // gtmScript.src = './gtm.js?id=' + i + dataLayer;
 
         firstScript.parentNode.insertBefore(gtmScript, firstScript);
-      })(window, document, 'dataLayer', 'GTM-W275NLW');
+      })(window, document, 'GTM-W275NLW');
     </script>
     <!-- End Google Tag Manager -->
 
@@ -109,7 +109,7 @@
       function gtmPush() {
         const data = { event: 'button-click', from: 'partytown' };
         console.log(`GTM dataLayer.push(${JSON.stringify(data)})`);
-        dataLayer.push(data);
+        dataLayer.push({ event: 'button-click', from: 'partytown' });
 
         const testDataLayer = document.getElementById('testDataLayer');
         testDataLayer.textContent = 'pushed';
@@ -123,12 +123,8 @@
       })();
     </script>
 
+    <p><a href="/tests/integrations/gtm/">Partytown GTM</a></p>
     <p><a href="/tests/integrations/gtm/standard.html">Standard GTM</a></p>
-    <p>
-      <a href="/tests/integrations/gtm/preserve-behavior.html"
-        >Partytown GTM with preserveBehavior</a
-      >
-    </p>
     <p><a href="/tests/">All Tests</a></p>
   </body>
 </html>

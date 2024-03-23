@@ -1,6 +1,6 @@
 {
   "name": "@builder.io/partytown",
-  "version": "0.8.2",
+  "version": "0.10.0",
   "description": "Relocate resource intensive third-party scripts off of the main thread and into a web worker.",
   "license": "MIT",
   "main": "index.cjs",
@@ -83,8 +83,8 @@
     "test.unit": "uvu -r tsm tests/unit",
     "tsc.watch": "tsc -w",
     "version": "npm run build.prod",
-    "fmt": "prettier --config package.json --write src",
-    "fmt.check": "prettier --config package.json --check src"
+    "fmt": "prettier --config package.json --write src scripts",
+    "fmt.check": "prettier --config package.json --check src scripts"
   },
   "devDependencies": {
     "@microsoft/api-extractor": "^7.19.5",

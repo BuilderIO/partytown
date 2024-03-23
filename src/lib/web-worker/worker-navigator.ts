@@ -1,19 +1,19 @@
 import type { WebWorkerEnvironment } from '../types';
 import { debug } from '../utils';
 import { logWorker } from '../log';
-import { resolveUrl } from './worker-exec';
+import { resolveSendBeaconRequestParameters, resolveUrl } from './worker-exec';
 import { webWorkerCtx } from './worker-constants';
+import { getter } from './worker-proxy';
 
 export const createNavigator = (env: WebWorkerEnvironment) => {
-  let key: any;
-  let nav: any = {
+  const nav: any = {
     sendBeacon: (url: string, body?: any) => {
       if (debug && webWorkerCtx.$config$.logSendBeaconRequests) {
         try {
           logWorker(
             `sendBeacon: ${resolveUrl(env, url, null)}${
               body ? ', data: ' + JSON.stringify(body) : ''
-            }`
+            }, resolvedParams: ${JSON.stringify(resolveSendBeaconRequestParameters(env, url))}`
           );
         } catch (e) {
           console.error(e);
@@ -25,6 +25,7 @@ export const createNavigator = (env: WebWorkerEnvironment) => {
           body,
           mode: 'no-cors',
           keepalive: true,
+          ...resolveSendBeaconRequestParameters(env, url),
         });
         return true;
       } catch (e) {
@@ -34,7 +35,7 @@ export const createNavigator = (env: WebWorkerEnvironment) => {
     },
   };
 
-  for (key in navigator) {
+  for (let key in navigator) {
     nav[key] = (navigator as any)[key];
   }
 
@@ -42,6 +43,13 @@ export const createNavigator = (env: WebWorkerEnvironment) => {
     set(_, propName, propValue) {
       (navigator as any)[propName] = propValue;
       return true;
+    },
+    get(target, prop) {
+      if (Object.prototype.hasOwnProperty.call(target, prop)) {
+        return target[prop];
+      }
+      const value = getter(env.$window$, ['navigator', prop]);
+      return value;
     },
   });
 };

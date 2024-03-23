@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content="Partytown Test Page" />
     <title>Load scripts on main thread</title>
+    <script src="./snippet.js"></script>
 
     <script>
-      partytown = {
+      const config = partytownIntegration.partytownSnippet({
         logCalls: true,
         logGetters: true,
         logSetters: true,
@@ -18,9 +19,12 @@
           `inline-test-script`,
           /regex-test-script\.js/,
         ],
-      };
+      });
+      const script = document.createElement('script');
+      script.type = 'text/javascript';
+      script.innerHTML = config;
+      document.head.appendChild(script);
     </script>
-    <script src="/~partytown/debug/partytown.js"></script>
     <script type="text/partytown">
       (() => {
         const scriptElement = document.createElement("script");
@@ -177,19 +181,6 @@
         </script>
       </li>
       <li>
-        <strong>Partytown Config:</strong>
-        <code id="testConfig"></code>
-        <script>
-          (() => {
-            const partyTownConfig = window.partytown;
-            const codeElement = document.getElementById('testConfig');
-
-            codeElement.innerText = partyTownConfig.loadScriptsOnMainThread;
-          })();
-        </script>
-      </li>
-
-      <li>
         <strong>Inline script</strong>
         <code id="testInlineScript"></code>
         <script type="text/javascript">
@@ -249,8 +240,8 @@
 
     <hr />
     <p>
-      <a href="/tests/integrations/load-scripts-on-main-thread/snippet.html"
-        >loadScriptsOnMainThread with snippet</a
+      <a href="/tests/integrations/load-scripts-on-main-thread/index.html"
+        >Standard loadScriptsOnMainThread</a
       >
     </p>
     <p><a href="/tests/">All Tests</a></p>

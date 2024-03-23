@@ -1,19 +1,29 @@
 import { test, expect, ConsoleMessage, Page } from '@playwright/test';
 
-const testPage = async (page: Page) => {
+const testPage = async (page: Page, expectedDataLayer: any ) => {
   const buttonDataLayerPush = page.locator('#buttonDataLayerPush');
   await buttonDataLayerPush.click();
 
   const testDataLayer = page.locator('#testDataLayer');
   await expect(testDataLayer).toHaveText('pushed');
-}
+
+  const windowHandle = await page.evaluateHandle(() => Promise.resolve(window));
+  const dataLayerHandle = await page.evaluateHandle(
+    (window) => window['dataLayer'] as Record<string, unknown>[],
+    windowHandle
+  );
+  const dataLayer = await dataLayerHandle.jsonValue();
+  expect(dataLayer).toStrictEqual(expectedDataLayer);
+  await dataLayerHandle.dispose();
+  await windowHandle.dispose();
+};
 
 test('gtm', async ({ page }) => {
   await page.goto('/tests/integrations/gtm/');
 
   await page.waitForSelector('.completed');
 
-  await testPage(page);
+  await testPage(page, []);
 });
 
 /*
@@ -56,13 +66,22 @@ test('gtm multiple tabs', async ({ page, context }) => {
   await page2.waitForSelector('.completed');
 
   await page.bringToFront();
-  await testPage(page);
+  await testPage(page, []);
 
   await page2.bringToFront();
-  await testPage(page2);
+  await testPage(page2, []);
 
   expect(pageConsoleErrors.length).toBe(0);
   expect(pageErrors.length).toBe(0);
   expect(page2ConsoleErrors.length).toBe(0);
   expect(page2Errors.length).toBe(0);
+});
+
+
+test('gtm with preserveBehavior', async ({ page }) => {
+  await page.goto('/tests/integrations/gtm/preserve-behavior.html');
+
+  await page.waitForSelector('.completed');
+
+  await testPage(page, [{ event: 'button-click', from: 'partytown' }]);
 });

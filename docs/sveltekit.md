@@ -15,20 +15,21 @@ Adopting [this strategy](https://partytown.builder.io/copy-library-files#vite) f
 
 ```js
 // vite.config.js
-
-import { join } from 'path'
-import { sveltekit } from '@sveltejs/kit/vite'
-import { partytownVite } from '@builder.io/partytown/utils'
+import { join } from 'path';
+import { sveltekit } from '@sveltejs/kit/vite';
+import { partytownVite } from '@builder.io/partytown/utils';
 
 /** @type {import('vite').UserConfig} */
 const config = {
   plugins: [
     sveltekit(),
-    partytownVite()
-  ]
-}
+    partytownVite({
+      dest: join(__dirname, 'dist', '~partytown'),
+    }),
+  ],
+};
 
-export default config
+export default config;
 ```
 
 ## 2. Add the Partytown script to `src/routes/+layout.svelte`
@@ -49,7 +50,11 @@ Adapting from [the HTML integration guide](https://partytown.builder.io/html)
 
 ## 3. Then add 3rd party scripts
 
-This is where we use partytown to add those scripts (note `type="text/partytown"` below). This example shows Google Tag Manager. Putting it together with the previous changes, our `+layout.svelte` looks like:
+This is where we use partytown to add those scripts (note `type="text/partytown"` below). If your script declares global functions or variables, make sure they are explicitly declared with `window` and forwarded to the web worker.
+
+This example shows Google Tag Manager. Note `window.gtag = function()` instead of `function gtag()`.
+
+Putting it together with the previous changes, our `+layout.svelte` looks like:
 
 ```svelte
 // src/routes/+layout.svelte
@@ -64,7 +69,7 @@ This is where we use partytown to add those scripts (note `type="text/partytown"
 	<script>
 		// Forward the necessary functions to the web worker layer
 		partytown = {
-			forward: ['dataLayer.push']
+			forward: ['dataLayer.push', 'gtag']
 		};
 	</script>
 
@@ -73,16 +78,15 @@ This is where we use partytown to add those scripts (note `type="text/partytown"
 	<script type="text/partytown" src="https://www.googletagmanager.com/gtag/js?id=G-ZX7H2KPXNZ"></script>
 	<script type="text/partytown">
 		window.dataLayer = window.dataLayer || [];
-		function gtag(){dataLayer.push(arguments);}
+		window.gtag = function(){dataLayer.push(arguments);}
 		gtag('js', new Date());
 		gtag('config', 'G-ZX7H2KPXNZ');
 	</script>
 </svelte:head>
 ```
 
-## 4. Optional: reverse-proxying scripts 
+## 4. Optional: reverse-proxying scripts
 
 This will only be necessary depending on which scripts you are using. The implementation will vary depending on hosting platform. See [Partytown's recommended guides](https://partytown.builder.io/proxying-requests#reverse-proxy).
-
 
 Acknowledgements: credit belongs to monogram.io for [an earlier version of this guide](https://monogram.io/blog/add-partytown-to-svelte).

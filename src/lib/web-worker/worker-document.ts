@@ -20,7 +20,7 @@ import { ABOUT_BLANK, elementStructurePropNames, IS_TAG_REG, WinIdKey } from './
 import { getInstanceStateValue } from './worker-state';
 import { getPartytownScript } from './worker-exec';
 import { isScriptJsType } from './worker-script';
-import { warnCrossOrgin } from '../log';
+import { warnCrossOrigin } from '../log';
 
 export const patchDocument = (
   WorkerDocument: any,
@@ -39,7 +39,7 @@ export const patchDocument = (
         if (env.$isSameOrigin$) {
           return getter(this, ['cookie']);
         } else {
-          warnCrossOrgin('get', 'cookie', env);
+          warnCrossOrigin('get', 'cookie', env);
           return '';
         }
       },
@@ -47,7 +47,7 @@ export const patchDocument = (
         if (env.$isSameOrigin$) {
           setter(this, ['cookie'], value);
         } else if (debug) {
-          warnCrossOrgin('set', 'cookie', env);
+          warnCrossOrigin('set', 'cookie', env);
         }
       },
     },

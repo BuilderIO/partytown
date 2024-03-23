@@ -1,74 +1,61 @@
-import { callMethod } from './worker-proxy';
-import { CallType, StorageItem, WebWorkerEnvironment } from '../types';
+import { callMethod, getter } from './worker-proxy';
+import { CallType, WebWorkerEnvironment } from '../types';
 import { EMPTY_ARRAY } from '../utils';
-import { warnCrossOrgin } from '../log';
+import { warnCrossOrigin } from '../log';
 
 export const addStorageApi = (
   win: any,
   storageName: 'localStorage' | 'sessionStorage',
-  storages: Map<string, StorageItem[]>,
   isSameOrigin: boolean,
   env: WebWorkerEnvironment
 ) => {
-  let getItems = (items?: StorageItem[]) => {
-    items = storages.get(win.origin);
-    if (!items) {
-      storages.set(win.origin, (items = []));
-    }
-    return items;
-  };
-  let getIndexByKey = (key: string) => getItems().findIndex((i) => i[STORAGE_KEY] === key);
-  let index: number;
-  let item: StorageItem;
-
   let storage: Storage = {
     getItem(key) {
-      index = getIndexByKey(key);
-      return index > -1 ? getItems()[index][STORAGE_VALUE] : null;
+      if (isSameOrigin) {
+        return callMethod(win, [storageName, 'getItem'], [key], CallType.Blocking);
+      } else {
+        warnCrossOrigin('get', storageName, env);
+      }
     },
 
     setItem(key, value) {
-      index = getIndexByKey(key);
-      if (index > -1) {
-        getItems()[index][STORAGE_VALUE] = value;
-      } else {
-        getItems().push([key, value]);
-      }
       if (isSameOrigin) {
-        callMethod(win, [storageName, 'setItem'], [key, value], CallType.NonBlocking);
+        callMethod(win, [storageName, 'setItem'], [key, value], CallType.Blocking);
       } else {
-        warnCrossOrgin('set', storageName, env);
+        warnCrossOrigin('set', storageName, env);
       }
     },
 
     removeItem(key) {
-      index = getIndexByKey(key);
-      if (index > -1) {
-        getItems().splice(index, 1);
-      }
       if (isSameOrigin) {
-        callMethod(win, [storageName, 'removeItem'], [key], CallType.NonBlocking);
+        callMethod(win, [storageName, 'removeItem'], [key], CallType.Blocking);
       } else {
-        warnCrossOrgin('remove', storageName, env);
+        warnCrossOrigin('remove', storageName, env);
       }
     },
 
     key(index) {
-      item = getItems()[index];
-      return item ? item[STORAGE_KEY] : null;
+      if (isSameOrigin) {
+        return callMethod(win, [storageName, 'key'], [index], CallType.Blocking);
+      } else {
+        warnCrossOrigin('key', storageName, env);
+      }
     },
 
     clear() {
-      getItems().length = 0;
       if (isSameOrigin) {
-        callMethod(win, [storageName, 'clear'], EMPTY_ARRAY, CallType.NonBlocking);
+        callMethod(win, [storageName, 'clear'], EMPTY_ARRAY, CallType.Blocking);
       } else {
-        warnCrossOrgin('clear', storageName, env);
+        warnCrossOrigin('clear', storageName, env);
       }
     },
 
     get length() {
-      return getItems().length;
+      if (isSameOrigin) {
+        return getter(win, [storageName, 'length']);
+      } else {
+        warnCrossOrigin('length', storageName, env);
+      }
     },
   };
 
@@ -99,6 +86,3 @@ export const addStorageApi = (
     },
   });
 };
-
-const STORAGE_KEY = 0;
-const STORAGE_VALUE = 1;

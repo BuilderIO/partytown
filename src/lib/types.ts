@@ -127,8 +127,6 @@ export interface InitWebWorkerData {
   $interfaces$: InterfaceInfo[];
   $libPath$: string;
   $sharedDataBuffer$?: SharedArrayBuffer;
-  $localStorage$: StorageItem[];
-  $sessionStorage$: StorageItem[];
   $origin$: string;
 }
 
@@ -157,7 +155,7 @@ export type InterfaceMember =
 
 export interface WebWorkerContext {
   $asyncMsgTimer$?: any;
-  $config$: PartytownConfig;
+  $config$: PartytownInternalConfig;
   $importScripts$: (...urls: string[]) => void;
   $initWindowMedia$?: InitWindowMedia;
   $interfaces$: InterfaceInfo[];
@@ -383,6 +381,14 @@ export type SerializedInstance =
 export type ResolveUrlType = 'fetch' | 'xhr' | 'script' | 'iframe' | 'image';
 
 /**
+ * @public
+ */
+export type SendBeaconParameters = Pick<
+  RequestInit,
+  'keepalive' | 'mode' | 'headers' | 'signal' | 'cache'
+>;
+
+/**
  * https://partytown.builder.io/configuration
  *
  * @public
@@ -400,6 +406,18 @@ export interface PartytownConfig {
    * @returns The returned value must be a URL interface, otherwise the default resolved URL is used.
    */
   resolveUrl?(url: URL, location: Location, type: ResolveUrlType): URL | undefined | null;
+  /**
+   * The `resolveSendBeaconRequestParameters()` hook can be used to modify the RequestInit parameters
+   * being used by the fetch request that polyfills the navigator.sendBeacon API in the worker context.
+   *
+   * @param url - The URL to be resolved. This is a URL https://developer.mozilla.org/en-US/docs/Web/API/URL, not a string.
+   * @param location - The current window location.
+   * @returns The returned value must be a SendBeaconParameters interface, otherwise the default parameters are used.
+   */
+  resolveSendBeaconRequestParameters?(
+    url: URL,
+    location: Location
+  ): SendBeaconParameters | undefined | null;
   /**
    * When set to `true`, Partytown scripts are not inlined and not minified.
    *
@@ -450,6 +468,11 @@ export interface PartytownConfig {
   get?: GetHook;
   set?: SetHook;
   apply?: ApplyHook;
+  /**
+   * When set to true, the Partytown Web Worker will respect the `withCredentials` option of XMLHttpRequests.
+   * Default: false
+   */
+  allowXhrCredentials?: boolean;
   /**
    * An absolute path to the root directory which Partytown library files
    * can be found. The library path must start and end with a `/`.
@@ -522,15 +545,31 @@ export interface PartytownConfig {
   nonce?: string;
 }
 
+export type PartytownInternalConfig = Omit<PartytownConfig, 'loadScriptsOnMainThread'> & {
+  loadScriptsOnMainThread?: ['regexp' | 'string', string][];
+};
+
 /**
- * A foward property to patch on `window`. The foward config property is an string,
+ * @public
+ */
+export type PartytownForwardPropertySettings = {
+  preserveBehavior?: boolean;
+};
+
+/**
+ * @public
+ */
+export type PartytownForwardPropertyWithSettings = [string, PartytownForwardPropertySettings?];
+
+/**
+ * A forward property to patch on `window`. The forward config property is an string,
  * representing the call to forward, such as `dataLayer.push` or `fbq`.
  *
  * https://partytown.builder.io/forwarding-events
  *
  * @public
  */
-export type PartytownForwardProperty = string;
+export type PartytownForwardProperty = string | PartytownForwardPropertyWithSettings;
 
 /**
  * @public
@@ -576,7 +615,11 @@ export interface ApplyHookOptions extends HookOptions {
   args: any[];
 }
 
-export interface MainWindow extends Window {
+export type StringIndexable = {
+  [key: string]: any;
+};
+
+export interface MainWindow extends Window, StringIndexable {
   partytown?: PartytownConfig;
   _ptf?: any[];
 }
@@ -618,8 +661,6 @@ export type RefHandler = (...args: any[]) => void;
 export type StateMap = Record<number, StateRecord>;
 
 export type StateRecord = Record<string | number, any>;
-
-export type StorageItem = [/*key*/ string, /*value*/ string];
 
 export const enum CallType {
   Blocking = 1,
@@ -705,6 +746,7 @@ export interface WorkerInstance {
 }
 
 export interface WorkerNode extends WorkerInstance, Node {
+  id?: string | undefined | null;
   type: string | undefined;
 }
 

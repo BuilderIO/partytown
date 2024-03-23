@@ -12,6 +12,17 @@ exports.createServer = function (port, enableAtomics) {
     if (url.pathname === '/') {
       res.writeHead(301, { Location: '/tests/' });
       return res.end();
+    } else if (url.pathname === '/api/cookie') {
+      const name = url.searchParams.get('name');
+      let date = new Date();
+      date.setTime(date.getTime() + 24 * 60 * 60 * 1000); // 24 hours from now
+      let expires = date.toUTCString();
+      res.writeHead(200, {
+        'Set-Cookie': `${name}=1; Path=/; Domain=localhost; expires=${expires}; SameSite=Lax;`,
+        'Access-Control-Allow-Origin': req.headers.origin ? req.headers.origin : '*',
+        'Access-Control-Allow-Credentials': 'true',
+      });
+      return res.end();
     } else if (url.pathname.endsWith('post')) {
       res.writeHead(200);
       let body = '';

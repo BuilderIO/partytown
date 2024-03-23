@@ -1,4 +1,4 @@
-import { definePrototypePropertyDescriptor } from '../utils';
+import { definePrototypePropertyDescriptor, testIfMustLoadScriptOnMainThread } from '../utils';
 import { getInstanceStateValue, setInstanceStateValue } from './worker-state';
 import { getter, setter } from './worker-proxy';
 import { HTMLSrcElementDescriptorMap } from './worker-src-element';
@@ -26,10 +26,8 @@ export const patchHTMLScriptElement = (WorkerHTMLScriptElement: any, env: WebWor
           setter(this, ['dataset', 'ptsrc'], orgUrl);
         }
 
-        if (this.type && config.loadScriptsOnMainThread) {
-          const shouldExecuteScriptViaMainThread = config.loadScriptsOnMainThread.some(
-            (scriptUrl) => new RegExp(scriptUrl).test(url)
-          );
+        if (this.type) {
+          const shouldExecuteScriptViaMainThread = testIfMustLoadScriptOnMainThread(config, url);
 
           if (shouldExecuteScriptViaMainThread) {
             setter(this, ['type'], 'text/javascript');
