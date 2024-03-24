@@ -1,7 +1,7 @@
-import { debug } from '../utils';
-import type { MainAccessRequest, MainAccessResponse } from '../types';
 import Sandbox from '@sandbox';
 import SandboxDebug from '@sandbox-debug';
+import type { MainAccessRequest, MainAccessResponse } from '../types';
+import { debug } from '../utils';
 
 export const onFetchServiceWorkerRequest = (ev: FetchEvent) => {
   const req = ev.request;
