@@ -33,14 +33,24 @@ export const receiveMessageFromSandboxToServiceWorker = (ev: ExtendableMessageEv
   }
 };
 
-const sendMessageToSandboxFromServiceWorker = (accessReq: MainAccessRequest) =>
-  new Promise<MainAccessResponse>(async (resolve) => {
-    const clients = await (self as any as ServiceWorkerGlobalScope).clients.matchAll();
-    const client = [...clients].sort((a, b) => {
+const getClientByTab = (clients: Client[], msgId: string) => {
+  const tabId = msgId.split('.').pop();
+  let client = clients.find((a) => a.url.endsWith(`?${tabId}`));
+  if (!client) {
+    client = [...clients].sort((a, b) => {
       if (a.url > b.url) return -1;
       if (a.url < b.url) return 1;
       return 0;
     })[0];
+  }
+
+  return client;
+}
+
+const sendMessageToSandboxFromServiceWorker = (accessReq: MainAccessRequest) =>
+  new Promise<MainAccessResponse>(async (resolve) => {
+    const clients = await (self as any as ServiceWorkerGlobalScope).clients.matchAll();
+    const client = getClientByTab([...clients], accessReq.$msgId$);
 
     if (client) {
       const timeout = debug ? 120000 : 10000;

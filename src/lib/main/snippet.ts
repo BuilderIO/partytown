@@ -79,6 +79,7 @@ export function snippet(
 
   function loadSandbox(isAtomics?: number) {
     sandbox = doc.createElement(isAtomics ? 'script' : 'iframe');
+    win._pttab = Date.now();
     if (!isAtomics) {
       sandbox.style.display = 'block';
       sandbox.style.width = '0';
@@ -90,7 +91,7 @@ export function snippet(
     sandbox.src =
       libPath +
       'partytown-' +
-      (isAtomics ? 'atomics.js?v=_VERSION_' : 'sandbox-sw.html?' + Date.now());
+      (isAtomics ? 'atomics.js?v=_VERSION_' : 'sandbox-sw.html?' + win._pttab);
 
     doc.querySelector(config!.sandboxParent || 'body')!.appendChild(sandbox);
   }
