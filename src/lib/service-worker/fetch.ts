@@ -45,7 +45,7 @@ const getClientByTab = (clients: Client[], msgId: string) => {
   }
 
   return client;
-}
+};
 
 const sendMessageToSandboxFromServiceWorker = (accessReq: MainAccessRequest) =>
   new Promise<MainAccessResponse>(async (resolve) => {
