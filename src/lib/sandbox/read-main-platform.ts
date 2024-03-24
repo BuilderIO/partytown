@@ -62,6 +62,7 @@ export const readMainPlatform = () => {
     $interfaces$: readImplementations(impls, initialInterfaces),
     $libPath$: new URL(libPath, mainWindow.location as any) + '',
     $origin$: origin,
+    $tabId$: mainWindow._pttab,
   };
 
   addGlobalConstructorUsingPrototype(

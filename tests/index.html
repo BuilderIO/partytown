@@ -1,172 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Partytown Test Page" />
-    <title>Partytown Tests</title>
-    <style>
-      body {
-        font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
-          Apple Color Emoji, Segoe UI Emoji;
-        line-height: 2em;
-        padding: 0 0 20px 0;
-      }
-      h1 {
-        margin: 0 0 15px 0;
-      }
-      h2 {
-        font-size: 18px;
-        margin: 20px 0 5px 0;
-      }
-      p {
-        font-size: 12px;
-        padding: 0 5px;
-        line-height: 18px;
-      }
-      ul {
-        list-style-type: none;
-        margin: 0;
-        padding: 0;
-      }
-      a:link,
-      a:visited {
-        text-decoration: none;
-        color: blue;
-      }
-      a:hover {
-        text-decoration: underline;
-      }
-      ul a {
-        display: block;
-        padding: 6px 8px;
-      }
-      ul a:hover {
-        background-color: #eee;
-        text-decoration: none;
-      }
-      hr {
-        border: 1px solid #ddd;
-        margin: 20px 0;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Partytown Tests 🎉</h1>
 
-    <p>
-      Stand-alone tests for
-      <a href="https://developer.mozilla.org/en-US/docs/Glossary/Main_thread">main thread</a>
-      APIs executed from within a
-      <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers"
-        >web worker</a
-      >. These pages are also tested using <a href="https://playwright.dev/">Playwright</a> from
-      Partytown's
-      <a href="https://github.com/BuilderIO/partytown/actions/workflows/ci.yml">CI Workerflow</a>.
-    </p>
-    <p>
-      Please see the
-      <a href="https://github.com/BuilderIO/partytown/blob/main/CONTRIBUTING.md#local-development"
-        >local development</a
-      >
-      page for more information on how to re-create issues locally,
-      <a
-        href="https://github.com/BuilderIO/partytown/blob/main/CONTRIBUTING.md#submitting-issues-and-writing-tests"
-        >submit issues and writing tests</a
-      >. Being able to recreate the issue with a minimal amount of code makes it easier debug.
-    </p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="Partytown Test Page" />
+  <title>Partytown Tests</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif,
+        Apple Color Emoji, Segoe UI Emoji;
+      line-height: 2em;
+      padding: 0 0 20px 0;
+    }
 
-    <h2>Platform Tests</h2>
-    <ul>
-      <li><a href="/tests/platform/anchor/">Anchor</a></li>
-      <li><a href="/tests/platform/audio/">Audio</a></li>
-      <li><a href="/tests/platform/canvas/">Canvas</a></li>
-      <li><a href="/tests/platform/custom-element/">Custom Element</a></li>
-      <li><a href="/tests/platform/document/">Document</a></li>
-      <li><a href="/tests/platform/document-prod/">Document (Prod Build)</a></li>
-      <li><a href="/tests/platform/element/">Element</a></li>
-      <li><a href="/tests/platform/element-class/">Element Class</a></li>
-      <li><a href="/tests/platform/element-style/">Element Style</a></li>
-      <li><a href="/tests/platform/event/">Event</a></li>
-      <li><a href="/tests/platform/error/">Error</a></li>
-      <li><a href="/tests/platform/fetch/">Fetch/XHR</a></li>
-      <li><a href="/tests/platform/form/">Form</a></li>
-      <li><a href="/tests/platform/history/">History</a></li>
-      <li><a href="/tests/platform/iframe/">IFrame</a></li>
-      <li><a href="/tests/platform/image/">Image</a></li>
-      <li><a href="/tests/platform/intersection-observer/">IntersectionObserver</a></li>
-      <li><a href="/tests/platform/multiple-pages/">Multiple Pages</a></li>
-      <li><a href="/tests/platform/mutation-observer/">MutationObserver</a></li>
-      <li><a href="/tests/platform/navigator/">Navigator</a></li>
-      <li><a href="/tests/platform/node/">Node</a></li>
-      <li><a href="/tests/platform/node-list/">NodeList</a></li>
-      <li><a href="/tests/platform/no-partytown-script/">No Partytown</a></li>
-      <li><a href="/tests/platform/resize-observer/">ResizeObserver</a></li>
-      <li><a href="/tests/platform/screen/">Screen</a></li>
-      <li><a href="/tests/platform/script/">Script</a></li>
-      <li><a href="/tests/platform/storage/">Storage</a></li>
-      <li><a href="/tests/platform/style/">Style</a></li>
-      <li><a href="/tests/platform/svg/">Svg</a></li>
-      <li><a href="/tests/platform/video/">Video</a></li>
-      <li><a href="/tests/platform/window/">Window</a></li>
-    </ul>
+    h1 {
+      margin: 0 0 15px 0;
+    }
 
-    <hr />
+    h2 {
+      font-size: 18px;
+      margin: 20px 0 5px 0;
+    }
 
-    <h2>Service Integration Tests</h2>
-    <ul>
-      <li><a href="/tests/integrations/clarity/">Clarity</a></li>
-      <li><a href="/tests/integrations/config/">Config</a></li>
-      <li><a href="/tests/integrations/event-forwarding/">Event Forwarding</a></li>
-      <li><a href="/tests/integrations/main-window-accessors/">Main Window Accessors</a></li>
-      <li>
-        <a href="/tests/integrations/load-scripts-on-main-thread/">Load Scripts on Main Thread</a>
-      </li>
-      <li><a href="/tests/integrations/facebook-pixel/">Facebook Pixel</a></li>
-      <li><a href="/tests/integrations/gtm/">Google Tag Manager (GTM)</a></li>
-      <li><a href="/tests/integrations/javascript-request/">Javascript Request Execution</a></li>
-      <li><a href="/tests/integrations/hubspot/forms.html">Hubspot Forms</a></li>
-      <li><a href="/tests/integrations/intercom/">Intercom</a></li>
-      <li><a href="/tests/integrations/jquery/">jQuery</a></li>
-      <li><a href="/tests/integrations/kiwisizing/">Kiwi Sizing</a></li>
-      <li><a href="/tests/integrations/mermaid/">Mermaid</a></li>
-      <li><a href="/tests/integrations/twitter/">Twitter Embed</a></li>
-      <li><a href="/tests/integrations/wistia/">Wistia</a></li>
-    </ul>
+    p {
+      font-size: 12px;
+      padding: 0 5px;
+      line-height: 18px;
+    }
 
-    <hr />
+    ul {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+    }
 
-    <h2>Benchmarks / Browser Tests</h2>
-    <ul>
-      <li><a href="/tests/benchmarks/">Benchmark</a></li>
-      <li><a href="/tests/benchmarks/services/">Services</a></li>
-      <li><a href="/tests/atomics/">Atomics COEP/COOP Headers Test</a></li>
-    </ul>
+    a:link,
+    a:visited {
+      text-decoration: none;
+      color: blue;
+    }
 
-    <hr />
+    a:hover {
+      text-decoration: underline;
+    }
 
-    <h2>More Info</h2>
-    <ul>
-      <li><a href="https://partytown.builder.io/">Documentation</a></li>
-      <li><a href="https://github.com/BuilderIO/partytown/tree/main/tests">E2E Tests</a></li>
-      <li>
-        <a href="https://github.com/BuilderIO/partytown/blob/main/CONTRIBUTING.md#local-development"
-          >Local Development</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/BuilderIO/partytown/blob/main/CONTRIBUTING.md#submitting-issues-and-writing-tests"
-          >Submitting Issues And Writing Tests</a
-        >
-      </li>
-      <li>
-        <a
-          href="https://github.com/BuilderIO/partytown/blob/main/CONTRIBUTING.md#plugin-authors--developers"
-          >Plugin Authors / Developers</a
-        >
-      </li>
-    </ul>
-    <p>Made with ❤️ by the <a href="https://www.builder.io/">Builder.io Team</a></p>
-  </body>
+    ul a {
+      display: block;
+      padding: 6px 8px;
+    }
+
+    ul a:hover {
+      background-color: #eee;
+      text-decoration: none;
+    }
+
+    hr {
+      border: 1px solid #ddd;
+      margin: 20px 0;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Partytown Tests 🎉</h1>
+
+  <p>
+    Stand-alone tests for
+    <a href="https://developer.mozilla.org/en-US/docs/Glossary/Main_thread">main thread</a>
+    APIs executed from within a
+    <a href="https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers">web worker</a>. These
+    pages are also tested using <a href="https://playwright.dev/">Playwright</a> from
+    Partytown's
+    <a href="https://github.com/BuilderIO/partytown/actions/workflows/ci.yml">CI Workerflow</a>.
+  </p>
+  <p>
+    Please see the
+    <a href="https://github.com/BuilderIO/partytown/blob/main/CONTRIBUTING.md#local-development">local development</a>
+    page for more information on how to re-create issues locally,
+    <a href="https://github.com/BuilderIO/partytown/blob/main/CONTRIBUTING.md#submitting-issues-and-writing-tests">submit
+      issues and writing tests</a>. Being able to recreate the issue with a minimal amount of code makes it easier
+    debug.
+  </p>
+
+  <h2>Platform Tests</h2>
+  <ul>
+    <li><a href="/tests/platform/anchor/">Anchor</a></li>
+    <li><a href="/tests/platform/audio/">Audio</a></li>
+    <li><a href="/tests/platform/canvas/">Canvas</a></li>
+    <li><a href="/tests/platform/custom-element/">Custom Element</a></li>
+    <li><a href="/tests/platform/document/">Document</a></li>
+    <li><a href="/tests/platform/document-prod/">Document (Prod Build)</a></li>
+    <li><a href="/tests/platform/element/">Element</a></li>
+    <li><a href="/tests/platform/element-class/">Element Class</a></li>
+    <li><a href="/tests/platform/element-style/">Element Style</a></li>
+    <li><a href="/tests/platform/event/">Event</a></li>
+    <li><a href="/tests/platform/error/">Error</a></li>
+    <li><a href="/tests/platform/fetch/">Fetch/XHR</a></li>
+    <li><a href="/tests/platform/form/">Form</a></li>
+    <li><a href="/tests/platform/history/">History</a></li>
+    <li><a href="/tests/platform/iframe/">IFrame</a></li>
+    <li><a href="/tests/platform/image/">Image</a></li>
+    <li><a href="/tests/platform/intersection-observer/">IntersectionObserver</a></li>
+    <li><a href="/tests/platform/multiple-pages/">Multiple Pages</a></li>
+    <li><a href="/tests/platform/multiple-tabs/">Multiple Tabs</a></li>
+    <li><a href="/tests/platform/mutation-observer/">MutationObserver</a></li>
+    <li><a href="/tests/platform/navigator/">Navigator</a></li>
+    <li><a href="/tests/platform/node/">Node</a></li>
+    <li><a href="/tests/platform/node-list/">NodeList</a></li>
+    <li><a href="/tests/platform/no-partytown-script/">No Partytown</a></li>
+    <li><a href="/tests/platform/resize-observer/">ResizeObserver</a></li>
+    <li><a href="/tests/platform/screen/">Screen</a></li>
+    <li><a href="/tests/platform/script/">Script</a></li>
+    <li><a href="/tests/platform/storage/">Storage</a></li>
+    <li><a href="/tests/platform/style/">Style</a></li>
+    <li><a href="/tests/platform/svg/">Svg</a></li>
+    <li><a href="/tests/platform/video/">Video</a></li>
+    <li><a href="/tests/platform/window/">Window</a></li>
+  </ul>
+
+  <hr />
+
+  <h2>Service Integration Tests</h2>
+  <ul>
+    <li><a href="/tests/integrations/clarity/">Clarity</a></li>
+    <li><a href="/tests/integrations/config/">Config</a></li>
+    <li><a href="/tests/integrations/event-forwarding/">Event Forwarding</a></li>
+    <li><a href="/tests/integrations/main-window-accessors/">Main Window Accessors</a></li>
+    <li>
+      <a href="/tests/integrations/load-scripts-on-main-thread/">Load Scripts on Main Thread</a>
+    </li>
+    <li><a href="/tests/integrations/facebook-pixel/">Facebook Pixel</a></li>
+    <li><a href="/tests/integrations/gtm/">Google Tag Manager (GTM)</a></li>
+    <li><a href="/tests/integrations/javascript-request/">Javascript Request Execution</a></li>
+    <li><a href="/tests/integrations/hubspot/forms.html">Hubspot Forms</a></li>
+    <li><a href="/tests/integrations/intercom/">Intercom</a></li>
+    <li><a href="/tests/integrations/jquery/">jQuery</a></li>
+    <li><a href="/tests/integrations/kiwisizing/">Kiwi Sizing</a></li>
+    <li><a href="/tests/integrations/mermaid/">Mermaid</a></li>
+    <li><a href="/tests/integrations/twitter/">Twitter Embed</a></li>
+    <li><a href="/tests/integrations/wistia/">Wistia</a></li>
+  </ul>
+
+  <hr />
+
+  <h2>Benchmarks / Browser Tests</h2>
+  <ul>
+    <li><a href="/tests/benchmarks/">Benchmark</a></li>
+    <li><a href="/tests/benchmarks/services/">Services</a></li>
+    <li><a href="/tests/atomics/">Atomics COEP/COOP Headers Test</a></li>
+  </ul>
+
+  <hr />
+
+  <h2>More Info</h2>
+  <ul>
+    <li><a href="https://partytown.builder.io/">Documentation</a></li>
+    <li><a href="https://github.com/BuilderIO/partytown/tree/main/tests">E2E Tests</a></li>
+    <li>
+      <a href="https://github.com/BuilderIO/partytown/blob/main/CONTRIBUTING.md#local-development">Local Development</a>
+    </li>
+    <li>
+      <a href="https://github.com/BuilderIO/partytown/blob/main/CONTRIBUTING.md#submitting-issues-and-writing-tests">Submitting
+        Issues And Writing Tests</a>
+    </li>
+    <li>
+      <a href="https://github.com/BuilderIO/partytown/blob/main/CONTRIBUTING.md#plugin-authors--developers">Plugin
+        Authors / Developers</a>
+    </li>
+  </ul>
+  <p>Made with ❤️ by the <a href="https://www.builder.io/">Builder.io Team</a></p>
+</body>
+
 </html>

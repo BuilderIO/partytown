@@ -17,6 +17,7 @@
         loadScriptsOnMainThread: [
           `${location.protocol}//${location.host}/tests/integrations/load-scripts-on-main-thread/test-script.js`,
           `inline-test-script`,
+          `inline-test-script-text`,
           /regex-test-script\.js/,
         ],
       });
@@ -124,6 +125,30 @@
 
             codeElement.innerText = scriptElement.src;
           })()
+        </script>
+      </li>
+      <li>
+        <strong>Inline script with text</strong>
+        <code id="testInlineScriptText"></code>
+        <script type="text/javascript">
+          const globalVariableScriptText = 13;
+        </script>
+        <script type="text/partytown">
+          (function () {
+            const script = document.createElement('script');
+    
+            script.type = "text/javascript";
+            script.id = "inline-test-script-text";
+    
+            script.text = `
+              (function () {
+                const testEl = document.getElementById('testInlineScriptText');
+                testEl.className = 'testInlineScriptText';
+                testEl.innerHTML = globalVariableScriptText;
+              })();
+            `;
+            document.body.appendChild(script);
+          })();
         </script>
       </li>
       <li>
