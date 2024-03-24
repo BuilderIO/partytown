@@ -36,25 +36,25 @@
 
     <!-- Google Tag Manager -->
     <script type="text/partytown">
-      (function (window, document, i) {
-        window['dataLayer'] = window[dataLayer] || [];
+      (function (window, document, dataLayerName, i) {
+        window[dataLayerName] = window[dataLayerName] || [];
 
-        window['dataLayer'].push({ 'gtm.start': new Date().getTime(), 'event': 'gtm.js' });
+        window[dataLayerName].push({ 'gtm.start': new Date().getTime(), 'event': 'gtm.js' });
 
         var firstScript = document.getElementsByTagName('script')[0];
         var gtmScript = document.createElement('script');
-        var dataLayer = 'dataLayer' != 'dataLayer' ? '&l=' + 'dataLayer' : '';
+        var dataLayerParam = dataLayerName != 'dataLayer' ? '&l=' + dataLayerName : '';
 
         gtmScript.async = true;
 
         // ORIGINAL
-        gtmScript.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dataLayer;
+        gtmScript.src = 'https://www.googletagmanager.com/gtm.js?id=' + i + dataLayerParam;
 
         // HACK
-        // gtmScript.src = './gtm.js?id=' + i + dataLayer;
+        // gtmScript.src = './gtm.js?id=' + i + dataLayerParam;
 
         firstScript.parentNode.insertBefore(gtmScript, firstScript);
-      })(window, document, 'GTM-W275NLW');
+      })(window, document, 'dataLayer', 'GTM-W275NLW');
     </script>
     <!-- End Google Tag Manager -->
 
@@ -109,7 +109,7 @@
       function gtmPush() {
         const data = { event: 'button-click', from: 'partytown' };
         console.log(`GTM dataLayer.push(${JSON.stringify(data)})`);
-        dataLayer.push({ event: 'button-click', from: 'partytown' });
+        dataLayer.push(data);
 
         const testDataLayer = document.getElementById('testDataLayer');
         testDataLayer.textContent = 'pushed';

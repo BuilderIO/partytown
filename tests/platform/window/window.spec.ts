@@ -1,10 +1,6 @@
-import { test, expect } from '@playwright/test';
+import { Page, expect, test } from '@playwright/test';
 
-test('window', async ({ page }) => {
-  await page.goto('/tests/platform/window/');
-
-  await page.waitForSelector('.completed');
-
+const testPage = async (page: Page) => {
   const testWindowName = page.locator('#testWindowName');
   await expect(testWindowName).toHaveText('Window');
 
@@ -113,7 +109,7 @@ test('window', async ({ page }) => {
   await expect(testDevicePixelRatio).not.toHaveText('');
 
   const testOrigin = page.locator('#testOrigin');
-  const origin = new URL(await testOrigin.textContent());
+  const origin = new URL((await testOrigin.textContent()) || '');
   expect(origin.pathname).toBe('/');
   expect(origin.hostname).toBe('localhost');
 
@@ -157,4 +153,28 @@ test('window', async ({ page }) => {
 
   const testDocumentScripts = page.locator('#testDocumentScripts');
   await expect(testDocumentScripts).toHaveText('scripts.length: number');
+};
+
+test('window', async ({ page }) => {
+  await page.goto('/tests/platform/window/');
+
+  await page.waitForSelector('.completed');
+
+  await testPage(page);
+});
+
+test('window multiple tabs', async ({ page, context }) => {
+  await page.goto('/tests/platform/window/');
+
+  await page.waitForSelector('.completed');
+
+  const page2 = await context.newPage();
+
+  await page2.goto('/tests/platform/window/');
+
+  await page2.waitForSelector('.completed');  
+
+  await testPage(page);
+
+  await testPage(page2);
 });

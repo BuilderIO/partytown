@@ -36,13 +36,16 @@
         const testFn = document.getElementById('testFn');
 
         superDuperFunction = function() {
+          const testFnInner = document.getElementById('testFnInner');
           switch (arguments[0]) {
             case 'fnReady': {
               testFn.textContent = arguments[0];
+              testFnInner.textContent = arguments[0];
               break;
             }
             case 'testForwardEvent': {
               testFn.textContent = arguments[1] + (++inc);
+              testFnInner.textContent = arguments[1] + (inc);
               break;
             }
           }
@@ -56,13 +59,16 @@
 
         superArray = [];
         superArray.push = function() {
+          const testArrayInner = document.getElementById('testArrayInner');
           switch (arguments[0]) {
             case 'arrayReady': {
               testArray.textContent = arguments[0];
+              testArrayInner.textContent = arguments[0];
               break;
             }
             default: {
               testArray.textContent = JSON.stringify(arguments[0]);
+              testArrayInner.textContent = JSON.stringify(arguments[0]);
               break;
             }
           }
@@ -155,6 +161,7 @@
         <strong>fn event</strong>
         <button id="buttonForwardEvent">fn</button>
         <code id="testFn"></code>
+        <code id="testFnInner"></code>
         <script>
           (function () {
             const btn = document.getElementById('buttonForwardEvent');
@@ -169,6 +176,7 @@
         <strong>array push event</strong>
         <button id="buttonArrayPush">push</button>
         <code id="testArray"></code>
+        <code id="testArrayInner"></code>
         <script>
           (function () {
             let mph = 88;
