@@ -18,7 +18,7 @@ The following is an example of including the `<Partytown/>` component in the app
 
 ```jsx
 import { Partytown } from '@builder.io/partytown/react';
-import { Links, Meta, Outlet } from 'remix';
+import { Links, Meta, Outlet } from '@remix-run/react';
 
 export default function App() {
   return (
