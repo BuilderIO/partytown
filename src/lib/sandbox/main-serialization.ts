@@ -127,9 +127,9 @@ const serializeCssRuleForWorker = (cssRule: any) => {
   }
   return obj;
 };
-
+const FallbackError = (window.top as any).Error;
 const serializedValueIsError = (value: any) => {
-  return value instanceof (window.top as any).Error;
+  return value instanceof ((window.top as any)?.Error || ErrorObject);
 };
 
 export const deserializeFromWorker = (
