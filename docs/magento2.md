@@ -62,7 +62,7 @@ Given the peculiarities of the partytown library, you may encounter CORS errors 
 <a href="https://partytown.builder.io/proxying-requests">Proxying Requests</a>
 
 You can also try using a self-hosted reverse-proxy solution 
-( see example here <a href="https://github.com/rostilos/perspective-partytown/blob/2.0.0-alpha/docs/reverse-proxy.md">Node.js reverse-proxy example for partytown library</a> ).
+( see example here <a href="https://github.com/rostilos/perspective-partytown/blob/2.0.0-alpha/docs/reverse-proxy.md">Node.js reverse-proxy example for partytown library</a> and here <a href="https://github.com/rostilos/perspective-partytown/blob/2.0.0-alpha/docs/reverse-proxy.md">Nginx reverse-proxy example for partytown library ( for warden ) </a>  ).
 
 ## Troubleshooting
 If you encounter errors when using the integration module for Magento 2 - you can also create an issue in the <a href="https://github.com/rostilos/perspective-partytown">source repository</a>
