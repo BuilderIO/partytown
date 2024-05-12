@@ -65,4 +65,4 @@ You can also try using a self-hosted reverse-proxy solution
 ( see example here <a href="https://github.com/rostilos/perspective-partytown/blob/2.0.0-alpha/docs/reverse-proxy.md">Node.js reverse-proxy example for partytown library</a> ).
 
 ## Troubleshooting
-If you encounter errors when using the integration module for magento2 - you can also create an issue in the <a href="https://github.com/rostilos/perspective-partytown">source repository</a>
+If you encounter errors when using the integration module for Magento 2 - you can also create an issue in the <a href="https://github.com/rostilos/perspective-partytown">source repository</a>
