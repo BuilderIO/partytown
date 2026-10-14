@@ -129,11 +129,19 @@ export function snippet(
 
     clearFallback();
 
-    // remove any previously patched functions
+    // remove any previously patched functions, but keep objects that have a
+    // nested property forwarded with preserveBehavior, e.g. dataLayer for
+    // dataLayer.push, since they hold the data pushed on the main thread
     if (top == win) {
-      (config!.forward || []).map(function (forwardProps) {
-        const [property] = resolvePartytownForwardProperty(forwardProps);
-        delete win[property.split('.')[0] as any];
+      const forward = (config!.forward || []).map(resolvePartytownForwardProperty);
+      forward.map(function ([property]) {
+        const name = property.split('.')[0];
+        const isPreserved = forward.some(function ([p, { preserveBehavior }]) {
+          return preserveBehavior && p.indexOf(name + '.') == 0;
+        });
+        if (!isPreserved) {
+          delete win[name as any];
+        }
       });
     }
 
