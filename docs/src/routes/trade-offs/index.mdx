@@ -46,6 +46,14 @@ Setting `document.cookie` is a noop and will not assign anything, and getting a 
 
 Note this is only an issue for iframes, created from within a Partytown script, and the created iframe is cross-origin. Partytown scripts, and iframes that have the same origin, do not have this issue.
 
+## Page Exit Events
+
+Handlers that third-party scripts add for page exit events, such as `pagehide`, `visibilitychange` and `beforeunload`, are not reliable when the page is unloading (a real navigation, reload or tab close; SPA route changes are not affected).
+
+The main thread only forwards the event to the web worker and returns right away, so the browser goes on to unload the page. The web worker belongs to the page and is terminated with it, often before the handler has run. Even when the handler does start, any DOM read it makes (such as `document.cookie` or `document.hasFocus()`) needs an answer from the main thread, which is no longer available. The main thread cannot wait for the web worker either, since browsers block synchronous requests during page dismissal.
+
+For example, the automatic Google Analytics 4 `user_engagement` event, which reports the remaining engagement time when the user leaves the page, is not sent when GA4 runs in Partytown. Events sent while the page is open, such as `page_view`, are not affected. If exit tracking is important, load that script on the main thread instead.
+
 ## Service Worker
 
 For the Service Worker build, a total of three threads are used: Main Thread, Web Worker, and Service Worker. Note that the [Atomics](/atomics) build only uses two threads.
