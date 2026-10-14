@@ -30,6 +30,8 @@ Set the script element's `type` attribute to `text/partytown`. For example:
 
 GA4 responses come with the correct CORS headers, so you will not have to [proxy](/proxying-requests) the requests to `www.google-analytics.com`. [Older versions of Google Analytics](https://support.google.com/analytics/answer/11583528?sjid=5512098847312629397-NA) required proxying, but have been sunset by Google and are no longer supported.
 
+Note that the automatic `user_engagement` event GA4 sends when the user leaves the page is not reliable from a web worker. Please see [page exit events](/trade-offs#page-exit-events) for more information.
+
 ## Forward Events
 
 Google Tag Manager uses the [dataLayer](https://developers.google.com/tag-platform/tag-manager/web/datalayer) array to send events. In order for Partytown to forward the calls to `window.dataLayer.push({..})`, the forward config should add `"dataLayer.push"`. Please see [forwarding events and triggers](/forwarding-events) for more information.
