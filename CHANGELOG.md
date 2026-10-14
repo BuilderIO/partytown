@@ -1,5 +1,13 @@
 # @qwik.dev/partytown
 
+## 1.0.1
+
+### Patch Changes
+
+- 🐞🩹 the main thread fallback keeps objects that have a property forwarded with `preserveBehavior`, e.g. `dataLayer` for `dataLayer.push`, so data pushed before the fallback isn't lost. (by [@ArmenMesropyanOptimax](https://github.com/ArmenMesropyanOptimax) in [#790](https://github.com/QwikDev/partytown/pull/790))
+
+- 🐞🩹 avoid Lighthouse "FencedFrame" deprecated API warning by skipping `HTMLFencedFrameElement` during element interface introspection, so no `<fencedframe>` is created in the sandbox (by [@tzdesign](https://github.com/tzdesign) in [#788](https://github.com/QwikDev/partytown/pull/788))
+
 ## 1.0.0
 
 ### Major Changes
