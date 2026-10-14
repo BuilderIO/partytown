@@ -37,7 +37,8 @@ export const getConstructorName = (obj: Object) => {
 
 export const startsWith = (str: string, val: string) => str.startsWith(val);
 
-// Chrome APIs that trigger deprecation warnings when accessed on window.
+// Chrome APIs that trigger deprecation warnings when accessed on window
+// (or, for element constructors, when instantiated).
 // Accessing these during platform introspection causes console noise.
 // https://github.com/QwikDev/partytown/issues/694
 export const DEPRECATED_WINDOW_PROPERTIES = new Set([
