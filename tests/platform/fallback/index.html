@@ -8,9 +8,13 @@
     <script>
       partytown = {
         fallbackTimeout: 1000,
+        forward: [['dataLayer.push', { preserveBehavior: true }]],
       };
     </script>
     <script src="/~partytown/debug/partytown.js"></script>
+    <script>
+      dataLayer.push({ event: 'before fallback' });
+    </script>
   </head>
   <body>
     <h1>Fallback</h1>
@@ -23,10 +27,19 @@
         <strong>dynamically added script falls back</strong>
         <code id="testDynamic"></code>
       </li>
+      <li>
+        <strong>preserveBehavior keeps data pushed before the fallback</strong>
+        <code id="testPreserved"></code>
+      </li>
     </ul>
 
     <script type="text/partytown">
       document.getElementById('testInitial').textContent = 'executed';
+      document.getElementById('testPreserved').textContent = (window.dataLayer || [])
+        .map(function (item) {
+          return item.event;
+        })
+        .join(',');
       document.body.classList.add('completed');
     </script>
 

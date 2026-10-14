@@ -24,5 +24,10 @@ test('fallback', async ({ page, baseURL }) => {
   const testDynamic = page.locator('#testDynamic');
   await expect(testDynamic).toHaveText('executed');
 
+  // dataLayer.push is forwarded with preserveBehavior, so the fallback
+  // must not delete the dataLayer that was pushed into on the main thread
+  const testPreserved = page.locator('#testPreserved');
+  await expect(testPreserved).toHaveText('before fallback');
+
   expect(pageErrors).toEqual([]);
 });

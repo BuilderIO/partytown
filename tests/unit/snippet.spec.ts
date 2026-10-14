@@ -117,6 +117,38 @@ test('fallback when service worker registration fulfills without a registration'
   assert.is(fallbackScripts[0].innerHTML, 'console.log(88)');
 });
 
+test('fallback keeps objects forwarded with preserveBehavior', ({
+  win,
+  document,
+  navigator,
+  top,
+}) => {
+  win.partytown = {
+    forward: [
+      ['dataLayer.push', { preserveBehavior: true }],
+      'dataLayer.other',
+      'ga',
+      // a top level stub is still removed so its script can set it up again
+      ['fbq', { preserveBehavior: true }],
+    ],
+  };
+
+  let fulfillRegister: any;
+  (navigator as any).serviceWorker.register = () => ({
+    then(onFulfilled: any) {
+      fulfillRegister = onFulfilled;
+    },
+  });
+  snippet(win, document, navigator, top, false);
+
+  win.dataLayer.push({ event: 'before fallback' });
+  fulfillRegister(undefined);
+
+  assert.equal(win.dataLayer.slice(), [{ event: 'before fallback' }]);
+  assert.not.ok('ga' in win);
+  assert.not.ok('fbq' in win);
+});
+
 test('iframe with a cross-origin top runs its own partytown', ({ win, document, navigator }) => {
   const script = document.createElement('script');
   script.type = 'text/partytown';
