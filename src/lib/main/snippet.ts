@@ -4,6 +4,7 @@ import {
   getOriginalBehavior,
   randomId,
   resolvePartytownForwardProperty,
+  startsWith,
   trustedType,
 } from '../utils';
 import type { MainWindow, PartytownConfig } from '../types';
@@ -137,7 +138,7 @@ export function snippet(
       forward.map(function ([property]) {
         const name = property.split('.')[0];
         const isPreserved = forward.some(function ([p, { preserveBehavior }]) {
-          return preserveBehavior && p.indexOf(name + '.') == 0;
+          return preserveBehavior && startsWith(p, name + '.');
         });
         if (!isPreserved) {
           delete win[name as any];
