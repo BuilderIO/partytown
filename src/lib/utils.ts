@@ -48,6 +48,8 @@ export const DEPRECATED_WINDOW_PROPERTIES = new Set([
   'AttributionReportingRequestOptions',
   'attributionSrc',
   'setAttributionReporting',
+  // creating a <fencedframe> to read its interface triggers the "FencedFrame" deprecation
+  'HTMLFencedFrameElement',
 ]);
 
 export const isValidMemberName = (memberName: string) =>
