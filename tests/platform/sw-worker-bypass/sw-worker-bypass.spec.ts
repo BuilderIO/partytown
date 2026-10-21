@@ -1,7 +1,7 @@
 import { test, expect, type Page } from '@playwright/test';
 
 // the sandbox is controlled by the service worker, but some of the worker's
-// proxytown requests still reach the server, as seen in iOS Safari (#554).
+// proxytown requests still reach the server, as seen in iOS Safari (#794).
 // `isBypassed` gets the index of each proxytown request the service worker sees
 const bypassWorkerRequests = async (page: Page, isBypassed: string) => {
   test.skip(

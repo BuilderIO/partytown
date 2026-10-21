@@ -5,7 +5,7 @@ test('sw-bypass', async ({ page, baseURL }) => {
 
   // the service worker is registered and activated, but its scope doesn't
   // cover the sandbox, so the sandbox navigation reaches the server, as in
-  // Safari private browsing (#554)
+  // Safari private browsing (#794)
   await page.addInitScript(() => {
     if (window === window.top) {
       const register = navigator.serviceWorker.register.bind(navigator.serviceWorker);

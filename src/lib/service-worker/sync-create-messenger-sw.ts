@@ -17,7 +17,7 @@ const createMessengerServiceWorker: Messenger = (receiveMessage) => {
   if (!swContainer.controller) {
     // the sandbox was served by the server instead of the service worker, e.g.
     // Safari private browsing, so the worker's proxytown requests would 404.
-    // don't start the worker (#554)
+    // don't start the worker (#794)
     fallbackOnMainThread();
     return Promise.resolve(null);
   }
