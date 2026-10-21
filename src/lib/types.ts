@@ -40,7 +40,8 @@ export type MessageFromWorkerToSandbox =
     ]
   | [type: WorkerMessageType.InitializeNextScript, winId: WinId]
   | [type: WorkerMessageType.ForwardWorkerAccessRequest, accessReq: MainAccessRequest]
-  | [type: WorkerMessageType.AsyncAccessRequest, accessReq: MainAccessRequest];
+  | [type: WorkerMessageType.AsyncAccessRequest, accessReq: MainAccessRequest]
+  | [type: WorkerMessageType.ServiceWorkerBypassed];
 
 export type MessageFromSandboxToWorker =
   | [type: WorkerMessageType.MainDataResponseToWorker, initWebWorkerData: InitWebWorkerData]
@@ -77,6 +78,7 @@ export const enum WorkerMessageType {
   LocationUpdate,
   DocumentVisibilityState,
   CustomElementCallback,
+  ServiceWorkerBypassed,
 }
 
 export const enum LocationUpdateType {

@@ -31,7 +31,8 @@ export const suite = (title?: string) => {
     webWorkerCtx.$config$ = ctx.config = {};
     ctx.env = createWorkerWindownEnvironment(ctx);
     ctx.snippetCode = _partytownSnippet!;
-    ctx.doc.addEventListener = (_: any, cb: any) => cb();
+    // partytown initializes right away (pt0), the sandbox never fails (pt2)
+    ctx.doc.addEventListener = (type: any, cb: any) => type != 'pt2' && cb();
     ctx.run = (code) => {
       const fn = new Function('window', 'top', 'document', 'navigator', code);
       return fn(ctx.win, ctx.top, ctx.doc, ctx.nav);

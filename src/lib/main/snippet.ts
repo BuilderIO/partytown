@@ -48,6 +48,8 @@ export function snippet(
           if (config?.fallbackTimeout != 0) {
             timeout = setTimeout(fallback, config?.fallbackTimeout || 9999);
             doc.addEventListener('pt0', clearFallback);
+            // the sandbox couldn't reach the service worker, no reason to wait
+            doc.addEventListener('pt2', fallback);
           }
 
           if (useAtomics) {
@@ -120,7 +122,7 @@ export function snippet(
     doc.querySelector(config!.sandboxParent || 'body')!.appendChild(sandbox);
   }
 
-  function fallback(i?: number, script?: HTMLScriptElement) {
+  function fallback() {
     // no support or timeout reached
     // basically "undo" all of the text/partytown scripts
     // so they act as normal scripts
@@ -148,7 +150,7 @@ export function snippet(
 
     // re-query the scripts, more could have been added since the initial read
     scripts = doc.querySelectorAll('script[type="text/partytown"]');
-    for (i = 0; i < scripts!.length; i++) {
+    for (let i = 0; i < scripts!.length; i++) {
       fallbackScript(scripts![i]);
     }
 
@@ -200,6 +202,7 @@ export function snippet(
   function clearFallback() {
     // Partytown has initialized, clear the fallback timeout
     clearTimeout(timeout);
+    doc.removeEventListener('pt2', fallback);
   }
 
   function canAccessTop() {
