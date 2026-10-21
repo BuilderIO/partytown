@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Partytown Test Page" />
+    <title>Service Worker Bypass From The Worker</title>
+    <script>
+      partytown = {
+        fallbackTimeout: 10000,
+      };
+    </script>
+    <script src="/~partytown/debug/partytown.js"></script>
+  </head>
+  <body>
+    <h1>Service Worker Bypass From The Worker</h1>
+    <ul>
+      <li>
+        <strong>script runs once, in the worker or on the main thread</strong>
+        <code id="testRuns"></code>
+      </li>
+      <li>
+        <strong>worker keeps running after a single failed request</strong>
+        <code id="testTicks">0</code>
+      </li>
+    </ul>
+
+    <script type="text/partytown">
+      var runs = document.getElementById('testRuns');
+      runs.textContent = runs.textContent + 'run;';
+    </script>
+
+    <script type="text/partytown">
+      document.getElementById('testRuns').getAttribute('id');
+      document.body.classList.add('completed');
+    </script>
+
+    <script type="text/partytown">
+      setInterval(function () {
+        var ticks = document.getElementById('testTicks');
+        ticks.textContent = String(Number(ticks.textContent) + 1);
+      }, 100);
+    </script>
+
+    <hr />
+    <p><a href="/tests/">All Tests</a></p>
+    <hr />
+  </body>
+</html>

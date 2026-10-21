@@ -5,11 +5,22 @@ import {
   type PartytownWebWorker,
   WorkerMessageType,
 } from '../types';
+import { mainWindow } from '../sandbox/main-globals';
 import { onMessageFromWebWorker } from '../sandbox/on-messenge-from-worker';
 import { readMainInterfaces, readMainPlatform } from '../sandbox/read-main-platform';
 
+// have the main thread fall back right away, no reason to wait for the timeout
+const fallbackOnMainThread = () => mainWindow.document.dispatchEvent(new CustomEvent('pt2'));
+
 const createMessengerServiceWorker: Messenger = (receiveMessage) => {
   const swContainer = window.navigator.serviceWorker;
+  if (!swContainer.controller) {
+    // the sandbox was served by the server instead of the service worker, e.g.
+    // Safari private browsing, so the worker's proxytown requests would 404.
+    // don't start the worker (#794)
+    fallbackOnMainThread();
+    return Promise.resolve(null);
+  }
   return swContainer.getRegistration().then((swRegistration) => {
     swContainer.addEventListener('message', (ev: MessageEvent<MainAccessRequest>) =>
       receiveMessage(
@@ -30,6 +41,10 @@ const createMessengerServiceWorker: Messenger = (receiveMessage) => {
           WorkerMessageType.MainInterfacesResponseToWorker,
           readMainInterfaces(),
         ]);
+      } else if (msg[0] === WorkerMessageType.ServiceWorkerBypassed) {
+        // the worker's first proxytown request reached the server, the worker
+        // isn't controlled by the service worker even though this sandbox is
+        fallbackOnMainThread();
       } else {
         onMessageFromWebWorker(worker, msg);
       }
